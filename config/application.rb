@@ -27,5 +27,15 @@ module TBIS
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # mailer settings
+    config.action_mailer.default_url_options = {host: ENV['ACTION_MAILER_DEFAULT_HOST']}
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+        address:   ENV['SMTP_ADDRESS'],
+        port:      ENV['SMTP_PORT'],
+        user_name: ENV['SMTP_USER_NAME'],
+        password:  ENV['SMTP_PASSWORD'],
+    }
   end
 end
