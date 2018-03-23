@@ -1,0 +1,21 @@
+<%= form_with(model: affiliate, local: true) do |form| %>
+  <% if affiliate.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(affiliate.errors.count, "error") %> prohibited this affiliate from being saved:</h2>
+
+      <ul>
+      <% affiliate.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    Name <%=form.text_field :name, value: affiliate.name%><br>
+    Address <%=form.text_field :address, value: affiliate.address%><br>
+    Phone number <%=form.text_field :phone_number, value: affiliate.phone_number%><br>
+    Email <%=form.text_field :email, value: affiliate.email%><br>
+    <%= form.submit %>
+  </div>
+<% end %>

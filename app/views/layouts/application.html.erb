@@ -9,7 +9,13 @@
   </head>
 
   <body>
+    <div style="background-color: darkgrey">
+      <p><%=flash[:notice]%></p>
+      <p><%=flash[:alert]%></p>
+    </div>
     <%= link_to 'Main', root_path%>
+    <%= link_to 'Companies', companies_path%>
+    <%= link_to 'Affiliates', affiliates_path%>
     <%if signed_in?%>
       <%= link_to 'Settings', edit_user_registration_path %>
       <%= link_to 'Sign Out', destroy_user_session_path, method: :delete%>
