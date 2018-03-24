@@ -12,4 +12,9 @@ class User < ApplicationRecord
   # def confirmation_required?
   #   false
   # end
+
+  module Role
+    COMPANY_OWNER = 1
+    CLIENT = 2
+  end
 end
