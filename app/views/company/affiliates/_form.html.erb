@@ -1,4 +1,4 @@
-<%= form_with(model: affiliate, local: true) do |form| %>
+<%= form_with(model: [affiliate.company, affiliate], local: true) do |form| %>
   <% if affiliate.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(affiliate.errors.count, "error") %> prohibited this affiliate from being saved:</h2>

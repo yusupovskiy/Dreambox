@@ -4,6 +4,9 @@ class ApplicationController < ActionController::Base
 
 
   private
+    # def current_user
+    #   @current_user ||= User.eager_load(:company).find
+    # end
     def configure_permitted_parameters
       keys = [:first_name, :last_name, :patronymic, :birthday]
       devise_parameter_sanitizer.permit(:sign_up, keys: keys)
@@ -18,6 +21,11 @@ class ApplicationController < ActionController::Base
       params[:return_url] || '/'
     end
     def ensure_current_user
-      redirect_to new_user_session_path(return_url: request.url) if current_user.nil?
+      p redirect_to new_user_session_path(return_url: request.url) if current_user.nil?
+    end
+    def ensure_company_owner_role
+      if current_user.nil? and current_user.role & User::Role::COMPANY_OWNER == 0
+        p redirect_to new_company_path, notice: 'Please, create a company first'
+      end
     end
 end

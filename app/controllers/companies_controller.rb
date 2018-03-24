@@ -1,6 +1,6 @@
 class CompaniesController < ApplicationController
   before_action :ensure_current_user
-  before_action :ensure_company_owner, except: [:new, :create]
+  before_action :ensure_company_owner_role, except: [:new, :create]
   before_action :set_company, only: [:edit, :update, :destroy]
 
   # GET /companies

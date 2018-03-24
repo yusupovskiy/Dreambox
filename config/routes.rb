@@ -3,6 +3,8 @@ Rails.application.routes.draw do
 
   devise_for :users, path: 'auth', controllers: {confirmations: 'confirmations'}
 
-  resources :affiliates, module: :company
-  resources :companies
+  resources :companies do
+    resources :affiliates, module: :company
+    resources :clients, module: :company
+  end
 end

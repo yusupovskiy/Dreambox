@@ -1,5 +1,6 @@
 class User < ApplicationRecord
-  has_one :company, dependent: :destroy
+  has_many :companies, dependent: :destroy
+  # has_many :clients
 
   # Include default devise modules. Others available are:
   # :lockable, :timeoutable and :omniauthable

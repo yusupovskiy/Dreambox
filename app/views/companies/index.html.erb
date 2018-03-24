@@ -8,6 +8,8 @@
       <th>ID</th>
       <th>Name</th>
       <th>User ID</th>
+      <th>Affiliates</th>
+      <th>Clients</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -18,6 +20,8 @@
         <td><%= company.id %></td>
         <td><%= company.name %></td>
         <td><%= company.user_id %></td>
+        <td><%= link_to 'Affiliates', company_affiliates_path(company)%></td>
+        <td><%= link_to 'Clients', company_clients_path(company)%></td>
         <td><%= link_to 'Show', company %></td>
         <td><%= link_to 'Edit', edit_company_path(company) %></td>
         <td><%= link_to 'Destroy', company, method: :delete, data: { confirm: 'Are you sure?' } %></td>

@@ -18,9 +18,9 @@
         <td><%= affiliate.id %></td>
         <td><%= affiliate.name %></td>
         <td><%= affiliate.company_id %></td>
-        <td><%= link_to 'Show', affiliate %></td>
-        <td><%= link_to 'Edit', edit_affiliate_path(affiliate) %></td>
-        <td><%= link_to 'Destroy', affiliate, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', company_affiliate_path(affiliate.company_id, affiliate) %></td>
+        <td><%= link_to 'Edit', edit_company_affiliate_path(affiliate.company, affiliate) %></td>
+        <td><%= link_to 'Destroy', company_affiliate_path(affiliate.company_id, affiliate), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -28,4 +28,4 @@
 
 <br>
 
-<%= link_to 'New Affiliate', new_affiliate_path %>
+<%= link_to 'New Affiliate', new_company_affiliate_path %>

@@ -1,12 +1,11 @@
 class Company::AffiliatesController < ApplicationController
-  before_action :ensure_current_user, :ensure_company, only: [:new, :edit, :update, :destroy]
+  before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
   before_action :set_affiliate, only: [:show, :edit, :update, :destroy]
 
   # GET /affiliates
   # GET /affiliates.json
   def index
-    # @affiliates = Affiliate.where(company: current_user.company)
-    @affiliates = Affiliate.all
+    @affiliates = Affiliate.where(company: params[:company_id])
   end
 
   # GET /affiliates/1
@@ -16,7 +15,7 @@ class Company::AffiliatesController < ApplicationController
 
   # GET /affiliates/new
   def new
-    @affiliate = Affiliate.new company: current_user.company
+    @affiliate = Affiliate.new company_id: params[:company_id]
   end
 
   # GET /affiliates/1/edit
@@ -30,7 +29,7 @@ class Company::AffiliatesController < ApplicationController
 
     respond_to do |format|
       if @affiliate.save
-        format.html { redirect_to @affiliate, notice: 'Affiliate was successfully created.' }
+        format.html { redirect_to [@affiliate.company, @affiliate], notice: 'Affiliate was successfully created.' }
         format.json { render :show, status: :created, location: @affiliate }
       else
         format.html { render :new }
@@ -72,13 +71,8 @@ class Company::AffiliatesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def affiliate_params
-      prms = params.require(:affiliate).permit :name, :address, :email, :phone_number
-      prms.merge company: current_user.company
-    end
-
-    def ensure_company
-      if current_user.company.nil?
-        redirect_to new_company_path, notice: 'Please, create a company first'
-      end
+      params.require(:affiliate)
+          .permit(:name, :address, :email, :phone_number)
+          .merge(company_id: params[:company_id])
     end
 end
