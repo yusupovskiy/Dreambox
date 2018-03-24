@@ -1,24 +1,26 @@
-# README
+TBIS
+====
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## About the project 
+#### The Big Information System is the project for organizations to manage their data
 
-Things you may want to cover:
+## Facilities
+* Full functionality of authentication system like email confirmation and so on (thanks [Devise gem](https://github.com/plataformatec/devise))
+* [User Roles](https://github.com/kofon95/TBIS/blob/master/app/models/user.rb#L17)
+* Company owner can create companies, affiliates (for that company), and clients (which are customer for concrete company)
+* Any client can become high-grade user; if such user exists (in other company) they merge
 
-* Ruby version
+## What is coming soon
+* Courses with dynamic fields
+* Tariffs
+* Subscriptions
+* Elastic Search or Sphinx
 
-* System dependencies
+## Some example routes
+* `/companies` - list of companies of current user
+* `/companies/1/affiliates` - list of affiliates each of which belongs to company with id 1
+* `/companies/1/clients` - similar to route above but for clients
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## Supported databases
+* Postgres
+* MySQL _(at risk of being unsupported)_
