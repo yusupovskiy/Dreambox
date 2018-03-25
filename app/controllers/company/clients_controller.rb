@@ -33,7 +33,7 @@ class Company::ClientsController < ApplicationController
     respond_to do |format|
       if @client.save
         format.html { redirect_to [@client.company, @client], notice: 'Client was successfully created.' }
-        format.json { render :show, status: :created, location: @client }
+        format.json { render :show, status: :created }
       else
         format.html { render :new }
         format.json { render json: @client.errors, status: :unprocessable_entity }
@@ -60,7 +60,7 @@ class Company::ClientsController < ApplicationController
   def destroy
     @client.destroy
     respond_to do |format|
-      format.html { redirect_to clients_url, notice: 'Client was successfully destroyed.' }
+      format.html { redirect_to company_clients_url, notice: 'Client was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
