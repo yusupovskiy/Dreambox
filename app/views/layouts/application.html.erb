@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="height: 100%">
   <head>
     <title>TBIS</title>
     <%= csrf_meta_tags %>
@@ -9,20 +9,40 @@
   </head>
 
   <body>
-    <div style="background-color: darkgrey">
-      <p><%=flash[:notice]%></p>
-      <p><%=flash[:alert]%></p>
+    <!-- Temporary div -->
+    <div style="position: fixed; right: 0;">
+      <div style="background-color: darkgrey">
+        <p><%=flash[:notice]%></p>
+        <p><%=flash[:alert]%></p>
+      </div>
+      <%= link_to 'Main', root_path%>
+      <%= link_to 'Companies', companies_path%>
+      <%if signed_in?%>
+        <%= link_to 'Settings', edit_user_registration_path %>
+        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete%>
+        <h3>Hi <%="#{current_user.first_name} #{current_user.last_name}"%></h3>
+      <%else%>
+        <%= link_to 'Sign Up', new_user_registration_path %>
+        <%= link_to 'Sign In', new_user_session_path %>
+      <%end%>
     </div>
-    <%= link_to 'Main', root_path%>
-    <%= link_to 'Companies', companies_path%>
-    <%if signed_in?%>
-      <%= link_to 'Settings', edit_user_registration_path %>
-      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete%>
-      <h3>Hi <%="#{current_user.first_name} #{current_user.last_name}"%></h3>
-    <%else%>
-      <%= link_to 'Sign Up', new_user_registration_path %>
-      <%= link_to 'Sign In', new_user_session_path %>
-    <%end%>
-    <%= yield %>
+
+    <%=render 'shared/authorization_fields'%>
+
+    <%=render 'shared/left_side'%>
+    <div class="content">
+      <%=yield%>
+
+      <div class="minimized-tabs">
+        <div class="item-minimized-tabs">
+          <img src="/resources/no-image-available.png" class="icon-item-minimized-tabs" />
+          <div class="name-item-minimized-tabs">Посетители</div>
+        </div>
+        <div class="item-minimized-tabs">
+          <img src="/resources/no-image-available.png" class="icon-item-minimized-tabs" />
+          <div class="name-item-minimized-tabs">Иван Иванов</div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

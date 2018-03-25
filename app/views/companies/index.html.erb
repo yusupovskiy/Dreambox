@@ -22,6 +22,7 @@
         <td><%= company.user_id %></td>
         <td><%= link_to 'Affiliates', company_affiliates_path(company)%></td>
         <td><%= link_to 'Clients', company_clients_path(company)%></td>
+        <td><%= link_to 'CRM (experimental)', company_crm_path(company)%></td>
         <td><%= link_to 'Show', company %></td>
         <td><%= link_to 'Edit', edit_company_path(company) %></td>
         <td><%= link_to 'Destroy', company, method: :delete, data: { confirm: 'Are you sure?' } %></td>

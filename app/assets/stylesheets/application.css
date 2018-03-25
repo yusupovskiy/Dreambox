@@ -13,3 +13,29 @@
  *= require_tree .
  *= require_self
  */
+
+
+@font-face {
+    font-family: MyriadPro;
+    src: url(/fonts/MyriadPro/MyriadPro-Regular.otf);
+}
+@font-face {
+    font-family: MyriadProCond;
+    src: url(/fonts/MyriadPro/MyriadPro-Cond.otf);
+}
+@font-face {
+    font-family: CenturyGothic;
+    src: url(/fonts/CenturyGothic/CenturyGothic.ttf);
+}
+@font-face {
+    font-family: CenturyGothicBold;
+    src: url(/fonts/CenturyGothic/CenturyGothicBold.ttf);
+}
+@font-face {
+    font-family: Roboto;
+    src: url(/fonts/Roboto/Roboto-Regular.ttf);
+}
+@font-face {
+    font-family: RobotoMedium;
+    src: url(/fonts/Roboto/Roboto-Medium.ttf);
+}

@@ -1,0 +1,361 @@
+<div class="content-list">
+  <div class="header-content-list">
+    <div class="section-menu">
+      <a href="#" class="item-section-menu active-item-section-menu">Списки</a>
+      <a href="#" class="item-section-menu">Сделки</a>
+      <a href="#" class="item-section-menu">Календарь</a>
+      <a href="#" class="item-section-menu">Аналитика</a>
+    </div>
+  </div>
+
+  <div class="home-lists">
+    <div class="content-home-lists">
+      <div class="box-home-lists">
+        <div class="visitors">
+          <div class="title-list">
+            <div class="icon-visitors icons-lists"></div>
+            <div class="name-title-list"><span>Клиенты: </span><span>120</span></div>
+            <div class="debt-visitors-item-body-list"><span class="amount-debt">-200 000</span> ₽</div>
+            <div class="btms-list">
+              <div class="icons-btms-list btm-sorting"></div>
+              <div class="icons-btms-list btm-search"></div>
+              <div class="icons-btms-list btm-still"></div>
+            </div>
+          </div>
+
+          <div class="panel-list">
+            <div class="sort-result">
+              <div class="filtering-status">
+                <span>Фильтр</span>
+                <div class="office-filtering-status"><div></div><span>1</span></div>
+                <div class="kontant-filtering-status"><div></div><span>2</span></div>
+              </div>
+            </div>
+            <div class="panel-search">
+              <input type="search" placeholder="Поиск по списку" />
+            </div>
+          </div>
+
+
+
+          <div class="body-list">
+            <div class="items-body-list" style="margin-top: 35px;">
+
+              <%@clients.each do |client|%>
+              <div class="item-body-list">
+                <div class="content-item-body-list">
+                  <div class="allotment"></div>
+                  <img src="/resources/no-image-available.png" class="avatar-item-body-list" />
+                  <div class="left-content-item-body-list">
+                    <span class="name-user-item-body-list"><%="#{client.first_name} #{client.last_name}"%></span>
+                    <span class="start-time-item-body-list">Ucmas сегодня в 12:20</span>
+                  </div>
+                  <div class="right-content-item-body-list">
+                    <div class="debt-visitors-item-body-list"><span class="amount-debt">-1 000</span> ₽</div>
+                  </div>
+                </div>
+              </div>
+              <%end%>
+
+            </div>
+          </div>
+          <div class="interaction-list">
+            <div class="btms-interaction-list">
+              <div class="btm-add"><div class="icon-plus"></div></div>
+            </div>
+            <hr class="bottom-line-list" />
+          </div>
+        </div>
+      </div>
+
+      <div class="box-home-lists">
+        <div class="visitors">
+          <div class="title-list">
+            <div class="icon-subscription icons-lists"></div>
+            <div class="name-title-list"><span>Абонементы: </span><span>13</span></div>
+
+            <div class="btms-list">
+              <div class="icons-btms-list btm-sorting"></div>
+              <div class="icons-btms-list btm-search"></div>
+              <div class="icons-btms-list btm-still"></div>
+            </div>
+          </div>
+          <div class="panel-list">
+            <div class="panel-filter">
+              <div class="allotment"></div><div class="number-selected">1</div>
+
+              <div class="sort-selected">
+                <div class="empty-sort-selected top-sort-selected"></div>
+                <div class="bottom-sort-selected"></div>
+              </div>
+
+              <div class="btm-filter active-btm-filter"><div class="icon-filter"></div><span>фильтровать списки</span></div>
+
+              <div class="closed-panel-filter"></div>
+            </div>
+          </div>
+          <div class="body-list">
+            <div class="items-body-list" style="margin-top: 35px;">
+              <div class="selected-item-body-list item-body-list">
+                <div class="content-item-subscription">
+                  <div class="name-item-subscription"><div class="allotment"></div>Английский для начинающих</div>
+                  <div class="client-item-subscription">
+                    <img src="/resources/no-image-available.png" />
+                    <div class="name-client-item-subscription"><span style="margin-right: 6px;">Оплатили</span> <span class="amount debt">1 000 ₽</span><span>из</span><span class="amount">4 000 ₽</span></div>
+                  </div>
+                  <div class="data-item-subscription">от 23 сенятбря 2018 по 23 октября 2018</div>
+                </div>
+              </div>
+              <div class="item-body-list">
+                <div class="content-item-subscription">
+                  <div class="name-item-subscription"><div class="allotment"></div>Ucmas</div>
+                  <div class="client-item-subscription">
+                    <img src="/resources/no-image-available.png" />
+                    <div class="name-client-item-subscription"><span style="margin-right: 6px;">Оплатили</span> <span class="amount">4 000 ₽</span><span>из</span><span class="amount">4 000 ₽</span></div>
+                  </div>
+                  <div class="data-item-subscription">от 23 сенятбря 2018 по 23 октября 2018</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="interaction-list">
+            <div class="btms-interaction-list">
+              <div class="btm-add"><div class="icon-plus"></div></div>
+            </div>
+            <hr class="bottom-line-list" />
+          </div>
+        </div>
+
+        <div class="visitors">
+          <div class="title-list">
+            <div class="icon-time icons-lists"></div>
+            <div class="name-title-list"><span>Посещения: </span><span>15</span></div>
+            <div class="btms-list">
+              <div class="btm-missed"><span class="number-notifications">2</span><div class="icons-btms-list"></div></div>
+              <div class="icons-btms-list btm-sorting"></div>
+              <div class="icons-btms-list btm-search"></div>
+              <div class="icons-btms-list btm-still"></div>
+            </div>
+          </div>
+          <div class="body-list">
+            <div class="items-body-list">
+              <div class="item-body-list">
+                <div class="content-item-subscription">
+                  <div class="left-content-item-subscription">
+                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>Занятие 10 - Английский для начинающих</div>
+                    <div class="attending-course"><span class="group-attending-course">Группа UCMAS Ф1</span> <img src="/images/visitors1.png" /><span>21</span></div>
+                    <div class="data-item-subscription">Кабинет 12</div>
+                  </div>
+                  <div class="right-content-item-subscription">
+                    <div class="time-and-date">Сегодня<br /> в 12:20 до 13:20</div>
+                  </div>
+                </div>
+              </div>
+              <div class="item-body-list">
+                <div class="content-item-subscription">
+                  <div class="left-content-item-subscription">
+                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>Занятие 9 - UCMAS</div>
+                    <div class="attending-course"><span class="group-attending-course">Группа UCMAS Ф1</span> <img src="/images/visitors1.png" /><span>21</span></div>
+                    <div class="data-item-subscription">Кабинет 12</div>
+                  </div>
+                  <div class="right-content-item-subscription">
+                    <div class="time-and-date">Позавчера<br /> в 12:20 до 13:20</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="interaction-list">
+            <div class="btms-interaction-list">
+              <div class="btm-add"><div class="icon-plus"></div></div>
+            </div>
+            <hr class="bottom-line-list" />
+          </div>
+        </div>
+      </div>
+      <div class="box-home-lists">
+        <div class="visitors">
+          <div class="title-list">
+            <div class="icon-group icons-lists"></div>
+            <div class="name-title-list"><span>Записи: </span><span>3</span></div>
+            <div class="btms-list">
+              <div class="icons-btms-list btm-sorting"></div>
+              <div class="icons-btms-list btm-search"></div>
+              <div class="icons-btms-list btm-still"></div>
+            </div>
+          </div>
+          <div class="body-list">
+            <div class="items-body-list">
+              <div class="item-body-list">
+                <div class="content-item-subscription">
+                  <div class="left-content-item-subscription" style="display: grid;">
+                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>Группа UCMAS Ф1</div>
+                    <div class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount debt">-11 000 ₽</span></div>
+                    <div class="course-direction">Ментальная арифметика UCMAS</div>
+                  </div>
+                  <div class="right-content-item-subscription">
+                    <div class="people-on-course">21<img src="/images/visitors1.png"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="item-body-list">
+                <div class="content-item-subscription">
+                  <div class="left-content-item-subscription" style="display: grid;">
+                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>Группа UCMAS Ф2</div>
+                    <div class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount">0 ₽</span></div>
+                    <div class="course-direction">Ментальная арифметика UCMAS</div>
+                  </div>
+                  <div class="right-content-item-subscription">
+                    <div class="people-on-course">21<img src="/images/visitors1.png"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="interaction-list">
+            <div class="btms-interaction-list">
+              <div class="btm-add"><div class="icon-plus"></div></div>
+            </div>
+            <hr class="bottom-line-list" />
+          </div>
+        </div>
+
+        <div class="visitors">
+          <div class="title-list">
+            <div class="icon-visitors icons-lists"></div>
+            <div class="name-title-list"><span>Услуги: </span><span>15</span></div>
+            <div class="btms-list">
+              <div class="icons-btms-list btm-sorting"></div>
+              <div class="icons-btms-list btm-search"></div>
+              <div class="icons-btms-list btm-still"></div>
+            </div>
+          </div>
+          <div class="body-list">
+            <div class="items-body-list">
+              <div class="item-body-list">
+                <div class="content-item-subscription">
+                  <div class="left-content-item-subscription">
+                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>UCMAS</div>
+                    <div class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount debt">1 140 000 ₽</span><span style="margin: 0 2px;">из</span><span class="amount">1 441 000 ₽</span></div>
+                    <div class="data-item-subscription">Не оплативших 23</div>
+                  </div>
+                  <div class="right-content-item-subscription">
+                    <div class="people-on-course">2<img src="/images/group1.png"></div>
+                    <div class="people-on-course">21<img src="/images/visitors1.png"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="item-body-list">
+                <div class="content-item-subscription">
+                  <div class="left-content-item-subscription">
+                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>UCMAS</div>
+                    <div class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount debt">10 000 ₽</span><span style="margin: 0 2px;">из</span><span class="amount">14 000 ₽</span></div>
+                    <div class="data-item-subscription">Не оплативших 23</div>
+                  </div>
+                  <div class="right-content-item-subscription">
+                    <div class="people-on-course">2<img src="/images/group1.png"></div>
+                    <div class="people-on-course">21<img src="/images/visitors1.png"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="interaction-list">
+            <div class="btms-interaction-list">
+              <div class="btm-add"><div class="icon-plus"></div></div>
+            </div>
+            <hr class="bottom-line-list" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div style="display: none;" class="bring-to-front">
+    <div style="display: none;" class="card">
+      <div class="btms-card">
+        <div class="btm-closed-card"></div>
+      </div>
+      <div class="name-card">Добавить контакт</div>
+      <div class="add-avatar"><div class="icon-add-avatar"></div></div>
+
+      <div class="entry-field">
+        <div class="title-input">Фамилия*</div>
+        <input type="text" class="input" aria-label="Имя">
+      </div>
+      <div class="entry-field">
+        <div class="title-input">Имя*</div>
+        <input type="text" class="input" aria-label="Имя">
+      </div>
+      <div class="entry-field">
+        <div class="title-input">Отчество</div>
+        <input type="text" class="input" aria-label="Имя">
+      </div>
+
+      <div class="sections-card">
+        <div class="items-sections-card">
+          <div class="item-sections-card active-item-sections-card">Основное</div>
+          <div class="item-sections-card">Филиалы</div>
+        </div>
+      </div>
+
+
+      <div class="entry-field">
+        <div class="title-input">Дата рождения*</div>
+        <input type="text" class="input" aria-label="Имя">
+      </div>
+      <div class="entry-field">
+        <div class="title-input">Пол*</div>
+        <input type="text" class="input" aria-label="Имя">
+      </div>
+      <div class="entry-field">
+        <div class="title-input">Телефон*</div>
+        <input type="text" class="input" aria-label="Имя">
+      </div>
+      <div class="entry-field">
+        <div class="title-input">Источник</div>
+        <input type="text" class="input" aria-label="Имя">
+      </div>
+
+    </div>
+    <div class="card">
+      <div class="btms-card">
+        <div class="btm-closed-card"></div>
+      </div>
+      <div class="name-card">Клиенты</div>
+      <img class="img-card" src="/resources/no-image-available.png" />
+      <div class="title-card">Магомедов Магомед<br />Магомедович</div>
+      <div class="balance">Задолжность <span class="amount debt">1 000 ₽</span></div>
+      <div class="sections-card">
+        <div class="items-sections-card">
+          <div class="item-sections-card active-item-sections-card">Информация</div>
+          <div class="item-sections-card">Журнал посещений</div>
+          <div class="item-sections-card">Финансовые операции</div>
+          <div class="item-sections-card">Абонементы</div>
+          <div class="item-sections-card">Курсы</div>
+          <div class="item-sections-card">Сделки</div>
+          <div class="item-sections-card">Скидки</div>
+          <div class="item-sections-card">Логи</div>
+        </div>
+      </div>
+      <div class="item-info">
+        <div class="title-item-info">Дата рождения</div>
+        <div class="text-item-info">21 сентября 2018</div>
+      </div>
+      <div class="item-info">
+        <div class="title-item-info">Пол</div>
+        <div class="text-item-info">мужской</div>
+      </div>
+      <div class="item-info">
+        <div class="title-item-info">Телефон</div>
+        <div class="text-item-info">+7 (918) 730 10 05</div>
+      </div>
+      <div class="item-info">
+        <div class="title-item-info">Источник</div>
+        <div class="text-item-info">Наружняя реклама</div>
+      </div>
+    </div>
+  </div>
+
+</div>
