@@ -5,12 +5,25 @@
     <%= csrf_meta_tags %>
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%if Rails.env.production?%>
+      <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <%else # development | test %>
+      <script src="/resources/vue.js"></script>
+    <%end%>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <script type="text/javascript" charset="utf-8">
+const Routes = {
+    getAllClients: companyId => `/companies/${companyId}/clients.json`,
+    addNewClient: companyId => `/companies/${companyId}/clients.json`,
+    removeClient: (companyId, clientId) => `/companies/${companyId}/clients/${clientId}.json`,
+}
+const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').content
+    </script>
   </head>
 
-  <body>
+  <body data-params="<%=params.to_json%>">
     <!-- Temporary div -->
-    <div style="position: fixed; right: 0;">
+    <div style="position: fixed; right: 50px;">
       <div style="background-color: darkgrey">
         <p><%=flash[:notice]%></p>
         <p><%=flash[:alert]%></p>

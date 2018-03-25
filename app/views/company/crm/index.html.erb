@@ -9,7 +9,7 @@
   </div>
 
   <div class="home-lists">
-    <div class="content-home-lists">
+    <div id="data-lists-manager" class="content-home-lists">
       <div class="box-home-lists">
         <div class="visitors">
           <div class="title-list">
@@ -37,31 +37,39 @@
           </div>
 
 
-
           <div class="body-list">
-            <div class="items-body-list" style="margin-top: 35px;">
+            <div class="items-body-list">
 
-              <%@clients.each do |client|%>
-              <div class="item-body-list">
+              <div v-for="(client, index) in clients" class="item-body-list">
                 <div class="content-item-body-list">
                   <div class="allotment"></div>
                   <img src="/resources/no-image-available.png" class="avatar-item-body-list" />
                   <div class="left-content-item-body-list">
-                    <span class="name-user-item-body-list"><%="#{client.first_name} #{client.last_name}"%></span>
+                    <span class="name-user-item-body-list">{{client.first_name}} {{client.last_name}}</span>
                     <span class="start-time-item-body-list">Ucmas сегодня в 12:20</span>
                   </div>
                   <div class="right-content-item-body-list">
                     <div class="debt-visitors-item-body-list"><span class="amount-debt">-1 000</span> ₽</div>
                   </div>
+                  <div @click="removeClient(index)">Remove</div>
                 </div>
               </div>
-              <%end%>
+
+              <div :style="'display: ' + (isAddClientWindowOpened ? 'block' : 'none')">
+                <div @click="isAddClientWindowOpened = false" style="cursor: pointer;">Close</div>
+                <input type="text" placeholder="First Name" v-model="firstName">
+                <input type="text" placeholder="Last Name" v-model="lastName">
+                <input type="text" placeholder="Patronymic" v-model="patronymic">
+                <input type="date" placeholder="Birthday" v-model="birthday">
+                <input type="text" placeholder="Phone Number" v-model="phoneNumber">
+                <button :disabled="isLoading" @click="createClient">Create <b>client</b></button>
+              </div>
 
             </div>
           </div>
           <div class="interaction-list">
             <div class="btms-interaction-list">
-              <div class="btm-add"><div class="icon-plus"></div></div>
+              <div @click="isAddClientWindowOpened = true" class="btm-add"><div class="icon-plus"></div></div>
             </div>
             <hr class="bottom-line-list" />
           </div>
@@ -95,7 +103,7 @@
             </div>
           </div>
           <div class="body-list">
-            <div class="items-body-list" style="margin-top: 35px;">
+            <div class="items-body-list">
               <div class="selected-item-body-list item-body-list">
                 <div class="content-item-subscription">
                   <div class="name-item-subscription"><div class="allotment"></div>Английский для начинающих</div>
