@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  namespace :company do
-    get 'crm/index'
+  namespace :companies do
+    get 'windows/show'
   end
 
   root 'home#index'
@@ -8,9 +8,10 @@ Rails.application.routes.draw do
   devise_for :users, path: 'auth', controllers: {confirmations: 'confirmations'}
 
   resources :companies do
-    resources :affiliates, module: :company
-    resources :clients, module: :company
+    resources :affiliates, module: :companies
+    resources :clients, module: :companies
 
-    get 'crm' => 'company/crm#index'
+    resources :crm, controller: 'companies/crm', only: :index
+    resources :windows, controller: 'companies/windows', only: :show
   end
 end

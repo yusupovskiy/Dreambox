@@ -1,0 +1,2 @@
+module Companies::WindowsHelper
+end

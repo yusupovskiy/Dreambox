@@ -12,11 +12,13 @@
     <%end%>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <script type="text/javascript" charset="utf-8">
+Vue.config.productionTip = Vue.config.devtools = false;
 const Routes = {
     getAllClients: companyId => `/companies/${companyId}/clients.json`,
-    addNewClient: companyId => `/companies/${companyId}/clients.json`,
-    removeClient: (companyId, clientId) => `/companies/${companyId}/clients/${clientId}.json`,
-}
+    addNewClient:  companyId => `/companies/${companyId}/clients.json`,
+    removeClient:  (companyId, clientId) => `/companies/${companyId}/clients/${clientId}.json`,
+    signIn:        () => '/auth/sign_in?return_url=' + encodeURIComponent(location.href)
+};
 const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').content
     </script>
   </head>

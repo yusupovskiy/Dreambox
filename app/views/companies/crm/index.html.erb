@@ -1,4 +1,4 @@
-<div class="content-list">
+<div class="content-list" id="content-list">
   <div class="header-content-list">
     <div class="section-menu">
       <a href="#" class="item-section-menu active-item-section-menu">Списки</a>
@@ -9,7 +9,7 @@
   </div>
 
   <div class="home-lists">
-    <div id="data-lists-manager" class="content-home-lists">
+    <div class="content-home-lists">
       <div class="box-home-lists">
         <div class="visitors">
           <div class="title-list">
@@ -39,10 +39,9 @@
 
           <div class="body-list">
             <div class="items-body-list">
-
-              <div v-for="(client, index) in clients" class="item-body-list">
-                <div class="content-item-body-list">
-                  <div class="allotment"></div>
+              <div v-for="(client, index) in clients" class="item-body-list" :class="client.selected ? 'selected-item-body-list' : ''">
+                <div @click="isClientInfoWindowOpened = true" class="content-item-body-list">
+                  <div @click.stop="selectClient(client)" class="allotment"></div>
                   <img src="/resources/no-image-available.png" class="avatar-item-body-list" />
                   <div class="left-content-item-body-list">
                     <span class="name-user-item-body-list">{{client.first_name}} {{client.last_name}}</span>
@@ -51,21 +50,20 @@
                   <div class="right-content-item-body-list">
                     <div class="debt-visitors-item-body-list"><span class="amount-debt">-1 000</span> ₽</div>
                   </div>
-                  <div @click="removeClient(index)">Remove</div>
+                  <span @click="removeClient(index)">Remove</span>
                 </div>
               </div>
-
-              <div :style="'display: ' + (isAddClientWindowOpened ? 'block' : 'none')">
-                <div @click="isAddClientWindowOpened = false" style="cursor: pointer;">Close</div>
-                <input type="text" placeholder="First Name" v-model="firstName">
-                <input type="text" placeholder="Last Name" v-model="lastName">
-                <input type="text" placeholder="Patronymic" v-model="patronymic">
-                <input type="date" placeholder="Birthday" v-model="birthday">
-                <input type="text" placeholder="Phone Number" v-model="phoneNumber">
-                <button :disabled="isLoading" @click="createClient">Create <b>client</b></button>
-              </div>
-
             </div>
+
+            <form :style="'display: ' + (isAddClientWindowOpened ? 'block' : 'none')" onsubmit="return false">
+              <div @click="isAddClientWindowOpened = false" style="cursor: pointer;">Close</div>
+              <input type="text" placeholder="First Name" v-model="firstName">
+              <input type="text" placeholder="Last Name" v-model="lastName">
+              <input type="text" placeholder="Patronymic" v-model="patronymic">
+              <input type="date" placeholder="Birthday" v-model="birthday">
+              <input type="text" placeholder="Phone Number" v-model="phoneNumber">
+              <button :disabled="isLoading" @click="createClient">Create <b>client</b></button>
+            </form>
           </div>
           <div class="interaction-list">
             <div class="btms-interaction-list">
@@ -280,7 +278,7 @@
   </div>
 
 
-  <div style="display: none;" class="bring-to-front">
+  <div :style="isClientInfoWindowOpened ? '' : 'display: none'" class="bring-to-front">
     <div style="display: none;" class="card">
       <div class="btms-card">
         <div class="btm-closed-card"></div>
@@ -327,43 +325,15 @@
       </div>
 
     </div>
-    <div class="card">
-      <div class="btms-card">
-        <div class="btm-closed-card"></div>
-      </div>
-      <div class="name-card">Клиенты</div>
-      <img class="img-card" src="/resources/no-image-available.png" />
-      <div class="title-card">Магомедов Магомед<br />Магомедович</div>
-      <div class="balance">Задолжность <span class="amount debt">1 000 ₽</span></div>
-      <div class="sections-card">
-        <div class="items-sections-card">
-          <div class="item-sections-card active-item-sections-card">Информация</div>
-          <div class="item-sections-card">Журнал посещений</div>
-          <div class="item-sections-card">Финансовые операции</div>
-          <div class="item-sections-card">Абонементы</div>
-          <div class="item-sections-card">Курсы</div>
-          <div class="item-sections-card">Сделки</div>
-          <div class="item-sections-card">Скидки</div>
-          <div class="item-sections-card">Логи</div>
-        </div>
-      </div>
-      <div class="item-info">
-        <div class="title-item-info">Дата рождения</div>
-        <div class="text-item-info">21 сентября 2018</div>
-      </div>
-      <div class="item-info">
-        <div class="title-item-info">Пол</div>
-        <div class="text-item-info">мужской</div>
-      </div>
-      <div class="item-info">
-        <div class="title-item-info">Телефон</div>
-        <div class="text-item-info">+7 (918) 730 10 05</div>
-      </div>
-      <div class="item-info">
-        <div class="title-item-info">Источник</div>
-        <div class="text-item-info">Наружняя реклама</div>
-      </div>
+    <div id="cards-container">
+
     </div>
   </div>
 
 </div>
+<script type="text/javascript" charset="utf-8">
+    $.get('http://localhost:3000/companies/9/windows/3', e => {
+        // TODO: create new instances of Vue and bind them to these windows
+        var c = $("#cards-container").html(e);
+    })
+</script>
