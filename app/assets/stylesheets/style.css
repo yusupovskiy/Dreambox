@@ -700,7 +700,7 @@ span.debt {
     user-select: none;
     display: table;
 }
-.panel-filter>.allotment {
+.panel-filter>.selection {
     display: block;
     margin: 10px 8px 10px 18px;
     opacity: 0.6!important;	
@@ -817,7 +817,7 @@ span.debt {
     opacity: 1;
 }
 
-.allotment {
+.selection {
     background-size: 100%;
     background-repeat: no-repeat;
     width: 14px;
@@ -829,13 +829,13 @@ span.debt {
     opacity: 0.2;
     display: none;
 }
-.allotment:hover {
+.selection:hover {
     opacity: 0.4;
 }
-.item-body-list:hover .allotment, .selected-item-body-list .allotment {
+.item-body-list:hover .selection, .selected-item-body-list .selection {
     display: block;
 }
-.selected-item-body-list .allotment {
+.selected-item-body-list .selection {
     opacity: 0.6;
 }
 
@@ -910,7 +910,7 @@ span.debt {
     -moz-filter: blur(5px);
     filter: blur(5px);
 }
-.name-item-subscription>.allotment {
+.name-item-subscription>.selection {
     margin: 0 8px 0 0;
 }
 .selected-item-body-list .name-item-subscription, .item-body-list:hover .name-item-subscription {
