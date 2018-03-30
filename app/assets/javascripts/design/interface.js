@@ -4,7 +4,7 @@ $(document).ready(function() {
   });
 
   function totalHeight() {
-    var desiredHeight = document.body.clientHeight - 83;
+    var desiredHeight = window.innerHeight - 83;
     var amountElements = $('.box-home-lists').length;
     for (var i = 1; i <= amountElements; i++) {
       var amountChildren = $('.content-home-lists>div:nth-of-type(' + i + ')>div').length;

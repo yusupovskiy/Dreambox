@@ -2,8 +2,6 @@ body {
     margin: 0;
     background-color: #f5f5f5;
 	font-family: Roboto;
-    display: table;
-    height: 100vh;
     overflow: hidden;
 }
 .logo img {
@@ -15,8 +13,12 @@ a {
 .left-side {
     width: 245px;
     float: left;
-    height: 100%;
-    position: relative;
+    box-shadow: 0px 0 10px 4px whitesmoke;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
 }
 .logo {
     margin: 18px auto 6px;
@@ -47,12 +49,13 @@ a {
     display: table;
     border-radius: 50%;
     overflow: hidden;
-    box-shadow: 0 0 0 1px #99c9f1;
+    /*box-shadow: 0 0 0 1px #99c9f1;*/
     margin: 0 auto 10px;
 }
 .admin-usage {
     width: 198px;
     margin: 0 auto;
+    user-select: none;
 }
 .avatar-admin-usage>img {
     width: 100%;
@@ -61,7 +64,6 @@ a {
 .btms-admin-usage {
     height: 17px;
     display: flex;
-    user-select: none;
 }
 .btm-admin-usage {
     height: 100%;
@@ -81,11 +83,6 @@ a {
     -webkit-transform: translateY(1px);
     -ms-transform: translateY(1px);
     transform: translateY(1px);
-}
-.avatar-admin-usage:hover {
-    -webkit-transform: translateY(-1px);
-    -ms-transform: translateY(-1px);
-    transform: translateY(-1px);
 }
 .menu {
     list-style-type: none;
@@ -199,10 +196,9 @@ span.copyright {
 }
 .visitors {
 	width: 300px;
-    height: 862px;
     background-color: white;
     border-radius: 6px;
-    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
     float: left;
     position: relative;
     margin-top: 16px;
@@ -214,11 +210,19 @@ span.copyright {
     bottom: 0;
 }
 .home-lists {
-	float: left;
+	/*float: left;
     width: 100%;
     position: relative;
-    height: 95%;
     overflow: scroll;
+    padding-bottom: 10px;*/
+    top: 31px;
+    bottom: 40px;
+    left: 0;
+    padding: 0;
+    z-index: 4;
+    position: absolute;
+    right: 0;
+    overflow: overlay;
 }
 .icons-lists {
     background-size: 100%;
@@ -334,7 +338,6 @@ span.copyright {
     border-radius: 50%;
 }
 .minimized-tabs {
-    width: 100%;
     position: absolute;
     bottom: 0;
     overflow: hidden;
@@ -346,17 +349,15 @@ span.copyright {
     background-color: white;
     padding: 9px 17px 19px 17px;
     border-radius: 6px 6px 0 0;
-    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -1px 5px 0 rgba(0, 0, 0, 0.1);
     position: relative;
     top: 10px;
-    transition: .3s margin, .3s top .2s;
+    transition: .3s margin, .3s top .05s;
     cursor: pointer;
-    margin-right: -80px;
 }
 .item-minimized-tabs:hover {
     top: 2px;
-    z-index: 999;    
-	margin: 0;
+    z-index: 999;
 }
 .item-minimized-tabs>* {
     float: left;
@@ -540,12 +541,12 @@ span.debt {
     font-size: 13px;
     color: #000000;
 }
-.content-list {
+/*.content-list {
 	float: left;
     width: 991px;
     position: relative;
     height: 100%;
-}
+}*/
 .content-home-lists {
     display: flex;
 }
@@ -567,7 +568,7 @@ span.debt {
     background-color: #f44337;
     color: white;
     z-index: 50;
-    font-size: 10;
+    font-size: 10px;
     text-align: center;
     border-radius: 50%;
     line-height: 16px;
@@ -687,6 +688,7 @@ span.debt {
 }
 .active-item-section-menu {
     opacity: 1!important;
+    cursor: default;
 }
 .active-item-subscription .name-item-subscription, .item-subscription:hover .name-item-subscription {
     margin-bottom: 10px;
@@ -978,19 +980,28 @@ span.debt {
     padding: 0 18px 0 38px;
     outline: none;
 }
-
+.content {
+    /*display: table;*/
+    top: 0;
+    bottom: 0;
+    left: 245px;
+    overflow: hidden;
+    padding: 0;
+    z-index: 4;
+    position: absolute;
+    right: 0;
+}
+.bring-to-front {
+    top: 0;
+    left: 0;
+}
+.active-item-menu>.link-item-menu {
+    cursor: default;
+}
 
 @media (max-height: 600px) {
 	.footer {
 		position: static;
 		margin-top: 60px;
 	}
-}
-
-.content {
-    display: table;
-}
-.bring-to-front {
-    top: 0;
-    left: 0;
 }
