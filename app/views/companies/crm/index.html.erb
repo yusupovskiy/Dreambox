@@ -41,7 +41,7 @@
             <div class="items-body-list">
               <div v-for="(client, index) in clients" class="item-body-list" :class="client.selected ? 'selected-item-body-list' : ''">
                 <div @click="openClientInfoWindow(client)" class="content-item-body-list">
-                  <div @click.stop="selectClient(client)" class="allotment"></div>
+                  <div @click.stop="selectClient(client)" class="selection"></div>
                   <img src="/resources/no-image-available.png" class="avatar-item-body-list" />
                   <div class="left-content-item-body-list">
                     <span class="name-user-item-body-list">{{client.first_name}} {{client.last_name}}</span>
@@ -88,7 +88,7 @@
           </div>
           <div class="panel-list">
             <div class="panel-filter">
-              <div class="allotment"></div><div class="number-selected">1</div>
+              <div class="selection"></div><div class="number-selected">1</div>
 
               <div class="sort-selected">
                 <div class="empty-sort-selected top-sort-selected"></div>
@@ -104,7 +104,7 @@
             <div class="items-body-list">
               <div class="selected-item-body-list item-body-list">
                 <div class="content-item-subscription">
-                  <div class="name-item-subscription"><div class="allotment"></div>Английский для начинающих</div>
+                  <div class="name-item-subscription"><div class="selection"></div>Английский для начинающих</div>
                   <div class="client-item-subscription">
                     <img src="/resources/no-image-available.png" />
                     <div class="name-client-item-subscription"><span style="margin-right: 6px;">Оплатили</span> <span class="amount debt">1 000 ₽</span><span>из</span><span class="amount">4 000 ₽</span></div>
@@ -114,7 +114,7 @@
               </div>
               <div class="item-body-list">
                 <div class="content-item-subscription">
-                  <div class="name-item-subscription"><div class="allotment"></div>Ucmas</div>
+                  <div class="name-item-subscription"><div class="selection"></div>Ucmas</div>
                   <div class="client-item-subscription">
                     <img src="/resources/no-image-available.png" />
                     <div class="name-client-item-subscription"><span style="margin-right: 6px;">Оплатили</span> <span class="amount">4 000 ₽</span><span>из</span><span class="amount">4 000 ₽</span></div>
@@ -148,7 +148,7 @@
               <div class="item-body-list">
                 <div class="content-item-subscription">
                   <div class="left-content-item-subscription">
-                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>Занятие 10 - Английский для начинающих</div>
+                    <div class="name-item-subscription name-item-visitation"><div class="selection"></div>Занятие 10 - Английский для начинающих</div>
                     <div class="attending-course"><span class="group-attending-course">Группа UCMAS Ф1</span> <img src="/images/visitors1.png" /><span>21</span></div>
                     <div class="data-item-subscription">Кабинет 12</div>
                   </div>
@@ -160,7 +160,7 @@
               <div class="item-body-list">
                 <div class="content-item-subscription">
                   <div class="left-content-item-subscription">
-                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>Занятие 9 - UCMAS</div>
+                    <div class="name-item-subscription name-item-visitation"><div class="selection"></div>Занятие 9 - UCMAS</div>
                     <div class="attending-course"><span class="group-attending-course">Группа UCMAS Ф1</span> <img src="/images/visitors1.png" /><span>21</span></div>
                     <div class="data-item-subscription">Кабинет 12</div>
                   </div>
@@ -195,7 +195,7 @@
               <div class="item-body-list">
                 <div class="content-item-subscription">
                   <div class="left-content-item-subscription" style="display: grid;">
-                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>Группа UCMAS Ф1</div>
+                    <div class="name-item-subscription name-item-visitation"><div class="selection"></div>Группа UCMAS Ф1</div>
                     <div class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount debt">-11 000 ₽</span></div>
                     <div class="course-direction">Ментальная арифметика UCMAS</div>
                   </div>
@@ -207,7 +207,7 @@
               <div class="item-body-list">
                 <div class="content-item-subscription">
                   <div class="left-content-item-subscription" style="display: grid;">
-                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>Группа UCMAS Ф2</div>
+                    <div class="name-item-subscription name-item-visitation"><div class="selection"></div>Группа UCMAS Ф2</div>
                     <div class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount">0 ₽</span></div>
                     <div class="course-direction">Ментальная арифметика UCMAS</div>
                   </div>
@@ -241,7 +241,7 @@
               <div class="item-body-list">
                 <div class="content-item-subscription">
                   <div class="left-content-item-subscription">
-                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>UCMAS</div>
+                    <div class="name-item-subscription name-item-visitation"><div class="selection"></div>UCMAS</div>
                     <div class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount debt">1 140 000 ₽</span><span style="margin: 0 2px;">из</span><span class="amount">1 441 000 ₽</span></div>
                     <div class="data-item-subscription">Не оплативших 23</div>
                   </div>
@@ -254,7 +254,7 @@
               <div class="item-body-list">
                 <div class="content-item-subscription">
                   <div class="left-content-item-subscription">
-                    <div class="name-item-subscription name-item-visitation"><div class="allotment"></div>UCMAS</div>
+                    <div class="name-item-subscription name-item-visitation"><div class="selection"></div>UCMAS</div>
                     <div class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount debt">10 000 ₽</span><span style="margin: 0 2px;">из</span><span class="amount">14 000 ₽</span></div>
                     <div class="data-item-subscription">Не оплативших 23</div>
                   </div>
