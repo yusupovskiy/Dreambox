@@ -242,7 +242,7 @@ span.copyright {
     height: 13px;
 }
 .body-list {
-    overflow: scroll;
+    overflow-y: overlay;
     height: 100%;
 }
 .items-body-list {
@@ -321,6 +321,7 @@ span.copyright {
     -ms-transform: translateY(1px);
     transform: translateY(1px);
     opacity: 1;
+    /*box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
 }
 .debt-visitors-item-body-list {
     font-size: 12px;
@@ -998,6 +999,30 @@ span.debt {
 .active-item-menu>.link-item-menu {
     cursor: default;
 }
+
+/* Cool scrollbar */
+.cool-scrollbar::-webkit-scrollbar {
+    width: 14px;
+    margin: 3px;
+    background-color: transparent;
+    display: none;
+}
+.cool-scrollbar::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 10px;
+    border: 5px solid white;
+}
+.cool-scrollbar::-webkit-scrollbar-thumb:hover {
+    border: 3px solid white;
+    border-radius: 20px;
+}
+.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #e7e7e7;
+}
+.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar {
+    display: block;
+}
+
 
 @media (max-height: 600px) {
 	.footer {
