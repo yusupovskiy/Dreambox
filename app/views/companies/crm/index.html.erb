@@ -14,7 +14,7 @@
         <div class="visitors">
           <div class="title-list">
             <div class="icon-visitors icons-lists"></div>
-            <div class="name-title-list"><span>Клиенты: </span><span>120</span></div>
+            <div class="name-title-list"><span>Клиенты: </span><span>{{totalClients}}</span></div>
             <div class="debt-visitors-item-body-list"><span class="amount-debt">-200 000</span> ₽</div>
             <div class="btms-list">
               <div class="icons-btms-list btm-sorting"></div>
@@ -50,7 +50,6 @@
                   <div class="right-content-item-body-list">
                     <div class="debt-visitors-item-body-list"><span class="amount-debt">-1 000</span> ₽</div>
                   </div>
-                  <span @click="removeClient(index)">Remove</span>
                 </div>
               </div>
             </div>

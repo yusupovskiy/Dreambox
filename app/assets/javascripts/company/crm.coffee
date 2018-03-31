@@ -45,6 +45,7 @@ document.addEventListener('turbolinks:load', ->
       isClientInfoWindowOpened: no
       isLoading: no
       clients: []
+      totalClients: 100
     computed:
       isWindowOpened: ->
         this.isAddClientWindowOpened || this.isClientInfoWindowOpened
@@ -69,7 +70,11 @@ document.addEventListener('turbolinks:load', ->
           Object.assign(dw.$data, data)
           return
         windowPath = Routes.clientInfoWindow()
-        methods = closeClientInfo: -> vm.isClientInfoWindowOpened = no
+        methods =
+          closeClientInfo: -> vm.isClientInfoWindowOpened = no
+          removeClient: ->
+            vm.removeClient(client)
+            this.closeClientInfo()
         loadWindow(windowPath, windowId, data, methods)
 
       createClient: (vm)->
@@ -79,8 +84,10 @@ document.addEventListener('turbolinks:load', ->
           client: vm.$data
         this.isLoading = yes
         $.post(Routes.addNewClient(companyId), data, (client) =>
+          client.selected = no
           this.clients.push(client)
           this.isAddClientWindowOpened = no
+          ++this.totalClients
         ).fail((e) =>
           messages = ''
           for field, value of e.responseJSON
@@ -90,15 +97,16 @@ document.addEventListener('turbolinks:load', ->
           this.isLoading = no
         )
 
-      removeClient: (index)->
-        client = this.clients[index]
+      removeClient: (client)->
         options =
           method: 'DELETE'
           data:
             authenticity_token: AUTHENTICITY_TOKEN
         this.isLoading = yes
         $.ajax(Routes.removeClient(companyId, client.id), options)
-          .done => this.clients.splice(index, 1)
+          .done =>
+            this.clients.splice(this.clients.indexOf(client), 1)
+            --this.totalClients
           .fail => alert(e)
           .always => this.isLoading = no
 
@@ -106,9 +114,10 @@ document.addEventListener('turbolinks:load', ->
         client.selected = !client.selected
     },
     created: ->
-      $.get(Routes.getAllClients(companyId), (clients, _statusMessage, xhr) =>
+      $.get(Routes.getAllClients(companyId), (res, _statusMessage, xhr) =>
         if (xhr.getResponseHeader('Content-Type').startsWith('application/json'))
-          this.clients = completeClients(clients)
+          this.clients = completeClients(res.clients)
+          this.totalClients = res.total_clients
         else
           window.location = Routes.signIn()
       )

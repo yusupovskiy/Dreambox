@@ -6,7 +6,7 @@ class Companies::ClientsController < ApplicationController
   # GET /clients.json
   def index
     @clients = Client.where(company: params[:company_id])
-    @clients.each {|c| c.phone_number='123123'}  # TODO: remove this line later
+    @total_clients = @clients.size
   end
 
   # GET /clients/1
