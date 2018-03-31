@@ -1,0 +1,50 @@
+<div class="card">
+  <div class="btms-card">
+    <div class="btm-closed-card" @click="closeAddClient"></div>
+  </div>
+  <div class="name-card">Добавить контакт</div>
+  <div class="add-avatar"><div class="icon-add-avatar"></div></div>
+
+  <div class="entry-field">
+    <div class="title-input">Фамилия*</div>
+    <input type="text" class="input" aria-label="Имя" v-model="last_name">
+  </div>
+  <div class="entry-field">
+    <div class="title-input">Имя*</div>
+    <input type="text" class="input" aria-label="Имя" v-model="first_name">
+  </div>
+  <div class="entry-field">
+    <div class="title-input">Отчество</div>
+    <input type="text" class="input" aria-label="Имя" v-model="patronymic">
+  </div>
+
+  <div class="sections-card">
+    <div class="items-sections-card">
+      <div class="item-sections-card active-item-sections-card">Основное</div>
+      <div class="item-sections-card">Филиалы</div>
+    </div>
+  </div>
+
+
+  <div class="entry-field">
+    <div class="title-input">Дата рождения*</div>
+    <input type="date" class="input" aria-label="Имя" v-model="birthday">
+  </div>
+  <div class="entry-field">
+    <div class="title-input">Пол*</div>
+    <input type="text" class="input" aria-label="Имя">
+  </div>
+  <div class="entry-field">
+    <div class="title-input">Телефон*</div>
+    <input type="text" class="input" aria-label="Имя" v-model="phone_number">
+  </div>
+  <div class="entry-field">
+    <div class="title-input">Источник</div>
+    <input type="text" class="input" aria-label="Имя">
+  </div>
+
+  <div>
+    <button @click="createClient">Добавить клиента</button>
+  </div>
+
+</div>

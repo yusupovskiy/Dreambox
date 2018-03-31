@@ -12,6 +12,6 @@ Rails.application.routes.draw do
     resources :clients, module: :companies
 
     resources :crm, controller: 'companies/crm', only: :index
-    resources :windows, controller: 'companies/windows', only: :show
   end
+  resources :windows, only: :show
 end

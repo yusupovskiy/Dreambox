@@ -40,7 +40,7 @@
           <div class="body-list">
             <div class="items-body-list">
               <div v-for="(client, index) in clients" class="item-body-list" :class="client.selected ? 'selected-item-body-list' : ''">
-                <div @click="isClientInfoWindowOpened = true" class="content-item-body-list">
+                <div @click="openClientInfoWindow(client)" class="content-item-body-list">
                   <div @click.stop="selectClient(client)" class="allotment"></div>
                   <img src="/resources/no-image-available.png" class="avatar-item-body-list" />
                   <div class="left-content-item-body-list">
@@ -55,19 +55,19 @@
               </div>
             </div>
 
-            <form :style="'display: ' + (isAddClientWindowOpened ? 'block' : 'none')" onsubmit="return false">
-              <div @click="isAddClientWindowOpened = false" style="cursor: pointer;">Close</div>
-              <input type="text" placeholder="First Name" v-model="firstName">
-              <input type="text" placeholder="Last Name" v-model="lastName">
-              <input type="text" placeholder="Patronymic" v-model="patronymic">
-              <input type="date" placeholder="Birthday" v-model="birthday">
-              <input type="text" placeholder="Phone Number" v-model="phoneNumber">
-              <button :disabled="isLoading" @click="createClient">Create <b>client</b></button>
-            </form>
+            <!--<form :style="'display: ' + (isAddClientWindowOpened ? 'block' : 'none')" onsubmit="return false">-->
+              <!--<div @click="isAddClientWindowOpened = false" style="cursor: pointer;">Close</div>-->
+              <!--<input type="text" placeholder="First Name" v-model="firstName">-->
+              <!--<input type="text" placeholder="Last Name" v-model="lastName">-->
+              <!--<input type="text" placeholder="Patronymic" v-model="patronymic">-->
+              <!--<input type="date" placeholder="Birthday" v-model="birthday">-->
+              <!--<input type="text" placeholder="Phone Number" v-model="phoneNumber">-->
+              <!--<button :disabled="isLoading" @click="createClient">Create <b>client</b></button>-->
+            <!--</form>-->
           </div>
           <div class="interaction-list">
             <div class="btms-interaction-list">
-              <div @click="isAddClientWindowOpened = true" class="btm-add"><div class="icon-plus"></div></div>
+              <div @click="openAddClientWindow" class="btm-add"><div class="icon-plus"></div></div>
             </div>
             <hr class="bottom-line-list" />
           </div>
@@ -278,62 +278,23 @@
   </div>
 
 
-  <div :style="isClientInfoWindowOpened ? '' : 'display: none'" class="bring-to-front">
-    <div style="display: none;" class="card">
-      <div class="btms-card">
-        <div class="btm-closed-card"></div>
-      </div>
-      <div class="name-card">Добавить контакт</div>
-      <div class="add-avatar"><div class="icon-add-avatar"></div></div>
-
-      <div class="entry-field">
-        <div class="title-input">Фамилия*</div>
-        <input type="text" class="input" aria-label="Имя">
-      </div>
-      <div class="entry-field">
-        <div class="title-input">Имя*</div>
-        <input type="text" class="input" aria-label="Имя">
-      </div>
-      <div class="entry-field">
-        <div class="title-input">Отчество</div>
-        <input type="text" class="input" aria-label="Имя">
-      </div>
-
-      <div class="sections-card">
-        <div class="items-sections-card">
-          <div class="item-sections-card active-item-sections-card">Основное</div>
-          <div class="item-sections-card">Филиалы</div>
-        </div>
-      </div>
-
-
-      <div class="entry-field">
-        <div class="title-input">Дата рождения*</div>
-        <input type="text" class="input" aria-label="Имя">
-      </div>
-      <div class="entry-field">
-        <div class="title-input">Пол*</div>
-        <input type="text" class="input" aria-label="Имя">
-      </div>
-      <div class="entry-field">
-        <div class="title-input">Телефон*</div>
-        <input type="text" class="input" aria-label="Имя">
-      </div>
-      <div class="entry-field">
-        <div class="title-input">Источник</div>
-        <input type="text" class="input" aria-label="Имя">
-      </div>
-
-    </div>
+  <div class="bring-to-front" v-show="isWindowOpened">
     <div id="cards-container">
-
+      <div v-show="isClientInfoWindowOpened"><div id="client-info-window"></div></div>
+      <div v-show="isAddClientWindowOpened"><div id="add-client-window"></div></div>
     </div>
   </div>
 
 </div>
 <script type="text/javascript" charset="utf-8">
-    $.get('http://localhost:3000/companies/9/windows/3', e => {
-        // TODO: create new instances of Vue and bind them to these windows
-        var c = $("#cards-container").html(e);
-    })
+    // $.get('http://localhost:3000/companies/9/windows/3', html => {
+    //     // TODO: create new instances of Vue and bind them to these windowsres = Vue.compile(t)
+    //     var res = Vue.compile(html)
+    //     var v = new Vue({
+    //         data: {client: {firstName: 'First!'}},
+    //         render: res.render,
+    //         staticRenderFns: res.staticRenderFns
+    //     })
+    //     v.$mount("#tmp")
+    // });
 </script>

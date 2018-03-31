@@ -1,10 +1,10 @@
 <div class="card">
   <div class="btms-card">
-    <div @click="isClientInfoWindowOpened = false" class="btm-closed-card"></div>
+    <div @click="closeClientInfo" class="btm-closed-card"></div>
   </div>
-  <div class="name-card">Клиенты {{q}}</div>
+  <div class="name-card">Клиенты</div>
   <img class="img-card" src="/resources/no-image-available.png" />
-  <div class="title-card">Магомедов Магомед<br />Магомедович</div>
+  <div class="title-card">{{`${first_name} ${last_name} ${patronymic}`}}</div>
   <div class="balance">Задолжность <span class="amount debt">1 000 ₽</span></div>
   <div class="sections-card">
     <div class="items-sections-card">
@@ -20,7 +20,7 @@
   </div>
   <div class="item-info">
     <div class="title-item-info">Дата рождения</div>
-    <div class="text-item-info">21 сентября 2018</div>
+    <div class="text-item-info">{{birthday}}</div>
   </div>
   <div class="item-info">
     <div class="title-item-info">Пол</div>
@@ -28,7 +28,7 @@
   </div>
   <div class="item-info">
     <div class="title-item-info">Телефон</div>
-    <div class="text-item-info">+7 (918) 730 10 05</div>
+    <div class="text-item-info">{{phone_number}}</div>
   </div>
   <div class="item-info">
     <div class="title-item-info">Источник</div>
