@@ -2,7 +2,7 @@
   <div class="btms-card">
     <div class="btm-closed-card" @click="closeAddClient"></div>
   </div>
-  <div class="name-card">Добавить контакт</div>
+  <div class="name-card">Добавить клиента</div>
   <div class="add-avatar"><div class="icon-add-avatar"></div></div>
 
   <div class="entry-field">
@@ -42,9 +42,10 @@
     <div class="title-input">Источник</div>
     <input type="text" class="input" aria-label="Имя">
   </div>
-
-  <div>
-    <button @click="createClient">Добавить клиента</button>
+<div class="interaction-list">
+  <div class="btms-interaction-list">
+    <button class="btn-confirm" @click="createClient"><div class="icon-confirm"></div></button>
   </div>
+</div>
 
 </div>

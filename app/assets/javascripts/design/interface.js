@@ -39,7 +39,7 @@ $(document).ready(function() {
     /*$(".body-list").niceScroll({cursorcolor: '#e7e7e7', cursorborder: '0', cursorwidth: '3px', cursorborderradius: '3px', cursorborder: '3px solid transparent', spacebarenabled: 'false'});
     $(".home-lists").niceScroll({cursorcolor: '#e7e7e7', cursorborder: '0', cursorwidth: '3px', cursorborderradius: '3px', cursorborder: '3px solid transparent', spacebarenabled: 'false'});
     $(".bring-to-front").niceScroll({cursorcolor: '#e7e7e7', cursorborder: '0', cursorwidth: '3px', cursorborderradius: '3px', cursorborder: '3px solid transparent', spacebarenabled: 'false'});
-    $(".sections-card").niceScroll({cursorcolor: '#e7e7e7', cursorborder: '0', cursorwidth: '0', cursorborderradius: '3px'});
-  */
+    */$(".sections-card").niceScroll({cursorcolor: '#e7e7e7', cursorborder: '0', cursorwidth: '0', cursorborderradius: '3px'});
+  
   });
 });

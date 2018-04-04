@@ -18,7 +18,7 @@ a {
     left: 0;
     top: 0;
     bottom: 0;
-    z-index: 5;
+    z-index: 4;
 }
 .logo {
     margin: 18px auto 6px;
@@ -329,8 +329,11 @@ span.copyright {
     margin: 7px 0;
     cursor: default;
 }
-.item-body-list:hover, .selected-item-body-list {
-    background-color: #f0f0f2;
+.item-body-list:hover {
+    background-color: #f5f5f5;
+}
+.selected-item-body-list {
+    background-color: #f0f0f2!important;
 }
 .icon-item-minimized-tabs {
     width: 18px;
@@ -370,6 +373,7 @@ span.copyright {
 }
 .btms-list {
     float: right;
+    margin: -16px -8px 0 0;
 }
 .icons-btms-list {
     background-size: 100% 100%;
@@ -378,12 +382,14 @@ span.copyright {
     height: 11px;
     float: left;
     margin-right: 10px;
-    margin: 1px 0 1px 16px;
+    padding: 17px 8px;
+    margin: 0;
     opacity: 0.5;
     cursor: pointer;
     transition: .3s;
+    background-origin: content-box;
 }
-.icons-btms-list:hover {
+.icons-btms-list:hover, .btm-missed:hover>.icons-btms-list {
     opacity: 1;
 }
 .btm-search {
@@ -424,6 +430,7 @@ span.copyright {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.75);
     z-index: 9999;
+    overflow: overlay;
 }
 .client-item-subscription>img {
     width: 18px;
@@ -555,7 +562,12 @@ span.debt {
     background-image: url(/images/help.png);
     width: 14px;
     height: 14px;
-    margin: -1px 0 0 0;
+    margin: 0;
+    padding: 0;
+}
+.btm-missed>.number-notifications {
+    right: 0px;
+    top: 10px;
 }
 .icon-subscription {
     background-image: url(/images/2.png);
@@ -581,6 +593,7 @@ span.debt {
     float: left;
     position: relative;
     cursor: pointer;
+    padding: 16px 8px;
 }
 .icon-time {
     background-image: url(/images/time-left.png);
@@ -593,6 +606,7 @@ span.debt {
     margin: 90px auto;
     padding-bottom: 40px;
     overflow: hidden;
+    position: relative;
 }
 .title-card {
     font-size: 18px;
@@ -652,12 +666,12 @@ span.debt {
     cursor: pointer;
     transition: .3s;
     float: left;
+    white-space: nowrap;
 }
 .items-sections-card {
-    display: -webkit-inline-box;
     padding: 0 16px;
     margin: 0 auto;
-    display: table;
+    display: inline-flex;
 }
 .active-item-sections-card {
     opacity: 1;
@@ -826,12 +840,17 @@ span.debt {
     float: left;
     margin-right: 10px;
     background-image: url(/images/Check-01.png);
-    margin: 8px 8px 8px 0;
+    padding: 8px 8px 8px 0;
     opacity: 0.2;
     display: none;
+    background-origin: content-box;
+    margin: 0;
 }
 .selection:hover {
     opacity: 0.4;
+}
+.selected-item-body-list .selection:hover {
+    opacity: 0.5!important;
 }
 .item-body-list:hover .selection, .selected-item-body-list .selection {
     display: block;
@@ -912,7 +931,7 @@ span.debt {
     filter: blur(5px);
 }
 .name-item-subscription>.selection {
-    margin: 0 8px 0 0;
+    padding: 1px 8px 0 0;
 }
 .selected-item-body-list .name-item-subscription, .item-body-list:hover .name-item-subscription {
     margin-bottom: 10px;
@@ -999,30 +1018,51 @@ span.debt {
 .active-item-menu>.link-item-menu {
     cursor: default;
 }
-
-/* Cool scrollbar */
-.cool-scrollbar::-webkit-scrollbar {
-    width: 14px;
-    margin: 3px;
-    background-color: transparent;
-    display: none;
+.btn-confirm {
+    width: 36px;
+    height: 36px;
+    background-color: #3dbf3d;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    opacity: .5;
+    user-select: none;
+    float: left;
+    margin: 0 8px;
+    border: 0;
+    position: relative;
 }
-.cool-scrollbar::-webkit-scrollbar-thumb {
-    background-color: white;
-    border-radius: 10px;
-    border: 5px solid white;
+.btn-confirm:hover {
+    opacity: 1;
 }
-.cool-scrollbar::-webkit-scrollbar-thumb:hover {
-    border: 3px solid white;
-    border-radius: 20px;
+.icon-confirm {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 10px;
+    height: 10px;
+    background-image: url(/images/confirm.png);
+    margin: 13px;
+    float: left;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
-.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #e7e7e7;
+.btn-card {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 17px;
+    height: 17px;
+    float: right;
+    margin: 9px;
+    opacity: 0.3;
+    cursor: pointer;
 }
-.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar {
-    display: block;
+.icon-delete {
+    background-image: url(/images/delete.png);
 }
-
+.icon-product {
+    background-image: url(/images/Product1-WF.png);
+}
 
 @media (max-height: 600px) {
 	.footer {

@@ -1,9 +1,9 @@
 <div class="card">
   <div class="btms-card">
     <div @click="closeClientInfo" class="btm-closed-card"></div>
-    <span @click="removeClient">Remove</span>
+    <div @click="removeClient" class="btn-card icon-delete"></div>
   </div>
-  <div class="name-card">Клиенты</div>
+  <div class="name-card">Клиент</div>
   <img class="img-card" src="/resources/no-image-available.png" />
   <div class="title-card">{{`${first_name} ${last_name} ${patronymic}`}}</div>
   <div class="balance">Задолжность <span class="amount debt">1 000 ₽</span></div>

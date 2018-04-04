@@ -1,0 +1,22 @@
+/* Cool scrollbar */
+.cool-scrollbar::-webkit-scrollbar {
+    width: 14px;
+    margin: 3px;
+    background-color: transparent;
+    display: none;
+}
+.cool-scrollbar::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 10px;
+    border: 5px solid white;
+}
+.cool-scrollbar::-webkit-scrollbar-thumb:hover {
+    border: 3px solid white;
+    border-radius: 20px;
+}
+.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #e7e7e7;
+}
+.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar {
+    display: block;
+}
