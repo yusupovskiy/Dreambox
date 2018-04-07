@@ -15,11 +15,16 @@
 Vue.config.productionTip = Vue.config.devtools = false;
 const Routes = {
     getAllClients:    companyId => `/companies/${companyId}/clients.json`,
+    getAllServices:   (companyId) => `/companies/${companyId}/services.json`,
     addNewClient:     companyId => `/companies/${companyId}/clients.json`,
+    addNewService:    companyId => `/companies/${companyId}/services.json`,
     removeClient:     (companyId, clientId) => `/companies/${companyId}/clients/${clientId}.json`,
+    removeService:    (companyId, serviceId) => `/companies/${companyId}/services/${serviceId}.json`,
     signIn:           () => '/auth/sign_in?return_url=' + encodeURIComponent(location.href),
     clientInfoWindow: () => '/windows/client-info',
+    serviceInfoWindow:() => '/windows/service-info',
     addClientWindow:  () => '/windows/add-client',
+    addServiceWindow: () => '/windows/add-service',
 };
 const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').content
     </script>

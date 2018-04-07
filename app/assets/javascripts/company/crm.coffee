@@ -2,10 +2,10 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-completeClients = (clients)->
-  clients.forEach (client)->
-    client.selected = no
-  clients
+setSelectable = (items)->
+  items.forEach (item)->
+    item.selected = no
+  items
 
 class Client
   constructor: ->
@@ -25,8 +25,7 @@ document.addEventListener('turbolinks:load', ->
   # cache of VueJS instances
   dynamicWindows = {}
   loadWindow = (windowPath, windowId, data, methods) ->
-    vm.isLoading = yes
-    $.get(windowPath, (html) =>
+    load = (html)->
       res = Vue.compile(html)
       v = new Vue({
         data: data,
@@ -35,7 +34,16 @@ document.addEventListener('turbolinks:load', ->
         staticRenderFns: res.staticRenderFns
       })
       v.$mount(document.getElementById(windowId))
-      dynamicWindows[windowId] = v
+
+
+    if win = dynamicWindows[windowPath]
+      load(win)
+      return
+
+    vm.isLoading = yes
+    $.get(windowPath, (html) =>
+      load(html)
+      dynamicWindows[windowPath] = html
     ).always(() => vm.isLoading = no)
 
   window.vm = vm = new Vue({
@@ -43,37 +51,39 @@ document.addEventListener('turbolinks:load', ->
     data:
       isAddClientWindowOpened: no
       isClientInfoWindowOpened: no
+      isAddServiceWindowOpened: no
+      isServiceInfoWindowOpened: no
       isLoading: no
       clients: []
-      totalClients: 100
+      services: []
+      totalClients: 0
+      totalServices: 0
     computed:
       isWindowOpened: ->
-        this.isAddClientWindowOpened || this.isClientInfoWindowOpened
+        this.isAddClientWindowOpened || this.isClientInfoWindowOpened ||
+        this.isAddServiceWindowOpened || this.isServiceInfoWindowOpened
     methods: {
       # Windows
       openAddClientWindow: ->
         this.isAddClientWindowOpened = yes
         windowId = 'add-client-window'
-        return if dynamicWindows[windowId]
-        data = new Client
         windowPath = Routes.addClientWindow()
+        return if dynamicWindows[windowPath]
+        data = new Client
         methods =
           closeAddClient: -> vm.isAddClientWindowOpened = no
           createClient: -> vm.createClient(this)
         loadWindow(windowPath, windowId, data, methods)
-      openClientInfoWindow: (client)->
+      openClientInfoWindow: (index)->
+        client = this.clients[index]
         this.isClientInfoWindowOpened = yes
         windowId = 'client-info-window'
-        dw = dynamicWindows[windowId]
         data = client
-        if dw
-          Object.assign(dw.$data, data)
-          return
         windowPath = Routes.clientInfoWindow()
         methods =
           closeClientInfo: -> vm.isClientInfoWindowOpened = no
           removeClient: ->
-            vm.removeClient(client)
+            vm.removeClient(index)
             this.closeClientInfo()
         loadWindow(windowPath, windowId, data, methods)
 
@@ -97,7 +107,8 @@ document.addEventListener('turbolinks:load', ->
           this.isLoading = no
         )
 
-      removeClient: (client)->
+      removeClient: (index)->
+        client = this.clients[index]
         options =
           method: 'DELETE'
           data:
@@ -107,17 +118,87 @@ document.addEventListener('turbolinks:load', ->
           .done =>
             this.clients.splice(this.clients.indexOf(client), 1)
             --this.totalClients
-          .fail => alert(e)
+          .fail (e) => alert(e)
           .always => this.isLoading = no
 
       selectClient: (client)->
         client.selected = !client.selected
+
+
+      # services
+      openAddServiceWindow: ->
+        this.isAddServiceWindowOpened = yes
+        windowId = 'add-service-window'
+        windowPath = Routes.addServiceWindow()
+        return if dynamicWindows[windowPath]
+        data = name: ''
+        methods =
+          closeAddService: -> vm.isAddServiceWindowOpened = no
+          createService: -> vm.createService(this)
+        loadWindow(windowPath, windowId, data, methods)
+      openServiceInfoWindow: (index)->
+        service = this.services[index]
+        this.isServiceInfoWindowOpened = yes
+        windowId = 'service-info-window'
+        data = service
+        windowPath = Routes.serviceInfoWindow()
+        methods =
+          closeServiceInfo: -> vm.isServiceInfoWindowOpened = no
+          removeService: ->
+            vm.removeService(index)
+            this.closeServiceInfo()
+        loadWindow(windowPath, windowId, data, methods)
+
+      createService: (vm)->
+        data =
+        authenticity_token: AUTHENTICITY_TOKEN
+        company_id: companyId
+        service: vm.$data
+        this.isLoading = yes
+        $.post(Routes.addNewService(companyId), data, (service) =>
+          service.selected = no
+          this.services.push(service)
+          this.isAddServiceWindowOpened = no
+          ++this.totalServices
+        ).fail((e) =>
+          messages = ''
+          for field, value of e.responseJSON
+            messages += '\n<' + field + '> = ' + value.join(', ')
+          alert('Errors:\n' + messages)
+        ).always((e) =>
+          this.isLoading = no
+        )
+
+      removeService: (index)->
+        service = this.services[index]
+        options =
+          method: 'DELETE'
+          data:
+            authenticity_token: AUTHENTICITY_TOKEN
+        this.isLoading = yes
+        $.ajax(Routes.removeService(companyId, service.id), options)
+          .done =>
+            this.services.splice(index, 1)
+            --this.totalServices
+          .fail (e) => alert(e)
+          .always => this.isLoading = no
+
+      selectService: (service)->
+        service.selected = !service.selected
     },
     created: ->
       $.get(Routes.getAllClients(companyId), (res, _statusMessage, xhr) =>
         if (xhr.getResponseHeader('Content-Type').startsWith('application/json'))
-          this.clients = completeClients(res.clients)
+          this.clients = setSelectable(res.clients)
           this.totalClients = res.total_clients
+        else
+          window.location = Routes.signIn()
+      )
+
+      $.get(Routes.getAllServices(companyId), (res, _statusMessage, xhr) =>
+        if (xhr.getResponseHeader('Content-Type').startsWith('application/json'))
+          this.services = setSelectable(res.services)
+          this.totalServices = res.total_services
         else
           window.location = Routes.signIn()
       )

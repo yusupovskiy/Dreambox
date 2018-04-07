@@ -1,0 +1,18 @@
+<div class="card">
+  <div class="btms-card">
+    <div class="btm-closed-card" @click="closeAddService"></div>
+  </div>
+  <div class="name-card">Добавить услугу</div>
+
+  <div class="entry-field">
+    <div class="title-input">Название*</div>
+    <input type="text" class="input" aria-label="Имя" v-model="name">
+  </div>
+
+  <div class="interaction-list">
+    <div class="btms-interaction-list">
+      <button class="btn-confirm" @click="createService"><div class="icon-confirm"></div></button>
+    </div>
+  </div>
+
+</div>

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :companies do
     resources :affiliates, module: :companies
     resources :clients, module: :companies
+    resources :services, module: :companies
 
     resources :crm, controller: 'companies/crm', only: :index
   end
