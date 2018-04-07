@@ -19,6 +19,7 @@ a {
     top: 0;
     bottom: 0;
     z-index: 4;
+    overflow-y: overlay;
 }
 .logo {
     margin: 18px auto 6px;
@@ -134,7 +135,8 @@ span.copyright {
 }
 .footer {
     position: absolute;
-    bottom: 30px;
+    bottom: 0;
+    padding-bottom: 30px;
 }
 .other-sections {
     margin: 0 0 16px 44px;
