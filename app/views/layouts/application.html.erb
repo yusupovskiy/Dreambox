@@ -8,7 +8,7 @@
     <%if Rails.env.production?%>
       <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <%else # development | test %>
-      <script src="/resources/vue.js"></script>
+      <%=javascript_include_tag 'vue'%>
     <%end%>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <script type="text/javascript" charset="utf-8">

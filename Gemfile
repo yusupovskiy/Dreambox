@@ -54,3 +54,4 @@ gem 'devise', '~> 4.4.1'
 gem 'dotenv-rails'
 gem 'jquery-rails'
 gem 'i18n-js'
+gem 'vuejs-rails', '2.4.2' # there is a bug in 2.5.13 (always shows productionTip)
