@@ -2,7 +2,6 @@ body {
     margin: 0;
     background-color: #f5f5f5;
 	font-family: Roboto;
-    height: 100vh;
 }
 .katalog {
     width: 800px;
@@ -94,6 +93,7 @@ img.object-avatar {
     margin-right: 20px;
     opacity: 0.5;
     cursor: pointer;
+    font-family: RobotoMedium;
 }
 .menu-with-options>div:hover {
     opacity: .7;

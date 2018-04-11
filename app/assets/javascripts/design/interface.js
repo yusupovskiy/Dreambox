@@ -51,7 +51,7 @@ $(document).ready(function() {
   
   function totalHeight() {
     var constHeaderOpenObjects = 84;
-    var desiredHeight = document.body.clientHeight - constHeaderOpenObjects;
+    var desiredHeight = window.innerHeight - constHeaderOpenObjects;
     $('.katalog').css({'height':''+desiredHeight+'px'});
     $('.test').css({'height':'74px'});
   }
