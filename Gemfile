@@ -55,3 +55,6 @@ gem 'dotenv-rails'
 gem 'jquery-rails'
 gem 'i18n-js'
 gem 'vuejs-rails', '2.4.2' # there is a bug in 2.5.13 (always shows productionTip)
+
+gem 'execjs'
+gem 'therubyracer', :platforms => :ruby
