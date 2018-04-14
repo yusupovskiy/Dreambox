@@ -6,7 +6,7 @@
   </div>
 <%end%>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name, return_url: params[:return_url])) do |f| %>
+<%= form_for(resource, as: resource_name, url: session_path(resource_name, return_url: params[:return_url]), html: {style: "position: relative; z-index: 99;"}) do |f| %>
   <div class="field">
     <%= f.label :email %><br />
     <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
