@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html style="height: 100%">
+<html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>TBIS</title>
     <%= csrf_meta_tags %>
 
@@ -32,7 +33,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
   <body data-params="<%=params.to_json%>">
     <!-- Temporary div -->
-    <div style="position: fixed; right: 50px;">
+    <div style="position: fixed; right: 50px; z-index: 99999;">
       <div style="background-color: darkgrey">
         <p><%=flash[:notice]%></p>
         <p><%=flash[:alert]%></p>
@@ -51,20 +52,68 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
     <%=render 'shared/authorization_fields'%>
 
-    <%=render 'shared/left_side'%>
-    <div class="content">
-      <%=yield%>
 
-      <div class="minimized-tabs">
-        <div class="item-minimized-tabs">
-          <img src="/resources/no-image-available.png" class="icon-item-minimized-tabs" />
-          <div class="name-item-minimized-tabs">Магомедов Магомед</div>
+    
+    <div class="test">
+      <div class="open-objects">
+      <div style="display: flex;">
+        <div class="open-object">
+          <img src="/resources/no-image-available.png" />
+          <span>Магомедов Магомед</span>
         </div>
-        <div class="item-minimized-tabs">
-          <img src="/resources/no-image-available.png" class="icon-item-minimized-tabs" />
-          <div class="name-item-minimized-tabs">Иван Иванов</div>
+        <div class="open-object">
+          <img src="/resources/no-image-available.png" />
+          <span>Магомедов</span>
+        </div>
+        <div class="open-object">
+          <img src="/resources/no-image-available.png" />
+          <span>Магомедов Магомед</span>
+        </div>
+        <div class="open-object">
+          <img src="/resources/no-image-available.png" />
+          <span>Магомедов Магомед</span>
+        </div>
+        <div class="open-object">
+          <img src="/resources/no-image-available.png" />
+          <span>Магомедов Магомед</span>
+        </div>
+        <div class="open-object">
+          <img src="/resources/no-image-available.png" />
+          <span>Магомедов Магомед</span>
+        </div>
+        <div class="open-object">
+          <img src="/resources/no-image-available.png" />
+          <span>Магомедов Магомед</span>
+        </div>
+        <div class="open-object">
+          <img src="/resources/no-image-available.png" />
+          <span>Магомедов Магомед</span>
+        </div>
+        <div class="open-object">
+          <img src="/resources/no-image-available.png" />
+          <span>Магомедов Магомед</span>
         </div>
       </div>
+      </div>
     </div>
+
+    <!-- <div class="content"> -->
+      <%=yield%>
+    <!-- </div> -->
+    
+    <div class="footer">
+      <div class="other-sections">
+        <div>О сервисе</div>
+        <div>Поддержка</div>
+        <div>Блог</div>
+        <div>Новые функции</div>
+        <div>Исправить или добавить функции</div>
+        <div>Оставить отзыв</div>
+      </div>
+      
+      <div class="copyright">© 2016 - 2018 Dreambox</div>
+    </div>
+    
+    <div class="back-background"></div>
   </body>
 </html>

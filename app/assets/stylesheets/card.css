@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    background-color: #bdbdbd;
+	font-family: Roboto;
+}
+.card {
+    background-color: #eceff0;
+    width: 350px;
+    height: 70%;
+    border-radius: 7px 7px 0 0;
+    z-index: 2;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    user-select: none;
+    transition: .3s;
+}
+.card img {
+    position: absolute;
+    right: 0;
+    top: -66px;
+    left: 0;
+    margin: auto;
+    user-select: none;
+    transition: .3s;
+    box-shadow: 0 0 0 2px white;
+    border-radius: 50%;
+}
+.title-panel {
+    padding: 10px 0 18px 0;
+    background-color: white;
+    border-radius: 7px 7px 0 0;
+}
+div.title-panel.avatar {
+    padding: 66px 0 18px 0;
+}
+.title-card {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4a4a4a;
+    text-align: center;
+    margin-top: 12px;
+}
+.role-card {
+    font-size: 14px;
+    color: #aeaeae;
+    text-align: center;
+    margin-top: 8px;
+}
+span.debt {
+    color: #ff7375;
+}
+.amount {
+    color: #a5df9e;
+}
+.btns-card {
+    position: absolute;
+    right: 0;
+    top: -48px;
+    left: 0;
+    margin: auto;
+    user-select: none;
+    transition: .3s;
+}
+.btns-card>div {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 17px;
+    height: 17px;
+    float: right;
+    padding: 9px;
+    margin-right: 9px;
+    cursor: pointer;
+    background-origin: content-box;
+}
+.btn-closed-card {
+    background-image: url(images/Close1.png);
+}
+.btn-home {
+    background-image: url(images/home.png);
+}
+.information-section {
+    margin: 0 30px;
+}
+.block-information {
+    background-color: white;
+    border-radius: 14px;
+    padding: 11px 20px;
+}
+.block-information>div {
+    display: table;
+    width: 100%;
+}
+.block-information>div>span {
+    font-size: 14px;
+}
+.title-input {
+    float: left;
+    color: #a2a2a2;
+    margin: 9px 0;
+}
+.text-input {
+    float: right;
+    color: #4a4a4a;
+    margin: 9px 0;
+}
+.btn-home:hover {
+    background-image: url(images/home-hover.png);
+}
+.btn-closed-card:hover {
+    background-image: url(images/close-hover.png);
+}
+.conten-card {
+    margin-top: 30px;
+}
