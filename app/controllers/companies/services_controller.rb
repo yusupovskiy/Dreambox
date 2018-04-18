@@ -1,5 +1,6 @@
 class Companies::ServicesController < ApplicationController
   before_action :set_companies_service, only: [:show, :edit, :update, :destroy]
+  layout 'card'
 
   # GET /companies/services
   # GET /companies/services.json
