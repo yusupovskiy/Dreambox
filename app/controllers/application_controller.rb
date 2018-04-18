@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :ensure_current_user
+  before_action :authenticate_user!
 
 
   private
@@ -21,7 +23,10 @@ class ApplicationController < ActionController::Base
       params[:return_url] || '/'
     end
     def ensure_current_user
-      p redirect_to new_user_session_path(return_url: request.url) if current_user.nil?
+      # if !signed_in? and request.get? and
+      #    params[:controller] != 'users'
+      #   p redirect_to new_user_session_path(return_url: request.url)
+      # end
     end
     def ensure_company_owner_role
       if current_user.nil? and current_user.role & User::Role::COMPANY_OWNER == 0
