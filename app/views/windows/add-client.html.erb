@@ -1,51 +1,33 @@
 <div class="card">
-  <div class="btms-card">
-    <div class="btm-closed-card" @click="closeAddClient"></div>
-  </div>
-  <div class="name-card">Добавить клиента</div>
-  <div class="add-avatar"><div class="icon-add-avatar"></div></div>
-
-  <div class="entry-field">
-    <div class="title-input">Фамилия*</div>
-    <input type="text" class="input" aria-label="Имя" v-model="last_name">
-  </div>
-  <div class="entry-field">
-    <div class="title-input">Имя*</div>
-    <input type="text" class="input" aria-label="Имя" v-model="first_name">
-  </div>
-  <div class="entry-field">
-    <div class="title-input">Отчество</div>
-    <input type="text" class="input" aria-label="Имя" v-model="patronymic">
-  </div>
-
-  <div class="sections-card">
-    <div class="items-sections-card">
-      <div class="item-sections-card active-item-sections-card">Основное</div>
-      <div class="item-sections-card">Филиалы</div>
+  <div class="title-panel">
+    <div class="btns-card">
+      <div class="btn-closed-card" @click="closeAddClient"></div>
+      <div class="btn-home"></div>
     </div>
+    <div class="title-card">Добавление клиента</div>
   </div>
-
-
-  <div class="entry-field">
-    <div class="title-input">Дата рождения*</div>
-    <input type="date" class="input" aria-label="Имя" v-model="birthday">
+  
+  <div class="conten-card">   
+    <div class="information-section">
+      <div class="block-information">
+        
+        <div class="add-avatar"><div class="icon-add-avatar"></div></div>
+        
+        <input class="inpot-panel" type="text" placeholder="Фамилия*" />
+        <input class="inpot-panel" type="text" placeholder="Имя*" />
+        <input class="inpot-panel" type="text" placeholder="Отчество" />
+      </div>
+      
+      <div class="block-information">
+        <input class="inpot-panel" type="date" placeholder="Дата рождения" />
+        <select class="inpot-panel" id="" name="" placeholder="Пол">
+          <option value="man">мужской</option>
+          <option value="woman">женский</option>
+        </select>
+        <input class="inpot-panel" type="text" placeholder="Телефон" />
+      </div>
+    </div>
+    <input type="submit" name="" class="btn icon-confirm" @click="createClient">
+    
   </div>
-  <div class="entry-field">
-    <div class="title-input">Пол*</div>
-    <input type="text" class="input" aria-label="Имя">
-  </div>
-  <div class="entry-field">
-    <div class="title-input">Телефон*</div>
-    <input type="text" class="input" aria-label="Имя" v-model="phone_number">
-  </div>
-  <div class="entry-field">
-    <div class="title-input">Источник</div>
-    <input type="text" class="input" aria-label="Имя">
-  </div>
-<div class="interaction-list">
-  <div class="btms-interaction-list">
-    <button class="btn-confirm" @click="createClient"><div class="icon-confirm"></div></button>
-  </div>
-</div>
-
 </div>
