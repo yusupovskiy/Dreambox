@@ -1,6 +1,7 @@
 class Companies::ClientsController < ApplicationController
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
   before_action :set_client, only: [:show, :edit, :update, :destroy]
+  layout 'card'
 
   # GET /clients
   # GET /clients.json
@@ -75,7 +76,7 @@ class Companies::ClientsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def client_params
       params.require(:client)
-          .permit(:first_name, :last_name, :patronymic, :birthday, :phone_number)
+          .permit(:first_name, :last_name, :patronymic, :birthday, :phone_number, :sex)
           .merge(company_id: params[:company_id])
     end
 end
