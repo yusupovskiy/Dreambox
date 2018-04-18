@@ -1,18 +1,19 @@
 <div class="card">
-  <div class="btms-card">
-    <div class="btm-closed-card" @click="closeAddService"></div>
-  </div>
-  <div class="name-card">Добавить услугу</div>
-
-  <div class="entry-field">
-    <div class="title-input">Название*</div>
-    <input type="text" class="input" aria-label="Имя" v-model="name">
-  </div>
-
-  <div class="interaction-list">
-    <div class="btms-interaction-list">
-      <button class="btn-confirm" @click="createService"><div class="icon-confirm"></div></button>
+  <div class="title-panel">
+    <div class="btns-card">
+      <div class="btn-closed-card" @click="closeAddService"></div>
+      <div class="btn-home"></div>
     </div>
+    <div class="title-card">Добавить услугу</div>
   </div>
-
+  
+  <div class="conten-card">   
+    <div class="information-section">
+      <div class="block-information">        
+        <input class="inpot-panel" type="text" placeholder="Название*" />
+      </div>
+    </div>
+    <input type="submit" name="" class="btn icon-confirm" @click="createService">
+    
+  </div>
 </div>

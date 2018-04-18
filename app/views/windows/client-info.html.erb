@@ -1,38 +1,60 @@
-<div class="card">
-  <div class="btms-card">
-    <div @click="closeClientInfo" class="btm-closed-card"></div>
-    <div @click="removeClient" class="btn-card icon-delete"></div>
-  </div>
-  <div class="name-card">Клиент</div>
-  <img class="img-card" src="/resources/no-image-available.png" />
-  <div class="title-card">{{`${first_name} ${last_name} ${patronymic}`}}</div>
-  <div class="balance">Задолжность <span class="amount debt">1 000 ₽</span></div>
-  <div class="sections-card">
-    <div class="items-sections-card">
-      <div class="item-sections-card active-item-sections-card">Информация</div>
-      <div class="item-sections-card">Журнал посещений</div>
-      <div class="item-sections-card">Финансовые операции</div>
-      <div class="item-sections-card">Абонементы</div>
-      <div class="item-sections-card">Курсы</div>
-      <div class="item-sections-card">Сделки</div>
-      <div class="item-sections-card">Скидки</div>
-      <div class="item-sections-card">Логи</div>
+<div class="card avatar">
+  <div class="title-panel">
+    <img class="img-card" src="/resources/no-image-available.png" />
+    <div class="btns-card">
+      <div title="Закрыть" class="btn-card icon-closed-card"></div>
+      <div title="На главную" class="btn-card icon-home"></div>
+      
+      <div title="В архив" class="btn-card icon-archive"></div>
     </div>
+    <div class="title-card">{{`${first_name} ${last_name} ${patronymic}`}}</div>
+    <div class="role-card">Клиенты</div>
   </div>
-  <div class="item-info">
-    <div class="title-item-info">Дата рождения</div>
-    <div class="text-item-info">{{birthday}}</div>
-  </div>
-  <div class="item-info">
-    <div class="title-item-info">Пол</div>
-    <div class="text-item-info">мужской</div>
-  </div>
-  <div class="item-info">
-    <div class="title-item-info">Телефон</div>
-    <div class="text-item-info">{{phone_number}}</div>
-  </div>
-  <div class="item-info">
-    <div class="title-item-info">Источник</div>
-    <div class="text-item-info">Наружняя реклама</div>
+  
+  <div class="conten-card">
+  
+    <div class="menu-with-options">
+      <div class="option active">Основное</div>
+      <div class="option">ОКАЗАНИЕ УСЛУГ <span class="amount debt">- 1 000 ₽</span></div>
+      <div class="option">Все финансовые опирации <span class="amount">10 000 ₽</span></div>
+    </div>
+    
+    <div class="cont-category-book">
+      <div class="tab-category information-section">
+        <div class="block-information">
+          <div class="item-information"><span class="title-input">Дата рождения</span><span class="text-input">{{birthday}}</span></div>
+          <div class="item-information"><span class="title-input">Пол</span><span class="text-input">мужской</span></div>
+          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">{{phone_number}}</span></div>
+        </div>
+        <div class="block-information compact active-compact">
+          <h3>Информация о матери</h3>
+          <div class="btn-compact"></div>
+          <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиева Пятимат Алиевна</span></div>
+          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+          <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+        </div>
+        <div class="block-information compact">
+          <h3>Информация об отце</h3>
+          <div class="btn-compact"></div>
+          <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиев Магомед Исаевич</span></div>
+          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+          <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+        </div>
+      </div>
+      <div class="tab-category information-section">
+        <div class="block-information">
+          <h3>Информация о матери</h3>
+          <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Магомедова Пятимат Магомедовна</span></div>
+          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+          <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+        </div>
+        <div class="block-information">
+          <h3>Информация об отце</h3>
+          <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Магомедов Осман Магомедович</span></div>
+          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+          <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

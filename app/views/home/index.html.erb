@@ -1,31 +1,31 @@
-
-<div class="current-object">
-  
-  <img class="object-avatar" src="/resources/no-image-available.png" />
-  <div class="object-info">
-    <span class="name-people">Юсупов Расул</span>
-    <span class="roles-people">Владелец</span>
+<%if signed_in?%>
+  <div class="current-object">
+    
+    <img class="object-avatar" src="/resources/no-image-available.png" />
+    <div class="object-info">
+      <span class="name-people"><%="#{current_user.first_name} #{current_user.last_name}"%></span>
+      <%= link_to 'Владелец', edit_user_registration_path, class: "roles-people" %>
+    </div>
+    <%= link_to 'выход', destroy_user_session_path, method: :delete, class: "sign-out" %>
   </div>
-  <div class="sign-out">выход</div>
-  
-</div>
+<%end%>
 
 
 <div class="katalog">
   
   <div class="header-katalog">
-    <a class="logo" href="#"><img src="/images/logo-mini.png" /></a>
+    <a class="logo" href="<%=root_path%>"><img src="/images/logo-mini.png" /></a>
     <input type="text" placeholder="Поиск инструментов или людей..." />
   </div>
   
   <div class="content-katalog">
     <div class="menu-with-options">
-      <div style="opacity: 1; cursor: default;">Все функции</div>
-      <div>Управление продажами</div>
-      <div>Компания</div>
-      <div>Финансы</div>
-      <div>Склад</div>
-      <div>Аналитика</div>
+      <div class="option active">Все функции</div>
+      <div class="option">Управление продажами</div>
+      <div class="option">Компания</div>
+      <div class="option">Финансы</div>
+      <div class="option">Склад</div>
+      <div class="option">Аналитика</div>
     </div>
     
     <div class="instruments">
@@ -64,10 +64,6 @@
         <div>Филиалы</div>
       </div>
       
-      <div class="instrument">
-        <img src="/images/office3.png" />
-        <div>Филиалы</div>
-      </div>
     </div>
     
   </div>
