@@ -1,33 +1,27 @@
-<p id="notice"><%= notice %></p>
+<div id="notice"><%= notice %></div>
+<div class="btns-card">
+  <a href="/" title="Закрыть" class="btn-card icon-closed-card"></a>
+  <a href="/" title="На главную" class="btn-card icon-home"></a>
+</div>
+<input class="card-search" type="text" placeholder="Поиск клиента...">
 
-<h1>Clients</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Patronymic</th>
-      <th>Birthday</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
+<div class="conten-card">
+  <div class="menu-with-options">
+    <div class="option active">Текущие клиенты 100</div>
+    <div class="option">Должники 24</div>
+    <div class="option">Архив 11</div>
+    <div class="option">Все клиенты 111</div>
+  </div>
+  <a class="btn icon-plus" href="<%=new_company_client_path %>"></a>
+  <div class="cont-category-book">
     <% @clients.each do |client| %>
-      <tr>
-        <td><%= client.first_name %></td>
-        <td><%= client.last_name %></td>
-        <td><%= client.patronymic %></td>
-        <td><%= client.birthday %></td>
-        <td><%= link_to 'Show', [client.company, client] %></td>
-        <td><%= link_to 'Edit', edit_company_client_path(client.company, client) %></td>
-        <td><%= link_to 'Destroy', [client.company, client], method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+      <%= link_to [client.company, client], class: "item-card" do %>
+       <img src="/resources/no-image-available.png" class="avatar-list">
+        <%= client.last_name %>
+        <%= client.first_name %>
+<!--         <%= link_to 'Edit', edit_company_client_path(client.company, client) %>
+        <%= link_to 'Destroy', [client.company, client], method: :delete, data: { confirm: 'Are you sure?' } %> -->
+      <%end%>
     <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Client', new_company_client_path %>
+  </div>
+</div>

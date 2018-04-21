@@ -1,4 +1,21 @@
 <%= form_with(model: [affiliate.company, affiliate], local: true) do |form| %>
+  <div class="conten-card">   
+    <div class="information-section">
+      <div class="block-information">
+        <%=form.text_field :name, value: affiliate.name, placeholder: "Название*", class: "input-panel" %>
+      </div>
+      
+      <div class="block-information">
+        <%=form.text_field :address, value: affiliate.address, placeholder: "Адрес филиала*", class: "input-panel" %>
+        <%=form.text_field :phone_number, value: affiliate.phone_number, placeholder: "Телефон", class: "input-panel" %>
+        <%=form.text_field :email, value: affiliate.email, placeholder: "Email", class: "input-panel" %>
+      </div>
+    </div>
+    <%= form.submit class: "btn icon-confirm" %>
+    
+  </div>
+
+
   <% if affiliate.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(affiliate.errors.count, "error") %> prohibited this affiliate from being saved:</h2>
@@ -11,11 +28,4 @@
     </div>
   <% end %>
 
-  <div class="actions">
-    Name <%=form.text_field :name, value: affiliate.name%><br>
-    Address <%=form.text_field :address, value: affiliate.address%><br>
-    Phone number <%=form.text_field :phone_number, value: affiliate.phone_number%><br>
-    Email <%=form.text_field :email, value: affiliate.email%><br>
-    <%= form.submit %>
-  </div>
 <% end %>

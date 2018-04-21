@@ -1,27 +1,23 @@
-<p id="notice"><%= notice %></p>
+<div id="notice"><%= notice %></div>
+<div class="btns-card">
+  <a href="/" title="Закрыть" class="btn-card icon-closed-card"></a>
+  <a href="/" title="На главную" class="btn-card icon-home"></a>
+</div>
+<input class="card-search" type="text" placeholder="Поиск услуг...">
 
-<h1>Companies Services</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
+<div class="conten-card">
+  <div class="menu-with-options">
+    <div class="option active">Все услуги 2</div>
+  </div>
+  <a class="btn icon-plus" href="<%=new_company_service_path%>"></a>
+  <div class="cont-category-book">
     <% @services.each do |service| %>
-      <tr>
-        <td><%=service.name%></td>
-        <td><%= link_to 'Show', [service.company, service] %></td>
-        <td><%= link_to 'Edit', edit_company_service_path(service.company, service) %></td>
-        <td><%= link_to 'Destroy', [service.company, service], method: :delete, data: {confirm: 'Are you sure?' } %></td>
-      </tr>
+      <div class="item-card">
+        <%=service.name%>
+        <%= link_to 'Show', [service.company, service] %>
+        <%= link_to 'Edit', edit_company_service_path(service.company, service) %>
+        <%= link_to 'Destroy', [service.company, service], method: :delete, data: {confirm: 'Are you sure?' } %>
+        </div>
     <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Companies Service', new_company_service_path %>
+  </div>
+</div>

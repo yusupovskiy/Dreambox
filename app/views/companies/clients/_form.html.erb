@@ -1,4 +1,25 @@
 <%= form_with(model: [client.company, client], local: true) do |form| %>
+  <div class="conten-card">   
+    <div class="information-section">
+      <div class="block-information">
+        
+        <div class="add-avatar"><div class="icon-add-avatar"></div></div>
+        <%= form.text_field :last_name, id: :client_last_name, placeholder: "Фамилия*", class: "input-panel" %>
+        <%= form.text_field :first_name, id: :client_first_name, placeholder: "Имя*", class: "input-panel" %>
+        <%= form.text_field :patronymic, id: :client_patronymic, placeholder: "Отчество", class: "input-panel" %>
+      </div>
+      
+      <div class="block-information">
+        <%= form.date_select :birthday, id: :client_birthday, placeholder: "Дата рождения*", class: "input-panel" %>
+        <%= form.select :sex, Client.sexes.keys, selected: client.sex, placeholder: "Пол", class: "input-panel" %>
+        <input type="text" class="input-panel" placeholder="Телефон" />
+      </div>
+    </div>
+    <%= form.submit class: "btn icon-confirm" %>
+    
+  </div>
+
+
   <% if client.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(client.errors.count, "error") %> prohibited this client from being saved:</h2>
@@ -11,32 +32,4 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :first_name %>
-    <%= form.text_field :first_name, id: :client_first_name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :last_name %>
-    <%= form.text_field :last_name, id: :client_last_name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :patronymic %>
-    <%= form.text_field :patronymic, id: :client_patronymic %>
-  </div>
-
-  <div class="field">
-    <%= form.label :birthday %>
-    <%= form.date_select :birthday, id: :client_birthday %>
-  </div>
-
-  <div class="field">
-    <%= form.label :sex %>
-    <%= form.select :sex, Client.sexes.keys, selected: client.sex %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
 <% end %>

@@ -17,6 +17,6 @@
 .cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar-thumb {
     background-color: #e7e7e7;
 }
-.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar {
+/*.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar {
     display: block;
-}
+}*/

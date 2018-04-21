@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="cool-scrollbar">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>TBIS</title>
@@ -33,19 +33,9 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
   <body data-params="<%=params.to_json%>">
     <!-- Temporary div -->
-    <div style="position: fixed; right: 50px; z-index: 99999;">
-      <div style="background-color: darkgrey">
-        <p><%=flash[:notice]%></p>
-        <p><%=flash[:alert]%></p>
-      </div>
-      <%= link_to 'Main', root_path%>
-      <%= link_to 'Companies', companies_path%>
-      <%if signed_in?%>
-        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete%>
-      <%else%>
-        <%= link_to 'Sign Up', new_user_registration_path %>
-        <%= link_to 'Sign In', new_user_session_path %>
-      <%end%>
+    <div class="message">
+      <p><%=flash[:notice]%></p>
+      <p><%=flash[:alert]%></p>
     </div>
 
     <%=render 'shared/authorization_fields'%>

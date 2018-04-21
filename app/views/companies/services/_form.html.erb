@@ -1,8 +1,15 @@
 <%= form_with(model: [service.company, service], local: true) do |form| %>
+  <div class="conten-card">   
+    <div class="information-section">
+      <div class="block-information">
+        <%= form.text_field :name, placeholder: "Название*", class: "input-panel"  %>
+      </div>
+    </div>
+    <%= form.submit class: "btn icon-confirm" %>
+  </div>
   <% if service.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(service.errors.count, "error") %> prohibited this service from being saved:</h2>
-
       <ul>
       <% service.errors.full_messages.each do |message| %>
         <li><%= message %></li>
@@ -10,13 +17,4 @@
       </ul>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
 <% end %>

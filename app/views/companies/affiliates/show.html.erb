@@ -1,9 +1,30 @@
-<p id="notice"><%= notice %></p>
+<div class="title-panel">
+    <div class="btns-card">
+      <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+      <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+    </div>
+    <div class="title-card"><%=@affiliate.name%></div>
+    <div class="role-card">Филиал</div>
+  </div>
+  
+  <div class="conten-card">
+  
+    <div class="menu-with-options">
+      <div class="option active">Основное</div>
+    </div>
+    
+    <div class="cont-category-book">
+      <div class="tab-category information-section">
+        <div class="block-information">
+          <div class="item-information"><span class="title-input">Адрес</span><span class="text-input"><%=@affiliate.address%></span></div>
+          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input"><%=@affiliate.phone_number || '[not given]'%></span></div>
+          <div class="item-information"><span class="title-input">Email</span><span class="text-input"><%=@affiliate.email || '[not given]'%></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-Name <%=@affiliate.name%><br>
-Address <%=@affiliate.address%><br>
-Phone number <%=@affiliate.phone_number || '[not given]'%><br>
-Email <%=@affiliate.email || '[not given]'%><br>
+<p id="notice"><%= notice %></p>
 
 <%= link_to 'Edit', edit_company_affiliate_path(@affiliate) %> |
 <%= link_to 'Back', company_affiliates_path %>

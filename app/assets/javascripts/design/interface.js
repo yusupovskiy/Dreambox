@@ -107,4 +107,20 @@ $(document).ready(function() {
       $(this).parent().addClass('active-compact');
     }
   });
+
+  window.onload = function() {
+    setInterval(function() {
+      if($('html').scrollTop() > 110) {
+        $('.btns-card').addClass('right-btns-card');
+        var marginRight = parseFloat($('.card').css('margin-left')) - 50;
+        $('.right-btns-card').css({'right':''+marginRight+'px'})
+        ;
+      }
+      else if($('html').scrollTop() < 110) {
+        $('.btns-card').removeClass('right-btns-card');
+        $('.btns-card').css({'right':'0px'});
+
+      }
+    }, 100);
+  }
 });
