@@ -1,12 +1,13 @@
 <div class="title-panel">
 	<div class="btns-card">
 	  <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
-	  <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+	  <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>	  <div class="btn-card top-scroll"></div>
+      <div class="btn-card btn-show-list"></div>
+      <div class="panel-show">
+        <%= link_to 'Вернуться в карту', [@affiliate.company, @affiliate] %>
+        <%= link_to 'Вернуться к списку', company_affiliates_path %>
+      </div>
 	</div>
     <div class="title-card">Редактирование филиала</div>
 </div>
-
 <%= render 'form', affiliate: @affiliate %>
-
-<%= link_to 'Show', [@affiliate.company, @affiliate] %> |
-<%= link_to 'Back', company_affiliates_path %>

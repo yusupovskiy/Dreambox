@@ -32,10 +32,17 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
   </head>
 
   <body data-params="<%=params.to_json%>">
+    
+
+    <div class="active-company">
+      <div class="name-company">Школа Лидеров</div>
+      <div class="days-subs">345 дн.</div>
+    </div>
+    
     <!-- Temporary div -->
     <div class="message">
-      <p><%=flash[:notice]%></p>
-      <p><%=flash[:alert]%></p>
+      <%=flash[:notice]%>
+      <%=flash[:alert]%>
     </div>
 
     <%=render 'shared/authorization_fields'%>

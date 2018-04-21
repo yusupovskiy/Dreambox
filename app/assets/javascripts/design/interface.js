@@ -123,4 +123,24 @@ $(document).ready(function() {
       }
     }, 100);
   }
+
+  // Раскрывает меню с функциями карты
+  $('.btn-show-list').click(function () {
+    $('.panel-show').css({'display':'grid'});
+  });
+  $(document).mouseup(function (e){ // событие клика по веб-документу
+    var div = $(".panel-show"); // тут указываем ID элемента
+    // if (!div.is(e.target) // если клик был не по нашему блоку
+    //     && div.has(e.target).length === 0) { // и не по его дочерним элементам
+      div.hide(); // скрываем его
+    // }
+  });
+
+  // $('.top-scroll').click(function () {
+  //   $('html').scrollTop(0);
+  // });
+  $('.top-scroll').click(function(){
+       $('html, body').animate({scrollTop:$('.footer').position().top}, 1000);
+});
+  
 });

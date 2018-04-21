@@ -36,6 +36,11 @@
     box-shadow: 0 0 0 2px #eceff0;
     border-radius: 50%;
     background-color: white;
+    overflow: hidden;
+}
+.img-card>img {
+    width: 100%;
+    height: 100%;
 }
 .title-panel {
     padding: 10px 0 18px 0;
@@ -417,11 +422,9 @@ a {
     position: fixed;
     left: 30px;
     z-index: 99999;
-    top: 50px;
-    max-width: 230px;
-}
-.message>p {    
-    padding: 0 20px;
+    top: 100px;
+    max-width: 190px;
+    padding: 10px 20px;
 }
 .card-search {
     font-size: 18px;
@@ -446,4 +449,74 @@ a {
 }
 .icon-edit {
     background-image: url(/images/edit.png);
+}
+.people-archive {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 27px;
+    height: 27px;
+    background-image: url(/images/archive.png);
+    background-origin: content-box;
+    position: absolute;
+    padding: 55px;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+}
+.archive.img-card>div {
+    display: block!important;
+}
+.name-content {
+    font-size: 13px;
+    color: #252525;
+}
+.left-content>span {
+    font-size: 11px;
+    color: #545454;
+}
+.left-content {
+    float: left;
+    margin: 9px 0px 9px 20px;
+}
+.right-content {
+    float: right;
+}
+.right-content>.amount {
+    margin: 17px 10px 17px 0;
+    display: table;
+}
+.btn-card.btn-show-list {
+    background-image: url(/images/still.png);
+    float: left!important;
+    width: 14px;
+    height: 14px;
+    padding: 11px;
+}
+.panel-show {
+    position: absolute;
+    background-color: white;
+    top: 10px;
+    left: 10px;
+    font-size: 14px;
+    padding: 10px 0;
+    border-radius: 7px;
+    display: none;
+    box-shadow: 0 0 5px -2px rgba(0, 0, 0, 0.6);
+}
+.panel-show>* {
+    color: #494949;
+    padding: 10px 20px;
+    float: left;
+}
+.panel-show>*:hover {
+    background-color: #ecf0f1;
+}
+.btns-card.right-btns-card>.panel-show {
+    left: 40px;
+}
+.top-scroll {
+    background-image: url(/images/arrows.png);
+    display: none;
+}
+.btns-card.right-btns-card>.top-scroll {
+    display: block;
 }

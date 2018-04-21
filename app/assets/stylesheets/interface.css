@@ -29,9 +29,8 @@ a {
 .header-katalog>input {
     font-size: 18px;
     width: 100%;
-    margin: 30px 0;
     box-sizing: border-box;
-    padding: 0 90px;
+    padding: 30px 90px;
     border: 0;
     outline: none;
 }
@@ -133,6 +132,11 @@ img.object-avatar {
     -webkit-transform: translateY(-2px);
     -ms-transform: translateY(-2px);
     transform: translateY(-2px);
+}
+.item-card:hover {
+    -webkit-transform: translateX(-2px);
+    -ms-transform: translateX(-2px);
+    transform: translateX(-2px);
 }
 .instrument>div {
     *color: #919394;
@@ -251,6 +255,7 @@ img.object-avatar {
     width: 290px;
     height: 50px;
     float: left;
+    transition: .3s;
 }
 a.btn {
     display: table;
@@ -262,7 +267,7 @@ a.btn {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    margin: 10px 10px 10px 10px;
+    margin: 10px -10px 10px 10px;
     float: left;
 }
 input.card-search {
@@ -277,4 +282,35 @@ input.card-search {
 }
 .test {
     display: none;
+}
+.active-company {
+    position: fixed;
+    z-index: 4;
+    color: white;
+    left: 30px;
+    top: 40px;
+}
+.name-company {
+    font-size: 14px;
+}
+.days-subs {
+    font-size: 24px;
+}
+.people-on-course {
+    font-size: 11px;
+    color: #888888;
+    margin-top: 5px;
+    text-align: right;
+}
+.people-on-course>img {
+    width: 10px;
+    height: 10px;
+    margin-left: 3px;
+    float: right;
+}
+.right-content>.people-on-course {
+    margin: 19px 10px 18px 0;
+}
+.icon-sorting {
+    background-image: url(/images/Filter-11-WF.png);
 }

@@ -2,6 +2,16 @@
 <div class="btns-card">
   <a href="/" title="Закрыть" class="btn-card icon-closed-card"></a>
   <a href="/" title="На главную" class="btn-card icon-home"></a>
+  <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div>
+
+      <div class="btn-card top-scroll"></div>
+
+      <div class="btn-card btn-show-list"></div>
+      <div class="panel-show">
+        <a href="#">Импортировать данные</a>
+        <a href="#">Экспортировать данные</a>
+      </div>
+
 </div>
 <input class="card-search" type="text" placeholder="Поиск клиента...">
 
@@ -16,10 +26,16 @@
   <div class="cont-category-book">
     <% @clients.each do |client| %>
       <%= link_to [client.company, client], class: "item-card" do %>
-       <img src="/resources/no-image-available.png" class="avatar-list">
-        <%= client.last_name %>
-        <%= client.first_name %>
-<!--         <%= link_to 'Edit', edit_company_client_path(client.company, client) %>
+        <img src="/resources/no-image-available.png" class="avatar-list">
+        <div class="left-content">
+          <div class="name-content"><%= client.last_name %>
+          <%= client.first_name %></div>
+          <span class="">Абонементы закончился<!-- Ucmas сегодня в 12:20 --></span>
+        </div>
+        <div class="right-content">
+          <span class="amount debt">- 6 000 ₽</span>
+        </div>
+<!--    <%= link_to 'Edit', edit_company_client_path(client.company, client) %>
         <%= link_to 'Destroy', [client.company, client], method: :delete, data: { confirm: 'Are you sure?' } %> -->
       <%end%>
     <% end %>
