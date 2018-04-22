@@ -32,8 +32,13 @@ class ApplicationController < ActionController::Base
     end
     def ensure_company_owner_role
       if current_user.nil? and current_user.role & User::Role::COMPANY_OWNER == 0
-        p redirect_to new_company_path, notice: t('create_a_company_first')
+        redirect_to new_company_path, notice: t('create_a_company_first')
       end
+    end
+    def ensure_user_has_company
+      redirect_to user_session_path, notice: t('devise.failure.unauthenticated') if current_user.nil?
+      company = Company.find_by_id(params[:company_id])
+      redirect_to new_company_path, notice: t('create_a_company_first') if company.nil?
     end
     def set_locale
       I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first.presence || 'en'

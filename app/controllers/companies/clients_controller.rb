@@ -1,6 +1,7 @@
 class Companies::ClientsController < ApplicationController
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
   before_action :set_client, only: [:show, :edit, :update, :destroy]
+  before_action :ensure_user_has_company
   layout 'card'
 
   # GET /clients

@@ -1,8 +1,9 @@
+<%=client.inspect%>
 <%= form_with(model: [client.company, client], local: true) do |form| %>
-  <div class="conten-card">   
+  <div class="conten-card">
     <div class="information-section">
       <div class="block-information">
-        
+
         <div id="drop_zone" class="add-avatar">
           <div class="icon-add-avatar">
             <%=form.file_field :avatar, id: :client_avatar, style: 'display: none'%>
@@ -12,7 +13,7 @@
         <%= form.text_field :first_name, id: :client_first_name, placeholder: "Имя*", class: "input-panel" %>
         <%= form.text_field :patronymic, id: :client_patronymic, placeholder: "Отчество", class: "input-panel" %>
       </div>
-      
+
       <div class="block-information">
         <%= form.date_field :birthday, id: :client_birthday, placeholder: "Дата рождения*", class: "input-panel" %>
         <%= form.select :sex, options_for_sexes, {selected: client.sex, placeholder: "Пол"}, {class: "input-panel"} %>
@@ -21,7 +22,7 @@
       </div>
     </div>
     <%= form.submit class: "btn icon-confirm" %>
-    
+
   </div>
 
 
