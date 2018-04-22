@@ -3,7 +3,11 @@
     <div class="information-section">
       <div class="block-information">
         
-        <div class="add-avatar"><div class="icon-add-avatar"></div></div>
+        <div id="drop_zone" class="add-avatar">
+          <div class="icon-add-avatar">
+            <%=form.file_field :avatar, id: :client_avatar, style: 'display: none'%>
+          </div>
+        </div>
         <%= form.text_field :last_name, id: :client_last_name, placeholder: "Фамилия*", class: "input-panel" %>
         <%= form.text_field :first_name, id: :client_first_name, placeholder: "Имя*", class: "input-panel" %>
         <%= form.text_field :patronymic, id: :client_patronymic, placeholder: "Отчество", class: "input-panel" %>
@@ -34,3 +38,16 @@
   <% end %>
 
 <% end %>
+
+<script>
+  if (!FileList.prototype.slice)  // firefox
+    FileList.prototype.slice = Array.prototype.slice
+  $("#client_avatar").withDropZone('#drop_zone', {
+    action: {
+      name: "image",
+      params: {
+        preview: true,
+      }
+    }
+  })
+</script>

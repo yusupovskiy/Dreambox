@@ -37,6 +37,5 @@ class ApplicationController < ActionController::Base
     end
     def set_locale
       I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first.presence || 'en'
-      p I18n.locale
     end
 end
