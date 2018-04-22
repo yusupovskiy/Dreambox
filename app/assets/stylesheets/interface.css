@@ -314,3 +314,9 @@ input.card-search {
 .icon-sorting {
     background-image: url(/images/Filter-11-WF.png);
 }
+.panel-sorting {
+    text-align: center;
+    padding-top: 20px;
+    color: #75787c;
+    display: none;
+}

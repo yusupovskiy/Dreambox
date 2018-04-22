@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener('turbolinks:load', function() {
   //totalHeight();
   // $(window).resize(totalHeight);
   
@@ -67,7 +67,7 @@ $(document).ready(function() {
   });
 
   // таб
-  var $wrapper = $('.conten-card'),
+  var $wrapper = $('.tabs'),
     $allTabs = $wrapper.find('.cont-category-book>div'),
     $tabMenu = $wrapper.find('.menu-with-options>div');
   
@@ -110,13 +110,13 @@ $(document).ready(function() {
 
   window.onload = function() {
     setInterval(function() {
-      if($('html').scrollTop() > 110) {
+      if($('html').scrollTop() > 120) {
         $('.btns-card').addClass('right-btns-card');
         var marginRight = parseFloat($('.card').css('margin-left')) - 50;
         $('.right-btns-card').css({'right':''+marginRight+'px'})
         ;
       }
-      else if($('html').scrollTop() < 110) {
+      else if($('html').scrollTop() < 120) {
         $('.btns-card').removeClass('right-btns-card');
         $('.btns-card').css({'right':'0px'});
 
@@ -136,11 +136,21 @@ $(document).ready(function() {
     // }
   });
 
+  // скролл при нажатии кнопки
   // $('.top-scroll').click(function () {
   //   $('html').scrollTop(0);
   // });
   $('.top-scroll').click(function(){
-       $('html, body').animate({scrollTop:$('.footer').position().top}, 1000);
-});
-  
+    $('html, body').animate({scrollTop:$('.footer').position().top}, 1000);
+  });
+
+
+  $('.icon-sorting').click(function(){
+    if($('.panel-sorting').css('display') == 'none') {
+        $('.panel-sorting').css({'display':'block'});
+    }
+    else {
+        $('.panel-sorting').css({'display':'none'});
+    }
+  });
 });

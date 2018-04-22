@@ -2,7 +2,7 @@
 .cool-scrollbar::-webkit-scrollbar {
     width: 14px;
     margin: 3px;
-    background-color: transparent;
+    background-color: white;
 /*    display: none;*/
 }
 .cool-scrollbar::-webkit-scrollbar-thumb {
