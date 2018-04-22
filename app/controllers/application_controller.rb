@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   before_action :ensure_current_user
   before_action :authenticate_user!
   layout 'card'
+  before_action :set_locale
 
 
   private
@@ -33,5 +34,9 @@ class ApplicationController < ActionController::Base
       if current_user.nil? and current_user.role & User::Role::COMPANY_OWNER == 0
         p redirect_to new_company_path, notice: t('create_a_company_first')
       end
+    end
+    def set_locale
+      I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first.presence || 'en'
+      p I18n.locale
     end
 end
