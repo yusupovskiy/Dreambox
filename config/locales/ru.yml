@@ -1,6 +1,16 @@
 
 ru:
   hello: Привет мир
+  sign_up: Зарегестрироваться
+  sign_in: Войти
+  sign_out: Выйти
+  remember_me: Запомнить
+  forgot_your_password?: Забыли пароль?
+  didnt_receive_confirmation_instruction?: Не получили письмо с активацией?
+  sex:
+    male: Мужской
+    female: Женский
+    unknown: Не скажу
   client:
     created: Клиент успешно создан
     updated: Клиент успешно сохранён

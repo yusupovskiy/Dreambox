@@ -20,10 +20,7 @@
           <%= f.password_field :password_confirmation, autocomplete: "off", placeholder: "Подтвердить пароль", class: "input-panel" %>
           <%= f.text_field :first_name, placeholder: "Фамилия", class: "input-panel" %>
           <%= f.text_field :last_name, placeholder: "Имя", class: "input-panel" %>
-
-
-          <%= f.submit "Sign up", name: nil, class: "btn icon-authorization" %>
-
+          <%= f.submit t(:sign_up), name: nil, class: "btn icon-authorization" %>
         </div>
 <!--           <% if @minimum_password_length %>
         <em>(<%= @minimum_password_length %> минимум символов)</em>

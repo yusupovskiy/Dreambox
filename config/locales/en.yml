@@ -31,6 +31,16 @@
 
 en:
   hello: Hello world
+  sign_up: Sign up
+  sign_in: Sign in
+  sign_out: Sign out
+  remember_me: Remember me
+  forgot_your_password?: Forgot your password?
+  didnt_receive_confirmation_instruction?: Didn't receive confirmation instructions?
+  sex:
+    male: Male
+    female: Female
+    unknown: Unknown
   client:
     created: Client was succesfully created
     updated: Client was succesfully saved
