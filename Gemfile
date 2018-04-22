@@ -58,3 +58,5 @@ gem 'vuejs-rails', '2.4.2' # there is a bug in 2.5.13 (always shows productionTi
 
 gem 'execjs'
 gem 'therubyracer', :platforms => :ruby
+gem 'aws-sdk', '~> 3'
+gem 'aws-sdk-s3', '~> 1'
