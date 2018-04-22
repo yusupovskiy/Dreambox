@@ -11,7 +11,7 @@
       
       <div class="block-information">
         <%= form.date_select :birthday, id: :client_birthday, placeholder: "Дата рождения*", class: "input-panel" %>
-        <%= form.select :sex, Client.sexes.keys, selected: client.sex, placeholder: "Пол", class: "input-panel" %>
+        <%= form.select :sex, options_for_sexes, {selected: client.sex, placeholder: "Пол"}, {class: "input-panel"} %>
         <input type="text" class="input-panel" placeholder="Телефон" />
       </div>
     </div>
