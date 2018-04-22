@@ -30,7 +30,7 @@ class Companies::AffiliatesController < ApplicationController
 
     respond_to do |format|
       if @affiliate.save
-        format.html { redirect_to [@affiliate.company, @affiliate], notice: 'Affiliate was successfully created.' }
+        format.html { redirect_to [@affiliate.company, @affiliate], notice: t('affiliate.created') }
         format.json { render :show, status: :created, location: @affiliate }
       else
         format.html { render :new }
@@ -44,7 +44,7 @@ class Companies::AffiliatesController < ApplicationController
   def update
     respond_to do |format|
       if @affiliate.update(affiliate_params)
-        format.html { redirect_to @affiliate, notice: 'Affiliate was successfully updated.' }
+        format.html { redirect_to @affiliate, notice: t('affiliate.updated') }
         format.json { render :show, status: :ok, location: @affiliate }
       else
         format.html { render :edit }
@@ -58,7 +58,7 @@ class Companies::AffiliatesController < ApplicationController
   def destroy
     @affiliate.destroy
     respond_to do |format|
-      format.html { redirect_to affiliates_url, notice: 'Affiliate was successfully destroyed.' }
+      format.html { redirect_to affiliates_url, notice: t('affiliate.destroyed') }
       format.json { head :no_content }
     end
   end

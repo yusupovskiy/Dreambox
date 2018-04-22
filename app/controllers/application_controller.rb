@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
     end
     def ensure_company_owner_role
       if current_user.nil? and current_user.role & User::Role::COMPANY_OWNER == 0
-        p redirect_to new_company_path, notice: 'Please, create a company first'
+        p redirect_to new_company_path, notice: t('create_a_company_first')
       end
     end
 end

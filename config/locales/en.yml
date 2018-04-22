@@ -30,4 +30,24 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  hello: Hello world
+  client:
+    created: Client was succesfully created
+    updated: Client was succesfully saved
+    destroyed: Client was succesfully destroyed
+  company:
+    created: Company was succesfully created
+    updated: Company was succesfully saved
+    destroyed: Company was succesfully destroyed
+    not_yours: Sorry, but that company is not yours
+  create_a_company_first: Please, create a company first
+
+  affiliate:
+    created: Affiliate was successfully created
+    updated: Affiliate was succesfully saved
+    destroyed: Affiliate was succesfully destroyed
+  service:
+    created: Service was successfully created
+    updated: Service was succesfully saved
+    destroyed: Service was succesfully destroyed
+

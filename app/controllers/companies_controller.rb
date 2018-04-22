@@ -39,7 +39,7 @@ class CompaniesController < ApplicationController
 
     respond_to do |format|
       if success_saving
-        format.html { redirect_to @company, notice: 'Company was successfully created.' }
+        format.html { redirect_to @company, notice: t('company.created') }
         format.json { render :show, status: :created, location: @company }
       else
         format.html { render :new }
@@ -53,7 +53,7 @@ class CompaniesController < ApplicationController
   def update
     respond_to do |format|
       if @company.update(company_params)
-        format.html { redirect_to @company, notice: 'Company was successfully updated.' }
+        format.html { redirect_to @company, notice: t('company.updated') }
         format.json { render :show, status: :ok, location: @company }
       else
         format.html { render :edit }
@@ -67,7 +67,7 @@ class CompaniesController < ApplicationController
   def destroy
     @company.destroy
     respond_to do |format|
-      format.html { redirect_to companies_url, notice: 'Company was successfully destroyed.' }
+      format.html { redirect_to companies_url, notice: t('company.destroyed') }
       format.json { head :no_content }
     end
   end
@@ -77,7 +77,7 @@ class CompaniesController < ApplicationController
     def set_company
       @company = Company.find(params[:id])
       if @company.user_id != current_user.id
-        redirect_to companies_path, notice: 'Sorry, but that company is not yours'
+        redirect_to companies_path, notice: t('company.not_yours')
       end
     end
 

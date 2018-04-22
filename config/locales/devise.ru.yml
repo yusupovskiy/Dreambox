@@ -9,10 +9,10 @@ en:
     failure:
       already_authenticated: "Вы уже вошли в систему"
       inactive: "Ваша учетная запись еще не активирована"
-      invalid: "Invalid %{authentication_keys} or password."
+      invalid: "Неверные %{authentication_keys} или пароль."
       locked: "Ваш аккаунт заблокирован"
       last_attempt: "У вас есть еще одна попытка, прежде чем ваша учетная запись будет заблокирована"
-      not_found_in_database: "Invalid %{authentication_keys} or password."
+      not_found_in_database: "Неверные %{authentication_keys} или пароль."
       timeout: "Срок действия вашей сессии истек. Повторите попытку, чтобы продолжить"
       unauthenticated: "Прежде чем продолжить, вам нужно войти в систему или зарегистрироваться"
       unconfirmed: "Прежде чем продолжить, вы должны подтвердить свой адрес электронной почты"
@@ -24,9 +24,9 @@ en:
       unlock_instructions:
         subject: "Unlock instructions"
       email_changed:
-        subject: "Email Changed"
+        subject: "Email изменён"
       password_change:
-        subject: "Password Changed"
+        subject: "Пароль изменён"
     omniauth_callbacks:
       failure: "Could not authenticate you from %{kind} because \"%{reason}\"."
       success: "Successfully authenticated from %{kind} account."
@@ -46,8 +46,8 @@ en:
       updated: "Your account has been updated successfully."
     sessions:
       signed_in: "Вы вошли в систему"
-      signed_out: "Signed out successfully."
-      already_signed_out: "Signed out successfully."
+      signed_out: "Вы вышли из системы"
+      already_signed_out: "Вы уже вышли из системы"
     unlocks:
       send_instructions: "You will receive an email with instructions for how to unlock your account in a few minutes."
       send_paranoid_instructions: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."
