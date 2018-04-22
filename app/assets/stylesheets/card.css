@@ -168,6 +168,8 @@ span.debt {
     margin: 12px auto;
     border: 2px dashed silver;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 .icon-add-avatar {
     background-size: 100%;
@@ -519,4 +521,11 @@ a {
 }
 .btns-card.right-btns-card>.top-scroll {
     display: block;
+}
+.add-avatar canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
