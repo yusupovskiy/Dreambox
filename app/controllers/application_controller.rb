@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   private
     # def current_user
-    #   @current_user ||= User.eager_load(:company).find
+    #   @current_user ||= User.eager_load(:@current_company).find
     # end
     def configure_permitted_parameters
       keys = [:first_name, :last_name, :patronymic, :birthday]
@@ -32,8 +32,14 @@ class ApplicationController < ActionController::Base
     end
     def ensure_company_owner_role
       if current_user.nil? and current_user.role & User::Role::COMPANY_OWNER == 0
-        p redirect_to new_company_path, notice: t('create_a_company_first')
+        redirect_to new_company_path, notice: t('create_a_company_first')
       end
+    end
+    def ensure_user_has_company
+      redirect_to user_session_path, notice: t('devise.failure.unauthenticated') if current_user.nil?
+      @current_company = Company.find_by_id(params[:company_id])
+      redirect_to root_path, notice: t('company.not_yours') unless @current_company.user_id == @current_user.id
+      redirect_to new_company_path, notice: t('create_a_company_first') if @current_company.nil?
     end
     def set_locale
       I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first.presence || 'en'

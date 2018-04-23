@@ -1,7 +1,7 @@
 <div class="title-panel avatar">
     <div class="archive img-card">
       <div title="Клиенты в архиве" class="people-archive"></div>
-      <img src="/resources/no-image-available.png" />
+      <%=image_tag s3_image(@client.avatar)%>
     </div>
     <div class="btns-card">
       <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
@@ -11,7 +11,7 @@
 
       <div class="btn-card btn-show-list"></div>
       <div class="panel-show">
-        <a href="<%= edit_company_client_path(@client) %>">Редактировать</a>
+        <a href="<%= edit_company_client_path(@current_company, @client) %>">Редактировать</a>
         <div>Отправить в архив</div>
         <%= link_to 'Вернуться к списку', company_clients_path %>
       </div>

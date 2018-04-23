@@ -18,6 +18,7 @@ class Client
 window.tt = Client
 
 document.addEventListener('turbolinks:load', ->
+  return # stub
   params = JSON.parse(document.body.dataset.params)
   return unless companyId = params['company_id']
 

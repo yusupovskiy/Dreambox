@@ -1,18 +1,20 @@
-<%= form_with(model: [client.company, client], local: true) do |form| %>
-  <div class="conten-card">   
+<%= form_with(model: [client.company, client], local: true, id: 'main-form',
+              data: { 'form-data' => @s3_direct_post.fields, 'url' => @s3_direct_post.url, 'host' => URI.parse(@s3_direct_post.url).host }) do |form| %>
+  <div class="conten-card">
     <div class="information-section">
       <div class="block-information">
-        
+
         <div id="drop_zone" class="add-avatar">
           <div class="icon-add-avatar">
-            <%=form.file_field :avatar, id: :client_avatar, style: 'display: none'%>
+            <input id="client_avatar" type="file" style="display: none;">
+            <%=form.hidden_field :avatar, id: 'client_avatar_field'%>
           </div>
         </div>
         <%= form.text_field :last_name, id: :client_last_name, placeholder: "Фамилия*", class: "input-panel" %>
         <%= form.text_field :first_name, id: :client_first_name, placeholder: "Имя*", class: "input-panel" %>
         <%= form.text_field :patronymic, id: :client_patronymic, placeholder: "Отчество", class: "input-panel" %>
       </div>
-      
+
       <div class="block-information">
         <%= form.date_field :birthday, id: :client_birthday, placeholder: "Дата рождения*", class: "input-panel" %>
         <%= form.select :sex, options_for_sexes, {selected: client.sex, placeholder: "Пол"}, {class: "input-panel"} %>
@@ -21,7 +23,7 @@
       </div>
     </div>
     <%= form.submit class: "btn icon-confirm" %>
-    
+
   </div>
 
 
@@ -42,12 +44,31 @@
 <script>
   if (!FileList.prototype.slice)  // firefox
     FileList.prototype.slice = Array.prototype.slice
-  $("#client_avatar").withDropZone('#drop_zone', {
+  var form = document.getElementById('main-form')
+  var data = JSON.parse(form.dataset.formData)
+  var clientAvatarField = document.getElementById('client_avatar_field')
+  var clientAvatar = $("#client_avatar")
+  var result = clientAvatar.withDropZone('#drop_zone', {
+    url: form.dataset.url,
+    autoUpload: true,
+    formData: (index, blob, filename)=> {
+      formData = new FormData
+      for (var i in data)
+          formData.set(i, data[i])
+      formData.set('file', blob, filename)
+      return formData
+    },
     action: {
       name: "image",
       params: {
         preview: true,
       }
+    },
+    done(filenames) {
+      var fn = filenames.map(filename => eval('`' + data.key + '`'))[0];
+      clientAvatarField.value = fn
+      console.log(fn)
     }
   })
+  clientAvatar.on('change', () => clientAvatarField.value = '')
 </script>
