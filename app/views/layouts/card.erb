@@ -32,7 +32,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
     <script src="https://cdn.rawgit.com/kofon95/smartuploader/608b195f/jquery.smartuploader.min.js"></script>
   </head>
 
-  <body data-params="<%=params.to_json%>">
+  <body data-params="<%=params.to_json%>" class="page top-panel">
     
 
     <div class="active-company">
@@ -49,7 +49,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
     <%=render 'shared/authorization_fields'%>
 
 
-    <!-- 
+
     <div class="test">
       <div class="open-objects">
       <div style="display: flex;">
@@ -92,7 +92,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
       </div>
       </div>
     </div>
- -->
+
     <!-- <div class="content"> -->
       <div class="card">
         <%=yield%>

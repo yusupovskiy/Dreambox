@@ -11,9 +11,9 @@
 
       <div class="btn-card btn-show-list"></div>
       <div class="panel-show">
+        <%= link_to 'Вернуться к списку', company_clients_path %>
         <a href="<%= edit_company_client_path(@current_company, @client) %>">Редактировать</a>
         <div>Отправить в архив</div>
-        <%= link_to 'Вернуться к списку', company_clients_path %>
       </div>
 
 
