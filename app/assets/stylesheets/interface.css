@@ -323,7 +323,7 @@ input.card-search {
 .top-panel .footer {
   top: -50%;
 }
-.top-panel .active-company {
+.top-panel .active-company, .top-panel .message {
     opacity: 0;
 }
 .opacity-panel .test {
