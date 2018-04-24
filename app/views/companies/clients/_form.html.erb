@@ -7,7 +7,7 @@
         <div id="drop_zone" class="add-avatar">
           <div class="icon-add-avatar">
             <input id="client_avatar" type="file" style="display: none;">
-            <%=form.hidden_field :avatar, id: 'client_avatar_field'%>
+            <%=form.hidden_field :avatar, id: 'client_avatar_field', value: client.avatar%>
           </div>
         </div>
         <%= form.text_field :last_name, id: :client_last_name, placeholder: "Фамилия*", class: "input-panel" %>

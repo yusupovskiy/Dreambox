@@ -11,7 +11,7 @@ a {
     height: 250px;
     background: #eceff0;
     border-radius: 7px 7px 0 0;
-    z-index: 2;
+    z-index: 5;
     overflow: hidden;
     position: relative;
     right: 0;
@@ -203,7 +203,7 @@ img.object-avatar {
     transition: .3s;
     left: 0;
     top: 0;
-    z-index: 1;
+    z-index: 5;
 }
 .footer {
     position: fixed;
