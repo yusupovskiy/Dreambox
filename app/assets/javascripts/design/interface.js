@@ -1,4 +1,7 @@
 document.addEventListener('turbolinks:load', function() {
+
+  $(".open-objects>div").niceScroll({cursorcolor:"transparent", cursorborder:"transparent"});
+
   totalHeight();
   $(window).resize(totalHeight);
   
