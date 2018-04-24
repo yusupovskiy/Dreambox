@@ -13,7 +13,7 @@ document.addEventListener('turbolinks:load', function() {
     var desiredHeight = windowHeight - constHeaderOpenObjects;
     var topMargin = windowHeight / 1.55;
     $('.katalog').css({'height':''+desiredHeight+'px', 'margin-top':''+topMargin+'px'});
-    $('.open-objects').css({'left':parseFloat($('.katalog').css('margin-left'))});
+    $('.open-objects>div>div').css({'margin-left':parseFloat($('.katalog').css('margin-left'))});
   }
 
   // При нажатии за пределами блока

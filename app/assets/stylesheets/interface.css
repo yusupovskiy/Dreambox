@@ -163,13 +163,14 @@ img.object-avatar {
 .open-objects {
     position: absolute;
     top: 0;
-    left: 283px;
+    left: 0;
     bottom: 0;
     right: 0;
     margin: auto;
     display: table;
     z-index: 2;
     user-select: none;
+    width: 100%;
 }
 .open-object {
     background-color: white;
