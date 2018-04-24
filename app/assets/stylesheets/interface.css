@@ -358,6 +358,9 @@ input.card-search {
     .message {
         top: 70px;
     }
+    .open-objects>div>div {
+        margin-left: 20px!important;
+    }
 }
 @media (max-width: 350px) {
     .card {
