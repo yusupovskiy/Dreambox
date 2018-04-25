@@ -1,0 +1,47 @@
+<%= form_with(url: [@current_company, record], model: record, local: true) do |form| %>
+  <% if record.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(record.errors.count, "error") %> prohibited this record from being saved:</h2>
+
+      <ul>
+      <% record.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :abon_period %>
+    <%= form.number_field :abon_period %>
+  </div>
+
+  <div class="field">
+    <%= form.label :total_clients %>
+    <%= form.number_field :total_clients %>
+  </div>
+
+  <div class="field">
+    <%= form.label :total_visits %>
+    <%= form.number_field :total_visits %>
+  </div>
+
+  <div class="field">
+    <%= form.label :affiliate_id %>
+    <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]} %>
+  </div>
+
+  <div class="field">
+    <%= form.label :finished_at %>
+    <%= form.date_select :finished_at %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

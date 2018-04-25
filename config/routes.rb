@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   resources :companies do
     resources :affiliates, module: :companies
+    resources :records, module: :companies
     post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
     resources :clients, module: :companies
     resources :services, module: :companies

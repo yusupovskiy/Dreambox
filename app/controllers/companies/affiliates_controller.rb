@@ -7,6 +7,7 @@ class Companies::AffiliatesController < ApplicationController
   # GET /affiliates.json
   def index
     @affiliates = Affiliate.where(company: params[:company_id])
+    @total_affiliates = @affiliates.count
   end
 
   # GET /affiliates/1

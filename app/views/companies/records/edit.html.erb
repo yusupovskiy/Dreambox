@@ -1,0 +1,6 @@
+<h1>Editing Record</h1>
+
+<%= render 'form', record: @record %>
+
+<%= link_to 'Show', company_record_path(params[:company_id], @record) %> |
+<%= link_to 'Back', company_records_path %>

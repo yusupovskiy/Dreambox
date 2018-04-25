@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @record.name %>
+</p>
+
+<p>
+  <strong>Abon period:</strong>
+  <%= @record.abon_period %>
+</p>
+
+<p>
+  <strong>Total clients:</strong>
+  <%= @record.total_clients %>
+</p>
+
+<p>
+  <strong>Total visits:</strong>
+  <%= @record.total_visits %>
+</p>
+
+<p>
+  <strong>Finished at:</strong>
+  <%= @record.finished_at %>
+</p>
+
+<%= link_to 'Edit', edit_company_record_path(@record) %> |
+<%= link_to 'Back', company_records_path %>
