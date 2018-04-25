@@ -1,6 +1,6 @@
 class Companies::ClientsController < ApplicationController
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
-  before_action :set_client, only: [:show, :edit, :update, :destroy]
+  before_action :set_client, only: [:show, :edit, :update, :destroy, :archive]
   before_action :ensure_user_has_company
   before_action :set_s3_direct_post, only: [:new, :edit]
   layout 'card'
@@ -29,7 +29,8 @@ class Companies::ClientsController < ApplicationController
   # POST /clients
   # POST /clients.json
   def create
-    @client = Client.new(client_params)
+    prms = client_params
+    @client = Client.new(prms)
     if email = params[:email]
       # TODO: create account (using transaction)
     end
@@ -69,6 +70,15 @@ class Companies::ClientsController < ApplicationController
     end
   end
 
+  def archive
+    @client.archive = params[:archive_status] == '1'
+    @client.save!
+    respond_to do |format|
+      format.html { redirect_to company_client_path(params[:company_id], params[:id]) }
+      format.json { render :show, status: :ok, location: @client }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client
@@ -77,9 +87,11 @@ class Companies::ClientsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def client_params
-      params.require(:client)
+      res = params.require(:client)
           .permit(:first_name, :last_name, :patronymic, :birthday, :phone_number, :sex, :avatar)
           .merge(company_id: params[:company_id])
+      res[:avatar] = nil if params[:client][:avatar].blank?
+      res
     end
     def set_s3_direct_post
       args = {

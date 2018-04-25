@@ -1,6 +1,8 @@
 <div class="title-panel avatar">
     <div class="archive img-card">
-      <div title="Клиенты в архиве" class="people-archive"></div>
+      <%if @client.archive%>
+        <div title="Клиенты в архиве" class="people-archive"></div>
+      <%end%>
       <%=image_tag s3_image(@client.avatar)%>
     </div>
     <div class="btns-card">
@@ -11,9 +13,14 @@
 
       <div class="btn-card btn-show-list"></div>
       <div class="panel-show">
-        <a href="<%= edit_company_client_path(@current_company, @client) %>">Редактировать</a>
-        <div>Отправить в архив</div>
         <%= link_to 'Вернуться к списку', company_clients_path %>
+        <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
+        <%if @client.archive%>
+          <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>
+        <%else%>
+          <%= link_to 'Отправить в архив', company_clients_archive_path(params[:company_id], params[:id], 1), method: :post%>
+        <%end%>
+        <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %>
       </div>
 
 
@@ -27,7 +34,7 @@
     <div class="menu-with-options">
       <div class="option active">Основное</div>
       <div class="option">ОКАЗАНИЕ УСЛУГ <span class="amount debt">- 12 000 ₽</span></div>
-      <div class="option">Все финансовые опирации <span class="amount">10 000 ₽</span></div>
+      <div class="option">Все финансовые операции <span class="amount">10 000 ₽</span></div>
     </div>
     
     <div class="cont-category-book">

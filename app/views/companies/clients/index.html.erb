@@ -8,6 +8,9 @@
 
       <div class="btn-card btn-show-list"></div>
       <div class="panel-show">
+        <a href="#">Майл рассылка</a>
+        <a href="#">СМС рассылка</a>
+        <a href="#">Вотсап рассылка</a>
         <a href="#">Импортировать данные</a>
         <a href="#">Экспортировать данные</a>
       </div>
@@ -31,7 +34,8 @@
   <div class="cont-category-book">
     <% @clients.each do |client| %>
       <%= link_to [client.company, client], class: "item-card" do %>
-        <img src="/resources/no-image-available.png" class="avatar-list">
+        <%=image_tag s3_image(client.avatar), class: "avatar-list" %>
+        <!-- <img src="/resources/no-image-available.png" class="avatar-list"> -->
         <div class="left-content">
           <div class="name-content"><%= client.last_name %>
           <%= client.first_name %></div>
