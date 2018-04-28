@@ -208,7 +208,7 @@ img.object-avatar {
 }
 .footer {
     position: fixed;
-    z-index: 1;
+    z-index: 15;
     color: white;
     font-size: 12px;
     width: 100%;
@@ -261,7 +261,7 @@ a.btn {
     display: table;
     width: 11px;
     height: 11px;
-    margin-bottom: 20px!important;
+    margin-bottom: 10px!important;
 }
 .avatar-list {
     width: 30px;

@@ -1,29 +1,68 @@
-<p id="notice"><%= notice %></p>
+<div class="title-panel">
+  <div class="btns-card">
+    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+    
+    <div class="btn-card top-scroll"></div>
 
-<p>
-  <strong>Name:</strong>
-  <%= @record.name %>
-</p>
+    <div class="btn-card btn-show-list"></div>
+    <div class="panel-show">
+      <%= link_to 'Вернуться к списку', company_records_path %>
+      <%= link_to 'Редактировать', edit_company_record_path(@record) %>
+    </div>
+  </div>
+  <div class="title-card"><%= @record.name %></div>
+  <div class="role-card">Групповая запись</div>
+</div>
 
-<p>
-  <strong>Abon period:</strong>
-  <%= @record.abon_period %>
-</p>
+<div class="conten-card tabs">
+  <div class="cont-category-book">
+    <div class="tab-category information-section">
 
-<p>
-  <strong>Total clients:</strong>
-  <%= @record.total_clients %>
-</p>
+      <div class="block-information">
+        <h3>Записанные</h3>      
+        <div class="responsible-entry">
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="rate-responsible">Пропустил: 0</div></div>
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="rate-responsible">Пропустил: 2</div></div>
+        </div>
+        <a class="btn icon-plus" href="#"></a>
+      </div>
 
-<p>
-  <strong>Total visits:</strong>
-  <%= @record.total_visits %>
-</p>
+      <div class="block-information">
+        <h3>Ответственные</h3>      
+        <div class="responsible-entry">
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="rate-responsible">ставка 35%</div></div>
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="rate-responsible">15 000 ₽ в месяц</div></div>
+        </div>
+      </div>
+      <div class="block-information">
+        <h3>Время посещений</h3>
+        <div class="item-information"><span class="title-input">В понедельник</span><span class="text-input">с 12:00 по 15:00</span></div>
+      </div>
 
-<p>
-  <strong>Finished at:</strong>
-  <%= @record.finished_at %>
-</p>
+      <div class="block-information">
+        <h3>Оказываемые услуги</h3>
+        <div class="item-information"><span class="title-input">Легкий английский</span><span class="text-input">5000 ₽</span></div>
+      </div>
 
-<%= link_to 'Edit', edit_company_record_path(@record) %> |
-<%= link_to 'Back', company_records_path %>
+      <div class="block-information">
+        <h3>Настройки группы</h3>
+
+        <div class="item-information"><span class="title-input">Тип записи</span><span class="text-input">Групповая запись</span></div>
+        <div class="item-information"><span class="title-input">Вид записи</span><span class="text-input">Автоматический абонемент</span></div>
+        <div class="item-information"><span class="title-input">Лимит в группе</span><span class="text-input"><%= @record.total_clients %></span></div>
+        <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input">20.12.2017</span></div>
+        <div class="item-information"><span class="title-input">Дата завершения</span><span class="text-input"><%= @record.finished_at %></span></div>
+        <div class="item-information"><span class="title-input">Период обучения</span><span class="text-input">2 года</span></div>
+        <div class="item-information"><span class="title-input">Филиал</span><span class="text-input">Главный филиал</span></div>
+      </div>
+      <div class="block-information">
+        <h3>Настройки абонементов</h3>
+        <div class="item-information"><span class="title-input">Период абонемента</span><span class="text-input"><%= @record.abon_period %> дней</span></div>
+        <div class="item-information"><span class="title-input">Посещений за абонемент</span><span class="text-input"><%= @record.total_visits %></span></div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,4 +1,60 @@
 <%= form_with(url: [@current_company, record], model: record, local: true) do |form| %>
+  <div class="conten-card">
+    <div class="information-section">
+      <div class="block-information">
+        <%= form.text_field :name, placeholder: "Название*", class: "input-panel" %>
+      </div>
+      <div class="block-information">
+        <h3>Настройка группы</h3>
+
+        <select id="" name="" placeholder="Тип записи" class="input-panel">
+          <option value="man">Групповая запись</option>
+          <option value="woman">Индивидуальная запись</option>
+        </select>
+        <select id="" name="" placeholder="Вид записи" class="input-panel">
+          <option value="man" title="Создается одно посещение, которое необходимо оплатить.">Разовое посещение</option>
+          <option value="woman" title="Когда клиент ходит с периодичностью, но предпочитает оплачивать конкретное посещение.">Многоразовое посещение</option>
+          <option value="man" title="Удобно, когда не известно, будут ли клиенты покупать следующие абонементы.">Разовый абонемент</option>
+          <option value="woman" title="Удобно, когда клиенты посещают курс, рассчитанный на длительный срок. Система сама создает абонементы, когда придет время, это освобождает от большой работы.">Автоматический абонемент</option>
+          <option value="woman" title="Указывается цена одного посещения, и сколько клиент посетил за период абонемента, столько он и платит.">Динамический абонемент</option>
+        </select>
+
+        <%= form.number_field :total_clients, placeholder: "Лимит в группе", class: "input-panel" %>
+
+        <input type="text" class="input-panel" placeholder="Начало обучения*" />
+        <input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />
+
+        <%= form.date_field :finished_at, placeholder: "Дата завершения*", class: "input-panel" %>
+        <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]}, placeholder: "Филиал*", class: "input-panel" %>
+      </div>
+      <div class="block-information">
+        <h3>Настройка абонементов</h3>
+        <%= form.number_field :abon_period, placeholder: "Период абонемента (в днях)*", class: "input-panel" %>
+        <%= form.number_field :total_visits, placeholder: "Посещений за абонемент", class: "input-panel" %>
+      </div>
+
+      <div class="block-information">
+        <h3>Оказываемые услуги</h3>
+        <div class="item-information"><span class="title-input">Легкий английский</span><div class="still-card"></div><span class="text-input">5000 ₽</span></div>
+        <div class="add-discount">+ Добавить еще</div>
+      </div>
+      <div class="block-information">
+        <h3>Ответственные</h3>      
+        <div class="responsible-entry">
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="still-card"></div><div class="rate-responsible">ставка 35%</div></div>
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="still-card"></div><div class="rate-responsible">15 000 ₽ в месяц</div></div>
+        </div>
+        <div class="add-discount">+ Добавить еще</div>
+      </div>
+      <div class="block-information">
+        <h3>Время посещений</h3>
+        <div class="item-information"><span class="title-input">В понедельник</span><div class="still-card"></div><span class="text-input">с 12:00 по 15:00</span></div>
+        <div class="add-discount">+ Добавить еще</div>
+      </div>
+
+    </div>
+    <%= form.submit class: "btn icon-confirm" %>
+  </div>
   <% if record.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(record.errors.count, "error") %> prohibited this record from being saved:</h2>
@@ -11,37 +67,4 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :abon_period %>
-    <%= form.number_field :abon_period %>
-  </div>
-
-  <div class="field">
-    <%= form.label :total_clients %>
-    <%= form.number_field :total_clients %>
-  </div>
-
-  <div class="field">
-    <%= form.label :total_visits %>
-    <%= form.number_field :total_visits %>
-  </div>
-
-  <div class="field">
-    <%= form.label :affiliate_id %>
-    <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]} %>
-  </div>
-
-  <div class="field">
-    <%= form.label :finished_at %>
-    <%= form.date_select :finished_at %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
 <% end %>

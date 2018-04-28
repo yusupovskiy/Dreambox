@@ -3,23 +3,18 @@
   <a href="/" title="Закрыть" class="btn-card icon-closed-card"></a>
   <a href="/" title="На главную" class="btn-card icon-home"></a>
   <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div>
-
-      <div class="btn-card top-scroll"></div>
-
-      <div class="btn-card btn-show-list"></div>
-      <div class="panel-show">
-        <a href="#">Майл рассылка</a>
-        <a href="#">СМС рассылка</a>
-        <a href="#">Вотсап рассылка</a>
-        <a href="#">Импортировать данные</a>
-        <a href="#">Экспортировать данные</a>
-      </div>
-
+  <div class="btn-card top-scroll"></div>
+  <div class="btn-card btn-show-list"></div>
+  <div class="panel-show">
+    <a href="#">Майл рассылка</a>
+    <a href="#">СМС рассылка</a>
+    <a href="#">Вотсап рассылка</a>
+    <a href="#">Импортировать данные</a>
+    <a href="#">Экспортировать данные</a>
+  </div>
 </div>
 
-<div class="panel-sorting">
-  Сортировка списка
-</div>
+<div class="panel-sorting">Сортировка списка</div>
 
 <input class="card-search" type="text" placeholder="Поиск клиента...">
 
@@ -35,7 +30,6 @@
     <% @clients.each do |client| %>
       <%= link_to [client.company, client], class: "item-card" do %>
         <%=image_tag s3_image(client.avatar), class: "avatar-list" %>
-        <!-- <img src="/resources/no-image-available.png" class="avatar-list"> -->
         <div class="left-content">
           <div class="name-content"><%= client.last_name %>
           <%= client.first_name %></div>
@@ -44,8 +38,6 @@
         <div class="right-content">
           <span class="amount debt">- 6 000 ₽</span>
         </div>
-<!--    <%= link_to 'Edit', edit_company_client_path(client.company, client) %>
-        <%= link_to 'Destroy', [client.company, client], method: :delete, data: { confirm: 'Are you sure?' } %> -->
       <%end%>
     <% end %>
   </div>

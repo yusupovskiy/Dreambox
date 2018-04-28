@@ -9,27 +9,27 @@
     </div>
     <div class="cont-category-book">
       <div class="tab-category information-section">
-        <div class="block-information">
+        <div class="block-information authorization">
           <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Электронная почта", class: "input-panel" %>
           <%= f.password_field :password, autocomplete: "off", placeholder: "Пароль", class: "input-panel" %>
           
           <%= f.submit class: "btn icon-authorization" %>
 
+        </div>
+        <% if devise_mapping.rememberable? -%>
+          <div class="field">
+            <%= f.check_box :remember_me %>
+            <%= f.label :remember_me, t(:remember_me) %>
           </div>
-            <% if devise_mapping.rememberable? -%>
-              <div class="field">
-                <%= f.check_box :remember_me %>
-                <%= f.label :remember_me, t(:remember_me) %>
-              </div>
-            <% end -%>
+        <% end -%>
 
-          <%= render "users/shared/links" %>
+        <%= render "users/shared/links" %>
 
-          <%if flash.present?%>
-            <div style="color: red;">
-              <%=flash[:alert]%>
-            </div>
-          <%end%>
+        <%if flash.present?%>
+          <div style="color: red;">
+            <%=flash[:alert]%>
+          </div>
+        <%end%>
       </div>
     </div>
   </div>

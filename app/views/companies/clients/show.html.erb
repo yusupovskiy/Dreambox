@@ -1,145 +1,140 @@
 <div class="title-panel avatar">
-    <div class="archive img-card">
-      <%if @client.archive%>
-        <div title="Клиенты в архиве" class="people-archive"></div>
-      <%end%>
-      <%=image_tag s3_image(@client.avatar)%>
-    </div>
-    <div class="btns-card">
-      <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
-      <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
-      
-      <div class="btn-card top-scroll"></div>
-
-      <div class="btn-card btn-show-list"></div>
-      <div class="panel-show">
-        <%= link_to 'Вернуться к списку', company_clients_path %>
-        <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
-        <%if @client.archive%>
-          <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>
-        <%else%>
-          <%= link_to 'Отправить в архив', company_clients_archive_path(params[:company_id], params[:id], 1), method: :post%>
-        <%end%>
-        <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %>
-      </div>
-
-
-    </div>
-    <div class="title-card"><%= @client.last_name %> <%= @client.first_name %><br /><%= @client.patronymic %></div>
-    <div class="role-card">Клиенты</div>
+  <div class="archive img-card">
+    <%if @client.archive%>
+      <div title="Клиенты в архиве" class="people-archive"></div>
+    <%end%>
+    <%=image_tag s3_image(@client.avatar)%>
   </div>
-  
-  <div class="conten-card tabs">
-  
-    <div class="menu-with-options">
-      <div class="option active">Основное</div>
-      <div class="option">ОКАЗАНИЕ УСЛУГ <span class="amount debt">- 12 000 ₽</span></div>
-      <div class="option">Все финансовые операции <span class="amount">10 000 ₽</span></div>
-    </div>
+  <div class="btns-card">
+    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
     
-    <div class="cont-category-book">
-      <div class="tab-category information-section">
-        <div class="block-information">
-          <div class="item-information"><span class="title-input">Возвраст</span><span class="text-input"><%= @client.birthday %></span></div>
-          <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= @client.birthday %></span></div>
-          <div class="item-information"><span class="title-input">Пол</span><span class="text-input"><%= t("sex.#{@client.sex}") %></span></div>
-          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
-        </div>
-        <div class="block-information compact active-compact">
-          <h3>Информация о матери</h3>
-          <div class="btn-compact"></div>
-          <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиева Пятимат Алиевна</span></div>
-          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
-          <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
-        </div>
-        <div class="block-information compact">
-          <h3>Информация об отце</h3>
-          <div class="btn-compact"></div>
-          <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиев Магомед Исаевич</span></div>
-          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
-          <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
-        </div>
-      </div>
-      <div class="tab-category information-section">
-        <div class="block-information entry">
-          <a href="#" class="title-entry">Группа Английский по будням</a>
-          <div class="service-entry">
-            <div>Английский</div>
-          </div>
-          <div class="responsible-entry">
-            <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Юсупов Расул</div></div> <div class="rate-responsible">ставка 35%</div></div>
-            <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Юсупов Расул</div></div> <div class="rate-responsible">15 000 ₽ в месяц</div></div>
-          </div>
-          <div class="discount-entry">
-            <div class="discount">Скидок нет</div> <div class="add-discount">+ Добавить скидку</div>
-          </div>
-          <div class="unsubscribe">отписать от группы</div>
-          <!--<div class="subscribe">записать в группы</div>-->
-          
-          <div class="info-about-subsc">Не оплачено <span class="amount debt">3 000 ₽ из 8 000 ₽</span></div>
-          <div class="subscriptions">
-            <a href="#" class="subscription">
-              <div class="data-subscriptions"><div class="add-discount">+ Продать абонемент</div></div>
-            </a>
-            <a href="#" class="subscription">
-              <div class="data-subscriptions">от 21 июль 2018 до 21 август 2018</div>
-              <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
-              <div class="visits-subs">посещений уже нет</div>
-            </a>
-            <a href="#" class="subscription">
-              <div class="data-subscriptions">от 21 июнь 2018 до 21 июль 2018</div>
-              <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
-              <div class="visits-subs">посещений уже нет</div>
-            </a>
-            <a href="#" class="subscription">
-              <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
-              <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
-              <div class="visits-subs">посещений уже нет</div>
-            </a>
-            <a href="#" class="subscription">
-              <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
-              <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
-              <div class="visits-subs">посещений уже нет</div>
-            </a>
-            <div class="more-subscriptions">Загрузить еще пять</div>
-          </div>
-        </div>
-        
-      </div>
+    <div class="btn-card top-scroll"></div>
 
-
-      <div class="tab-category information-section">
-        <div class="block-information">
-          <div class="item-information">
-            <span class="title-input">26 авгеста 2018</span>
-            <span class="text-input">1 000 ₽</span>
-            <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
-          </div>
-        </div>
-        <div class="block-information">
-          <div class="item-information">
-            <span class="title-input">26 авгеста 2018</span>
-            <span class="text-input">1 000 ₽</span>
-            <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
-          </div>
-        </div>
-        <div class="block-information">
-          <div class="item-information">
-            <span class="title-input">26 авгеста 2018</span>
-            <span class="text-input">1 000 ₽</span>
-            <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
-          </div>
-        </div>
-        <div class="block-information">
-          <div class="item-information">
-            <span class="title-input">26 авгеста 2018</span>
-            <span class="text-input">1 000 ₽</span>
-            <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
-          </div>
-        </div>
-      </div>
-
+    <div class="btn-card btn-show-list"></div>
+    <div class="panel-show">
+      <%= link_to 'Вернуться к списку', company_clients_path %>
+      <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
+      <%if @client.archive%>
+        <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>
+      <%else%>
+        <%= link_to 'Отправить в архив', company_clients_archive_path(params[:company_id], params[:id], 1), method: :post%>
+      <%end%>
+      <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %>
     </div>
   </div>
-<!--
-<p id="notice"><%= notice %></p> -->
+  <div class="title-card"><%= @client.last_name %> <%= @client.first_name %><br /><%= @client.patronymic %></div>
+  <div class="role-card">Клиенты</div>
+</div>
+
+<div class="conten-card tabs">
+  <div class="menu-with-options">
+    <div class="option active">Основное</div>
+    <div class="option">ОКАЗАНИЕ УСЛУГ <span class="amount debt">- 12 000 ₽</span></div>
+    <div class="option">Все финансовые операции <span class="amount">10 000 ₽</span></div>
+  </div>
+  
+  <div class="cont-category-book">
+    <div class="tab-category information-section">
+      <div class="block-information">
+        <div class="item-information"><span class="title-input">Возвраст</span><span class="text-input"><%= @client.birthday %></span></div>
+        <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= @client.birthday %></span></div>
+        <div class="item-information"><span class="title-input">Пол</span><span class="text-input"><%= t("sex.#{@client.sex}") %></span></div>
+        <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+      </div>
+      <div class="block-information compact active-compact">
+        <h3>Информация о матери</h3>
+        <div class="btn-compact"></div>
+        <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиева Пятимат Алиевна</span></div>
+        <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+        <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+      </div>
+      <div class="block-information compact">
+        <h3>Информация об отце</h3>
+        <div class="btn-compact"></div>
+        <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиев Магомед Исаевич</span></div>
+        <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+        <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+      </div>
+    </div>
+    <div class="tab-category information-section">
+      <div class="block-information entry">
+        <a href="#" class="title-entry">Группа Английский по будням</a>
+        <div class="service-entry">
+          <div>Английский</div>
+        </div>
+        <div class="responsible-entry">
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Юсупов Расул</div></div> <div class="rate-responsible">ставка 35%</div></div>
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Юсупов Расул</div></div> <div class="rate-responsible">15 000 ₽ в месяц</div></div>
+        </div>
+        <div class="discount-entry">
+          <div class="discount">Скидок нет</div> <div class="add-discount">+ Добавить скидку</div>
+        </div>
+        <div class="unsubscribe">отписать от группы</div>
+        <!--<div class="subscribe">записать в группы</div>-->
+        
+        <div class="info-about-subsc">Не оплачено <span class="amount debt">3 000 ₽ из 8 000 ₽</span></div>
+        <div class="subscriptions">
+          <a href="#" class="subscription">
+            <div class="data-subscriptions"><div class="add-discount">+ Продать абонемент</div></div>
+          </a>
+          <a href="#" class="subscription">
+            <div class="data-subscriptions">от 21 июль 2018 до 21 август 2018</div>
+            <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
+            <div class="visits-subs">посещений уже нет</div>
+          </a>
+          <a href="#" class="subscription">
+            <div class="data-subscriptions">от 21 июнь 2018 до 21 июль 2018</div>
+            <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
+            <div class="visits-subs">посещений уже нет</div>
+          </a>
+          <a href="#" class="subscription">
+            <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
+            <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
+            <div class="visits-subs">посещений уже нет</div>
+          </a>
+          <a href="#" class="subscription">
+            <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
+            <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
+            <div class="visits-subs">посещений уже нет</div>
+          </a>
+          <div class="more-subscriptions">Загрузить еще пять</div>
+        </div>
+      </div>
+      
+    </div>
+
+
+    <div class="tab-category information-section">
+      <div class="block-information">
+        <div class="item-information">
+          <span class="title-input">26 авгеста 2018</span>
+          <span class="text-input">1 000 ₽</span>
+          <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
+        </div>
+      </div>
+      <div class="block-information">
+        <div class="item-information">
+          <span class="title-input">26 авгеста 2018</span>
+          <span class="text-input">1 000 ₽</span>
+          <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
+        </div>
+      </div>
+      <div class="block-information">
+        <div class="item-information">
+          <span class="title-input">26 авгеста 2018</span>
+          <span class="text-input">1 000 ₽</span>
+          <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
+        </div>
+      </div>
+      <div class="block-information">
+        <div class="item-information">
+          <span class="title-input">26 авгеста 2018</span>
+          <span class="text-input">1 000 ₽</span>
+          <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

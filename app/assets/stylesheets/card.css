@@ -103,6 +103,7 @@ span.debt {
 }
 .information-section {
     margin: 0 30px;
+    display: grid;
 }
 .block-information {
     background-color: white;
@@ -206,7 +207,7 @@ span.debt {
     margin: 0 auto 10px;
     display: table;
 }
-.block-information>.btn {
+.authorization>.btn {
     top: 0;
     right: 18px;
     bottom: 0;
@@ -218,7 +219,7 @@ span.debt {
 .btn:hover, .btn:focus {
     opacity: 1;
 }
-.block-information>.btn:active {
+.authorization>.btn:active {
     -webkit-transform: translatex(1px);
     -ms-transform: translatex(1px);
     transform: translatex(1px);
@@ -533,4 +534,29 @@ a {
 }
 .add-avatar:hover canvas {
     opacity: .8;
+}
+.add-discount {
+    font-size: 13px;
+    user-select: none;
+}
+.block-information .add-discount {
+    margin: 5px 0 9px 0;
+}
+.block-information .responsible-entry {
+    margin: 0 0 9px 0;
+}
+.still-card {
+    background-image: url(/images/still-dark.png);
+    float: right;
+    width: 12px;
+    height: 12px;
+    padding: 10px 0 10px 10px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-origin: content-box;
+    opacity: .5;
+}
+.item-responsible>.still-card {
+    padding: 2px 0 2px 5px;
 }
