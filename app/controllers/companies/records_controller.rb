@@ -5,7 +5,7 @@ class Companies::RecordsController < ApplicationController
   # GET /records
   # GET /records.json
   def index
-    @records = Record.all
+    @records = Record.where(company_id: params[:company_id])
   end
 
   # GET /records/1

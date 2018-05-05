@@ -5,7 +5,7 @@ class Companies::ServicesController < ApplicationController
   # GET /companies/services
   # GET /companies/services.json
   def index
-    @services = Service.all
+    @services = Service.where(company_id: params[:company_id])
     @total_services = @services.count
   end
 
@@ -66,7 +66,7 @@ class Companies::ServicesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_companies_service
-      @service = Service.find(params[:id])
+      @service = Service.where(company_id: params[:company_id]).find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
