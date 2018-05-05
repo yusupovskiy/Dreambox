@@ -1,5 +1,5 @@
 module ClientsHelper
   def options_for_sexes
-    Client.sexes.keys.map{|s| [t(s), s] }
+    options_for(Client.sexes, 'sex')
   end
 end

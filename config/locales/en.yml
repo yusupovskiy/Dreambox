@@ -41,6 +41,15 @@ en:
     male: Male
     female: Female
     unknown: Unknown
+  record_type:
+    grouping: Grouping record
+    personal: Personal record
+  visit_type:
+    one_time_visit: One-time visit
+    reusable_visit: Reusable visit
+    one_time_abon: One-time abonnement
+    automatic_abon: Automatic abonnement
+    dynamic_abon: Dynamic abonnement
   client:
     created: Client was succesfully created
     updated: Client was succesfully saved

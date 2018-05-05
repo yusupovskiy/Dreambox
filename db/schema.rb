@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_25_133527) do
+ActiveRecord::Schema.define(version: 2018_05_05_122857) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,7 +56,19 @@ ActiveRecord::Schema.define(version: 2018_04_25_133527) do
     t.bigint "affiliate_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "record_type", null: false
+    t.integer "visit_type", null: false
     t.index ["affiliate_id"], name: "index_records_on_affiliate_id"
+  end
+
+  create_table "records_services", primary_key: ["record_id", "service_id"], force: :cascade do |t|
+    t.bigint "record_id", null: false
+    t.bigint "service_id", null: false
+    t.float "money", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_id"], name: "index_records_services_on_record_id"
+    t.index ["service_id"], name: "index_records_services_on_service_id"
   end
 
   create_table "services", force: :cascade do |t|
@@ -101,5 +113,7 @@ ActiveRecord::Schema.define(version: 2018_04_25_133527) do
   add_foreign_key "clients", "users"
   add_foreign_key "companies", "users"
   add_foreign_key "records", "affiliates"
+  add_foreign_key "records_services", "records"
+  add_foreign_key "records_services", "services"
   add_foreign_key "services", "companies"
 end

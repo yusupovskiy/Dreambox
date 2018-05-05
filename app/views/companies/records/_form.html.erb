@@ -7,24 +7,18 @@
       <div class="block-information">
         <h3>Настройка группы</h3>
 
-        <select id="" name="" placeholder="Тип записи" class="input-panel">
-          <option value="man">Групповая запись</option>
-          <option value="woman">Индивидуальная запись</option>
-        </select>
-        <select id="" name="" placeholder="Вид записи" class="input-panel">
-          <option value="man" title="Создается одно посещение, которое необходимо оплатить.">Разовое посещение</option>
-          <option value="woman" title="Когда клиент ходит с периодичностью, но предпочитает оплачивать конкретное посещение.">Многоразовое посещение</option>
-          <option value="man" title="Удобно, когда не известно, будут ли клиенты покупать следующие абонементы.">Разовый абонемент</option>
-          <option value="woman" title="Удобно, когда клиенты посещают курс, рассчитанный на длительный срок. Система сама создает абонементы, когда придет время, это освобождает от большой работы.">Автоматический абонемент</option>
-          <option value="woman" title="Указывается цена одного посещения, и сколько клиент посетил за период абонемента, столько он и платит.">Динамический абонемент</option>
-        </select>
+        <%= form.select :record_type, options_for(Record.record_types, 'record_type'), {selected: record.record_type}, {class: "input-panel"}%>
+
+        <%= form.select :visit_type, options_for(Record.visit_types, 'visit_type'), {selected: record.visit_type}, {class: "input-panel"}%>
 
         <%= form.number_field :total_clients, placeholder: "Лимит в группе", class: "input-panel" %>
 
-        <input type="text" class="input-panel" placeholder="Начало обучения*" />
-        <input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />
+        <label>Дата начала*</label>
+        <%= form.date_field :created_at, placeholder: "Дата начала*", class: "input-panel"%>
+        <label>Дата завершения*</label>
+        <%= form.date_field :finished_at, placeholder: "Дата завершения*", class: "input-panel"%>
+        <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
 
-        <%= form.date_field :finished_at, placeholder: "Дата завершения*", class: "input-panel" %>
         <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]}, placeholder: "Филиал*", class: "input-panel" %>
       </div>
       <div class="block-information">
@@ -35,9 +29,40 @@
 
       <div class="block-information">
         <h3>Оказываемые услуги</h3>
-        <div class="item-information"><span class="title-input">Легкий английский</span><div class="still-card"></div><span class="text-input">5000 ₽</span></div>
+        <div id="item-informations"></div>
         <div class="add-discount">+ Добавить еще</div>
+        <div>
+          <%= form.select :attached_service, @services.map{|s| [s.name, s.id]}, {}, {id: 'attached_service'} %>
+          <input id="attached_service_money" type="number" placeholder="Цена (в рублях)" style="width: 100px">
+          <button id="attach-service" type="button">OK</button>
+        </div>
       </div>
+      <script>
+var itemInformations = document.getElementById("item-informations")
+var attachedService = document.getElementById("attached_service")
+var moneyInput = document.getElementById("attached_service_money")
+document.getElementById("attach-service").addEventListener("click", () => {
+    let selected = attachedService.selectedOptions[0];
+    let [id, name] = [selected.value, selected.textContent]
+    let money = moneyInput.value
+    let html = `
+          <div class="item-information">
+            <input name="record[service_ids][]" type="hidden" value="${id}">
+            <span class="title-input">${name}</span>
+            <div class="remove_this_item still-card"></div>
+            <span class="text-input">${money} ₽</span>
+            <input name="record[service_money][]" type="hidden" value="${money}">
+          </div>
+`
+    let elem = document.createRange().createContextualFragment(html)
+    itemInformations.appendChild(elem)
+    let items = itemInformations.children
+    let lastItem = items[items.length-1];
+    lastItem
+        .getElementsByClassName("remove_this_item")[0]
+        .addEventListener("click", () => lastItem.outerHTML = '')
+})
+      </script>
       <div class="block-information">
         <h3>Ответственные</h3>      
         <div class="responsible-entry">

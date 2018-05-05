@@ -11,6 +11,15 @@ ru:
     male: Мужской
     female: Женский
     unknown: Не скажу
+  record_type:
+    grouping: Групповая запись
+    personal: Индивидуальная запись
+  visit_type:
+    one_time_visit: Одноразовое посещение
+    reusable_visit: Многоразовое посещение
+    one_time_abon: Одноразовый абонемент
+    automatic_abon: Автоматический абонемент
+    dynamic_abon: Динамический абонемент
   client:
     created: Клиент успешно создан
     updated: Клиент успешно сохранён

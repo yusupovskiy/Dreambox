@@ -8,11 +8,11 @@
     <div class="btn-card btn-show-list"></div>
     <div class="panel-show">
       <%= link_to 'Вернуться к списку', company_records_path %>
-      <%= link_to 'Редактировать', edit_company_record_path(@record) %>
+      <%= link_to 'Редактировать', edit_company_record_path(params[:company_id], @record) %>
     </div>
   </div>
   <div class="title-card"><%= @record.name %></div>
-  <div class="role-card">Групповая запись</div>
+  <div class="role-card"><%= t('record_type.' + @record.record_type)%></div>
 </div>
 
 <div class="conten-card tabs">
@@ -42,19 +42,24 @@
 
       <div class="block-information">
         <h3>Оказываемые услуги</h3>
-        <div class="item-information"><span class="title-input">Легкий английский</span><span class="text-input">5000 ₽</span></div>
+        <%@record.record_service.eager_load(:service).each do |rc|%>
+          <div class="item-information">
+            <span class="title-input"><%=rc.service.name%></span>
+            <span class="text-input"><%=rc.money%> ₽</span>
+          </div>
+        <%end%>
       </div>
 
       <div class="block-information">
         <h3>Настройки группы</h3>
 
-        <div class="item-information"><span class="title-input">Тип записи</span><span class="text-input">Групповая запись</span></div>
-        <div class="item-information"><span class="title-input">Вид записи</span><span class="text-input">Автоматический абонемент</span></div>
+        <div class="item-information"><span class="title-input">Тип записи</span><span class="text-input"><%= t('record_type.' + @record.record_type)%></span></div>
+        <div class="item-information"><span class="title-input">Вид записи</span><span class="text-input"><%= t('record_type.' + @record.visit_type)%></span></div>
         <div class="item-information"><span class="title-input">Лимит в группе</span><span class="text-input"><%= @record.total_clients %></span></div>
-        <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input">20.12.2017</span></div>
+        <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input"><%= @record.created_at%></span></div>
         <div class="item-information"><span class="title-input">Дата завершения</span><span class="text-input"><%= @record.finished_at %></span></div>
         <div class="item-information"><span class="title-input">Период обучения</span><span class="text-input">2 года</span></div>
-        <div class="item-information"><span class="title-input">Филиал</span><span class="text-input">Главный филиал</span></div>
+        <div class="item-information"><span class="title-input">Филиал</span><span class="text-input"><%= @record.affiliate.name%></span></div>
       </div>
       <div class="block-information">
         <h3>Настройки абонементов</h3>

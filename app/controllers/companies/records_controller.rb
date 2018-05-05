@@ -16,16 +16,26 @@ class Companies::RecordsController < ApplicationController
   # GET /records/new
   def new
     @record = Record.new
+    @services = Service.where(company_id: params[:company_id])
   end
 
   # GET /records/1/edit
   def edit
+    @services = Service.where(company_id: params[:company_id])
   end
 
   # POST /records
   # POST /records.json
   def create
     @record = Record.new(record_params)
+    ids = params[:record][:service_ids]
+    money = params[:record][:service_money]
+    raise 'Wrong request'unless ids.size == money.size
+
+    ids.size.times do |i|
+      @record.record_service << RecordService.new(service_id: ids[i], money: money[i])
+    end
+
 
     respond_to do |format|
       if @record.save
@@ -65,14 +75,15 @@ class Companies::RecordsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_record
-      @record = Record.find(params[:id])
+      @record = Record.eager_load(:affiliate).find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def record_params
       params.require(:record)
         .permit(:name, :abon_period, :total_clients, :total_visits,
-                :finished_at, :affiliate_id)
+                :created_at, :finished_at, :affiliate_id,
+                :record_type, :visit_type)
     end
     def set_company
       @current_company = Company.find(params[:company_id])
