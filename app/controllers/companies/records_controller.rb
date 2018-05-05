@@ -5,12 +5,16 @@ class Companies::RecordsController < ApplicationController
   # GET /records
   # GET /records.json
   def index
-    @records = Record.where(company_id: params[:company_id])
+    ids = @current_company.affiliates.select(:id)
+    @records = Record.where(affiliate: ids)
   end
 
   # GET /records/1
   # GET /records/1.json
   def show
+    unless @record.affiliate.company_id == @current_company.id
+      render html: "Record with id = #{@record.id} does not belong to you"
+    end
   end
 
   # GET /records/new
@@ -87,5 +91,6 @@ class Companies::RecordsController < ApplicationController
     end
     def set_company
       @current_company = Company.find(params[:company_id])
+      render html: "Sorry, but the company with id = #{@current_company} is not yours" unless @current_company.user_id == current_user.id
     end
 end
