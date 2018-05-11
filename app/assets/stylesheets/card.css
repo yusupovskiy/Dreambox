@@ -502,13 +502,16 @@ a {
     padding: 10px 0;
     border-radius: 7px;
     display: none;
+    box-shadow: 0 1px 8px -2px rgba(0, 0, 0, 0.5)!important;
     box-shadow: 0 0 5px -2px rgba(0, 0, 0, 0.6);
     z-index: 999;
+    user-select: none;
 }
 .panel-show>* {
     color: #494949;
     padding: 10px 20px;
     float: left;
+    cursor: pointer;
 }
 .panel-show>*:hover {
     background-color: #ecf0f1;
@@ -598,11 +601,13 @@ a {
     color: #4a4a4a;
     font-size: 14px;
     float: left;
+    cursor: pointer;
 }
 .item-element {
     float: left;
     width: 100%;
     margin-bottom: 10px;
+    position: relative;
 }
 .rigth-side-elem {
     float: right;
@@ -625,4 +630,8 @@ a {
 }
 .block-information.active-compact>.container-information, .block-information.active-compact>.add-discount {
     display: none;
+}
+.item-element .panel-show {
+    top: 0;
+    left: 70px;
 }

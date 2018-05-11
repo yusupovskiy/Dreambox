@@ -5,11 +5,13 @@
     
     <div class="btn-card top-scroll"></div>
 
-    <div class="btn-card btn-show-list"></div>
-    <div class="panel-show">
-      <%= link_to 'Вернуться к списку', company_records_path %>
-      <%= link_to 'Редактировать', edit_company_record_path(params[:company_id], @record) %>
+    <div class="btn-card btn-show-list">
+      <div class="panel-show">
+        <%= link_to 'Вернуться к списку', company_records_path %>
+        <%= link_to 'Редактировать', edit_company_record_path(params[:company_id], @record) %>
+      </div>
     </div>
+ 
   </div>
   <div class="title-card"><%= @record.name %></div>
   <div class="role-card"><%= t('record_type.' + @record.record_type)%></div>
@@ -34,7 +36,15 @@
 
         <div class="container-information">
           <div class="item-element">
-            <a href="#" class="left-side-elem"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></a>
+            <div class="left-side-elem">
+                <img src="/resources/no-image-available.png">
+                <div>Юсупов Расул</div>
+                <div class="panel-show">
+                    <div>Открыть карту</div>
+                    <div>Продать абонемент</div>
+                    <div>Отписать</div>
+                </div>
+            </div>
             <div class="rigth-side-elem">
               <select id="" name="">
                 <option value="36">Записан</option>
@@ -46,7 +56,15 @@
             </div>
           </div>
           <div class="item-element">
-            <div class="left-side-elem"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div>
+            <div class="left-side-elem">
+                <img src="/resources/no-image-available.png">
+                <div>Юсупов Расул</div>
+                <div class="panel-show">
+                    <div>Открыть карту</div>
+                    <div>Продать абонемент</div>
+                    <div>Отписать</div>
+                </div>
+            </div>
             <div class="rigth-side-elem">
               <select id="" name="">
                 <option value="36">Не записан</option>
@@ -58,7 +76,15 @@
             </div>
           </div>
           <div class="item-element">
-            <div class="left-side-elem"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div>
+            <div class="left-side-elem">
+                <img src="/resources/no-image-available.png">
+                <div>Юсупов Расул</div>
+                <div class="panel-show">
+                    <div>Открыть карту</div>
+                    <div>Продать абонемент</div>
+                    <div>Отписать</div>
+                </div>
+            </div>
             <div class="rigth-side-elem">Нет абонемента</div>
           </div>
         </div>

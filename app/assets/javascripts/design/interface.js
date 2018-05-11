@@ -109,8 +109,17 @@ document.addEventListener('turbolinks:load', function() {
 
   // Раскрывает меню с функциями карты
   $('.btn-show-list').click(function () {
-    $('.panel-show').css({'display':'grid'});
+    $(this).children(".panel-show").css({'display':'grid'});
   });
+
+  $('.left-side-elem').hover(function () {
+    $(".left-side-elem>.panel-show").css({'display':'none'});
+    $(this).children(".panel-show").css({'display':'grid'});
+  });
+  $('.left-side-elem').mouseleave(function () {
+    $(".left-side-elem>.panel-show").css({'display':'none'});
+  });
+
   $(document).mouseup(function (e){ // событие клика по веб-документу
     var div = $(".panel-show"); // тут указываем ID элемента
     // if (!div.is(e.target) // если клик был не по нашему блоку
