@@ -11,16 +11,17 @@
     
     <div class="btn-card top-scroll"></div>
 
-    <div class="btn-card btn-show-list"></div>
-    <div class="panel-show">
-      <%= link_to 'Вернуться к списку', company_clients_path %>
-      <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
-      <%if @client.archive%>
-        <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>
-      <%else%>
-        <%= link_to 'Отправить в архив', company_clients_archive_path(params[:company_id], params[:id], 1), method: :post%>
-      <%end%>
-      <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %>
+    <div class="btn-card btn-show-list">
+      <div class="panel-show">
+        <%= link_to 'Вернуться к списку', company_clients_path %>
+        <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
+        <%if @client.archive%>
+          <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>
+        <%else%>
+          <%= link_to 'Отправить в архив', company_clients_archive_path(params[:company_id], params[:id], 1), method: :post%>
+        <%end%>
+        <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %>
+      </div>
     </div>
   </div>
   <div class="title-card"><%= @client.last_name %> <%= @client.first_name %><br /><%= @client.patronymic %></div>
@@ -57,7 +58,10 @@
         <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
       </div>
     </div>
-    <div class="tab-category information-section">
+    <div class="tab-category">
+      <div class="btn-subs">Новая запись</div>
+      
+      <div class="information-section">
       <div class="block-information entry">
         <a href="#" class="title-entry">Группа Английский по будням</a>
         <div class="service-entry">
@@ -101,7 +105,7 @@
           <div class="more-subscriptions">Загрузить еще пять</div>
         </div>
       </div>
-      
+      </div>
     </div>
 
 

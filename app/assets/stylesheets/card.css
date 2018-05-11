@@ -215,7 +215,7 @@ span.debt {
 .icon-authorization {
     background-image: url(/images/arrow.png);
 }
-.btn:hover, .btn:focus {
+.btn:hover, .btn:focus, .btn-subs:hover, .btn-subs:focus {
     opacity: 1;
 }
 .authorization>.btn:active {
@@ -223,7 +223,7 @@ span.debt {
     -ms-transform: translatex(1px);
     transform: translatex(1px);
 }
-.btn:active, .btn-card:active {
+.btn:active, .btn-card:active, .btn-subs:active {
     -webkit-transform: translateY(1px);
     -ms-transform: translateY(1px);
     transform: translateY(1px);
@@ -334,9 +334,12 @@ img.logo {
     margin: 0 6px 12px 6px;
 }
 .add-discount {
-    margin-left: 12px;
     color: #4fa6f7;
     cursor: pointer;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: bold;
+    user-select: none;
 }
 .subscriptions {
     color: #a7a7a7;
@@ -537,10 +540,6 @@ a {
 .add-avatar:hover canvas {
     opacity: .8;
 }
-.add-discount {
-    font-size: 13px;
-    user-select: none;
-}
 .block-information .add-discount {
     margin: 5px 0 9px 0;
 }
@@ -589,19 +588,20 @@ a {
     width: 21px;
     height: 21px;
     border-radius: 50%;
-    margin: 3px 0;
+    margin: 3px 8px 3px 0;
 }
 .left-side-elem>* {
     float: left;
 }
 .left-side-elem>div {
-    margin: 6px 0px 5px 8px;
+    margin: 6px 0 5px;
 }
 .left-side-elem {
     color: #4a4a4a;
     font-size: 14px;
     float: left;
     cursor: pointer;
+    min-width: 100px;
 }
 .item-element {
     float: left;
@@ -634,4 +634,20 @@ a {
 .item-element .panel-show {
     top: 0;
     left: 70px;
+}
+.btn-subs {
+    color: white;
+    background: #3b89d1;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    width: 120px;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 7px;
+    margin: 0 auto 20px;
+    opacity: .5;
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    user-select: none;
 }

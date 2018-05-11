@@ -3,10 +3,11 @@
 	  <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
 	  <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>      
 	  <div class="btn-card top-scroll"></div>
-      <div class="btn-card btn-show-list"></div>
-      <div class="panel-show">
-        <%= link_to 'Вернуться в карту', [@service.company, @service] %>
-        <%= link_to 'Вернуться к списку', company_services_path %>
+      <div class="btn-card btn-show-list">
+        <div class="panel-show">
+          <%= link_to 'Вернуться в карту', [@service.company, @service] %>
+          <%= link_to 'Вернуться к списку', company_services_path %>
+        </div>
       </div>
 	</div>
     <div class="title-card">Добавление услуги</div>

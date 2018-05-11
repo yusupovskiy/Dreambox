@@ -24,10 +24,20 @@
       <div class="block-information compact active-compact">
         <h3><div class="icon-time"></div>Текущие посещения</h3>
         <div class="btn-compact"></div>
+
         <div class="container-information">
-          <div class="item-information"><span class="title-input">Сегодня</span><span class="text-input">в 12:00 до 15:00</span></div>
+            <div class="item-element">
+              <div class="left-side-elem">
+                  <div>Сегодня</div>
+                  <div class="panel-show">
+                      <div>Открыть карту</div>
+                      <div>Отменить</div>
+                  </div>
+              </div>
+              <div class="rigth-side-elem">в 12:00 до 15:00</div>
+            </div>
         </div>
-        <div class="add-discount">+ Добавить еще</div>
+        <div class="add-discount">+ Добавить</div>
       </div>
 
       <div class="block-information compact">
@@ -48,6 +58,7 @@
             <div class="rigth-side-elem">
               <select id="" name="">
                 <option value="36">Записан</option>
+                <option value="36">Не записан</option>
                 <option value="38">Посетил</option>
                 <option value="38">Не посетил</option>
                 <option value="38">Не посетит</option>
@@ -68,6 +79,7 @@
             <div class="rigth-side-elem">
               <select id="" name="">
                 <option value="36">Не записан</option>
+                <option value="36">Записан</option>
                 <option value="38">Посетил</option>
                 <option value="38">Не посетил</option>
                 <option value="38">Не посетит</option>
@@ -88,39 +100,96 @@
             <div class="rigth-side-elem">Нет абонемента</div>
           </div>
         </div>
-        <div class="add-discount">+ Записать еще</div>
+        <div class="add-discount">+ Записать</div>
       </div>
 
-      <div class="block-information">
-        <h3><div class="icon-employees"></div>Ответственные</h3>      
-        <div class="responsible-entry">
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="still-card"></div><div class="rate-responsible">ставка 35%</div></div>
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="still-card"></div><div class="rate-responsible">15 000 ₽ в месяц</div></div>
-        </div>
-        <div class="add-discount">+ Добавить еще</div>
-      </div>
+      <div class="block-information compact">
+        <h3><div class="icon-employees"></div>Ответственные</h3>
+        <div class="btn-compact"></div>
 
-      <div class="block-information">
-        <h3><div class="icon-time"></div>График посещений</h3>
-        <div class="item-information"><span class="title-input">В понедельник</span><span class="text-input">с 12:00 по 15:00</span></div>
-        <div class="add-discount">+ Добавить еще</div>
-      </div>
-
-      <div class="block-information">
-        <h3><div class="icon-list"></div>Оказываемые услуги</h3>
-        <%@record.record_service.eager_load(:service).each do |rc|%>
-          <div class="item-information">
-            <span class="title-input"><%=rc.service.name%></span>
-            <span class="text-input"><%=rc.money%> ₽</span>
+        <div class="container-information">
+          <div class="item-element">
+            <div class="left-side-elem">
+                <img src="/resources/no-image-available.png">
+                <div>Юсупов Расул</div>
+                <div class="panel-show">
+                    <div>Открыть карту</div>
+                    <div>Заморозить выплаты</div>
+                    <div>Редактировать</div>
+                    <div>Удалить</div>
+                </div>
+            </div>
+            <div class="rigth-side-elem">4 500 ₽ (35%)</div>
           </div>
-        <%end%>
+          <div class="item-element">
+            <div class="left-side-elem">
+                <img src="/resources/no-image-available.png">
+                <div>Юсупов Расул</div>
+                <div class="panel-show">
+                    <div>Открыть карту</div>
+                    <div>Заморозить выплаты</div>
+                    <div>Редактировать</div>
+                    <div>Удалить</div>
+                </div>
+            </div>
+            <div class="rigth-side-elem">5 000 ₽ (фикси.)</div>
+          </div>
+        </div>
+        <div class="add-discount">+ Добавить</div>
       </div>
 
+      <div class="block-information compact">
+        <h3><div class="icon-time"></div>График посещений</h3>
+        <div class="btn-compact"></div>
+
+        <div class="container-information">
+          <div class="item-element">
+            <div class="left-side-elem">
+                <div>В понедельник</div>
+                <div class="panel-show">
+                    <div>Удалить</div>
+                </div>
+            </div>
+            <div class="rigth-side-elem">с 12:00 по 15:00</div>
+          </div>
+          <div class="item-element">
+            <div class="left-side-elem">
+                <div>Во вторник</div>
+                <div class="panel-show">
+                    <div>Удалить</div>
+                </div>
+            </div>
+            <div class="rigth-side-elem">с 12:00 по 15:00</div>
+          </div>
+        </div>
+        <div class="add-discount">+ Добавить</div>
+      </div>
+
+      <div class="block-information compact">
+        <h3><div class="icon-list"></div>Оказываемые услуги</h3>
+        <div class="btn-compact"></div>
+
+        <div class="container-information">
+          <%@record.record_service.eager_load(:service).each do |rc|%>
+            <div class="item-element">
+              <div class="left-side-elem">
+                  <div><%=rc.service.name%></div>
+                  <div class="panel-show">
+                    <div>Открыть карту</div>
+                      <div>Удалить</div>
+                  </div>
+              </div>
+              <div class="rigth-side-elem"><%=rc.money%> ₽</div>
+            </div>
+          <%end%>
+        </div>
+        <div class="add-discount">+ Добавить</div>
+      </div>
 
       <div class="block-information">
         <h3>Оказываемые услуги</h3>
         <div id="item-informations"></div>
-        <div class="add-discount">+ Добавить еще</div>
+        <div class="add-discount">+ Добавить</div>
         <div>
           <select id="attached_service" name="record[attached_service]"><option value="36">Спидкубинг</option>
             <option value="38">UCMAS</option>
