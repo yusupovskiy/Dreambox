@@ -111,21 +111,23 @@ document.addEventListener('turbolinks:load', function() {
   $('.btn-show-list').click(function () {
     $(this).children(".panel-show").css({'display':'grid'});
   });
-
-  $('.left-side-elem').hover(function () {
-    $(".left-side-elem>.panel-show").css({'display':'none'});
-    $(this).children(".panel-show").css({'display':'grid'});
-  });
-  $('.left-side-elem').mouseleave(function () {
-    $(".left-side-elem>.panel-show").css({'display':'none'});
-  });
-
   $(document).mouseup(function (e){ // событие клика по веб-документу
     var div = $(".panel-show"); // тут указываем ID элемента
     // if (!div.is(e.target) // если клик был не по нашему блоку
     //     && div.has(e.target).length === 0) { // и не по его дочерним элементам
       div.hide(); // скрываем его
     // }
+  });
+
+  var showPanelLeftSideElem = function () {
+    $(".left-side-elem>.panel-show").css({'display':'none'});
+    $(this).children(".panel-show").css({'display':'grid'});
+  };
+
+  $('.left-side-elem').hover(showPanelLeftSideElem).click(showPanelLeftSideElem);
+
+  $('.left-side-elem').mouseleave(function () {
+    $(".left-side-elem>.panel-show").css({'display':'none'});
   });
 
   // скролл при нажатии кнопки
