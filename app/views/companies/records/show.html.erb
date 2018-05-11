@@ -19,29 +19,69 @@
   <div class="cont-category-book">
     <div class="tab-category information-section">
 
-      <div class="block-information">
-        <h3>Записанные</h3>      
-        <div class="responsible-entry">
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="rate-responsible">Пропустил: 0</div></div>
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="rate-responsible">Пропустил: 2</div></div>
+      <div class="block-information compact active-compact">
+        <h3><div class="icon-time"></div>Текущие посещения</h3>
+        <div class="btn-compact"></div>
+        <div class="container-information">
+          <div class="item-information"><span class="title-input">Сегодня</span><span class="text-input">в 12:00 до 15:00</span></div>
         </div>
-        <a class="btn icon-plus" href="#"></a>
+        <div class="add-discount">+ Добавить еще</div>
+      </div>
+
+      <div class="block-information compact">
+        <h3><div class="icon-user"></div>Записанные</h3>
+        <div class="btn-compact"></div>
+
+        <div class="container-information">
+          <div class="item-element">
+            <a href="#" class="left-side-elem"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></a>
+            <div class="rigth-side-elem">
+              <select id="" name="">
+                <option value="36">Записан</option>
+                <option value="38">Посетил</option>
+                <option value="38">Не посетил</option>
+                <option value="38">Не посетит</option>
+                <option value="38">Отмена</option>
+              </select>
+            </div>
+          </div>
+          <div class="item-element">
+            <div class="left-side-elem"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div>
+            <div class="rigth-side-elem">
+              <select id="" name="">
+                <option value="36">Не записан</option>
+                <option value="38">Посетил</option>
+                <option value="38">Не посетил</option>
+                <option value="38">Не посетит</option>
+                <option value="38">Отмена</option>
+              </select>
+            </div>
+          </div>
+          <div class="item-element">
+            <div class="left-side-elem"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div>
+            <div class="rigth-side-elem">Нет абонемента</div>
+          </div>
+        </div>
+        <div class="add-discount">+ Записать еще</div>
       </div>
 
       <div class="block-information">
-        <h3>Ответственные</h3>      
+        <h3><div class="icon-employees"></div>Ответственные</h3>      
         <div class="responsible-entry">
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="rate-responsible">ставка 35%</div></div>
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="rate-responsible">15 000 ₽ в месяц</div></div>
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="still-card"></div><div class="rate-responsible">ставка 35%</div></div>
+          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="still-card"></div><div class="rate-responsible">15 000 ₽ в месяц</div></div>
         </div>
+        <div class="add-discount">+ Добавить еще</div>
       </div>
+
       <div class="block-information">
-        <h3>Время посещений</h3>
+        <h3><div class="icon-time"></div>График посещений</h3>
         <div class="item-information"><span class="title-input">В понедельник</span><span class="text-input">с 12:00 по 15:00</span></div>
+        <div class="add-discount">+ Добавить еще</div>
       </div>
 
       <div class="block-information">
-        <h3>Оказываемые услуги</h3>
+        <h3><div class="icon-list"></div>Оказываемые услуги</h3>
         <%@record.record_service.eager_load(:service).each do |rc|%>
           <div class="item-information">
             <span class="title-input"><%=rc.service.name%></span>
@@ -50,8 +90,48 @@
         <%end%>
       </div>
 
+
       <div class="block-information">
+        <h3>Оказываемые услуги</h3>
+        <div id="item-informations"></div>
+        <div class="add-discount">+ Добавить еще</div>
+        <div>
+          <select id="attached_service" name="record[attached_service]"><option value="36">Спидкубинг</option>
+            <option value="38">UCMAS</option>
+          </select>
+          <input id="attached_service_money" type="number" placeholder="Цена (в рублях)" style="width: 100px">
+          <button id="attach-service" type="button">OK</button>
+        </div>
+      </div>
+      <script>
+        var itemInformations = document.getElementById("item-informations")
+        var attachedService = document.getElementById("attached_service")
+        var moneyInput = document.getElementById("attached_service_money")
+        document.getElementById("attach-service").addEventListener("click", () => {
+            let selected = attachedService.selectedOptions[0];
+            let [id, name] = [selected.value, selected.textContent]
+            let money = moneyInput.value
+            let html = `
+                  <div class="item-information">
+                    <input name="record[service_ids][]" type="hidden" value="${id}">
+                    <span class="title-input">${name}</span>
+                    <div class="remove_this_item still-card"></div>
+                    <span class="text-input">${money} ₽</span>
+                    <input name="record[service_money][]" type="hidden" value="${money}">
+                  </div>`
+            let elem = document.createRange().createContextualFragment(html)
+            itemInformations.appendChild(elem)
+            let items = itemInformations.children
+            let lastItem = items[items.length-1];
+            lastItem
+                .getElementsByClassName("remove_this_item")[0]
+                .addEventListener("click", () => lastItem.outerHTML = '')
+        })
+      </script>
+
+      <div class="block-information compact active-compact">
         <h3>Настройки группы</h3>
+        <div class="btn-compact"></div>
 
         <div class="item-information"><span class="title-input">Тип записи</span><span class="text-input"><%= t('record_type.' + @record.record_type)%></span></div>
         <div class="item-information"><span class="title-input">Вид записи</span><span class="text-input"><%= t('record_type.' + @record.visit_type)%></span></div>
@@ -61,13 +141,14 @@
         <div class="item-information"><span class="title-input">Период обучения</span><span class="text-input">2 года</span></div>
         <div class="item-information"><span class="title-input">Филиал</span><span class="text-input"><%= @record.affiliate.name%></span></div>
       </div>
-      <div class="block-information">
+
+      <div class="block-information compact active-compact">
         <h3>Настройки абонементов</h3>
+        <div class="btn-compact"></div>
+
         <div class="item-information"><span class="title-input">Период абонемента</span><span class="text-input"><%= @record.abon_period %> дней</span></div>
         <div class="item-information"><span class="title-input">Посещений за абонемент</span><span class="text-input"><%= @record.total_visits %></span></div>
-
       </div>
-
     </div>
   </div>
 </div>

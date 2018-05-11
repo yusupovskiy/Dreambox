@@ -116,19 +116,18 @@ span.debt {
     display: table;
     width: 100%;
 }
-.block-information>div>span {
-    font-size: 14px;
-}
 .title-input {
     float: left;
     color: #a2a2a2;
     margin: 9px 0;
     user-select: none;
+    font-size: 14px;
 }
 .text-input {
     float: right;
     color: #4a4a4a;
     margin: 9px 0;
+    font-size: 14px;
 }
 .icon-home:hover {
     background-image: url(/images/home-hover.png);
@@ -559,4 +558,71 @@ a {
 }
 .item-responsible>.still-card {
     padding: 2px 0 2px 5px;
+}
+
+.block-information>h3>div {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 10px;
+    height: 10px;
+    float: left;
+    margin-top: 1px;
+    margin-right: 8px;
+}
+.icon-user {
+    background-image: url(/images/user.png);
+}
+
+.icon-employees {
+    background-image: url(/images/teacher.png);
+}
+.icon-time {
+    background-image: url(/images/time-left.png);
+}
+.icon-list {
+    background-image: url(/images/list.png);
+}
+.left-side-elem>img {
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    margin: 3px 0;
+}
+.left-side-elem>* {
+    float: left;
+}
+.left-side-elem>div {
+    margin: 6px 0px 5px 8px;
+}
+.left-side-elem {
+    color: #4a4a4a;
+    font-size: 14px;
+    float: left;
+}
+.item-element {
+    float: left;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.rigth-side-elem {
+    float: right;
+    font-style: italic;
+    color: #a7a7a7;
+    font-size: 12px;
+    line-height: 2.3;
+}
+.container-information {
+    width: 100%;
+    float: left;
+    margin-bottom: 9px;
+}
+.rigth-side-elem>select {
+    background: #e7e7e7;
+    border: 0;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+.block-information.active-compact>.container-information, .block-information.active-compact>.add-discount {
+    display: none;
 }

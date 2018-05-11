@@ -208,7 +208,7 @@ img.object-avatar {
 }
 .footer {
     position: fixed;
-    z-index: 15;
+    z-index: 4;
     color: white;
     font-size: 12px;
     width: 100%;

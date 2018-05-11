@@ -63,27 +63,12 @@ document.getElementById("attach-service").addEventListener("click", () => {
         .addEventListener("click", () => lastItem.outerHTML = '')
 })
       </script>
-      <div class="block-information">
-        <h3>Ответственные</h3>      
-        <div class="responsible-entry">
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="still-card"></div><div class="rate-responsible">ставка 35%</div></div>
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png"><div>Юсупов Расул</div></div><div class="still-card"></div><div class="rate-responsible">15 000 ₽ в месяц</div></div>
-        </div>
-        <div class="add-discount">+ Добавить еще</div>
-      </div>
-      <div class="block-information">
-        <h3>Время посещений</h3>
-        <div class="item-information"><span class="title-input">В понедельник</span><div class="still-card"></div><span class="text-input">с 12:00 по 15:00</span></div>
-        <div class="add-discount">+ Добавить еще</div>
-      </div>
-
     </div>
     <%= form.submit class: "btn icon-confirm" %>
   </div>
   <% if record.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(record.errors.count, "error") %> prohibited this record from being saved:</h2>
-
       <ul>
       <% record.errors.full_messages.each do |message| %>
         <li><%= message %></li>
@@ -91,5 +76,4 @@ document.getElementById("attach-service").addEventListener("click", () => {
       </ul>
     </div>
   <% end %>
-
 <% end %>

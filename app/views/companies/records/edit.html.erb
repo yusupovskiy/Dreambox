@@ -1,17 +1,87 @@
-<div class="title-panel">
-	<div class="btns-card">
-	  <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
-	  <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>      
-      
-      <div class="btn-card top-scroll"></div>
+<%= form_with(url: [@current_company, @record], model: @record, local: true) do |form| %>
+  <div class="title-panel">
+  	<div class="btns-card">
+  	  <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+  	  <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>      
+        
+        <div class="btn-card top-scroll"></div>
 
-      <div class="btn-card btn-show-list"></div>
-      <div class="panel-show">
-        <%= link_to 'Вернуться к карте', company_record_path(params[:company_id], @record) %>
-        <%= link_to 'Перейти к списку', company_records_path %>
+        <div class="btn-card btn-show-list"></div>
+        <div class="panel-show">
+          <%= link_to 'Вернуться к карте', company_record_path(params[:company_id], @record) %>
+          <%= link_to 'Перейти к списку', company_records_path %>
+        </div>
+  	</div>
+      <div class="title-card">Редактирование записи</div>
+  </div>
+  
+  <div class="conten-card">
+    <div class="information-section">
+      <div class="block-information">
+        <%= form.text_field :name, placeholder: "Название*", class: "input-panel" %>
       </div>
-	</div>
-    <div class="title-card">Редактирование групповой записи</div>
-</div>
+      <div class="block-information">
+        <h3>Настройка группы</h3>
+        <label>Лимит в группе</label>
+        <%= form.number_field :total_clients, placeholder: "Лимит в группе", class: "input-panel" %>
+        <label>Дата завершения*</label>
+        <%= form.date_field :finished_at, placeholder: "Дата завершения*", class: "input-panel"%>
+        <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
+      </div>
+      <div class="block-information">
+        <h3>Настройка абонементов</h3>
+        <%= form.number_field :total_visits, placeholder: "Посещений за абонемент", class: "input-panel" %>
+      </div>
 
-<%= render 'form', record: @record %>
+      <div class="block-information">
+        <h3>Оказываемые услуги</h3>
+        <div id="item-informations"></div>
+        <div class="add-discount">+ Добавить еще</div>
+        <div>
+          <%= form.select :attached_service, @services.map{|s| [s.name, s.id]}, {}, {id: 'attached_service'} %>
+          <input id="attached_service_money" type="number" placeholder="Цена (в рублях)" style="width: 100px">
+          <button id="attach-service" type="button">OK</button>
+        </div>
+      </div>
+      <script>
+var itemInformations = document.getElementById("item-informations")
+var attachedService = document.getElementById("attached_service")
+var moneyInput = document.getElementById("attached_service_money")
+document.getElementById("attach-service").addEventListener("click", () => {
+    let selected = attachedService.selectedOptions[0];
+    let [id, name] = [selected.value, selected.textContent]
+    let money = moneyInput.value
+    let html = `
+          <div class="item-information">
+            <input name="record[service_ids][]" type="hidden" value="${id}">
+            <span class="title-input">${name}</span>
+            <div class="remove_this_item still-card"></div>
+            <span class="text-input">${money} ₽</span>
+            <input name="record[service_money][]" type="hidden" value="${money}">
+          </div>
+`
+    let elem = document.createRange().createContextualFragment(html)
+    itemInformations.appendChild(elem)
+    let items = itemInformations.children
+    let lastItem = items[items.length-1];
+    lastItem
+        .getElementsByClassName("remove_this_item")[0]
+        .addEventListener("click", () => lastItem.outerHTML = '')
+})
+      </script>
+    </div>
+    <%= form.submit class: "btn icon-confirm" %>
+  </div>
+  <% if @record.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(record.errors.count, "error") %> prohibited this record from being saved:</h2>
+
+      <ul>
+      <% record.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+<% end %>
