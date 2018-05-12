@@ -43,68 +43,71 @@
         <div class="item-information"><span class="title-input">Пол</span><span class="text-input"><%= t("sex.#{@client.sex}") %></span></div>
         <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
       </div>
-      <div class="block-information compact active-compact">
+      <div class="block-information parent-compact">
         <h3>Информация о матери</h3>
-        <div class="btn-compact"></div>
-        <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиева Пятимат Алиевна</span></div>
-        <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
-        <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+        <div class="btn-compact click-compact"><div></div></div>
+        <div class="container-info compact">
+          <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиева Пятимат Алиевна</span></div>
+          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+          <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+        </div>
       </div>
-      <div class="block-information compact">
+      <div class="block-information parent-compact">
         <h3>Информация об отце</h3>
-        <div class="btn-compact"></div>
-        <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиев Магомед Исаевич</span></div>
-        <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
-        <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+        <div class="btn-compact click-compact"><div></div></div>
+        <div class="container-info compact">
+          <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиев Магомед Исаевич</span></div>
+          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+          <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
+        </div>
       </div>
     </div>
     <div class="tab-category">
       <div class="btn-subs">Новая запись</div>
       
       <div class="information-section">
-      <div class="block-information entry">
-        <a href="#" class="title-entry">Группа Английский по будням</a>
-        <div class="service-entry">
-          <div>Английский</div>
+        <div class="block-information entry parent-compact">
+          <a href="#" class="title-entry">Группа Английский по будням</a>
+          <div class="btn-compact click-compact"><div></div></div>
+          <div class="service-entry">
+            <div>Английский</div>
+          </div>
+          <div class="responsible-entry compact">
+            <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Юсупов Расул</div></div> <div class="rate-responsible">4 500 ₽ (35%)</div></div>
+            <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Юсупов Расул</div></div> <div class="rate-responsible">5 000 ₽ (фикс.)</div></div>
+          </div>
+          <div class="discount-entry compact">
+            <div class="discount">Скидок нет</div> <div class="add-discount">+ Добавить скидку</div>
+          </div>
+          <div class="unsubscribe compact">отписать</div>
+          <!--<div class="subscribe compact">записать</div>-->
+
+          <div class="info-about-subsc">Долг <span class="amount debt">3 000 ₽ из 8 000 ₽</span></div>
+          <div class="current-subs click-compact">Текущий абонемент до 21 августа 2018</div>
+          <div class="subscriptions compact">
+            <a href="#" class="subscription">
+              <div class="data-subscriptions"><div class="add-discount">+ Продать абонемент</div></div>
+            </a>
+            <a href="#" class="subscription active">
+              <div class="data-subscriptions">Текущий до 21 август 2018</div>
+              <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
+              <div class="visits-subs">посещений уже нет</div>
+            </a>
+            <a href="#" class="subscription">
+              <div class="data-subscriptions">от 21 июнь 2018 до 21 июль 2018</div>
+              <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
+            </a>
+            <a href="#" class="subscription">
+              <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
+              <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
+            </a>
+            <a href="#" class="subscription">
+              <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
+              <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
+            </a>
+            <div class="more-subscriptions">Загрузить еще пять</div>
+          </div>
         </div>
-        <div class="responsible-entry">
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Юсупов Расул</div></div> <div class="rate-responsible">ставка 35%</div></div>
-          <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Юсупов Расул</div></div> <div class="rate-responsible">15 000 ₽ в месяц</div></div>
-        </div>
-        <div class="discount-entry">
-          <div class="discount">Скидок нет</div> <div class="add-discount">+ Добавить скидку</div>
-        </div>
-        <div class="unsubscribe">отписать от группы</div>
-        <!--<div class="subscribe">записать в группы</div>-->
-        
-        <div class="info-about-subsc">Не оплачено <span class="amount debt">3 000 ₽ из 8 000 ₽</span></div>
-        <div class="subscriptions">
-          <a href="#" class="subscription">
-            <div class="data-subscriptions"><div class="add-discount">+ Продать абонемент</div></div>
-          </a>
-          <a href="#" class="subscription">
-            <div class="data-subscriptions">от 21 июль 2018 до 21 август 2018</div>
-            <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
-            <div class="visits-subs">посещений уже нет</div>
-          </a>
-          <a href="#" class="subscription">
-            <div class="data-subscriptions">от 21 июнь 2018 до 21 июль 2018</div>
-            <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
-            <div class="visits-subs">посещений уже нет</div>
-          </a>
-          <a href="#" class="subscription">
-            <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
-            <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
-            <div class="visits-subs">посещений уже нет</div>
-          </a>
-          <a href="#" class="subscription">
-            <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
-            <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
-            <div class="visits-subs">посещений уже нет</div>
-          </a>
-          <div class="more-subscriptions">Загрузить еще пять</div>
-        </div>
-      </div>
       </div>
     </div>
 

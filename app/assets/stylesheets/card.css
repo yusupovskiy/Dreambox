@@ -14,7 +14,7 @@
 .block-information>h3 {
     color: #a3a3a3;
     font-size: 11px;
-    padding: 10px 0 15px 0;
+    padding: 10px 0;
     margin: 0;
     text-transform: uppercase;
     user-select: none;
@@ -203,7 +203,7 @@ span.debt {
     outline: none;
 }
 .conten-card>.btn {
-    margin: 0 auto 10px;
+    margin: 0 auto 20px;
     display: table;
 }
 .authorization>.btn {
@@ -223,48 +223,67 @@ span.debt {
     -ms-transform: translatex(1px);
     transform: translatex(1px);
 }
-.btn:active, .btn-card:active, .btn-subs:active {
+.btn:active, .btn-card:active, .btn-subs:active, .add-discount:active {
     -webkit-transform: translateY(1px);
     -ms-transform: translateY(1px);
     transform: translateY(1px);
-    opacity: 1;
+    opacity: 1!important;
+}
+.add-discount:hover {
+    opacity: .7;
 }
 img.logo {
     height: 24px;
 }
-.block-information.active-compact {
-    height: 31px;
-    overflow: hidden;
+.block-information.parent-compact .compact {
+    display: none;
+}
+.container-info {
+    margin-top: 5px;
 }
 .btn-compact {
-    background-size: 100%;
-    background-repeat: no-repeat;
-    width: 10px;
-    height: 10px;
-    padding: 21px 19px;
-    background-origin: content-box;
-    border-radius: 50%;
-    float: left;
-    z-index: 1;
+    z-index: 6;
     position: absolute;
-    user-select: none;
-    background-image: url(/images/arrow-grey.png);
     top: 0;
     right: 0;
-	-webkit-transform: rotate(-90deg);
+    width: 100%;
+    height: 55px;
+    cursor: pointer;
+}
+.btn-compact:hover {
+    opacity: 0.5;
+}
+.btn-compact:active {
+    -webkit-transform: translateY(1px);
+    -ms-transform: translateY(1px);
+    transform: translateY(1px);
+    opacity: 1!important;
+}
+.btn-compact>div {
+    -webkit-transform: rotate(-90deg);
     -moz-transform: rotate(-90deg);
     -o-transform: rotate(-90deg);
     transform: rotate(-90deg);
     transition: .3s;
+    background-image: url(/images/arrow-grey.png);
+    background-size: 10px 10px;
+    background-repeat: no-repeat;
+    width: 55px;
+    height: 55px;
+    float: right;
+    background-position: center;
 }
-.active-compact>.btn-compact {
+.parent-compact .btn-compact>div {
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
     -o-transform: rotate(90deg);
     transform: rotate(90deg);
 }
-.compact>h3 {
-    cursor: pointer;
+.current-subs {
+    float: left;
+    color: #a7a7a7;
+    font-size: 13px;
+    margin: 0px 6px 6px 6px;
 }
 
 .block-information.entry {
@@ -277,6 +296,8 @@ img.logo {
     font-weight: bold;
     padding: 9px 6px 12px 6px;
     float: left;
+    position: relative;
+    z-index: 8;
 }
 .service-entry {
     color: #a7a7a7;
@@ -287,6 +308,14 @@ img.logo {
     padding-left: 17px;
     background-image: url(/images/list.png);
     margin: 0 6px 12px 6px;
+    position: relative;
+    z-index: 8;
+}
+a.subscription.active {
+    color: #525252;
+}
+.click-compact {
+    cursor: pointer;
 }
 .service-entry>*, .discount-entry>* {
     float: left;
@@ -306,7 +335,6 @@ img.logo {
     float: left;
 }
 .responsible-entry {
-    width: 100%;
     float: left;
     color: #a7a7a7;
     font-size: 13px;
@@ -340,6 +368,9 @@ img.logo {
     font-size: 10px;
     font-weight: bold;
     user-select: none;
+    float: left;
+    width: 100%;
+    padding: 5px 0 10px 0;
 }
 .subscriptions {
     color: #a7a7a7;
@@ -540,12 +571,6 @@ a {
 .add-avatar:hover canvas {
     opacity: .8;
 }
-.block-information .add-discount {
-    margin: 5px 0 9px 0;
-}
-.block-information .responsible-entry {
-    margin: 0 0 9px 0;
-}
 .still-card {
     background-image: url(/images/still-dark.png);
     float: right;
@@ -619,7 +644,12 @@ a {
 .container-information {
     width: 100%;
     float: left;
-    margin-bottom: 9px;
+    margin-top: 5px;
+}
+.block-information>h3>span {
+    float: right;
+    margin-right: 30px;
+    opacity: .5;
 }
 .rigth-side-elem>select {
     background: #e7e7e7;
@@ -627,9 +657,6 @@ a {
     padding: 5px;
     border-radius: 4px;
     font-size: 13px;
-}
-.block-information.active-compact>.container-information, .block-information.active-compact>.add-discount {
-    display: none;
 }
 .item-element .panel-show {
     top: 0;

@@ -67,12 +67,12 @@ document.addEventListener('turbolinks:load', function() {
   });
   
   // скрыть
-  $('.compact>h3').click(function() {
-    if($(this).parent().hasClass('active-compact')) {
-      $(this).parent().removeClass('active-compact');
+  $('.click-compact').click(function() {
+    if($(this).parent('.block-information').hasClass('parent-compact')) {
+      $(this).parent('.block-information').removeClass('parent-compact');
     }
     else {
-      $(this).parent().addClass('active-compact');
+      $(this).parent().addClass('parent-compact');
     }
   });
 

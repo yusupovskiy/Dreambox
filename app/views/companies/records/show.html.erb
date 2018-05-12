@@ -21,9 +21,9 @@
   <div class="cont-category-book">
     <div class="tab-category information-section">
 
-      <div class="block-information compact active-compact">
-        <h3><div class="icon-time"></div>Текущие посещения</h3>
-        <div class="btn-compact"></div>
+      <div class="block-information parent-compact">
+        <h3><div class="icon-time"></div>Текущие посещения <span>4</span></h3>
+          <div class="btn-compact click-compact"><div></div></div>
 
         <div class="container-information">
             <div class="item-element">
@@ -36,15 +36,45 @@
               </div>
               <div class="rigth-side-elem">в 12:00 до 15:00</div>
             </div>
+            <div class="item-element compact">
+              <div class="left-side-elem">
+                  <div>Завтра</div>
+                  <div class="panel-show">
+                      <div>Открыть карту</div>
+                      <div>Отменить</div>
+                  </div>
+              </div>
+              <div class="rigth-side-elem">в 12:00 до 15:00</div>
+            </div>
+            <div class="item-element compact">
+              <div class="left-side-elem">
+                  <div>Послезавтра</div>
+                  <div class="panel-show">
+                      <div>Открыть карту</div>
+                      <div>Отменить</div>
+                  </div>
+              </div>
+              <div class="rigth-side-elem">в 12:00 до 15:00</div>
+            </div>
+            <div class="item-element compact">
+              <div class="left-side-elem">
+                  <div>21 августа 2018</div>
+                  <div class="panel-show">
+                      <div>Открыть карту</div>
+                      <div>Отменить</div>
+                  </div>
+              </div>
+              <div class="rigth-side-elem">в 12:00 до 15:00</div>
+            </div>
         </div>
         <div class="add-discount">+ Добавить</div>
       </div>
 
-      <div class="block-information compact">
-        <h3><div class="icon-user"></div>Записанные</h3>
-        <div class="btn-compact"></div>
+      <div class="block-information">
+        <h3><div class="icon-user"></div>Записанные <span>3 из 20</span></h3>
+          <div class="btn-compact click-compact"><div></div></div>
 
-        <div class="container-information">
+        <div class="container-information compact">
           <div class="item-element">
             <div class="left-side-elem">
                 <img src="/resources/no-image-available.png">
@@ -104,10 +134,31 @@
       </div>
 
       <div class="block-information compact">
-        <h3><div class="icon-employees"></div>Ответственные</h3>
-        <div class="btn-compact"></div>
+        <h3><div class="icon-list"></div>Оказываемые услуги <span>1</span></h3>
+          <div class="btn-compact click-compact"><div></div></div>
 
-        <div class="container-information">
+        <div class="container-information compact">
+          <%@record.record_service.eager_load(:service).each do |rc|%>
+            <div class="item-element">
+              <div class="left-side-elem">
+                  <div><%=rc.service.name%></div>
+                  <div class="panel-show">
+                    <div>Открыть карту</div>
+                      <div>Удалить</div>
+                  </div>
+              </div>
+              <div class="rigth-side-elem"><%=rc.money%> ₽</div>
+            </div>
+          <%end%>
+        </div>
+        <div class="add-discount">+ Добавить</div>
+      </div>
+
+      <div class="block-information">
+        <h3><div class="icon-employees"></div>Ответственные <span>2</span></h3>
+          <div class="btn-compact click-compact"><div></div></div>
+
+        <div class="container-information compact">
           <div class="item-element">
             <div class="left-side-elem">
                 <img src="/resources/no-image-available.png">
@@ -138,11 +189,11 @@
         <div class="add-discount">+ Добавить</div>
       </div>
 
-      <div class="block-information compact">
-        <h3><div class="icon-time"></div>График посещений</h3>
-        <div class="btn-compact"></div>
+      <div class="block-information">
+        <h3><div class="icon-time"></div>График посещений <span>2</span></h3>
+          <div class="btn-compact click-compact"><div></div></div>
 
-        <div class="container-information">
+        <div class="container-information compact">
           <div class="item-element">
             <div class="left-side-elem">
                 <div>В понедельник</div>
@@ -161,27 +212,6 @@
             </div>
             <div class="rigth-side-elem">с 12:00 по 15:00</div>
           </div>
-        </div>
-        <div class="add-discount">+ Добавить</div>
-      </div>
-
-      <div class="block-information compact">
-        <h3><div class="icon-list"></div>Оказываемые услуги</h3>
-        <div class="btn-compact"></div>
-
-        <div class="container-information">
-          <%@record.record_service.eager_load(:service).each do |rc|%>
-            <div class="item-element">
-              <div class="left-side-elem">
-                  <div><%=rc.service.name%></div>
-                  <div class="panel-show">
-                    <div>Открыть карту</div>
-                      <div>Удалить</div>
-                  </div>
-              </div>
-              <div class="rigth-side-elem"><%=rc.money%> ₽</div>
-            </div>
-          <%end%>
         </div>
         <div class="add-discount">+ Добавить</div>
       </div>
