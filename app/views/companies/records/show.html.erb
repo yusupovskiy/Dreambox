@@ -220,11 +220,11 @@
         <h3>Оказываемые услуги</h3>
         <div id="item-informations"></div>
         <div class="add-discount">+ Добавить</div>
-        <div>
-          <select id="attached_service" name="record[attached_service]"><option value="36">Спидкубинг</option>
+        <div class="panel-attachment">
+          <select class="input-attachment" id="attached_service" name="record[attached_service]"><option value="36">Спидкубинг</option>
             <option value="38">UCMAS</option>
           </select>
-          <input id="attached_service_money" type="number" placeholder="Цена (в рублях)" style="width: 100px">
+          <input class="input-attachment" id="attached_service_money" type="number" placeholder="Цена (в рублях)">
           <button id="attach-service" type="button">OK</button>
         </div>
       </div>
@@ -254,25 +254,30 @@
         })
       </script>
 
-      <div class="block-information compact active-compact">
+      <div class="block-information parent-compact">
         <h3>Настройки группы</h3>
-        <div class="btn-compact"></div>
-
-        <div class="item-information"><span class="title-input">Тип записи</span><span class="text-input"><%= t('record_type.' + @record.record_type)%></span></div>
-        <div class="item-information"><span class="title-input">Вид записи</span><span class="text-input"><%= t('record_type.' + @record.visit_type)%></span></div>
-        <div class="item-information"><span class="title-input">Лимит в группе</span><span class="text-input"><%= @record.total_clients %></span></div>
-        <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input"><%= @record.created_at%></span></div>
-        <div class="item-information"><span class="title-input">Дата завершения</span><span class="text-input"><%= @record.finished_at %></span></div>
-        <div class="item-information"><span class="title-input">Период обучения</span><span class="text-input">2 года</span></div>
-        <div class="item-information"><span class="title-input">Филиал</span><span class="text-input"><%= @record.affiliate.name%></span></div>
+        <div class="btn-compact click-compact"><div></div></div>
+        <div class="container-information compact">
+          <div class="item-information"><span class="title-input">Тип записи</span><span class="text-input"><%= t('record_type.' + @record.record_type)%></span></div>
+          <div class="item-information"><span class="title-input">Вид записи</span><span class="text-input"><%= t('record_type.' + @record.visit_type)%></span></div>
+          <div class="item-information"><span class="title-input">Лимит в группе</span><span class="text-input"><%= @record.total_clients %></span></div>
+          <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input"><%= @record.created_at%></span></div>
+          <div class="item-information"><span class="title-input">Дата завершения</span><span class="text-input"><%= @record.finished_at %></span></div>
+          <div class="item-information"><span class="title-input">Период обучения</span><span class="text-input">2 года</span></div>
+          <div class="item-information"><span class="title-input">Филиал</span><span class="text-input"><%= @record.affiliate.name%></span></div>
+        </div>
       </div>
 
-      <div class="block-information compact active-compact">
+      <div class="block-information parent-compact">
         <h3>Настройки абонементов</h3>
-        <div class="btn-compact"></div>
+        <div class="btn-compact click-compact"><div></div></div>
 
-        <div class="item-information"><span class="title-input">Период абонемента</span><span class="text-input"><%= @record.abon_period %> дней</span></div>
-        <div class="item-information"><span class="title-input">Посещений за абонемент</span><span class="text-input"><%= @record.total_visits %></span></div>
+        <div class="container-information compact">
+          <div class="item-information"><span class="title-input">Период абонемента</span><span class="text-input"><%= @record.abon_period %> дней</span></div>
+          <div class="item-information"><span class="title-input">Посещений за абонемент</span><span class="text-input"><%= @record.total_visits %></span></div>
+          <div class="item-information"><span class="title-input">Авто абонементы</span><span class="text-input">нет</span></div>
+          <div class="item-information"><span class="title-input">Формирование цены</span><span class="text-input">за абонемент</span></div>
+        </div>
       </div>
     </div>
   </div>
