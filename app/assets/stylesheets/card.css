@@ -247,8 +247,9 @@ img.logo {
     top: 0;
     right: 0;
     width: 100%;
-    height: 55px;
+    height: 45px;
     cursor: pointer;
+    overflow: hidden;
 }
 .btn-compact:hover {
     opacity: 0.5;
@@ -370,7 +371,7 @@ a.subscription.active {
     user-select: none;
     float: left;
     width: 100%;
-    padding: 5px 0 10px 0;
+    padding: 10px 0;
 }
 .subscriptions {
     color: #a7a7a7;

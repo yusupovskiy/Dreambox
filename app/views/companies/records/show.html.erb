@@ -9,6 +9,8 @@
       <div class="panel-show">
         <%= link_to 'Вернуться к списку', company_records_path %>
         <%= link_to 'Редактировать', edit_company_record_path(params[:company_id], @record) %>
+        <div>Автопродление всем</div>
+        <div>Динамические цены</div>
       </div>
     </div>
  
@@ -82,6 +84,8 @@
                 <div class="panel-show">
                     <div>Открыть карту</div>
                     <div>Продать абонемент</div>
+                      <div>Автопродление</div>
+                      <div>Динамическая цена</div>
                     <div>Отписать</div>
                 </div>
             </div>
@@ -103,6 +107,8 @@
                 <div class="panel-show">
                     <div>Открыть карту</div>
                     <div>Продать абонемент</div>
+                      <div>Автопродление</div>
+                      <div>Динамическая цена</div>
                     <div>Отписать</div>
                 </div>
             </div>
@@ -124,6 +130,8 @@
                 <div class="panel-show">
                     <div>Открыть карту</div>
                     <div>Продать абонемент</div>
+                      <div>Автопродление</div>
+                      <div>Динамическая цена</div>
                     <div>Отписать</div>
                 </div>
             </div>
@@ -144,10 +152,11 @@
                   <div><%=rc.service.name%></div>
                   <div class="panel-show">
                     <div>Открыть карту</div>
-                      <div>Удалить</div>
+                    <div>Редактировать пункт</div>
+                    <div>Удалить пункт</div>
                   </div>
               </div>
-              <div class="rigth-side-elem"><%=rc.money%> ₽</div>
+              <div class="rigth-side-elem"><%=rc.money%> ₽ (0 ₽)</div>
             </div>
           <%end%>
         </div>
@@ -166,8 +175,8 @@
                 <div class="panel-show">
                     <div>Открыть карту</div>
                     <div>Заморозить выплаты</div>
-                    <div>Редактировать</div>
-                    <div>Удалить</div>
+                    <div>Редактировать пункт</div>
+                    <div>Удалить пункт</div>
                 </div>
             </div>
             <div class="rigth-side-elem">4 500 ₽ (35%)</div>
@@ -179,8 +188,8 @@
                 <div class="panel-show">
                     <div>Открыть карту</div>
                     <div>Заморозить выплаты</div>
-                    <div>Редактировать</div>
-                    <div>Удалить</div>
+                    <div>Редактировать пункт</div>
+                    <div>Удалить пункт</div>
                 </div>
             </div>
             <div class="rigth-side-elem">5 000 ₽ (фикси.)</div>
@@ -198,7 +207,7 @@
             <div class="left-side-elem">
                 <div>В понедельник</div>
                 <div class="panel-show">
-                    <div>Удалить</div>
+                    <div>Удалить пункт</div>
                 </div>
             </div>
             <div class="rigth-side-elem">с 12:00 по 15:00</div>
@@ -207,7 +216,7 @@
             <div class="left-side-elem">
                 <div>Во вторник</div>
                 <div class="panel-show">
-                    <div>Удалить</div>
+                    <div>Удалить пункт</div>
                 </div>
             </div>
             <div class="rigth-side-elem">с 12:00 по 15:00</div>
