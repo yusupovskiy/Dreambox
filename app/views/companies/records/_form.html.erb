@@ -32,14 +32,14 @@
         <div id="item-informations"></div>
         <div class="add-discount">+ Добавить еще</div>
         <div>
-          <%= form.select :attached_service, @services.map{|s| [s.name, s.id]}, {}, {id: 'attached_service'} %>
+          <%= form.select :services, @services.map{|s| [s.name, s.id]}, {}, {id: 'service_list'} %>
           <input id="attached_service_money" type="number" placeholder="Цена (в рублях)" style="width: 100px">
           <button id="attach-service" type="button">OK</button>
         </div>
       </div>
       <script>
 var itemInformations = document.getElementById("item-informations")
-var attachedService = document.getElementById("attached_service")
+var attachedService = document.getElementById("service_list")
 var moneyInput = document.getElementById("attached_service_money")
 document.getElementById("attach-service").addEventListener("click", () => {
     let selected = attachedService.selectedOptions[0];

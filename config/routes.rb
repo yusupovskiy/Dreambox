@@ -17,5 +17,8 @@ Rails.application.routes.draw do
 
     resources :crm, controller: 'companies/crm', only: :index
   end
+  # two primary keys
+  delete 'records_services' => 'records_services#destroy'
+  resources 'records_services'
   resources :windows, only: :show
 end

@@ -13,8 +13,9 @@ class Companies::RecordsController < ApplicationController
   # GET /records/1.json
   def show
     unless @record.affiliate.company_id == @current_company.id
-      render html: "Record with id = #{@record.id} does not belong to you"
+      return render html: "Record with id = #{@record.id} does not belong to you"
     end
+    @services = Service.where(company_id: params[:company_id])
   end
 
   # GET /records/new

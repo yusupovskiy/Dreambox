@@ -156,7 +156,7 @@
                     <div>Удалить пункт</div>
                   </div>
               </div>
-              <div class="rigth-side-elem"><%=rc.money%> ₽ (0 ₽)</div>
+              <div class="rigth-side-elem"><%#=rc.money_for_abon%> ₽ (0 ₽)</div>
             </div>
           <%end%>
         </div>
@@ -225,41 +225,82 @@
         <div class="add-discount">+ Добавить</div>
       </div>
 
-      <div class="block-information">
+      <div id="records_services_part" data-record-id="<%=@record.id%>" class="block-information">
         <h3>Оказываемые услуги</h3>
-        <div id="item-informations"></div>
+        <div>
+          <div v-for="(recordService, index) in recordsServices" class="item-information">
+            <span class="title-input">{{recordService.service.name}}</span>
+            <div @click="deleteRecordService(index)" class="remove_this_item still-card"></div>
+            <span class="text-input">{{recordService.money_for_abon}} ₽ ({{recordService.money_for_visit}} ₽)</span>
+          </div>
+        </div>
         <div class="add-discount">+ Добавить</div>
         <div class="panel-attachment">
-          <select class="input-attachment" id="attached_service" name="record[attached_service]"><option value="36">Спидкубинг</option>
-            <option value="38">UCMAS</option>
+          <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+          <select id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
+            <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
           </select>
-          <input class="input-attachment" id="attached_service_money" type="number" placeholder="Цена (в рублях)">
-          <button id="attach-service" type="button">OK</button>
+          <input class="input-attachment" type="number" placeholder="Цена за абонемент" v-model="moneyForAbon">
+          <input class="input-attachment" type="number" placeholder="Цена за посещение" v-model="moneyForVisit">
+          <button @click="attachService" type="button">OK</button>
         </div>
       </div>
       <script>
-        var itemInformations = document.getElementById("item-informations")
-        var attachedService = document.getElementById("attached_service")
-        var moneyInput = document.getElementById("attached_service_money")
-        document.getElementById("attach-service").addEventListener("click", () => {
-            let selected = attachedService.selectedOptions[0];
-            let [id, name] = [selected.value, selected.textContent]
-            let money = moneyInput.value
-            let html = `
-                  <div class="item-information">
-                    <input name="record[service_ids][]" type="hidden" value="${id}">
-                    <span class="title-input">${name}</span>
-                    <div class="remove_this_item still-card"></div>
-                    <span class="text-input">${money} ₽</span>
-                    <input name="record[service_money][]" type="hidden" value="${money}">
-                  </div>`
-            let elem = document.createRange().createContextualFragment(html)
-            itemInformations.appendChild(elem)
-            let items = itemInformations.children
-            let lastItem = items[items.length-1];
-            lastItem
-                .getElementsByClassName("remove_this_item")[0]
-                .addEventListener("click", () => lastItem.outerHTML = '')
+        var authToken = document.getElementById("authenticity_token").value
+        var itemInformations = document.getElementById("records_services_part")
+        var recordId = itemInformations.dataset.recordId
+        var vm = new Vue({
+          el: '#records_services_part',
+          data: {
+            recordsServices: [],
+            moneyForAbon: 0,
+            moneyForVisit: 0,
+            attachedServiceId: null,
+          },
+          methods: {
+            deleteRecordService(index) {
+              let rs = this.recordsServices[index]
+              $.ajax('/records_services',{
+                method: 'DELETE',
+                data: {
+                  authenticity_token: authToken,
+                  record_service: {
+                    record_id: rs.record_id,
+                    service_id: rs.service_id
+                  }
+                },
+                success: e => this.recordsServices.splice(index, 1),
+                error: e => console.log('error', e)
+              })
+            },
+            attachService() {
+              let {moneyForAbon, moneyForVisit, attachedServiceId, serviceName} = this
+              $.ajax('/records_services', {
+                method: 'POST',
+                data: {
+                  authenticity_token: authToken,
+                  record_service: {
+                    record_id: recordId,
+                    service_id: attachedServiceId,
+                    money_for_abon: moneyForAbon,
+                    money_for_visit: moneyForVisit,
+                  }
+                },
+                error: e => console.log('error', e)
+              }).done(newRecordService => {
+                newRecordService.service = {id: attachedServiceId, name: serviceName}
+                this.recordsServices.push(newRecordService)
+              })
+            },
+            updateFromSelectedText(e) {
+              let {options} = e.target
+              this.serviceName = options[options.selectedIndex].text
+            }
+          },
+          created() {
+            $.get('/records_services.json?record_id='+recordId,
+                  result => this.recordsServices = result)
+          }
         })
       </script>
 
