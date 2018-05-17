@@ -19,7 +19,8 @@
         <%= form.date_field :birthday, id: :client_birthday, placeholder: "Дата рождения*", class: "input-panel" %>
         <%= form.select :sex, options_for_sexes, {selected: client.sex, placeholder: "Пол"}, {class: "input-panel"} %>
 
-        <input type="text" class="input-panel" placeholder="Телефон" />
+        <%= form.text_field :phone_number, id: :client_phone_number, placeholder: "Телефон", class: "input-panel" %>
+
       </div>
     </div>
     <%= form.submit class: "btn icon-confirm" %>

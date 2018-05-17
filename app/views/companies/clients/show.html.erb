@@ -31,8 +31,8 @@
 <div class="conten-card tabs">
   <div class="menu-with-options">
     <div class="option active">Основное</div>
-    <div class="option">ОКАЗАНИЕ УСЛУГ <span class="amount debt">- 12 000 ₽</span></div>
-    <div class="option">Все финансовые операции <span class="amount">10 000 ₽</span></div>
+    <div class="option">ОКАЗАНИЕ УСЛУГ <span class="amount debt">- 6 000 ₽</span></div>
+    <div class="option">Все финансовые операции <span class="amount">18 000 ₽</span></div>
   </div>
   
   <div class="cont-category-book">
@@ -42,7 +42,7 @@
           <span class="title-input">Возвраст (лет)</span><span class="text-input"><%= Date.today.year - @client.birthday.year %></span></div>
         <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= @client.birthday %></span></div>
         <div class="item-information"><span class="title-input">Пол</span><span class="text-input"><%= t("sex.#{@client.sex}") %></span></div>
-        <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
+        <div class="item-information"><span class="title-input">Телефон</span><span class="text-input"><%= @client.phone_number %></span></div>
       </div>
       <div class="block-information parent-compact">
         <h3>Информация о матери</h3>
@@ -83,7 +83,7 @@
           <div class="unsubscribe compact">отписать</div>
           <!--<div class="subscribe compact">записать</div>-->
 
-          <div class="info-about-subsc">Осталось оплатить <span class="amount debt">3 000 ₽ из 8 000 ₽</span></div>
+          <div class="info-about-subsc">Осталось оплатить <span class="amount debt">6 000 ₽ из 6 000 ₽</span></div>
           <div class="current-subs click-compact">Текущий абонемент до 21 августа 2018</div>
           <div class="subscriptions compact">
             <a href="#" class="subscription">
@@ -103,7 +103,7 @@
               <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
             </a>
             <a href="#" class="subscription">
-              <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
+              <div class="data-subscriptions">от 21 апрель 2018 до 21 май 2018</div>
               <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
             </a>
             <div class="more-subscriptions">Загрузить еще пять</div>
@@ -116,30 +116,30 @@
     <div class="tab-category information-section">
       <div class="block-information">
         <div class="item-information">
-          <span class="title-input">26 авгеста 2018</span>
-          <span class="text-input">1 000 ₽</span>
-          <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
+          <span class="title-input">26 июля 2018</span>
+          <span class="text-input">3 000 ₽</span>
+          <span class="text-input">Оплатил за абонемент от 21 июля 2018 года, который стоит 4000 ₽</span>
         </div>
       </div>
       <div class="block-information">
         <div class="item-information">
-          <span class="title-input">26 авгеста 2018</span>
-          <span class="text-input">1 000 ₽</span>
-          <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
+          <span class="title-input">28 июня 2018</span>
+          <span class="text-input">3 000 ₽</span>
+          <span class="text-input">Оплатил за абонемент от 21 июня 2018 года, который стоит 4000 ₽</span>
         </div>
       </div>
       <div class="block-information">
         <div class="item-information">
-          <span class="title-input">26 авгеста 2018</span>
-          <span class="text-input">1 000 ₽</span>
-          <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
+          <span class="title-input">25 мая 2018</span>
+          <span class="text-input">6 000 ₽</span>
+          <span class="text-input">Оплатил за абонемент от 21 мая 2018 года, который стоит 4000 ₽</span>
         </div>
       </div>
       <div class="block-information">
         <div class="item-information">
-          <span class="title-input">26 авгеста 2018</span>
-          <span class="text-input">1 000 ₽</span>
-          <span class="text-input">Оплатил за абонемент от 21 августа 2018 года, который стоит 4000 ₽</span>
+          <span class="title-input">22 апреля 2018</span>
+          <span class="text-input">6 000 ₽</span>
+          <span class="text-input">Оплатил за абонемент от 21 апреля 2018 года, который стоит 4000 ₽</span>
         </div>
       </div>
     </div>

@@ -130,6 +130,24 @@ document.addEventListener('turbolinks:load', function() {
     $(".left-side-elem>.panel-show").css({'display':'none'});
   });
 
+  $(document.body).click(function(e){
+    var activeSideElem = $(e.target).closest(".left-side-elem");
+    if(activeSideElem.length === 0)
+        return;
+    showPanelLeftSideElem;
+    console.log(activeSideElem); // элемент, на котором произошло событие
+  });
+
+
+jQuery(".left-side-elem").mouseenter(function(e) {
+               jQuery(this).css("opacity", 0.5);
+         console.log('Вы навели мышь на элемент <img src="' + jQuery(this).attr('src') + '">');
+            }).mouseout(function(e) {
+               jQuery(this).css("opacity", 1.0);
+         console.log('Вы убрали мышь с элемента <img src="' + jQuery(this).attr('src') + '">');
+            });
+
+
   // скролл при нажатии кнопки
   // $('.top-scroll').click(function () {
   //   $('html').scrollTop(0);

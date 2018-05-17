@@ -20,9 +20,9 @@
         <%= form.text_field :name, placeholder: "Название*", class: "input-panel" %>
       </div>
       <div class="block-information">
-        <h3>Настройка группы</h3>
-        <label>Лимит в группе</label>
-        <%= form.number_field :total_clients, placeholder: "Лимит в группе", class: "input-panel" %>
+        <h3>Настройка записи</h3>
+        <label>Лимит в записи</label>
+        <%= form.number_field :total_clients, placeholder: "Лимит в записи", class: "input-panel" %>
         <label>Дата завершения*</label>
         <%= form.date_field :finished_at, placeholder: "Дата завершения*", class: "input-panel"%>
         <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
@@ -31,43 +31,6 @@
         <h3>Настройка абонементов</h3>
         <%= form.number_field :total_visits, placeholder: "Посещений за абонемент", class: "input-panel" %>
       </div>
-
-      <div class="block-information">
-        <h3>Оказываемые услуги</h3>
-        <div id="item-informations"></div>
-        <div class="add-discount">+ Добавить еще</div>
-        <div>
-          <%= form.select :attached_service, @services.map{|s| [s.name, s.id]}, {}, {id: 'attached_service'} %>
-          <input id="attached_service_money" type="number" placeholder="Цена (в рублях)" style="width: 100px">
-          <button id="attach-service" type="button">OK</button>
-        </div>
-      </div>
-      <script>
-var itemInformations = document.getElementById("item-informations")
-var attachedService = document.getElementById("attached_service")
-var moneyInput = document.getElementById("attached_service_money")
-document.getElementById("attach-service").addEventListener("click", () => {
-    let selected = attachedService.selectedOptions[0];
-    let [id, name] = [selected.value, selected.textContent]
-    let money = moneyInput.value
-    let html = `
-          <div class="item-information">
-            <input name="record[service_ids][]" type="hidden" value="${id}">
-            <span class="title-input">${name}</span>
-            <div class="remove_this_item still-card"></div>
-            <span class="text-input">${money} ₽</span>
-            <input name="record[service_money][]" type="hidden" value="${money}">
-          </div>
-`
-    let elem = document.createRange().createContextualFragment(html)
-    itemInformations.appendChild(elem)
-    let items = itemInformations.children
-    let lastItem = items[items.length-1];
-    lastItem
-        .getElementsByClassName("remove_this_item")[0]
-        .addEventListener("click", () => lastItem.outerHTML = '')
-})
-      </script>
     </div>
     <%= form.submit class: "btn icon-confirm" %>
   </div>
