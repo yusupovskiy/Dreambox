@@ -137,6 +137,31 @@
             </div>
             <div class="rigth-side-elem">Нет абонемента</div>
           </div>
+          <% 9.times do %>
+          <div class="item-element">
+            <div class="left-side-elem">
+                <img src="/resources/no-image-available.png">
+                <div>Юсупов Расул</div>
+                <div class="panel-show">
+                    <div>Открыть карту</div>
+                    <div>Продать абонемент</div>
+                      <div>Автопродление</div>
+                      <div>Динамическая цена</div>
+                    <div>Отписать</div>
+                </div>
+            </div>
+            <div class="rigth-side-elem">
+              <select id="" name="">
+                <option value="36">Записан</option>
+                <option value="36">Не записан</option>
+                <option value="38">Посетил</option>
+                <option value="38">Не посетил</option>
+                <option value="38">Не посетит</option>
+                <option value="38">Отмена</option>
+              </select>
+            </div>
+          </div>
+          <% end %>
         </div>
         <div class="add-discount">+ Записать</div>
       </div>
@@ -147,8 +172,8 @@
         <div class="btn-compact click-compact"><div></div></div>
         
         <div class="container-information compact">
-          <div v-for="(recordService, index) in recordsServices" class="item-element">
-            <div class="left-side-elem" @mouseenter="hoverClass='myclass'" @mouseleave="hoverClass=''" :class="hoverClass">
+          <div v-for="(recordService, index) in recordsServices" class="item-element" style="display: none;">
+            <div class="left-side-elem">
                 <div>{{recordService.service.name}}</div>
                 <div class="panel-show">
                   <a href="/">Открыть карту</a>
@@ -157,12 +182,23 @@
                 </div>
             </div>
             <div class="rigth-side-elem">{{recordService.money_for_abon}} ₽ ({{recordService.money_for_visit}} ₽)</div>
+          </div>          
+          <div class="item-element">
+            <div class="left-side-elem">
+                <div>Английский язык</div>
+                <div class="panel-show">
+                  <a href="/">Открыть карту</a>
+                  <div>Редактировать пункт</div>
+                  <div class="remove_this_item">Удалить пункт</div>
+                </div>
+            </div>
+            <div class="rigth-side-elem">4000 ₽ (150 ₽)</div>
           </div>
         </div>
 
         <div class="add-discount">+ Добавить</div>
 
-        <div class="panel-attachment">
+        <div class="panel-attachment" style="display: none;">
           <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
           <select class="input-attachment" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
             <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
@@ -241,7 +277,7 @@
           <div class="item-element">
             <div class="left-side-elem">
                 <img src="/resources/no-image-available.png">
-                <div>Юсупов Расул</div>
+                <div>Агаева Патимат</div>
                 <div class="panel-show">
                     <div>Открыть карту</div>
                     <div>Заморозить выплаты</div>
@@ -254,7 +290,7 @@
           <div class="item-element">
             <div class="left-side-elem">
                 <img src="/resources/no-image-available.png">
-                <div>Юсупов Расул</div>
+                <div>Улубекова Зубруд</div>
                 <div class="panel-show">
                     <div>Открыть карту</div>
                     <div>Заморозить выплаты</div>

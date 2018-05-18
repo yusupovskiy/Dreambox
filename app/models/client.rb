@@ -4,4 +4,5 @@ class Client < ApplicationRecord
 
   validates :first_name, :last_name, length: {minimum: 3}
   enum sex: [ :male, :female, :unknown ]
+
 end

@@ -3,7 +3,6 @@ class Companies::ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy, :archive]
   before_action :ensure_user_has_company
   before_action :set_s3_direct_post, only: [:new, :edit]
-  layout 'card'
 
   # GET /clients
   # GET /clients.json
