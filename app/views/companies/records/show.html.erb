@@ -73,7 +73,7 @@
       </div>
 
       <div class="block-information">
-        <h3><div class="icon-user"></div>Записанные <span>3 из 20</span></h3>
+        <h3><div class="icon-user"></div>Записанные <span>12 из 20</span></h3>
           <div class="btn-compact click-compact"><div></div></div>
 
         <div class="container-information compact">
@@ -338,8 +338,8 @@
           <div class="item-information"><span class="title-input">Тип записи</span><span class="text-input"><%= t('record_type.' + @record.record_type)%></span></div>
           <div class="item-information"><span class="title-input">Тип посещения</span><span class="text-input"><%= t('record_type.' + @record.visit_type)%></span></div>
           <div class="item-information"><span class="title-input">Лимит в записи</span><span class="text-input"><%= @record.total_clients %></span></div>
-          <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input"><%= @record.created_at%></span></div>
-          <div class="item-information"><span class="title-input">Дата завершения</span><span class="text-input"><%= @record.finished_at %></span></div>
+          <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input"><%= @record.created_at.strftime("%d %b, %Y") %></span></div>
+          <div class="item-information"><span class="title-input">Дата завершения</span><span class="text-input"><%= @record.finished_at.strftime("%d %b, %Y") %></span></div>
           <div class="item-information"><span class="title-input">Филиал</span><span class="text-input"><%= @record.affiliate.name%></span></div>
         </div>
       </div>

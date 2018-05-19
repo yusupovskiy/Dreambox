@@ -16,20 +16,18 @@
   </div>
   <a class="btn icon-plus" href="<%=new_company_affiliate_path%>"></a>
   <div class="cont-category-book">
-    <% @affiliates.each do |affiliate| %>
-      <%= link_to [affiliate.company, affiliate], class: "item-card" do %>
-        <div class="left-content">
-          <div class="name-content"><%= affiliate.name %></div>
-          <span class=""><span style="margin-right: 2px;">Прибыль за месяц</span> <span class="amount">1 441 000 ₽</span></span>
-        </div>
-        <div class="right-content">
-          <div class="people-on-course">121<img src="/images/visitors1.png"></div>
-        </div>
-        
-
-<!--         <%= link_to 'Edit', edit_company_affiliate_path(affiliate.company, affiliate) %>
-        <%= link_to 'Destroy', company_affiliate_path(affiliate.company_id, affiliate), method: :delete, data: { confirm: 'Are you sure?' } %> -->
-      <%end%>
-    <% end %>
+    <div class="tab-category information-section">
+      <% @affiliates.each do |affiliate| %>
+        <%= link_to [affiliate.company, affiliate], class: "item-card" do %>
+          <div class="left-content">
+            <div class="name-content"><%= affiliate.name %></div>
+            <span class=""><span style="margin-right: 2px;">Прибыль за месяц</span> <span class="amount">1 441 000 ₽</span></span>
+          </div>
+          <div class="right-content">
+            <div class="people-on-course">121<img src="/images/visitors1.png"></div>
+          </div>
+        <%end%>
+      <% end %>
+    </div>
   </div>
 </div>

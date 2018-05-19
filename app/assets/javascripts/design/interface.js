@@ -124,6 +124,7 @@ document.addEventListener('turbolinks:load', function() {
     $(this).children(".panel-show").css({'display':'grid'});
   };
 
+
   $('.left-side-elem').hover(showPanelLeftSideElem).click(showPanelLeftSideElem);
 
   $('.left-side-elem').mouseleave(function () {
@@ -137,15 +138,6 @@ document.addEventListener('turbolinks:load', function() {
     showPanelLeftSideElem;
     console.log(activeSideElem); // элемент, на котором произошло событие
   });
-
-
-jQuery(".left-side-elem").mouseenter(function(e) {
-               jQuery(this).css("opacity", 0.5);
-         console.log('Вы навели мышь на элемент <img src="' + jQuery(this).attr('src') + '">');
-            }).mouseout(function(e) {
-               jQuery(this).css("opacity", 1.0);
-         console.log('Вы убрали мышь с элемента <img src="' + jQuery(this).attr('src') + '">');
-            });
 
 
   // скролл при нажатии кнопки

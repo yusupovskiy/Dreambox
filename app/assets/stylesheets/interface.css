@@ -249,7 +249,7 @@ img.object-avatar {
 }
 .item-card {
     background-color: white;
-    margin: 0 30px 10px 30px;
+    margin-bottom: 10px;
     font-size: 14px;
     border-radius: 7px;
     width: 290px;

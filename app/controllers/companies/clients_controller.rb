@@ -9,6 +9,8 @@ class Companies::ClientsController < ApplicationController
   def index
     @clients = Client.where(company: params[:company_id])
     @total_clients = @clients.size
+    @no_archive_clients = Client.where(company: params[:company_id], archive: false)
+    @archive_clients = Client.where(company: params[:company_id], archive: true)
   end
 
   # GET /clients/1

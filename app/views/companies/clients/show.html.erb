@@ -1,7 +1,7 @@
 <div class="title-panel avatar">
   <div class="archive img-card">
     <%if @client.archive%>
-      <div title="Клиенты в архиве" class="people-archive"></div>
+      <div title="Клиент в архиве" class="people-archive"></div>
     <%end%>
     <%=image_tag s3_image(@client.avatar)%>
   </div>
@@ -25,7 +25,7 @@
     </div>
   </div>
   <div class="title-card"><%= @client.last_name %> <%= @client.first_name %><br /><%= @client.patronymic %></div>
-  <div class="role-card">Клиенты</div>
+  <div class="role-card">Клиент</div>
 </div>
 
 <div class="conten-card tabs">
@@ -40,7 +40,7 @@
       <div class="block-information">
         <div class="item-information">
           <span class="title-input">Возвраст (лет)</span><span class="text-input"><%= Date.today.year - @client.birthday.year %></span></div>
-        <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= @client.birthday %></span></div>
+        <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= @client.birthday.strftime("%d %b, %Y") %></span></div>
         <div class="item-information"><span class="title-input">Пол</span><span class="text-input"><%= t("sex.#{@client.sex}") %></span></div>
         <div class="item-information"><span class="title-input">Телефон</span><span class="text-input"><%= @client.phone_number %></span></div>
       </div>

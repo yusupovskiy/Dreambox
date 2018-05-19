@@ -223,7 +223,7 @@ span.debt {
     -ms-transform: translatex(1px);
     transform: translatex(1px);
 }
-.btn:active, .btn-card:active, .btn-subs:active, .add-discount:active {
+.btn:active, .btn-subs:active, .add-discount:active {
     -webkit-transform: translateY(1px);
     -ms-transform: translateY(1px);
     transform: translateY(1px);

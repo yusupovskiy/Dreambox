@@ -1,0 +1,11 @@
+<%= link_to [client.company, client], class: "item-card" do %>
+  <%=image_tag s3_image(client.avatar), class: "avatar-list" %>
+  <div class="left-content">
+    <div class="name-content"><%= client.last_name %>
+    <%= client.first_name %></div>
+    <span class="">Абонементы закончился<!-- Ucmas сегодня в 12:20 --></span>
+  </div>
+  <div class="right-content">
+    <span class="amount debt">- 6 000 ₽</span>
+  </div>
+<%end%>

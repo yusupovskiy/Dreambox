@@ -19,27 +19,26 @@
 
 <input class="card-search" type="text" placeholder="Поиск">
 
-<div class="conten-card">
+<div class="conten-card tabs">
   <div class="menu-with-options">
-    <div class="option active">Текущие клиенты 100</div>
-    <div class="option">Должники 24</div>
-    <div class="option">Архив 11</div>
-    <div class="option">Все клиенты 111</div>
+    <div class="option active" title="Те клиенты, которые в данный момент пользуются услугами в вашем филиале">Текущие клиенты <%= @no_archive_clients.size %></div>
+    <div class="option">Должники 0</div>
+    <div class="option">Архив <%= @archive_clients.size %></div>
+    <div class="option"title="Все клиенты компании, включая архив">Все клиенты <%= @total_clients %></div>
   </div>
   <a class="btn icon-plus" href="<%=new_company_client_path %>"></a>
   <div class="cont-category-book">
-    <% @clients.each do |client| %>
-      <%= link_to [client.company, client], class: "item-card" do %>
-        <%=image_tag s3_image(client.avatar), class: "avatar-list" %>
-        <div class="left-content">
-          <div class="name-content"><%= client.last_name %>
-          <%= client.first_name %></div>
-          <span class="">Абонементы закончился<!-- Ucmas сегодня в 12:20 --></span>
-        </div>
-        <div class="right-content">
-          <span class="amount debt">- 6 000 ₽</span>
-        </div>
-      <%end%>
-    <% end %>
+    <div class="tab-category information-section">
+      <%= render @no_archive_clients %>
+    </div>
+    <div class="tab-category information-section">
+      cписок должников
+    </div>
+    <div class="tab-category information-section">
+      <%= render @archive_clients %>
+    </div>
+    <div class="tab-category information-section">
+      <%= render @clients %>
+    </div>
   </div>
 </div>
