@@ -8,8 +8,8 @@
     <%= form.submit class: "btn icon-confirm" %>
   </div>
   <% if service.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(service.errors.count, "error") %> prohibited this service from being saved:</h2>
+    <div id="error_explanation" class="message">
+      <h4><%= pluralize(service.errors.count, "error") %> prohibited this service from being saved:</h4>
       <ul>
       <% service.errors.full_messages.each do |message| %>
         <li><%= message %></li>

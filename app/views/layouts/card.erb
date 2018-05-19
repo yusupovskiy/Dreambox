@@ -35,80 +35,25 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
   <!-- <body data-params="<%=params.to_json%>" class="page top-panel"> -->
   <body data-params="<%=params.to_json%>" class="">
     
-
     <div class="active-company">
       <div class="name-company">Школа кулинаров</div>
       <div class="days-subs">∞ дн.</div>
     </div>
-    
-    <!-- Temporary div -->
-    <div class="message">
-      <%=flash[:notice]%>
-      <%=flash[:alert]%>
-    </div>
+
+    <%if flash.present?%>
+      <div class="message">
+        <%=flash[:notice]%>
+        <%=flash[:alert]%>
+      </div>
+    <%end%>
 
     <%=render 'shared/authorization_fields'%>
 
+    <% render 'layouts/open_tabs' %>
 
-
-    <!-- <div class="test">
-      <div class="open-objects">
-      <div style="position: absolute; top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    margin: auto;
-    width: 100%;
-    overflow: overlay;
-    height: 48px;
-    padding: 5px 0;">
-      <div style="display: flex;">
-        <div class="open-object">
-          <img src="/resources/no-image-available.png" />
-          <span>Магомедов Магомед</span>
-        </div>
-        <div class="open-object">
-          <img src="/resources/no-image-available.png" />
-          <span>Магомедов</span>
-        </div>
-        <div class="open-object">
-          <img src="/resources/no-image-available.png" />
-          <span>Магомедов Магомед</span>
-        </div>
-        <div class="open-object">
-          <img src="/resources/no-image-available.png" />
-          <span>Магомедов Магомед</span>
-        </div>
-        <div class="open-object">
-          <img src="/resources/no-image-available.png" />
-          <span>Магомедов Магомед</span>
-        </div>
-        <div class="open-object">
-          <img src="/resources/no-image-available.png" />
-          <span>Магомедов Магомед</span>
-        </div>
-        <div class="open-object">
-          <img src="/resources/no-image-available.png" />
-          <span>Магомедов Магомед</span>
-        </div>
-        <div class="open-object">
-          <img src="/resources/no-image-available.png" />
-          <span>Магомедов Магомед</span>
-        </div>
-        <div class="open-object">
-          <img src="/resources/no-image-available.png" />
-          <span>Магомедов Магомед</span>
-        </div>
-      </div>
-      </div>
-      </div>
-    </div> -->
-
-    <!-- <div class="content"> -->
-      <div class="card">
-        <%=yield%>
-      </div>
-    <!-- </div> -->
+    <div class="card">
+      <%=yield%>
+    </div>
     
     <div class="footer">
       <div class="other-sections">
@@ -120,7 +65,6 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         <div>Оставить отзыв</div>
         <div>Помощь по бизнесу</div>
       </div>
-      
       <div class="copyright">© 2016 - 2018 Dreambox</div>
     </div>
     

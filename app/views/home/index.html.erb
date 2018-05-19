@@ -15,18 +15,10 @@
   
   <div class="header-katalog">
     <a class="logo" href="<%=root_path%>"><img src="/images/logo-mini.png" /></a>
-    <input type="text" placeholder="Поиск инструментов или людей..." />
+    <input type="text" placeholder="Быстрый поиск..." />
   </div>
   
   <div class="content-katalog">
-    <div class="menu-with-options">
-      <div class="option active">Все функции</div>
-      <div class="option">Оказание услуг</div>
-      <div class="option">Компания</div>
-      <div class="option">Финансы</div>
-      <div class="option">Склад</div>
-      <div class="option">Аналитика</div>
-    </div>
     
     <div class="instruments">
       <a href="<%=company_clients_path @current_company%>" class="instrument">
@@ -47,10 +39,7 @@
         <div>Филиалы</div>
       </a>
 
-      <!-- <div class="instrument">
-        <img src="/images/group.png" />
-        <div>Группы</div>
-      </div>
+      <!--
       <div class="instrument">
         <img src="/images/group.png" />
         <div>Индивидуально</div>

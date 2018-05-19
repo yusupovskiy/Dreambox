@@ -7,7 +7,7 @@ a {
     text-decoration: none;
 }
 .katalog {
-    width: 800px;
+    width: 550px;
     height: 250px;
     background: #eceff0;
     border-radius: 7px 7px 0 0;
@@ -22,14 +22,14 @@ a {
 }
 .header-katalog {
     width: 100%;
-    height: 80px;
+    height: 70px;
     background-color: white;
 }
 .header-katalog>input {
-    font-size: 18px;
+    font-size: 16px;
     width: 100%;
     box-sizing: border-box;
-    padding: 30px 90px;
+    padding: 26px 30px 26px 90px;
     border: 0;
     outline: none;
 }
@@ -118,11 +118,11 @@ img.object-avatar {
     border-radius: 14px;
 }
 .instruments {
-    margin: 0 17px;
+    margin: 30px 17px 0 17px;
 }
 .instrument {
     float: left;
-    margin: 0 14px;
+    margin: 0 14px 24px 14px;
     cursor: pointer;
     transition: .3s;
     width: 57px;
@@ -152,7 +152,7 @@ img.object-avatar {
     display: table;
     width: 32px;
     height: 17px;
-    padding: 32px 26px 32px 30px;
+    padding: 27px 26px 23px 30px;
     position: absolute;
     top: 0;
     left: 0;
@@ -160,7 +160,7 @@ img.object-avatar {
 .header-katalog>.logo>img {
     width: 100%;
 }
-.open-objects {
+.open-tabs>div {
     position: absolute;
     top: 0;
     left: 0;
@@ -171,6 +171,19 @@ img.object-avatar {
     z-index: 2;
     user-select: none;
     width: 100%;
+}
+.open-tabs>div>div {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    margin: auto;
+    width: 100%;
+    overflow: hidden;
+    height: 48px;
+    padding: 5px 0px;
+    outline: none;
 }
 .open-object {
     background-color: white;
@@ -197,7 +210,7 @@ img.object-avatar {
     font-size: 13px;
     margin: 9.5px 0px;
 }
-.test {
+.open-tabs {
     width: 100%;
     height: 50%;
     position: fixed;
@@ -252,7 +265,7 @@ img.object-avatar {
     margin-bottom: 10px;
     font-size: 14px;
     border-radius: 7px;
-    width: 290px;
+    width: 300px;
     height: 50px;
     float: left;
     transition: .3s;
@@ -271,7 +284,7 @@ a.btn {
 }
 input.card-search {
     background-color: white;
-    width: 290px;
+    width: 300px;
     display: table;
     margin: 20px 30px 0;
     padding: 12px 20px;
@@ -317,7 +330,7 @@ input.card-search {
     color: #75787c;
     display: none;
 }
-.top-panel .test {
+.top-panel .open-tabs {
   height: 74px;
 }
 .top-panel .footer {
@@ -326,12 +339,20 @@ input.card-search {
 .top-panel .active-company, .top-panel .message {
     opacity: 0;
 }
-.opacity-panel .test {
+.opacity-panel .open-tabs {
     opacity: .4;
 }
 .field_with_errors input {
-    border: 1px solid red;
-    border-width: 0 0 1px 0;
+    border: 2px solid #ffb0b0;
+    border-width: 0 0 2px 0;
+}
+.message ul {
+    padding-left: 20px;
+}
+.message ul>li {
+    word-break: break-all;
+    font-size: 13px;
+    margin-bottom: 10px;
 }
 
 @media (max-width: 960px) {
@@ -361,7 +382,7 @@ input.card-search {
     .message {
         top: 70px;
     }
-    .open-objects>div>div {
+    .open-tabs>div>div>div {
         margin-left: 20px!important;
     }
 }

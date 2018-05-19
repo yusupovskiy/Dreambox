@@ -12,14 +12,11 @@
       </div>
     </div>
     <%= form.submit class: "btn icon-confirm" %>
-    
   </div>
 
-
   <% if affiliate.errors.any? %>
-    <div id="error_explanation">
+    <div id="error_explanation" class="message">
       <h2><%= pluralize(affiliate.errors.count, "error") %> prohibited this affiliate from being saved:</h2>
-
       <ul>
       <% affiliate.errors.full_messages.each do |message| %>
         <li><%= message %></li>
@@ -27,5 +24,4 @@
       </ul>
     </div>
   <% end %>
-
 <% end %>
