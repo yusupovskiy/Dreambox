@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   devise_for :users, path: 'auth', controllers: {confirmations: 'confirmations'}
   get 'auth' => 'home#auth'
+  get 'search_result' => 'home#search_result'
 
   resources :companies do
     resources :affiliates, module: :companies

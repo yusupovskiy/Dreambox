@@ -1,6 +1,5 @@
 <%if signed_in?%>
   <div class="current-object">
-
     <img class="object-avatar" src="/resources/no-image-available.png" />
     <div class="object-info">
       <span class="name-people"><%="#{current_user.first_name} #{current_user.last_name}"%></span>
@@ -12,15 +11,14 @@
 
 
 <div class="katalog">
-  
   <div class="header-katalog">
     <a class="logo" href="<%=root_path%>"><img src="/images/logo-mini.png" /></a>
     <input type="text" placeholder="Быстрый поиск..." />
   </div>
-  
-  <div class="content-katalog">
-    
+  <div class="content-katalog katalog-scrollbar">
+    <div class="result-quick-search"></div>
     <div class="instruments">
+      <div class="title-section">Инструменты</div>
       <a href="<%=company_clients_path @current_company%>" class="instrument">
         <img src="/images/user.png" />
         <div>Клиенты</div>
@@ -38,29 +36,48 @@
         <img src="/images/workflow.png" />
         <div>Филиалы</div>
       </a>
-
-      <!--
       <div class="instrument">
         <img src="/images/group.png" />
-        <div>Индивидуально</div>
+        <div>Сотрудники</div>
       </div>
       <div class="instrument">
         <img src="/images/img_432045.png" />
-        <div>Абонементы</div>
-      </div>
-      <div class="instrument">
-        <img src="/images/time-left.png" />
-        <div>Посещения</div>
-      </div>
-      
-      <div class="instrument">
-        <img src="/images/2.png" />
-        <div>Оплаты</div>
-      </div>
-       -->
-      
+        <div>Финансы</div>
+      </div>      
     </div>
-    
   </div>
-  
 </div>
+
+<script type="text/javascript">
+  document.addEventListener('turbolinks:load', function() {
+
+    function funcBefore() {
+      $('.result-quick-search').html('<div class="loading-block"><img src="images/loading.gif"</div>');
+    }
+    function funcSuccess(data) {
+      $('.result-quick-search').html(data);
+    }
+
+    $('.katalog').on("input",function(ev){
+      var textSearch = $(ev.target).val(); 
+      var arrayTextSearch = textSearch.split(' ');
+
+      if(textSearch != "" && textSearch != " " ) {
+        $.ajax( {
+          url: '/search_result',
+          type: 'GET',
+          data: {
+            request: arrayTextSearch
+          },
+          dataType: 'HTML',
+          beforeSend: funcBefore,
+          success: funcSuccess
+        });
+      }
+      else {
+        $('.result-quick-search').html('');
+      }
+
+    });
+  });
+</script>

@@ -39,4 +39,9 @@ ru:
     created: Услуга успешно создана
     updated: Услуга успешно сохранёна
     destroyed: Услуга успешно удалёна
+  companies: 
+    records: 
+      show: 
+        completed_ecords: Завершена!
+        desc-completed_ecords: Указанный срок подошел к концу
 

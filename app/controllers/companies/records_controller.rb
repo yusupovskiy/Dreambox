@@ -7,6 +7,8 @@ class Companies::RecordsController < ApplicationController
   def index
     ids = @current_company.affiliates.select(:id)
     @records = Record.where(affiliate: ids)
+    @completed_records = @records.where("finished_at < ?", Date.today)
+    @no_completed_records = @records.where("finished_at > ?", Date.today)
   end
 
   # GET /records/1

@@ -22,7 +22,9 @@
   <div class="menu-with-options">
     <div class="option active" title="Те клиенты, которые в данный момент пользуются услугами в вашем филиале">Текущие клиенты <%= @no_archive_clients.size %></div>
     <div class="option">Должники 0</div>
-    <div class="option">Архив <%= @archive_clients.size %></div>
+    <% if @archive_clients.any? then %>
+      <div class="option">Архив <%= @archive_clients.size %></div>
+    <% end %>
     <div class="option"title="Все клиенты компании, включая архив">Все клиенты <%= @total_clients %></div>
   </div>
   <a class="btn icon-plus" href="<%=new_company_client_path %>"></a>
@@ -33,9 +35,11 @@
     <div class="tab-category information-section">
       cписок должников
     </div>
-    <div class="tab-category information-section">
-      <%= render @archive_clients %>
-    </div>
+    <% if @archive_clients.any? then %>
+      <div class="tab-category information-section">
+        <%= render @archive_clients %>
+      </div>
+    <% end %>
     <div class="tab-category information-section">
       <%= render @clients %>
     </div>

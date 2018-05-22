@@ -20,3 +20,25 @@
 /*.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar {
     display: block;
 }*/
+
+.katalog-scrollbar::-webkit-scrollbar {
+    width: 14px;
+    margin: 3px;
+    background-color: #e0e3e7;
+    display: none;
+}
+.katalog-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #939598;
+    border-radius: 10px;
+    border: 5px solid #e1e4e8;
+}
+.katalog-scrollbar::-webkit-scrollbar-thumb:hover {
+    border: 3px solid #e1e4e8;
+    border-radius: 20px;
+}
+.katalog-scrollbar:hover.cool-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #e7e7e7;
+}
+.katalog-scrollbar:hover.katalog-scrollbar::-webkit-scrollbar {
+    display: block;
+}

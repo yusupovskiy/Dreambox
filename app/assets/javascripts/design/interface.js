@@ -5,9 +5,11 @@ document.addEventListener('turbolinks:load', function() {
   totalHeight();
   $(window).resize(totalHeight);
   
-  $('.header-katalog>input').focus(function () {
+  var scrollPanel = function () {
     $('html, body').animate({scrollTop: $('html').height()}, 500);
-  });
+  };
+
+  $('.header-katalog>input').focus(scrollPanel).click(scrollPanel);
 
   
   function totalHeight() {
@@ -39,6 +41,9 @@ document.addEventListener('turbolinks:load', function() {
     $allTabs = $wrapper.find('.cont-category-book>div'),
     $tabMenu = $wrapper.find('.menu-with-options>div');
   
+  $('.tabs .menu-with-options>div:nth-of-type(1)').addClass('active');
+  
+
   $allTabs.not(':first-of-type').hide();
   $allTabs.addClass('active-tab-category');
   
