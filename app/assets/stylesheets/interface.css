@@ -1152,6 +1152,9 @@ input.input-attachment {
     font-family: RobotoMedium;
     margin: 0 16px 16px 16px;
 }
+.left-side-elem:hover>.panel-show, .btn-show-list:hover>.panel-show {
+    display: grid;
+}
 
 @media (max-width: 960px) {
     .copyright {
