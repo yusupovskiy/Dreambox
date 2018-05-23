@@ -172,7 +172,7 @@
 
 
       <div id="records_services_part" data-record-id="<%=@record.id%>" class="block-information">
-        <h3><div class="icon-list"></div>Оказываемые услуги <span>1</span></h3>
+        <h3><div class="icon-list"></div>Оказываемые услуги <span>{{recordsServices.length}}</span></h3>
         <div class="btn-compact click-compact"><div></div></div>
         
         <div class="container-information compact">
@@ -180,36 +180,35 @@
             <div class="left-side-elem">
                 <div>{{recordService.service.name}}</div>
                 <div class="panel-show">
-                  <a href="/">Открыть карту</a>
-                  <div>Редактировать пункт</div>
-                  <div @click="deleteRecordService(index)"  class="remove_this_item">Удалить пункт</div>
+                  <a :href="`/companies/<%=params[:company_id]%>/services/${recordService.service_id}`">Открыть карточку</a>
+                  <div @click="editingRS = {...recordsServices[index]}">Редактировать пункт</div>
+                  <div @click="deleteRecordService(index)" class="remove_this_item">Удалить пункт</div>
                 </div>
             </div>
             <div class="rigth-side-elem">{{recordService.money_for_abon}} ₽ ({{recordService.money_for_visit}} ₽)</div>
-          </div>          
-          <div class="item-element">
-            <div class="left-side-elem">
-                <div>Английский язык</div>
-                <div class="panel-show">
-                  <a href="/">Открыть карту</a>
-                  <div>Редактировать пункт</div>
-                  <div class="remove_this_item">Удалить пункт</div>
-                </div>
-            </div>
-            <div class="rigth-side-elem">4000 ₽ (150 ₽)</div>
           </div>
         </div>
 
         <div class="add-discount">+ Добавить</div>
+        <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
 
         <div class="panel-attachment">
-          <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
           <select class="input-attachment" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
             <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
           </select>
           <input class="input-attachment" type="number" placeholder="Цена за абонемент" v-model="moneyForAbon">
           <input class="input-attachment" type="number" placeholder="Цена за посещение" v-model="moneyForVisit">
           <input class="btn icon-confirm" type="button" @click="attachService">
+        </div>
+
+        <div v-if="editingRS" class="panel-editing">
+          <input class="input-attachment" type="number" placeholder="Цена за абонемент" v-model="editingRS.money_for_abon">
+          <input class="input-attachment" type="number" placeholder="Цена за посещение" v-model="editingRS.money_for_visit">
+          <input class="btn icon-confirm" type="button" @click="editRS">
+          <input class="btn" type="button" @click="cancelEditing">
+        </div>
+        <div>
+          <%#console%>
         </div>
 
       </div>
@@ -225,6 +224,7 @@
             moneyForAbon: null,
             moneyForVisit: null,
             attachedServiceId: null,
+            editingRS: null,
           },
           methods: {
             deleteRecordService(index) {
@@ -239,8 +239,29 @@
                   }
                 },
                 success: e => this.recordsServices.splice(index, 1),
-                error: e => console.log('error', e)
+                error: e => console.warn('error', e)
               })
+            },
+            editRS() {
+              $.ajax('/records_services', {
+                method: 'PATCH',
+                data: {
+                  authenticity_token: authToken,
+                  record_service: { ...this.editingRS }
+                },
+                success: e => {
+                  this.editingRS = null
+                  let {record_id, service_id} = e
+                  let index = this.recordsServices
+                    .findIndex(rs => rs.record_id == e.record_id && rs.service_id == e.service_id)
+                  this.recordsServices[index] = {...this.recordsServices[index], ...e}
+                },
+                error: e => console.warn('error', e)
+              })
+              // this.editingRS = null
+            },
+            cancelEditing() {
+              this.editingRS = null
             },
             attachService() {
               let {moneyForAbon, moneyForVisit, attachedServiceId, serviceName} = this
@@ -255,7 +276,7 @@
                     money_for_visit: moneyForVisit,
                   }
                 },
-                error: e => console.log('error', e)
+                error: e => console.warn('error', e)
               }).done(newRecordService => {
                 newRecordService.service = {id: attachedServiceId, name: serviceName}
                 this.recordsServices.push(newRecordService)
