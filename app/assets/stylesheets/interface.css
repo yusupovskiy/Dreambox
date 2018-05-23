@@ -123,6 +123,7 @@ img.object-avatar {
 }
 .instrument>img {
     width: 21px;
+    height: 21px;
     padding: 18px;
     background-color: white;
     border-radius: 14px;
@@ -465,9 +466,11 @@ input.card-search {
     background-color: white;
     overflow: hidden;
 }
-.img-card>img {
+.people-avatar {
     width: 100%;
     height: 100%;
+    position: absolute;
+    top: 0;
 }
 .title-panel {
     padding: 10px 0 18px 0;
@@ -570,6 +573,7 @@ span.debt {
     padding: 8px 0;
     border: 0;
     margin-bottom: 1px;
+    background-color: white;
 }
 .icon-plus {
     background-image: url(/images/plus.png);
@@ -597,6 +601,7 @@ span.debt {
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    top: 0;
 }
 .icon-add-avatar {
     background-size: 100%;
@@ -604,10 +609,16 @@ span.debt {
     width: 14px;
     height: 14px;
     float: left;
-    margin: 38px;
+    padding: 38px;
     background-image: url(/images/plus2.png);
+    position: absolute;
+    top: 0;
+    z-index: 99;
+    background-color: rgba(255, 255, 255, 0.7);
+    background-origin: content-box;
+    transition: .3s;
 }
-.add-avatar:hover {
+.add-avatar:hover .icon-add-avatar {
     background-color: #f3f3f3;
 }
 .btn {
@@ -924,10 +935,7 @@ a {
     position: absolute;
     padding: 55px;
     background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-}
-.archive.img-card>div {
-    display: block!important;
+    z-index: 10;
 }
 .name-content {
     font-size: 14px;
@@ -1127,7 +1135,7 @@ input.input-attachment {
     width: 200px;
 }
 .completed-records {
-    color: #ff7375;
+    color: #12ce88;
     text-align: center;
     margin-top: 8px;
     text-transform: uppercase;

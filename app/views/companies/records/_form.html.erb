@@ -7,8 +7,10 @@
       <div class="block-information">
         <h3>Настройка группы</h3>
 
+        <%= form.label t('.record_type') %>
         <%= form.select :record_type, options_for(Record.record_types, 'record_type'), {selected: record.record_type}, {class: "input-panel"}%>
 
+        <%= form.label t('.visit_type') %>
         <%= form.select :visit_type, options_for(Record.visit_types, 'visit_type'), {selected: record.visit_type}, {class: "input-panel"}%>
 
         <%= form.number_field :total_clients, placeholder: "Лимит в группе", class: "input-panel" %>
@@ -19,55 +21,19 @@
         <%= form.date_field :finished_at, placeholder: "Дата завершения*", class: "input-panel"%>
         <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
 
-        <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]}, placeholder: "Филиал*", class: "input-panel" %>
+        <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]}, {placeholder: "Пол"}, {class: "input-panel"} %>
       </div>
       <div class="block-information">
         <h3>Настройка абонементов</h3>
+        <%= form.label t('.abon_period') %>
         <%= form.number_field :abon_period, placeholder: "Период абонемента (в днях)*", class: "input-panel", value: "30" %>
         <%= form.number_field :total_visits, placeholder: "Посещений за абонемент", class: "input-panel" %>
       </div>
-
-      <div class="block-information">
-        <h3>Оказываемые услуги</h3>
-        <div id="item-informations"></div>
-        <div class="add-discount">+ Добавить еще</div>
-        <div>
-          <%= form.select :services, @services.map{|s| [s.name, s.id]}, {}, {id: 'service_list'} %>
-          <input id="attached_service_money" type="number" placeholder="Цена (в рублях)" style="width: 100px">
-          <button id="attach-service" type="button">OK</button>
-        </div>
-      </div>
-      <script>
-var itemInformations = document.getElementById("item-informations")
-var attachedService = document.getElementById("service_list")
-var moneyInput = document.getElementById("attached_service_money")
-document.getElementById("attach-service").addEventListener("click", () => {
-    let selected = attachedService.selectedOptions[0];
-    let [id, name] = [selected.value, selected.textContent]
-    let money = moneyInput.value
-    let html = `
-          <div class="item-information">
-            <input name="record[service_ids][]" type="hidden" value="${id}">
-            <span class="title-input">${name}</span>
-            <div class="remove_this_item still-card"></div>
-            <span class="text-input">${money} ₽</span>
-            <input name="record[service_money][]" type="hidden" value="${money}">
-          </div>
-`
-    let elem = document.createRange().createContextualFragment(html)
-    itemInformations.appendChild(elem)
-    let items = itemInformations.children
-    let lastItem = items[items.length-1];
-    lastItem
-        .getElementsByClassName("remove_this_item")[0]
-        .addEventListener("click", () => lastItem.outerHTML = '')
-})
-      </script>
     </div>
     <%= form.submit class: "btn icon-confirm" %>
   </div>
   <% if record.errors.any? %>
-    <div id="error_explanation">
+    <div id="error_explanation" class="message">
       <h2><%= pluralize(record.errors.count, "error") %> prohibited this record from being saved:</h2>
       <ul>
       <% record.errors.full_messages.each do |message| %>

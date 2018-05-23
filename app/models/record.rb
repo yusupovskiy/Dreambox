@@ -8,5 +8,5 @@ class Record < ApplicationRecord
   enum visit_type: {one_time_visit: 0, reusable_visit: 1,
                     one_time_abon: 2, automatic_abon: 3, dynamic_abon: 4}
 
-  validates :name, presence: true
+  validates :name, :record_type, :visit_type, :created_at, :finished_at, :abon_period, :affiliate_id, presence: true
 end

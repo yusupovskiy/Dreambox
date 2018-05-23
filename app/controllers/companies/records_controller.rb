@@ -37,11 +37,11 @@ class Companies::RecordsController < ApplicationController
     @record = Record.new(record_params)
     ids = params[:record][:service_ids]
     money = params[:record][:service_money]
-    raise 'Wrong request'unless ids.size == money.size
+    #raise 'Wrong request'unless ids.size == money.size
 
-    ids.size.times do |i|
-      @record.record_service << RecordService.new(service_id: ids[i], money: money[i])
-    end
+    #ids.size.times do |i|
+    #  @record.record_service << RecordService.new(service_id: ids[i], money: money[i])
+    #end
 
 
     respond_to do |format|

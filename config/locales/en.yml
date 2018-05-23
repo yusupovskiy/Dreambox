@@ -73,4 +73,8 @@ en:
     records: 
       show: 
         completed_ecords: Completed
-        desc-completed_ecords: The deadline has come to an end
+        desc_completed_ecords: The deadline has come to an end
+      form:
+        record_type: Record type
+        visit_type: Visit type
+        abon_period: Abon period (days)*

@@ -10,7 +10,7 @@ ru:
   sex:
     male: Мужской
     female: Женский
-    unknown: Не скажу
+    unknown: Не указано
   record_type:
     grouping: Групповая запись
     personal: Индивидуальная запись
@@ -43,5 +43,12 @@ ru:
     records: 
       show: 
         completed_ecords: Завершена!
-        desc-completed_ecords: Указанный срок подошел к концу
+        desc_completed_ecords: Указанный срок подошел к концу
+        record_type: Тип записи
+        visit_type: Тип визита
+        abon_period: Период абонемента (в днях)*
+      form:
+        record_type: Тип записи
+        visit_type: Тип визита
+        abon_period: Период абонемента (в днях)*
 

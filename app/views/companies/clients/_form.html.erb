@@ -9,6 +9,8 @@
             <input id="client_avatar" type="file" style="display: none;">
             <%=form.hidden_field :avatar, id: 'client_avatar_field', value: client.avatar%>
           </div>
+
+          <%= image_tag s3_image(@client.avatar), class: 'people-avatar' %>
         </div>
         <%= form.text_field :last_name, id: :client_last_name, placeholder: "Фамилия*", class: "input-panel" %>
         <%= form.text_field :first_name, id: :client_first_name, placeholder: "Имя*", class: "input-panel" %>
@@ -29,7 +31,7 @@
 
 
   <% if client.errors.any? %>
-    <div id="error_explanation">
+    <div id="error_explanation" class="message">
       <h2><%= pluralize(client.errors.count, "error") %> prohibited this client from being saved:</h2>
 
       <ul>
