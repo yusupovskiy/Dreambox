@@ -8,7 +8,6 @@
     <div class="btn-card btn-show-list">
       <div class="panel-show">
         <%= link_to 'Вернуться к списку', company_clients_path %>
-        <%= link_to 'Назад', :back %>
         <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
         <%if @client.archive%>
           <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>

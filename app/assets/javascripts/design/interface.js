@@ -144,6 +144,17 @@ document.addEventListener('turbolinks:load', function() {
   // //   console.log(activeSideElem); // элемент, на котором произошло событие
   // // });
 
+  var focusInput = $('.finput .finput-input');
+  focusInput.focus(function() {
+    $(this).parent().addClass('focus');
+  });
+  focusInput.focusout(function() {
+    this.value || $(this).parent().removeClass('focus');
+  });
+  for (let input of focusInput) {
+    input.value && $(input).parent().addClass('focus')
+  }
+
 
   // скролл при нажатии кнопки
   // $('.top-scroll').click(function () {

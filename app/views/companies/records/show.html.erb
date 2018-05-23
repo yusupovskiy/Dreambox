@@ -193,12 +193,23 @@
         <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
 
         <div class="panel-attachment">
-          <select class="input-attachment" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
-            <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
-          </select>
-          <input class="input-attachment" type="number" placeholder="Цена за абонемент" v-model="moneyForAbon">
-          <input class="input-attachment" type="number" placeholder="Цена за посещение" v-model="moneyForVisit">
-          <input class="btn icon-confirm" type="button" @click="attachService">
+          <div class="finput">
+            <label class="finput-label">Услуга</label>
+            <select class="finput-input" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
+              <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
+            </select>
+          </div>
+          <div class="finput">
+            <label class="finput-label">Цена за абонемент</label>
+            <input class="finput-input" type="number" v-model="moneyForAbon">
+          </div>
+          <div class="finput">
+            <label class="finput-label">Цена за посещение</label>
+            <input class="finput-input" type="number" v-model="moneyForVisit">
+          </div>
+          <div class="btns-confirm">
+            <input class="btn icon-confirm" type="button" @click="attachService">
+          </div>
         </div>
 
         <div v-if="editingRS" class="panel-editing">

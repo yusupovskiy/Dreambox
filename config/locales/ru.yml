@@ -31,6 +31,19 @@ ru:
     not_yours: Простите, компания Вам не принадлежит
   create_a_company_first: Пожалуйста, создайте сначала компанию
 
+  users:
+    sessions:
+      new:
+        email: 'Электронная почта'
+        password: 'Пароль'
+    registrations:
+      new:
+        email: 'Электронная почта'
+        password: 'Пароль'
+        password_confirmation: 'Подтвердить пароль'
+        first_name: 'Фамилия'
+        last_name: 'Имя'
+
   affiliate:
     created: Филиал успешно создан
     updated: Филиал успешно сохранён
@@ -51,4 +64,18 @@ ru:
         record_type: Тип записи
         visit_type: Тип визита
         abon_period: Период абонемента (в днях)*
+        name: Название*
+        total_clients: Лимит в группе
+        created_at: Дата начала*
+        finished_at: Дата завершения*
+        affiliate_id: Филиал*
+        total_visits: Посещений за абонемент
+    clients:
+      form:
+        last_name: 'Фамилия*'
+        first_name: 'Имя*'
+        patronymic: 'Отчество'
+        birthday: 'Дата рождения'
+        sex: 'Пол'
+        phone_number: 'Телефон'
 

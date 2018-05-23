@@ -2,32 +2,54 @@
   <div class="conten-card">
     <div class="information-section">
       <div class="block-information">
-        <%= form.text_field :name, placeholder: "Название*", class: "input-panel" %>
+        <div class="finput">
+          <%= form.label t('.name'), class: 'finput-label' %>
+          <%= form.text_field :name, class: "finput-input" %>
+        </div>
       </div>
+
       <div class="block-information">
         <h3>Настройка группы</h3>
 
-        <%= form.label t('.record_type') %>
-        <%= form.select :record_type, options_for(Record.record_types, 'record_type'), {selected: record.record_type}, {class: "input-panel"}%>
+        <div class="finput">
+          <%= form.label t('.record_type'), class: 'finput-label' %>
+          <%= form.select :record_type, options_for(Record.record_types, 'record_type'), {selected: record.record_type}, {class: "finput-input"}%>
+        </div>
+        <div class="finput">
+          <%= form.label t('.visit_type'), class: 'finput-label' %>
+          <%= form.select :visit_type, options_for(Record.visit_types, 'visit_type'), {selected: record.visit_type}, {class: "finput-input"}%>
+        </div>
+        <div class="finput">
+          <%= form.label t('.total_clients'), class: 'finput-label' %>
+          <%= form.number_field :total_clients, class: "finput-input" %>
+        </div>
 
-        <%= form.label t('.visit_type') %>
-        <%= form.select :visit_type, options_for(Record.visit_types, 'visit_type'), {selected: record.visit_type}, {class: "input-panel"}%>
+        <div class="finput">
+          <%= form.label t('.created_at'), class: 'finput-label' %>
+          <%= form.date_field :created_at, class: "finput-input"%>
+        </div>
 
-        <%= form.number_field :total_clients, placeholder: "Лимит в группе", class: "input-panel" %>
-
-        <label>Дата начала*</label>
-        <%= form.date_field :created_at, placeholder: "Дата начала*", class: "input-panel"%>
-        <label>Дата завершения*</label>
-        <%= form.date_field :finished_at, placeholder: "Дата завершения*", class: "input-panel"%>
+        <div class="finput">
+          <%= form.label t('.total_clients'), class: 'finput-label' %>
+          <%= form.date_field :finished_at, class: "finput-input"%>
+        </div>
         <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
-
-        <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]}, {placeholder: "Пол"}, {class: "input-panel"} %>
+        <div class="finput">
+          <%= form.label t('.affiliate_id'), class: 'finput-label' %>
+          <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]}, {}, {class: "finput-input"} %>
+        </div>
+       
       </div>
       <div class="block-information">
         <h3>Настройка абонементов</h3>
-        <%= form.label t('.abon_period') %>
-        <%= form.number_field :abon_period, placeholder: "Период абонемента (в днях)*", class: "input-panel", value: "30" %>
-        <%= form.number_field :total_visits, placeholder: "Посещений за абонемент", class: "input-panel" %>
+        <div class="finput">
+          <%= form.label t('.abon_period'), class: 'finput-label' %>
+          <%= form.number_field :abon_period, class: "finput-input", value: "30" %>
+        </div>
+        <div class="finput">
+          <%= form.label t('.total_visits'), class: 'finput-label' %>
+          <%= form.number_field :total_visits, class: "finput-input" %>
+        </div>
       </div>
     </div>
     <%= form.submit class: "btn icon-confirm" %>
