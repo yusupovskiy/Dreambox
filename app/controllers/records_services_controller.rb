@@ -1,5 +1,4 @@
 class RecordsServicesController < ApplicationController
-  before_action :set_record_service, only: :destroy
   before_action :record_service_params, only: :create
   layout false
 
@@ -21,10 +20,28 @@ class RecordsServicesController < ApplicationController
       return render plain: 'current user has not the company of the record', status: 400
     end
 
-
-    rs = RecordService.create! pms
+    rs = RecordService.new pms
+    rs.money_for_abon = 0 if not rs.money_for_abon.nil? and rs.money_for_abon < 0
+    rs.money_for_visit = 0 if not rs.money_for_visit.nil? and rs.money_for_visit < 0
+    rs.save!
     respond_to do |format|
       format.json { render json: rs, status: 201 }
+    end
+  end
+
+  def update
+    pms = record_service_params
+    ids = pms.permit(:record_id, :service_id)
+    record_service = RecordService.find_by(ids)
+    pms.delete(:record_id)
+    pms.delete(:service_id)
+
+    pms = Hash(pms)
+    RecordService.where(ids).update_all(pms)
+    record_service.assign_attributes(pms)
+    respond_to do |format|
+      # format.html { redirect_to record_service, notice: 'Record was successfully updated.' }
+      format.json { render json: record_service, status: :ok }
     end
   end
 
@@ -45,9 +62,6 @@ class RecordsServicesController < ApplicationController
   end
 
   private
-    def set_record_service
-      @record_service = RecordService.find(params[:id]) if params[:id]
-    end
     def record_service_params
       params.require(:record_service)
         .permit(:record_id, :service_id, :money_for_abon, :money_for_visit)
