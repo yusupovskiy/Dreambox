@@ -65,7 +65,7 @@
       if(textSearch != "" && textSearch != " " ) {
         $.ajax( {
           url: '/search_result',
-          type: 'GET',
+          method: 'GET',
           data: {
             request: arrayTextSearch
           },
