@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_13_111335) do
+ActiveRecord::Schema.define(version: 2018_05_24_155125) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,19 @@ ActiveRecord::Schema.define(version: 2018_05_13_111335) do
     t.integer "record_type", null: false
     t.integer "visit_type", null: false
     t.index ["affiliate_id"], name: "index_records_on_affiliate_id"
+  end
+
+  create_table "records_clients", force: :cascade do |t|
+    t.boolean "is_active", default: true, null: false
+    t.boolean "is_automatic", null: false
+    t.boolean "is_dynamic", null: false
+    t.bigint "record_id", null: false
+    t.bigint "client_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_records_clients_on_client_id"
+    t.index ["record_id", "client_id"], name: "index_records_clients_on_record_id_and_client_id", unique: true
+    t.index ["record_id"], name: "index_records_clients_on_record_id"
   end
 
   create_table "records_services", primary_key: ["record_id", "service_id"], force: :cascade do |t|
@@ -114,6 +127,8 @@ ActiveRecord::Schema.define(version: 2018_05_13_111335) do
   add_foreign_key "clients", "users"
   add_foreign_key "companies", "users"
   add_foreign_key "records", "affiliates"
+  add_foreign_key "records_clients", "clients"
+  add_foreign_key "records_clients", "records"
   add_foreign_key "records_services", "records"
   add_foreign_key "records_services", "services"
   add_foreign_key "services", "companies"
