@@ -81,93 +81,41 @@
           <div class="btn-compact click-compact"><div></div></div>
 
         <div class="container-information compact">
-          <div class="item-element">
-            <div class="left-side-elem">
-                <img src="/resources/no-image-available.png">
-                <div>Юсупов Расул</div>
-                <div class="panel-show">
-                    <div>Открыть карту</div>
-                    <div>Продать абонемент</div>
-                      <div>Автопродление</div>
-                      <div>Динамическая цена</div>
-                    <div>Отписать</div>
-                </div>
+          <% @records_clients.each do |rc| %>
+            <div class="item-element">
+              <div class="left-side-elem">
+                  <img src="/resources/no-image-available.png">
+                  <div><%="#{rc.client.last_name} #{rc.client.first_name}"%></div>
+                  <div class="panel-show">
+                      <div>Открыть карту</div>
+                      <div>Продать абонемент</div>
+                        <div>Автопродление</div>
+                        <div>Динамическая цена</div>
+                      <div>Отписать</div>
+                  </div>
+              </div>
+              <div class="rigth-side-elem">
+                <select id="" name="">
+                  <option value="36">Записан</option>
+                  <option value="36">Не записан</option>
+                  <option value="38">Посетил</option>
+                  <option value="38">Не посетил</option>
+                  <option value="38">Не посетит</option>
+                  <option value="38">Отмена</option>
+                </select>
+              </div>
+              <div>
+                <%=link_to 'X', records_client_path(rc), method: :delete%>
+              </div>
             </div>
-            <div class="rigth-side-elem">
-              <select id="" name="">
-                <option value="36">Записан</option>
-                <option value="36">Не записан</option>
-                <option value="38">Посетил</option>
-                <option value="38">Не посетил</option>
-                <option value="38">Не посетит</option>
-                <option value="38">Отмена</option>
-              </select>
-            </div>
-          </div>
-          <div class="item-element">
-            <div class="left-side-elem">
-                <img src="/resources/no-image-available.png">
-                <div>Юсупов Расул</div>
-                <div class="panel-show">
-                    <div>Открыть карту</div>
-                    <div>Продать абонемент</div>
-                      <div>Автопродление</div>
-                      <div>Динамическая цена</div>
-                    <div>Отписать</div>
-                </div>
-            </div>
-            <div class="rigth-side-elem">
-              <select id="" name="">
-                <option value="36">Не записан</option>
-                <option value="36">Записан</option>
-                <option value="38">Посетил</option>
-                <option value="38">Не посетил</option>
-                <option value="38">Не посетит</option>
-                <option value="38">Отмена</option>
-              </select>
-            </div>
-          </div>
-          <div class="item-element">
-            <div class="left-side-elem">
-                <img src="/resources/no-image-available.png">
-                <div>Юсупов Расул</div>
-                <div class="panel-show">
-                    <div>Открыть карту</div>
-                    <div>Продать абонемент</div>
-                      <div>Автопродление</div>
-                      <div>Динамическая цена</div>
-                    <div>Отписать</div>
-                </div>
-            </div>
-            <div class="rigth-side-elem">Нет абонемента</div>
-          </div>
-          <% 9.times do %>
-          <div class="item-element">
-            <div class="left-side-elem">
-                <img src="/resources/no-image-available.png">
-                <div>Юсупов Расул</div>
-                <div class="panel-show">
-                    <div>Открыть карту</div>
-                    <div>Продать абонемент</div>
-                      <div>Автопродление</div>
-                      <div>Динамическая цена</div>
-                    <div>Отписать</div>
-                </div>
-            </div>
-            <div class="rigth-side-elem">
-              <select id="" name="">
-                <option value="36">Записан</option>
-                <option value="36">Не записан</option>
-                <option value="38">Посетил</option>
-                <option value="38">Не посетил</option>
-                <option value="38">Не посетит</option>
-                <option value="38">Отмена</option>
-              </select>
-            </div>
-          </div>
-          <% end %>
+          <%end%>
         </div>
         <div class="add-discount">+ Записать</div>
+        <%= form_with url: records_clients_path, model: @record_client do |f|%>
+          <%=f.hidden_field :record_id, value: @record_client.record_id%>
+          <%=f.select(:client_id, @clients.map {|c| [client_title_in_select(c), c.id]} )%>
+          <%=f.button%>
+        <%end%>
       </div>
 
 

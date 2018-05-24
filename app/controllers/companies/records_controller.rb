@@ -18,6 +18,9 @@ class Companies::RecordsController < ApplicationController
       return render html: "Record with id = #{@record.id} does not belong to you"
     end
     @services = Service.where(company_id: params[:company_id])
+    @record_client = RecordClient.new(record_id: params[:id])
+    @clients = Client.where(archive: false, company_id: @current_company.id)
+    @records_clients = RecordClient.eager_load(:client).where(record_id: params[:id])
   end
 
   # GET /records/new
