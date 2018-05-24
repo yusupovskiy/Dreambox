@@ -144,15 +144,27 @@ document.addEventListener('turbolinks:load', function() {
   // //   console.log(activeSideElem); // элемент, на котором произошло событие
   // // });
 
+  var btnAddServices = $('.add-services');
+  btnAddServices.click(function() {
+    $(this).parent('.block-information').children('.panel-attachment').show();
+    $(this).hide();
+  });
+  var btnPanelServices = $('.btn-no');
+  btnPanelServices.click(function() {
+    $(this).parent('.btns-confirm').parent('.panel-attachment').hide();
+    $(this).parent('.btns-confirm').parent('.panel-attachment').parent('.block-information').children('.add-services').show();
+  });
+
+
   var focusInput = $('.finput .finput-input');
   focusInput.focus(function() {
-    $(this).parent().addClass('focus');
+    $(this).parents('.finput').addClass('focus');
   });
   focusInput.focusout(function() {
-    this.value || $(this).parent().removeClass('focus');
+    this.value || $(this).parents('.finput').removeClass('focus');
   });
   for (let input of focusInput) {
-    input.value && $(input).parent().addClass('focus')
+    input.value && $(input).parents('.finput').addClass('focus')
   }
 
 

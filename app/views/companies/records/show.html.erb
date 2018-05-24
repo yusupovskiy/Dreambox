@@ -20,19 +20,19 @@
     <div title="<%= t('.desc_completed_ecords') %>" class="completed-records"> <%= t('.completed_ecords') %></div>
   <%end%>
   <div class="title-card"><%= @record.name %></div>
-  <div class="role-card"><%= t('record_type.' + @record.record_type)%></div>
+  <div class="role-card"><%= t('.record_type.' + @record.record_type)%></div>
 </div>
 
 <div class="conten-card tabs">
   <div class="cont-category-book">
     <div class="tab-category information-section">
 
-      <div class="block-information parent-compact">
+      <div class="block-information parent-compact block-visit">
         <h3><div class="icon-time"></div>Время посещения <span>4</span></h3>
           <div class="btn-compact click-compact"><div></div></div>
 
         <div class="container-information">
-            <div class="item-element">
+            <div class="item-element compact">
               <div class="left-side-elem">
                   <div>Сегодня</div>
                   <div class="panel-show">
@@ -189,10 +189,10 @@
           </div>
         </div>
 
-        <div class="add-discount">+ Добавить</div>
+        <div class="add-discount add-services">+ Добавить</div>
         <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
 
-        <div class="panel-attachment">
+        <div id="" class="panel-attachment panel-add-services">
           <div class="finput">
             <label class="finput-label">Услуга</label>
             <select class="finput-input" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
@@ -201,22 +201,25 @@
           </div>
           <div class="finput">
             <label class="finput-label">Цена за абонемент</label>
-            <input class="finput-input" type="number" v-model="moneyForAbon">
+            <input class="finput-input" type="number" v-model="moneyForAbon" min="0">
           </div>
           <div class="finput">
             <label class="finput-label">Цена за посещение</label>
-            <input class="finput-input" type="number" v-model="moneyForVisit">
+            <input class="finput-input" type="number" v-model="moneyForVisit" min="0">
           </div>
           <div class="btns-confirm">
             <input class="btn icon-confirm" type="button" @click="attachService">
+            <input class="btn btn-no" type="button">
           </div>
         </div>
 
-        <div v-if="editingRS" class="panel-editing">
-          <input class="input-attachment" type="number" placeholder="Цена за абонемент" v-model="editingRS.money_for_abon">
-          <input class="input-attachment" type="number" placeholder="Цена за посещение" v-model="editingRS.money_for_visit">
-          <input class="btn icon-confirm" type="button" @click="editRS">
-          <input class="btn" type="button" @click="cancelEditing">
+        <div v-if="editingRS" class="panel-attachment">
+          <input class="input-attachment" type="number" placeholder="Цена за абонемент" v-model="editingRS.money_for_abon" min="0">
+          <input class="input-attachment" type="number" placeholder="Цена за посещение" v-model="editingRS.money_for_visit" min="0">
+          <div class="btns-confirm">
+            <input class="btn icon-confirm" type="button" @click="editRS">
+            <input class="btn btn-no" type="button" @click="cancelEditing">
+          </div>
         </div>
         <div>
           <%#console%>

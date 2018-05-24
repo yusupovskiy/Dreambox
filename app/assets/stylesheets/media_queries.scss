@@ -1,0 +1,39 @@
+@media (max-width: 960px) {
+    .copyright {
+        float: left;
+        margin-top: 10px;
+        margin-left: 30px;
+    }
+    .active-company {
+        top: 70px;
+    }
+    .message {
+        top: 130px;
+    }
+}
+@media (max-width: 800px) {
+    .footer {
+        display: none;
+    }
+    .active-company {
+        top: 20px;
+    }
+    .message {
+        top: 70px;
+    }
+    .open-tabs>div>div>div {
+        margin-left: 20px!important;
+    }
+}
+@media (max-width: 550px) {
+    .katalog {
+        width: 100%;
+        border-radius: 0;
+    }
+}
+@media (max-width: 350px) {
+    .card {
+        width: 100%;
+        border-radius: 0;
+    }
+}

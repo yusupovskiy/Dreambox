@@ -12,12 +12,12 @@ ru:
     female: Женский
     unknown: Не указано
   record_type:
-    grouping: Групповая запись
-    personal: Индивидуальная запись
+    grouping: групповая
+    personal: индивидуальная
   visit_type:
     one_time_visit: Одноразовое посещение
     reusable_visit: Многоразовое посещение
-    one_time_abon: Одноразовый абонемент
+    one_time_abon: по абонементу
     automatic_abon: Автоматический абонемент
     dynamic_abon: Динамический абонемент
   client:
@@ -60,9 +60,12 @@ ru:
         record_type: Тип записи
         visit_type: Тип визита
         abon_period: Период абонемента (в днях)*
+        record_type:
+          grouping: Групповая запись
+          personal: Индивидуальная запись
       form:
-        record_type: Тип записи
-        visit_type: Тип визита
+        record_type: Запись*
+        visit_type: Визит*
         abon_period: Период абонемента (в днях)*
         name: Название*
         total_clients: Лимит в группе
@@ -70,6 +73,12 @@ ru:
         finished_at: Дата завершения*
         affiliate_id: Филиал*
         total_visits: Посещений за абонемент
+      edit:
+        name: Название*
+        total_clients: Лимит в группе
+        finished_at: Дата завершения*
+        total_visits: Посещений за абонемент
+        
     clients:
       form:
         last_name: 'Фамилия*'
