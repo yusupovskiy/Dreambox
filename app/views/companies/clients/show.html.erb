@@ -7,14 +7,15 @@
 
     <div class="btn-card btn-show-list">
       <div class="panel-show">
-        <%= link_to 'Вернуться к списку', company_clients_path %>
+        <%= link_to 'Назад', :back %>
+        <%= link_to 'Перейти в список', company_clients_path %>
         <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
         <%if @client.archive%>
           <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>
         <%else%>
           <%= link_to 'Отправить в архив', company_clients_archive_path(params[:company_id], params[:id], 1), method: :post%>
         <%end%>
-        <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %>
+<!--         <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %> -->
       </div>
     </div>
   </div>
@@ -26,10 +27,6 @@
   </div>
   <div class="title-card"><%= @client.last_name %> <%= @client.first_name %><br /><%= @client.patronymic %></div>
   <div class="role-card">Клиент</div>
-
-
-
-
 </div>
 
 <div class="conten-card tabs">
@@ -57,15 +54,6 @@
           <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
         </div>
       </div>
-      <div class="block-information parent-compact">
-        <h3>Информация об отце</h3>
-        <div class="btn-compact click-compact"><div></div></div>
-        <div class="container-info compact">
-          <div class="item-information"><span class="title-input">ФИО</span><span class="text-input">Алиев Магомед Исаевич</span></div>
-          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input">+7 (918) 730 10 05</span></div>
-          <div class="item-information"><span class="title-input">Номер паспорта</span><span class="text-input">82 38 233322</span></div>
-        </div>
-      </div>
     </div>
     <div class="tab-category">
       <!-- <div class="btn-subs">Новая запись</div> -->
@@ -84,9 +72,13 @@
 
               <div class="service-entry">
                 <% record_service = RecordService.where(record_id: rc.record_id) %>
-                <% record_service.each do |rservice|%>
-                    <% service = Service.find(rservice.service_id)%>
-                    <%= link_to service.name, [service.company, service] %>
+                <% if record_service.size > 0 %>
+                  <% record_service.each do |rservice|%>
+                      <% service = Service.find(rservice.service_id)%>
+                      <%= link_to service.name, [service.company, service] %>
+                  <% end %>
+                <% else %>
+                  <div>Нет услуги</div>
                 <% end %>
               </div>
 
@@ -96,9 +88,37 @@
                 <div class="subscribe compact">записать</div>
               <% end %>
 
+
+
               <div class="discount-entry compact">
                 <div class="discount">Скидок нет</div> <div class="add-discount">+ Добавить скидку</div>
               </div>
+
+              <form class="panel-attachment panel-add-services compact" style="display: grid;">
+                <div class="finput focus">
+                  <label class="finput-label">Дата начала*</label>
+                  <input class="finput-input" type="date">
+                </div>
+                <div class="finput focus">
+                  <label class="finput-label">Дата завершения*</label>
+                  <input class="finput-input" type="date">
+                </div>
+                <div class="finput focus">
+                  <label class="finput-label">Сумма коррекции*</label>
+                  <input class="finput-input" type="number">
+                </div>
+                <div class="finput-desc">при вводе отрицательного значения, клиент будет получать скидку</div>
+                <div class="finput focus">
+                  <label class="finput-label">Примечание*</label>
+                  <input class="finput-input" type="text">
+                </div>
+                <div class="btns-confirm">
+                  <button name="button" type="submit" class="btn icon-confirm"></button>
+                  <input class="btn btn-no" type="button">
+                </div>
+              </form>
+
+
 
               <div class="info-about-subsc">Осталось оплатить <span class="amount debt">6 000 ₽</span></div>
               <div class="current-subs click-compact">Текущий абонемент до 21 августа 2018</div>
@@ -146,27 +166,6 @@
           <span class="title-input">26 июля 2018</span>
           <span class="text-input">3 000 ₽</span>
           <span class="text-input">Оплатил за абонемент от 21 июля 2018 года, который стоит 4000 ₽</span>
-        </div>
-      </div>
-      <div class="block-information">
-        <div class="item-information">
-          <span class="title-input">28 июня 2018</span>
-          <span class="text-input">3 000 ₽</span>
-          <span class="text-input">Оплатил за абонемент от 21 июня 2018 года, который стоит 4000 ₽</span>
-        </div>
-      </div>
-      <div class="block-information">
-        <div class="item-information">
-          <span class="title-input">25 мая 2018</span>
-          <span class="text-input">6 000 ₽</span>
-          <span class="text-input">Оплатил за абонемент от 21 мая 2018 года, который стоит 4000 ₽</span>
-        </div>
-      </div>
-      <div class="block-information">
-        <div class="item-information">
-          <span class="title-input">22 апреля 2018</span>
-          <span class="text-input">6 000 ₽</span>
-          <span class="text-input">Оплатил за абонемент от 21 апреля 2018 года, который стоит 4000 ₽</span>
         </div>
       </div>
     </div>

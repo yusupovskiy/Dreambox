@@ -678,7 +678,14 @@ img.logo {
     height: 24px;
 }
 .block-information.parent-compact .compact {
-    display: none;
+    display: none!important;
+}
+.finput-desc {
+    color: #888888;
+    font-size: 11px;
+    margin-bottom: 15px;
+    margin-top: -5px;
+    user-select: none;
 }
 .container-info {
     margin-top: 5px;
@@ -752,9 +759,10 @@ img.logo {
     float: left;
     padding-left: 17px;
     background-image: url(/images/list.png);
-    margin: 0 6px 12px 0;
+    margin: 0 0 12px 0;
     position: relative;
     z-index: 8;
+    width: 100%;
 }
 a.subscription.active {
     color: #525252;

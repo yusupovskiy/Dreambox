@@ -10,8 +10,8 @@
         <%= link_to 'Вернуться к списку', company_records_path %>
         <%= link_to 'Редактировать', edit_company_record_path(params[:company_id], @record) %>
         <div>Продать всем абонементы</div>
-        <div>Автопродление всем</div>
-        <div>Динамические цены</div>
+<!--         <div>Автопродление всем</div>
+        <div>Динамические цены</div> -->
       </div>
     </div>
  
@@ -87,7 +87,7 @@
                   <%=image_tag s3_image(rc.client.avatar), class: "avatar-list" %>
                   <div><%="#{rc.client.last_name} #{rc.client.first_name}"%></div>
                   <div class="panel-show">
-                      <div>Открыть карту</div>
+                      <%= link_to 'Открыть карту', [rc.client.company, rc.client]%>
                       <div>Продать абонемент</div>
 <!--                  <div>Автопродление</div>
                       <div>Динамическая цена</div> -->
@@ -122,6 +122,18 @@
             <input class="btn btn-no" type="button">
           </div>
         <%end%>
+
+        <!-- ab -->
+        <form class="panel-attachment panel-add-services compact" style="display: grid;">
+          <div class="finput focus">
+            <label class="finput-label">Дата начала абонемента*</label>
+            <input class="finput-input" type="date">
+          </div>
+          <div class="btns-confirm">
+            <button name="button" type="submit" class="btn icon-confirm"></button>
+            <input class="btn btn-no" type="button">
+          </div>
+        </form>
       </div>
 
 
