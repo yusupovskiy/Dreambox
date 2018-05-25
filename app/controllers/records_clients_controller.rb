@@ -1,7 +1,12 @@
 class RecordsClientsController < ApplicationController
 
   def create
-    record_client = RecordClient.create!(record_client_params.merge(is_automatic: false, is_dynamic: false))
+    pms = record_client_params
+    if record_client = RecordClient.find_by(pms.permit(:record_id, :client_id))
+      record_client.update_attribute(:is_active, true)
+    else
+      record_client = RecordClient.create!(pms.merge(is_automatic: false, is_dynamic: false))
+    end
 
     respond_to do |format|
       format.html { redirect_to request.referer }
@@ -11,7 +16,11 @@ class RecordsClientsController < ApplicationController
 
   def destroy
     rc = RecordClient.find(params[:id])
-    rc.destroy!
+    if params[:deactivate_instead_of_destroying]
+      rc.update_attribute(:is_active, false)
+    else
+      rc.destroy!
+    end
 
     respond_to do |format|
       format.html { redirect_to request.referer }

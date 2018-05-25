@@ -16,9 +16,9 @@ class Companies::ClientsController < ApplicationController
   # GET /clients/1
   # GET /clients/1.json
   def show
-    @record_client = RecordClient.where(client_id: params[:id])
-
-    
+    @records_clients = RecordClient.where(client_id: params[:id])
+    @discount = Discount.new
+    @discounts = Discount.where(record_client: @records_clients)
   end
 
   # GET /clients/new
@@ -44,7 +44,7 @@ class Companies::ClientsController < ApplicationController
         format.html { redirect_to [@client.company, @client], notice: t('client.created') }
         format.json { render :show, status: :created }
       else
-        format.html { render :new }
+        format.html { ensure_current_user; set_s3_direct_post; render :new }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
     end

@@ -40,8 +40,8 @@
     <div class="tab-category information-section">
       <div class="block-information">
         <div class="item-information">
-          <span class="title-input">Возвраст (лет)</span><span class="text-input"><%= Date.today.year - @client.birthday.year %></span></div>
-        <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= @client.birthday.strftime("%d %b, %Y") %></span></div>
+          <span class="title-input">Возвраст (лет)</span><span class="text-input"><%= @client.birthday.nil? ? 'Не указан' : Date.today.year - @client.birthday.year %></span></div>
+        <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= @client.birthday.nil? ? 'Не указана' : @client.birthday.strftime("%d %b, %Y") %></span></div>
         <div class="item-information"><span class="title-input">Пол</span><span class="text-input"><%= t("sex.#{@client.sex}") %></span></div>
         <div class="item-information"><span class="title-input">Телефон</span><span class="text-input"><%= @client.phone_number %></span></div>
       </div>
@@ -62,8 +62,8 @@
 
       <div class="information-section">
 
-        <% if @record_client.size > 0 %>
-          <% @record_client.each do |rc| %>
+        <% if @records_clients.present? %>
+          <% @records_clients.each do |rc| %>
             <% record = Record.find(rc.record_id)%>
 
             <div class="block-information entry parent-compact">
@@ -72,7 +72,7 @@
 
               <div class="service-entry">
                 <% record_service = RecordService.where(record_id: rc.record_id) %>
-                <% if record_service.size > 0 %>
+                <% if record_service.present? %>
                   <% record_service.each do |rservice|%>
                       <% service = Service.find(rservice.service_id)%>
                       <%= link_to service.name, [service.company, service] %>
@@ -83,41 +83,58 @@
               </div>
 
               <% if rc.is_active %>
-                <div class="unsubscribe compact">отписать</div>
+                <div class="unsubscribe compact"><%=link_to 'Отписать', records_client_path(rc, deactivate_instead_of_destroying: 1), method: :delete%></div>
               <% else %>
-                <div class="subscribe compact">записать</div>
+                <div class="subscribe compact">
+                  <%=link_to 'Записать', records_clients_path(record_client: {record_id: rc.record_id, client_id: rc.client_id}), method: :post%>
+                </div>
               <% end %>
 
 
 
               <div class="discount-entry compact">
-                <div class="discount">Скидок нет</div> <div class="add-discount">+ Добавить скидку</div>
+                <%if @discounts.empty? %>
+                  <div class="discount">Скидок нет</div>
+                <%else%>
+                  <ul>
+                    <%@discounts.each do |d| %>
+                      <li>
+                        <%=d.start_at%>
+                        <%=d.finish_at%>
+                        <%=d.note%>
+                        <%=d.value%>
+                      </li>
+                    <%end%>
+                  </ul>
+                <%end%>
+                <div class="add-discount">+ Добавить скидку</div>
               </div>
 
-              <form class="panel-attachment panel-add-services compact" style="display: grid;">
+              <%=form_with url: discounts_path, model: @discount,
+               html: {class: 'panel-attachment panel-add-services compact', style: 'display: grid'} do |f|%>
+                <%=f.hidden_field :record_client_id, value: rc.id%>
                 <div class="finput focus">
                   <label class="finput-label">Дата начала*</label>
-                  <input class="finput-input" type="date">
+                  <%= f.date_field :start_at, class: 'finput-input' %>
                 </div>
                 <div class="finput focus">
                   <label class="finput-label">Дата завершения*</label>
-                  <input class="finput-input" type="date">
+                  <%= f.date_field :finish_at, class: 'finput-input' %>
                 </div>
                 <div class="finput focus">
                   <label class="finput-label">Сумма коррекции*</label>
-                  <input class="finput-input" type="number">
+                  <%= f.number_field :value, class: 'finput-input' %>
                 </div>
                 <div class="finput-desc">при вводе отрицательного значения, клиент будет получать скидку</div>
                 <div class="finput focus">
                   <label class="finput-label">Примечание*</label>
-                  <input class="finput-input" type="text">
+                  <%= f.text_field :note, class: 'finput-input' %>
                 </div>
                 <div class="btns-confirm">
-                  <button name="button" type="submit" class="btn icon-confirm"></button>
+                  <%= f.submit class: 'btn icon-confirm' %>
                   <input class="btn btn-no" type="button">
                 </div>
-              </form>
-
+              <%end%>
 
 
               <div class="info-about-subsc">Осталось оплатить <span class="amount debt">6 000 ₽</span></div>

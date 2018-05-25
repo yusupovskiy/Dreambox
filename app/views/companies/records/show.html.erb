@@ -91,7 +91,7 @@
                       <div>Продать абонемент</div>
 <!--                  <div>Автопродление</div>
                       <div>Динамическая цена</div> -->
-                      <%=link_to 'Отписать', records_client_path(rc), method: :delete%>
+                      <%=link_to 'Отписать', records_client_path(rc, deactivate_instead_of_destroying: 1), method: :delete%>
                   </div>
               </div>
               <div class="rigth-side-elem">

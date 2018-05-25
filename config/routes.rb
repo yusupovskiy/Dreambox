@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :subscriptions
   namespace :companies do
     get 'windows/show'
   end
@@ -24,4 +25,5 @@ Rails.application.routes.draw do
   resources :records_services
   resources :records_clients
   resources :windows, only: :show
+  resources :discounts
 end

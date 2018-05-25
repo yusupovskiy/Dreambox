@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_24_155125) do
+ActiveRecord::Schema.define(version: 2018_05_25_144544) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,18 @@ ActiveRecord::Schema.define(version: 2018_05_24_155125) do
     t.string "name", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_companies_on_user_id"
+  end
+
+  create_table "discounts", force: :cascade do |t|
+    t.date "start_at", null: false
+    t.date "finish_at", null: false
+    t.float "value", null: false
+    t.string "note", null: false
+    t.boolean "is_active", default: true, null: false
+    t.bigint "record_client_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_client_id"], name: "index_discounts_on_record_client_id"
   end
 
   create_table "records", force: :cascade do |t|
@@ -126,6 +138,7 @@ ActiveRecord::Schema.define(version: 2018_05_24_155125) do
   add_foreign_key "clients", "companies"
   add_foreign_key "clients", "users"
   add_foreign_key "companies", "users"
+  add_foreign_key "discounts", "records_clients", column: "record_client_id"
   add_foreign_key "records", "affiliates"
   add_foreign_key "records_clients", "clients"
   add_foreign_key "records_clients", "records"
