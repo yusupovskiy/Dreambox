@@ -107,6 +107,20 @@
               <div>
                 
               </div>
+
+              <%=form_with url: subscriptions_path, model: @subscription,
+                html: {class: 'panel-attachment panel-add-services compact', style: 'display: grid'} do |f|%>
+                <%=f.hidden_field :record_client_id, value: rc.id%>
+                <div class="finput focus">
+                  <label class="finput-label">Дата начала абонемента*</label>
+                  <%= f.date_field :start_at, class: 'finput-input' %>
+                </div>
+                <div class="btns-confirm">
+                  <%= f.submit class: 'btn icon-confirm' %>
+                  <input class="btn btn-no" type="button">
+                </div>
+              <%end%>
+
             </div>
           <%end%>
         </div>
@@ -122,18 +136,6 @@
             <input class="btn btn-no" type="button">
           </div>
         <%end%>
-
-        <!-- ab -->
-        <form class="panel-attachment panel-add-services compact" style="display: grid;">
-          <div class="finput focus">
-            <label class="finput-label">Дата начала абонемента*</label>
-            <input class="finput-input" type="date">
-          </div>
-          <div class="btns-confirm">
-            <button name="button" type="submit" class="btn icon-confirm"></button>
-            <input class="btn btn-no" type="button">
-          </div>
-        </form>
       </div>
 
 
