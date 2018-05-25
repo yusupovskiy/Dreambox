@@ -17,19 +17,28 @@
   <div class="conten-card">
     <div class="information-section">
       <div class="block-information">
-        <%= form.text_field :name, placeholder: "Название*", class: "input-panel" %>
+        <div class="finput">
+          <%= form.label t('.name'), class: 'finput-label' %>
+          <%= form.text_field :name, class: "finput-input", required: 'required' %>
+        </div>
       </div>
       <div class="block-information">
         <h3>Настройка записи</h3>
-        <label>Лимит в записи</label>
-        <%= form.number_field :total_clients, placeholder: "Лимит в записи", class: "input-panel" %>
-        <label>Дата завершения*</label>
-        <%= form.date_field :finished_at, placeholder: "Дата завершения*", class: "input-panel"%>
-        <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
+        <div class="finput">
+          <%= form.label t('.total_clients'), class: 'finput-label' %>
+          <%= form.number_field :total_clients, class: "finput-input" %>
+        </div>
+        <div class="finput">
+          <%= form.label t('.finished_at'), class: 'finput-label' %>
+          <%= form.date_field :finished_at, class: "finput-input", required: 'required'%>
+        </div>
       </div>
       <div class="block-information">
         <h3>Настройка абонементов</h3>
-        <%= form.number_field :total_visits, placeholder: "Посещений за абонемент", class: "input-panel" %>
+        <div class="finput">
+          <%= form.label t('.total_visits'), class: 'finput-label' %>
+          <%= form.number_field :total_visits, class: "finput-input" %>
+        </div>
       </div>
     </div>
     <%= form.submit class: "btn icon-confirm" %>

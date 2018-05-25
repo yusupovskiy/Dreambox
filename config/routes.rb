@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   # two primary keys
   delete 'records_services' => 'records_services#destroy'
   patch 'records_services' => 'records_services#update'
-  resources 'records_services'
+  resources :records_services
+  resources :records_clients
   resources :windows, only: :show
 end

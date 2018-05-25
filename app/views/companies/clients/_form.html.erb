@@ -3,32 +3,44 @@
   <div class="conten-card">
     <div class="information-section">
       <div class="block-information">
-
         <div id="drop_zone" class="add-avatar">
           <div class="icon-add-avatar">
             <input id="client_avatar" type="file" style="display: none;">
             <%=form.hidden_field :avatar, id: 'client_avatar_field', value: client.avatar%>
           </div>
-
           <%= image_tag s3_image(@client.avatar), class: 'people-avatar' %>
         </div>
-        <%= form.text_field :last_name, id: :client_last_name, placeholder: "Фамилия*", class: "input-panel" %>
-        <%= form.text_field :first_name, id: :client_first_name, placeholder: "Имя*", class: "input-panel" %>
-        <%= form.text_field :patronymic, id: :client_patronymic, placeholder: "Отчество", class: "input-panel" %>
+        <div class="finput">
+          <%= form.label t('.last_name'), class: 'finput-label' %>
+          <%= form.text_field :last_name, id: :client_last_name, class: 'finput-input' %>
+        </div>
+        <div class="finput">
+          <%= form.label t('.first_name'), class: 'finput-label' %>
+          <%= form.text_field :first_name, id: :client_first_name, class: 'finput-input' %>
+        </div>
+        <div class="finput">
+          <%= form.label t('.patronymic'), class: 'finput-label' %>
+          <%= form.text_field :patronymic, id: :client_patronymic, class: 'finput-input' %>
+        </div>
       </div>
 
       <div class="block-information">
-        <%= form.date_field :birthday, id: :client_birthday, placeholder: "Дата рождения*", class: "input-panel" %>
-        <%= form.select :sex, options_for_sexes, {selected: client.sex, placeholder: "Пол"}, {class: "input-panel"} %>
-
-        <%= form.text_field :phone_number, id: :client_phone_number, placeholder: "Телефон", class: "input-panel" %>
-
+        <div class="finput">
+          <%= form.label t('.birthday'), class: 'finput-label' %>
+          <%= form.date_field :birthday, id: :client_birthday, class: 'finput-input' %>
+        </div>
+        <div class="finput">
+          <%= form.label t('.sex'), class: 'finput-label' %>
+          <%= form.select :sex, options_for_sexes, {selected: client.sex}, {class: 'finput-input'} %>
+        </div>
+        <div class="finput">
+          <%= form.label t('.phone_number'), class: 'finput-label' %>
+          <%= form.text_field :phone_number, id: :client_phone_number, class: "finput-input" %>
+        </div>
       </div>
     </div>
     <%= form.submit class: "btn icon-confirm" %>
-
   </div>
-
 
   <% if client.errors.any? %>
     <div id="error_explanation" class="message">
@@ -41,7 +53,6 @@
       </ul>
     </div>
   <% end %>
-
 <% end %>
 
 <script>

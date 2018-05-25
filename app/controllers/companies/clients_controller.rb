@@ -16,6 +16,9 @@ class Companies::ClientsController < ApplicationController
   # GET /clients/1
   # GET /clients/1.json
   def show
+    @record_client = RecordClient.where(client_id: params[:id])
+
+    
   end
 
   # GET /clients/new
