@@ -146,7 +146,7 @@ document.addEventListener('turbolinks:load', function() {
 
   var btnAddServices = $('.add-services');
   btnAddServices.click(function() {
-    $(this).parent('.block-information').children('.panel-attachment').show();
+    $(this).parent('.block-information').children('.panel-attachment').css('display', 'grid');
     $(this).hide();
   });
   var btnPanelServices = $('.btn-no');

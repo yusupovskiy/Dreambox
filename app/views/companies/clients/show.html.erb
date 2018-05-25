@@ -26,6 +26,10 @@
   </div>
   <div class="title-card"><%= @client.last_name %> <%= @client.first_name %><br /><%= @client.patronymic %></div>
   <div class="role-card">Клиент</div>
+
+
+
+
 </div>
 
 <div class="conten-card tabs">
@@ -64,51 +68,74 @@
       </div>
     </div>
     <div class="tab-category">
-      <div class="btn-subs">Новая запись</div>
+      <!-- <div class="btn-subs">Новая запись</div> -->
       
-      <div class="information-section">
-        <div class="block-information entry parent-compact">
-          <a href="#" class="title-entry">Группа Английский по будням</a>
-          <div class="btn-compact click-compact"><div></div></div>
-          <div class="service-entry">
-            <div>Английский</div>
-          </div>
-          <div class="responsible-entry compact">
-            <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Агаева Патимат</div></div> <div class="rate-responsible">4 500 ₽ (35%)</div></div>
-            <div class="item-responsible"><div class="name-responsible"><img src="/resources/no-image-available.png" /><div>Улубекова Зумруд</div></div> <div class="rate-responsible">5 000 ₽ (фикс.)</div></div>
-          </div>
-          <div class="discount-entry compact">
-            <div class="discount">Скидок нет</div> <div class="add-discount">+ Добавить скидку</div>
-          </div>
-          <div class="unsubscribe compact">отписать</div>
-          <!--<div class="subscribe compact">записать</div>-->
+        
 
-          <div class="info-about-subsc">Осталось оплатить <span class="amount debt">6 000 ₽ из 6 000 ₽</span></div>
-          <div class="current-subs click-compact">Текущий абонемент до 21 августа 2018</div>
-          <div class="subscriptions compact">
-            <a href="#" class="subscription">
-              <div class="data-subscriptions"><div class="add-discount">+ Продать абонемент</div></div>
-            </a>
-            <a href="#" class="subscription active">
-              <div class="data-subscriptions">Текущий до 21 август 2018</div>
-              <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
-              <div class="visits-subs">посещений уже нет</div>
-            </a>
-            <a href="#" class="subscription">
-              <div class="data-subscriptions">от 21 июнь 2018 до 21 июль 2018</div>
-              <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
-            </a>
-            <a href="#" class="subscription">
-              <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
-              <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
-            </a>
-            <a href="#" class="subscription">
-              <div class="data-subscriptions">от 21 апрель 2018 до 21 май 2018</div>
-              <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
-            </a>
-            <div class="more-subscriptions">Загрузить еще пять</div>
+      <div class="information-section">
+
+        <% if @record_client.size > 0 %>
+          <% @record_client.each do |rc| %>
+            <% record = Record.find(rc.record_id)%>
+
+            <div class="block-information entry parent-compact">
+              <%= link_to record.name, company_record_path(params[:company_id], record), class: 'title-entry' %>
+              <div class="btn-compact click-compact"><div></div></div>
+
+              <div class="service-entry">
+                <% record_service = RecordService.where(record_id: rc.record_id) %>
+                <% record_service.each do |rservice|%>
+                    <% service = Service.find(rservice.service_id)%>
+                    <%= link_to service.name, [service.company, service] %>
+                <% end %>
+              </div>
+
+              <% if rc.is_active %>
+                <div class="unsubscribe compact">отписать</div>
+              <% else %>
+                <div class="subscribe compact">записать</div>
+              <% end %>
+
+              <div class="discount-entry compact">
+                <div class="discount">Скидок нет</div> <div class="add-discount">+ Добавить скидку</div>
+              </div>
+
+              <div class="info-about-subsc">Осталось оплатить <span class="amount debt">6 000 ₽</span></div>
+              <div class="current-subs click-compact">Текущий абонемент до 21 августа 2018</div>
+              <div class="subscriptions compact">
+  <!--               <a href="#" class="subscription">
+                  <div class="data-subscriptions"><div class="add-discount">+ Продать абонемент</div></div>
+                </a> -->
+                <a href="#" class="subscription active">
+                  <div class="data-subscriptions">Текущий до 21 август 2018</div>
+                  <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
+                  <div class="visits-subs">посещений уже нет</div>
+                </a>
+                <a href="#" class="subscription">
+                  <div class="data-subscriptions">от 21 июнь 2018 до 21 июль 2018</div>
+                  <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
+                </a>
+                <a href="#" class="subscription">
+                  <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
+                  <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
+                </a>
+                <a href="#" class="subscription">
+                  <div class="data-subscriptions">от 21 апрель 2018 до 21 май 2018</div>
+                  <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
+                </a>
+                <div class="more-subscriptions">Загрузить еще пять</div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="loading-block">
+            <div>
+              <img src="/images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;">
+              <div>Ничего нет</div>
+            </div>
           </div>
-        </div>
+        <% end %>
+
       </div>
     </div>
 

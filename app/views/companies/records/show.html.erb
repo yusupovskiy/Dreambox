@@ -77,21 +77,21 @@
       </div>
 
       <div class="block-information">
-        <h3><div class="icon-user"></div>Записанные <span>12 из 20</span></h3>
-          <div class="btn-compact click-compact"><div></div></div>
+        <h3><div class="icon-user"></div>Записанные <span><%= @records_clients.size %><% if @record.total_clients %><%= ' из ' %><% end %><%= @record.total_clients  %></span></h3>
+        <div class="btn-compact click-compact"><div></div></div>
 
         <div class="container-information compact">
           <% @records_clients.each do |rc| %>
             <div class="item-element">
               <div class="left-side-elem">
-                  <img src="/resources/no-image-available.png">
+                  <%=image_tag s3_image(rc.client.avatar), class: "avatar-list" %>
                   <div><%="#{rc.client.last_name} #{rc.client.first_name}"%></div>
                   <div class="panel-show">
                       <div>Открыть карту</div>
                       <div>Продать абонемент</div>
-                        <div>Автопродление</div>
-                        <div>Динамическая цена</div>
-                      <div>Отписать</div>
+<!--                  <div>Автопродление</div>
+                      <div>Динамическая цена</div> -->
+                      <%=link_to 'Отписать', records_client_path(rc), method: :delete%>
                   </div>
               </div>
               <div class="rigth-side-elem">
@@ -105,18 +105,39 @@
                 </select>
               </div>
               <div>
-                <%=link_to 'X', records_client_path(rc), method: :delete%>
+                
               </div>
             </div>
           <%end%>
         </div>
-        <div class="add-discount">+ Записать</div>
-        <%= form_with url: records_clients_path, model: @record_client do |f|%>
+        <div class="add-discount add-services">+ Записать</div>
+        <%= form_with url: records_clients_path, model: @record_client, class: 'panel-attachment panel-add-services' do |f|%>
           <%=f.hidden_field :record_id, value: @record_client.record_id%>
-          <%=f.select(:client_id, @clients.map {|c| [client_title_in_select(c), c.id]} )%>
-          <%=f.button%>
+          <div class="finput">
+            <label class="finput-label">Клиенты</label>
+            <%= f.select(:client_id, @clients.map {|c| [client_title_in_select(c), c.id]}, {}, {class: 'finput-input'}) %>
+          </div>
+          <div class="btns-confirm">
+            <%= f.button '', class: 'btn icon-confirm' %>
+            <input class="btn btn-no" type="button">
+          </div>
         <%end%>
       </div>
+
+
+
+<!--         <div id="" class="panel-attachment panel-add-services">
+          <div class="finput">
+            <label class="finput-label">Услуга</label>
+            <select class="finput-input" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
+              <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
+            </select>
+          </div>
+          <div class="btns-confirm">
+            <input class="btn icon-confirm" type="button" @click="attachService">
+            <input class="btn btn-no" type="button">
+          </div>
+        </div> -->
 
 
       <div id="records_services_part" data-record-id="<%=@record.id%>" class="block-information">

@@ -737,10 +737,12 @@ img.logo {
     font-size: 14px;
     color: #4a4a4a;
     font-weight: bold;
-    padding: 9px 6px 12px 6px;
-    float: left;
+    padding: 9px 0 12px 0;
     position: relative;
     z-index: 8;
+    transition: .3s;
+    display: block;
+    margin-right: 50px;
 }
 .service-entry {
     color: #a7a7a7;
@@ -750,7 +752,7 @@ img.logo {
     float: left;
     padding-left: 17px;
     background-image: url(/images/list.png);
-    margin: 0 6px 12px 6px;
+    margin: 0 6px 12px 0;
     position: relative;
     z-index: 8;
 }
@@ -762,37 +764,20 @@ a.subscription.active {
 }
 .service-entry>*, .discount-entry>* {
     float: left;
-    margin-top: -2px;
+    margin: -1px 10px 5px 0;
+    color: #a7a7a7;
+    transition: .3s;
 }
-.item-responsible {
-    float: left;
-    width: 100%;
-    margin-bottom: 6px;
+.service-entry>*:hover, .title-entry:hover {
+    -webkit-transform: translateX(2px);
+    -ms-transform: translateX(2px);
+    transform: translateX(2px);
+    opacity: .7;
 }
 .rate-responsible {
     float: right;
     margin-top: 1px;
     font-style: italic;
-}
-.name-responsible {
-    float: left;
-}
-.responsible-entry {
-    float: left;
-    color: #a7a7a7;
-    font-size: 13px;
-    margin: 0 6px 6px 6px;
-}
-.name-responsible>img {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-}
-.name-responsible>* {
-    float: left;
-}
-.name-responsible>div {
-    margin: 1px 0px 1px 6px;
 }
 .discount-entry {
     color: #a7a7a7;
@@ -885,10 +870,11 @@ a {
     background-size: 11px 11px;
     background-repeat: no-repeat;
     float: left;
-    margin: 0 6px 12px 6px;
+    margin: 0 6px 32px 6px;
     cursor: pointer;
     opacity: .5;
     user-select: none;
+    width: 100%;
 }
 .unsubscribe:hover, .subscribe:hover {
     opacity: .9;
@@ -1025,9 +1011,6 @@ a {
     background-origin: content-box;
     opacity: .5;
 }
-.item-responsible>.still-card {
-    padding: 2px 0 2px 5px;
-}
 
 .block-information>h3>div {
     background-size: 100%;
@@ -1122,7 +1105,7 @@ a {
 }
 .panel-attachment {
     background-color: #ecf0f1;
-    float: left;
+    display: grid;
     padding: 20px;
     border-radius: 7px;
     margin-top: 10px;
