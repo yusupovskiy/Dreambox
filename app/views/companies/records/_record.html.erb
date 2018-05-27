@@ -4,6 +4,6 @@
     <span class=""><span style="margin-right: 2px;">Долг</span> <span class="amount debt">8 410 ₽</span></span>
   </div>
   <div class="right-content">
-    <div class="people-on-course">12<img src="/images/visitors1.png"></div>
+    <div class="people-on-course"><%= RecordClient.where(record_id: record.id, is_active: true).size %><img src="/images/visitors1.png"></div>
   </div>
 <% end %>

@@ -65,7 +65,6 @@
         <% if @records_clients.present? %>
           <% @records_clients.each do |rc| %>
             <% record = Record.find(rc.record_id)%>
-
             <div class="block-information entry parent-compact">
               <%= link_to record.name, company_record_path(params[:company_id], record), class: 'title-entry' %>
               <div class="btn-compact click-compact"><div></div></div>
@@ -83,84 +82,95 @@
               </div>
 
               <% if rc.is_active %>
-                <div class="unsubscribe compact"><%=link_to 'Отписать', records_client_path(rc, deactivate_instead_of_destroying: 1), method: :delete%></div>
+                <%=link_to 'Отписать', records_client_path(rc, deactivate_instead_of_destroying: 1), method: :delete, class: 'unsubscribe compact' %>
               <% else %>
-                <div class="subscribe compact">
-                  <%=link_to 'Записать', records_clients_path(record_client: {record_id: rc.record_id, client_id: rc.client_id}), method: :post%>
-                </div>
+                <%=link_to 'Записать', records_clients_path(record_client: {record_id: rc.record_id, client_id: rc.client_id}), method: :post, class: 'subscribe compact' %>
               <% end %>
 
 
 
-              <div class="discount-entry compact">
+              <div class="discount-entry compact show-hide-panel">
+                <div class="title-discount">Скида и коррекция цены</div>
                 <%if @discounts.empty? %>
-                  <div class="discount">Скидок нет</div>
+                  <div class="discount">Список пуст</div>
                 <%else%>
                   <ul>
                     <%@discounts.each do |d| %>
                       <li>
-                        <%=d.start_at%>
-                        <%=d.finish_at%>
-                        <%=d.note%>
-                        <%=d.value%>
+                        <%=d.note%> <span class="amount"><%=d.value%> ₽</span><br />
+                        
+                        от <%=d.start_at.strftime("%d %b, %Y")%>
+                        до <%=d.finish_at.strftime("%d %b, %Y")%>
                       </li>
                     <%end%>
                   </ul>
                 <%end%>
-                <div class="add-discount">+ Добавить скидку</div>
+                <div class="add-discount add-services">+ Добавить скидку</div>
+                <%=form_with url: discounts_path, model: @discount,
+                 html: {class: 'panel-attachment panel-add-services compact'} do |f|%>
+                  <%=f.hidden_field :record_client_id, value: rc.id%>
+                  <div class="finput focus">
+                    <label class="finput-label">Дата начала*</label>
+                    <%= f.date_field :start_at, class: 'finput-input', required: 'required' %>
+                  </div>
+                  <div class="finput focus">
+                    <label class="finput-label">Дата завершения*</label>
+                    <%= f.date_field :finish_at, class: 'finput-input', required: 'required' %>
+                  </div>
+                  <div class="finput focus">
+                    <label class="finput-label">Сумма коррекции*</label>
+                    <%= f.number_field :value, class: 'finput-input', required: 'required' %>
+                  </div>
+                  <div class="finput-desc">при вводе отрицательного значения, клиент будет получать скидку</div>
+                  <div class="finput focus">
+                    <label class="finput-label">Примечание*</label>
+                    <%= f.text_field :note, class: 'finput-input', required: 'required' %>
+                  </div>
+                  <div class="btns-confirm">
+                    <%= f.submit class: 'btn icon-confirm' %>
+                    <input class="btn btn-no" type="button">
+                  </div>
+                <%end%>
               </div>
 
-              <%=form_with url: discounts_path, model: @discount,
-               html: {class: 'panel-attachment panel-add-services compact', style: 'display: grid'} do |f|%>
-                <%=f.hidden_field :record_client_id, value: rc.id%>
-                <div class="finput focus">
-                  <label class="finput-label">Дата начала*</label>
-                  <%= f.date_field :start_at, class: 'finput-input' %>
-                </div>
-                <div class="finput focus">
-                  <label class="finput-label">Дата завершения*</label>
-                  <%= f.date_field :finish_at, class: 'finput-input' %>
-                </div>
-                <div class="finput focus">
-                  <label class="finput-label">Сумма коррекции*</label>
-                  <%= f.number_field :value, class: 'finput-input' %>
-                </div>
-                <div class="finput-desc">при вводе отрицательного значения, клиент будет получать скидку</div>
-                <div class="finput focus">
-                  <label class="finput-label">Примечание*</label>
-                  <%= f.text_field :note, class: 'finput-input' %>
-                </div>
-                <div class="btns-confirm">
-                  <%= f.submit class: 'btn icon-confirm' %>
-                  <input class="btn btn-no" type="button">
-                </div>
-              <%end%>
 
 
               <div class="info-about-subsc">Осталось оплатить <span class="amount debt">6 000 ₽</span></div>
               <div class="current-subs click-compact">Текущий абонемент до 21 августа 2018</div>
               <div class="subscriptions compact">
+
+                <div class="show-hide-panel">
+                  <div class="add-discount add-services">+ Продать абонемент</div>
+
+                </div>
   <!--               <a href="#" class="subscription">
                   <div class="data-subscriptions"><div class="add-discount">+ Продать абонемент</div></div>
                 </a> -->
+                <% subs = Subscription.where(record_client_id: rc.id).order("start_at DESC") %>
+                <% subs.each do |sub| %>
+
+
+                    <% if sub.start_at <= Date.today && Date.today <= sub.finish_at %>
+                      <%= link_to company_subscription_path(params[:company_id], sub.id), class: "subscription active" do %>
+                        <div class="data-subscriptions">Текущий<br />от <%= sub.start_at.strftime("%d %b %Y") %> до <%= sub.finish_at.strftime("%d %b %Y") %></div>
+                        <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
+                      <% end %>
+                    <% else %>
+                      <%= link_to company_subscription_path(params[:company_id], sub.id), class: "subscription" do %>
+                        <div class="data-subscriptions">от <%= sub.start_at.strftime("%d %b %Y") %> до <%= sub.finish_at.strftime("%d %b %Y") %></div>
+                        <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
+                      <% end %>
+                    <% end %>
+                <% end %>
+
+<!-- 
                 <a href="#" class="subscription active">
                   <div class="data-subscriptions">Текущий до 21 август 2018</div>
                   <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
                   <div class="visits-subs">посещений уже нет</div>
-                </a>
-                <a href="#" class="subscription">
-                  <div class="data-subscriptions">от 21 июнь 2018 до 21 июль 2018</div>
-                  <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
-                </a>
-                <a href="#" class="subscription">
-                  <div class="data-subscriptions">от 21 май 2018 до 21 июнь 2018</div>
-                  <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
-                </a>
-                <a href="#" class="subscription">
-                  <div class="data-subscriptions">от 21 апрель 2018 до 21 май 2018</div>
-                  <div class="payment-subs">был оплачен <span class="amount">6 000 ₽</span></div>
-                </a>
-                <div class="more-subscriptions">Загрузить еще пять</div>
+                </a> -->
+
+<!--                 <div class="more-subscriptions">Загрузить еще пять</div> -->
               </div>
             </div>
           <% end %>

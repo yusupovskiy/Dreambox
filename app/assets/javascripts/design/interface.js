@@ -144,17 +144,6 @@ document.addEventListener('turbolinks:load', function() {
   // //   console.log(activeSideElem); // элемент, на котором произошло событие
   // // });
 
-  var btnAddServices = $('.add-services');
-  btnAddServices.click(function() {
-    $(this).parent('.block-information').children('.panel-attachment').css('display', 'grid');
-    $(this).hide();
-  });
-  var btnPanelServices = $('.btn-no');
-  btnPanelServices.click(function() {
-    $(this).parent('.btns-confirm').parent('.panel-attachment').hide();
-    $(this).parent('.btns-confirm').parent('.panel-attachment').parent('.block-information').children('.add-services').show();
-  });
-
 
   var focusInput = $('.finput .finput-input');
   focusInput.focus(function() {
@@ -166,6 +155,23 @@ document.addEventListener('turbolinks:load', function() {
   for (let input of focusInput) {
     input.value && $(input).parents('.finput').addClass('focus')
   }
+
+  var btnTicketSale = $('.ticket-sale');
+  btnTicketSale.click(function() {
+    $(this).parents('.item-element').children('.panel-attachment').css('display', 'grid');
+  });
+
+
+  var btnAddServices = $('.add-services');
+  btnAddServices.click(function() {
+    $(this).parent('.show-hide-panel').children('.panel-attachment').css('display', 'grid');
+    $(this).hide();
+  });
+  var btnPanelServices = $('.btn-no');
+  btnPanelServices.click(function() {
+    $(this).parents('.panel-attachment').hide();
+    $(this).parents('.show-hide-panel').children('.add-services').show();
+  });
 
 
   // скролл при нажатии кнопки

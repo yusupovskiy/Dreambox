@@ -19,6 +19,7 @@ class Companies::ClientsController < ApplicationController
     @records_clients = RecordClient.where(client_id: params[:id])
     @discount = Discount.new
     @discounts = Discount.where(record_client: @records_clients)
+    @subscription = Subscription.new
   end
 
   # GET /clients/new

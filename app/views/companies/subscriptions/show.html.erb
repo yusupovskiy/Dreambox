@@ -1,0 +1,165 @@
+
+<div class="title-panel">
+  <div class="btns-card">
+    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+    
+    <div class="btn-card top-scroll"></div>
+
+    <div class="btn-card btn-show-list">
+      <div class="panel-show">
+        <%= link_to 'Назад', :back %>
+        <div>Сделать перерасчет</div>
+        <div>Отменить абонемент</div>
+        <div>Продлить абонемент</div>
+      </div>
+    </div>
+ 
+  </div>
+  <div class="role-card">Абонемент</div>
+</div>
+
+<div class="conten-card tabs">
+  <div class="cont-category-book">
+    <div class="tab-category information-section">
+
+
+      <div class="block-information show-hide-panel">
+        <h3><div class="icon-time"></div>Причина отмены</h3>
+
+        <div class="container-information compact">
+          <div class="item-element">
+            <div class="left-side-elem">
+                <div>Пришлось отменить абонемент, чтобы клиента не делал мозги</div>
+            </div>
+            <div class="rigth-side-elem">20 августа 2018</div>
+          </div>
+        </div>
+
+        <form class="panel-attachment panel-add-services compact" accept-charset="UTF-8" data-remote="true" method="post" style="display: grid;">
+          <div class="finput focus">
+            <label class="finput-label">Причина отмены*</label>
+            <input class="finput-input" type="number" name="">
+          </div>
+          <div class="btns-confirm">
+            <input type="submit" name="commit" value="Create Subscription" class="btn icon-confirm" data-disable-with="Create Subscription">
+            <input class="btn btn-no" type="button">
+          </div>
+        </form>
+
+      </div>
+
+
+      <div class="block-information show-hide-panel">
+        <h3><div class="icon-time"></div>Перерасчет</h3>
+
+        <div class="container-information compact">
+          <div class="item-element">
+            <div class="left-side-elem">
+                <div>Пришлось сделать перасчет, чтобы клиента не делал мозги</div>
+            </div>
+            <div class="rigth-side-elem">20 августа 2018</div>
+          </div>
+        </div>
+
+        <form class="panel-attachment panel-add-services compact" accept-charset="UTF-8" data-remote="true" method="post" style="display: grid;">
+          <div class="finput focus">
+            <label class="finput-label">Сумма*</label>
+            <input class="finput-input" type="number" name="">
+          </div>
+          <div class="finput focus">
+            <label class="finput-label">Причина перерасчета*</label>
+            <input class="finput-input" type="text" name="">
+          </div>
+          <div class="btns-confirm">
+            <input type="submit" name="commit" value="Create Subscription" class="btn icon-confirm" data-disable-with="Create Subscription">
+            <input class="btn btn-no" type="button">
+          </div>
+        </form>
+      </div>
+
+      <div class="block-information show-hide-panel">
+        <h3><div class="icon-time"></div>Оплата <span class="amount">4000 ₽ из 4000 ₽</span></h3>
+          <div class="btn-compact click-compact"><div></div></div>
+
+        <div class="container-information compact">
+          <div class="item-element">
+            <div class="left-side-elem">
+                <span class="amount">1000 ₽</span>
+            </div>
+            <div class="rigth-side-elem">20 августа 2018</div>
+          </div>
+          <div class="item-element">
+            <div class="left-side-elem">
+                <span class="amount">3000 ₽</span>
+            </div>
+            <div class="rigth-side-elem">20 августа 2018</div>
+          </div>
+        </div>
+        <div class="add-discount">+ Добавить</div>
+
+        <form class="panel-attachment panel-add-services compact" accept-charset="UTF-8" data-remote="true" method="post" style="display: grid;">
+          <div class="finput focus">
+            <label class="finput-label">Сумма оплаты*</label>
+            <input class="finput-input" type="number" name="">
+          </div>
+          <div class="btns-confirm">
+            <input type="submit" name="commit" value="Create Subscription" class="btn icon-confirm" data-disable-with="Create Subscription">
+            <input class="btn btn-no" type="button">
+          </div>
+        </form>
+
+      </div>
+
+      <div class="block-information show-hide-panel">
+        <h3><div class="icon-time"></div>Продление <span>1</span></h3>
+          <div class="btn-compact click-compact"><div></div></div>
+
+        <div class="container-information compact">
+          <div class="item-element">
+            <div class="left-side-elem">
+                <div>Продлили, чтобы клиента не делал мозги  на 2 дня</div>
+            </div>
+            <div class="rigth-side-elem">20 августа 2018</div>
+          </div>
+        </div>
+        <div class="add-discount">+ Добавить</div>
+
+        <form class="panel-attachment panel-add-services compact" accept-charset="UTF-8" data-remote="true" method="post" style="display: grid;">
+          <div class="finput focus">
+            <label class="finput-label">Кол-во дней*</label>
+            <input class="finput-input" type="number" name="">
+          </div>
+          <div class="finput focus">
+            <label class="finput-label">Причина продления*</label>
+            <input class="finput-input" type="text" name="">
+          </div>
+          <div class="btns-confirm">
+            <input type="submit" name="commit" value="Create Subscription" class="btn icon-confirm" data-disable-with="Create Subscription">
+            <input class="btn btn-no" type="button">
+          </div>
+        </form>
+
+      </div>
+
+
+      <div class="block-information parent-compact">
+        <h3>Настройки абонемента</h3>
+        <div class="btn-compact click-compact"><div></div></div>
+        <div class="container-information compact">
+          <div class="item-information"><span class="title-input">Владелец</span><span class="text-input">Юсупов Расул</span></div>
+          <div class="item-information"><span class="title-input">Ходит</span><span class="text-input">Группа 1</span></div>
+          <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input"><%= @subscription.start_at.strftime("%d %b, %Y") %></span></div>
+          <div class="item-information"><span class="title-input">Дата завершения</span><span class="text-input"><%= @subscription.finish_at.strftime("%d %b, %Y") %></span></div>
+
+          <div class="item-information"><span class="title-input">Количество посещений</span><span class="text-input"><%= @subscription.visits %></span></div>
+          <div class="item-information"><span class="title-input">Активный</span><span class="text-input"><%= @subscription.is_active %></span></div>
+          <div class="item-information"><span class="title-input">Сумма</span><span class="text-input"><%= @subscription.price %></span></div>
+          <div class="item-information"><span class="title-input">Примечание</span><span class="text-input"><%= @subscription.note %></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= link_to 'Редактировать', edit_company_subscription_path(params[:company_id], @subscription) %> |

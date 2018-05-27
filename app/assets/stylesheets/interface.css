@@ -339,13 +339,13 @@ input.card-search {
     text-align: right;
 }
 .people-on-course>img {
-    width: 10px;
-    height: 10px;
+    width: 11px;
+    height: 11px;
     margin-left: 3px;
     float: right;
 }
 .right-content>.people-on-course {
-    margin: 19px 10px 18px 0;
+    margin: 24px 14px 23px 0;
 }
 .icon-sorting {
     background-image: url(/images/Filter-11-WF.png);
@@ -500,7 +500,8 @@ span.debt {
 }
 .amount {
     *color: #a5df9e;
-    color: #7bcd71;
+    *color: #7bcd71;
+    color: #12ce88;
 }
 .btns-card {
     position: absolute;
@@ -733,7 +734,7 @@ img.logo {
     float: left;
     color: #a7a7a7;
     font-size: 13px;
-    margin: 0px 6px 6px 6px;
+    margin: 0px 0 6px 0;
 }
 
 .block-information.entry {
@@ -770,7 +771,7 @@ a.subscription.active {
 .click-compact {
     cursor: pointer;
 }
-.service-entry>*, .discount-entry>* {
+.service-entry>* {
     float: left;
     margin: -1px 10px 5px 0;
     color: #a7a7a7;
@@ -790,12 +791,16 @@ a.subscription.active {
 .discount-entry {
     color: #a7a7a7;
     font-size: 13px;
-    background-size: 11px 11px;
-    background-repeat: no-repeat;
     float: left;
-    padding-left: 17px;
-    background-image: url(/images/discount.png);
-    margin: 0 6px 12px 6px;
+    margin: 0 0 12px 0;
+    width: 100%;
+}
+.discount-entry ul {
+    padding-left: 19px;
+    margin: 15px 0 7px 0;
+}
+.discount-entry li {
+    margin-bottom: 10px;
 }
 .add-discount {
     color: #4fa6f7;
@@ -833,12 +838,24 @@ div.info-about-subsc {
     float: left;
     color: #a7a7a7;
     font-size: 13px!important;
-    margin: 10px 6px 6px 6px;
+    margin: 10px 0 6px 0;
+}
+.discount {
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: bold;
+    user-select: none;
+    display: table;
+    color: #a3a3a3;
+    margin: 15px 0 5px 0;
+    width: 100%;
+    opacity: .5;
 }
 .subscription {
     margin-top: 30px;
     display: table;
     color: #a7a7a7;
+    transition: .3s;
 }
 a {
     text-decoration: none;
@@ -847,9 +864,10 @@ a {
     padding-left: 20px;
 }
 .subscription:hover {
-    -webkit-transform: translateY(-1px);
-    -ms-transform: translateY(-1px);
-    transform: translateY(-1px);
+    -webkit-transform: translateX(2px);
+    -ms-transform: translateX(2px);
+    transform: translateX(2px);
+    color: #313131!important;
 }
 .more-subscriptions {
     color: #a7a7a7;
@@ -871,23 +889,28 @@ a {
     color: #ff7375;
 }
 .subscribe {
-    color: #7bcd71;
+    color: #12ce88;
 }
 .unsubscribe, .subscribe {
-    font-size: 13px;
+    font-size: 11px;
     background-size: 11px 11px;
     background-repeat: no-repeat;
     float: left;
-    margin: 0 6px 32px 6px;
+    margin: 0 0 32px 0;
     cursor: pointer;
     opacity: .5;
     user-select: none;
     width: 100%;
+    transition: .3s;
+    text-transform: uppercase;
+    font-weight: 600;
 }
 .unsubscribe:hover, .subscribe:hover {
-    opacity: .9;
+    -webkit-transform: translateX(2px);
+    -ms-transform: translateX(2px);
+    transform: translateX(2px);
+    opacity: 1;
 }
-
 .message {
     background-color: white;
     font-size: 14px;
@@ -1226,4 +1249,15 @@ input.input-attachment {
 
 .block-visit .item-element:nth-of-type(1) {
     display: block!important;
+}
+.title-discount {
+    background-image: url(/images/discount.png);
+    background-size: 11px 11px;
+    background-repeat: no-repeat;
+    padding-left: 17px;
+    background-position-y: center;
+    user-select: none;
+}
+.left-side-elem .amount {
+    line-height: 1.95;
 }

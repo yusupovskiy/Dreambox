@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :subscriptions
+  # resources :subscriptions
   namespace :companies do
     get 'windows/show'
   end
@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
     resources :clients, module: :companies
     resources :services, module: :companies
+    resources :subscriptions, module: :companies
 
     resources :crm, controller: 'companies/crm', only: :index
   end

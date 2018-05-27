@@ -27,7 +27,7 @@
   <div class="cont-category-book">
     <div class="tab-category information-section">
 
-      <div class="block-information parent-compact block-visit">
+      <div class="block-information parent-compact block-visit show-hide-panel">
         <h3><div class="icon-time"></div>Время посещения <span>4</span></h3>
           <div class="btn-compact click-compact"><div></div></div>
 
@@ -76,7 +76,7 @@
         <div class="add-discount">+ Добавить</div>
       </div>
 
-      <div class="block-information">
+      <div class="block-information show-hide-panel">
         <h3><div class="icon-user"></div>Записанные <span><%= @records_clients.size %><% if @record.total_clients %><%= ' из ' %><% end %><%= @record.total_clients  %></span></h3>
         <div class="btn-compact click-compact"><div></div></div>
 
@@ -88,14 +88,15 @@
                   <div><%="#{rc.client.last_name} #{rc.client.first_name}"%></div>
                   <div class="panel-show">
                       <%= link_to 'Открыть карту', [rc.client.company, rc.client]%>
-                      <div>Продать абонемент</div>
+                      <div class="ticket-sale">Продать абонемент</div>
 <!--                  <div>Автопродление</div>
                       <div>Динамическая цена</div> -->
                       <%=link_to 'Отписать', records_client_path(rc, deactivate_instead_of_destroying: 1), method: :delete%>
                   </div>
               </div>
               <div class="rigth-side-elem">
-                <select id="" name="">
+                Нет абонемента
+                <select id="" name="" style="display: none;">
                   <option value="36">Записан</option>
                   <option value="36">Не записан</option>
                   <option value="38">Посетил</option>
@@ -104,12 +105,9 @@
                   <option value="38">Отмена</option>
                 </select>
               </div>
-              <div>
-                
-              </div>
-
-              <%=form_with url: subscriptions_path, model: @subscription,
-                html: {class: 'panel-attachment panel-add-services compact', style: 'display: grid'} do |f|%>
+              <br />
+              <%=form_with url: company_subscriptions_path(params[:company_id]), model: @subscription,
+                html: {class: 'panel-attachment panel-add-services compact'} do |f|%>
                 <%=f.hidden_field :record_client_id, value: rc.id%>
                 <div class="finput focus">
                   <label class="finput-label">Дата начала абонемента*</label>
@@ -120,10 +118,10 @@
                   <input class="btn btn-no" type="button">
                 </div>
               <%end%>
-
             </div>
           <%end%>
         </div>
+
         <div class="add-discount add-services">+ Записать</div>
         <%= form_with url: records_clients_path, model: @record_client, class: 'panel-attachment panel-add-services' do |f|%>
           <%=f.hidden_field :record_id, value: @record_client.record_id%>
@@ -154,7 +152,7 @@
         </div> -->
 
 
-      <div id="records_services_part" data-record-id="<%=@record.id%>" class="block-information">
+      <div id="records_services_part" data-record-id="<%=@record.id%>" class="block-information show-hide-panel">
         <h3><div class="icon-list"></div>Оказываемые услуги <span>{{recordsServices.length}}</span></h3>
         <div class="btn-compact click-compact"><div></div></div>
         
@@ -291,7 +289,7 @@
         })
       </script>
 
-      <div class="block-information">
+      <div class="block-information show-hide-panel">
         <h3><div class="icon-employees"></div>Ответственные <span>2</span></h3>
           <div class="btn-compact click-compact"><div></div></div>
 
@@ -326,7 +324,7 @@
         <div class="add-discount">+ Добавить</div>
       </div>
 
-      <div class="block-information">
+      <div class="block-information show-hide-panel">
         <h3><div class="icon-time"></div>График посещений <span>2</span></h3>
           <div class="btn-compact click-compact"><div></div></div>
 
@@ -353,7 +351,7 @@
         <div class="add-discount">+ Добавить</div>
       </div>
 
-      <div class="block-information parent-compact">
+      <div class="block-information parent-compact show-hide-panel">
         <h3>Настройки записи</h3>
         <div class="btn-compact click-compact"><div></div></div>
         <div class="container-information compact">
@@ -366,7 +364,7 @@
         </div>
       </div>
 
-      <div class="block-information parent-compact">
+      <div class="block-information parent-compact show-hide-panel">
         <h3>Настройки абонементов</h3>
         <div class="btn-compact click-compact"><div></div></div>
 

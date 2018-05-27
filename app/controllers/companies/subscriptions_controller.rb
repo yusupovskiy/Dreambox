@@ -1,11 +1,11 @@
-class SubscriptionsController < ApplicationController
+class Companies::SubscriptionsController < ApplicationController
   before_action :set_subscription, only: [:show, :edit, :update, :destroy]
 
   # GET /subscriptions
   # GET /subscriptions.json
-  # def index
-  #   @subscriptions = Subscription.all
-  # end
+  def index
+    @subscriptions = Subscription.all
+  end
 
   # GET /subscriptions/1
   # GET /subscriptions/1.json
@@ -28,9 +28,7 @@ class SubscriptionsController < ApplicationController
     rc = RecordClient.eager_load(:record).find @subscription.record_client_id
 
     @subscription.finish_at = @subscription.start_at + rc.record.abon_period.days
-    if rc.record.total_visits.present?
-      @subscription.visits = rc.record.total_visits
-    end
+    @subscription.visits = rc.record.total_visits
     @subscription.price = RecordService.where(record_id: rc.record_id).sum(:money_for_abon)
 
     respond_to do |format|

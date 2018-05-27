@@ -9,6 +9,7 @@ class Companies::RecordsController < ApplicationController
     @records = Record.where(affiliate: ids)
     @completed_records = @records.where("finished_at < ?", Date.today)
     @no_completed_records = @records.where("finished_at > ?", Date.today)
+
   end
 
   # GET /records/1
