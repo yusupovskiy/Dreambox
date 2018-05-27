@@ -34,17 +34,17 @@ select rc.*, r.total_visits from (
 where rn = 1 and finish_at = '#{date_of_last_day_of_previous_month}'
 SQL
 
-    count = 0
-    ActiveRecord::Base.connection.select_all(sql).to_hash.each do |rc|
+    start_at = date_of_last_day_of_previous_month + 1.day
+    finish_at = date_of_last_day_of_previous_month + Time.days_in_month(today.month).days
+    rows = ActiveRecord::Base.connection.select_all(sql).to_hash
+    rows.each do |rc|
       Subscription.create!({
-          start_at: date_of_last_day_of_previous_month + 1.day,
-          finish_at: date_of_last_day_of_previous_month + 1.month,
-          visits: rc['total_visits'],
-          record_client_id: rc['id'],
-        })
-      count += 1
+        start_at: start_at,
+        finish_at: finish_at,
+        visits: rc['total_visits'],
+        record_client_id: rc['id'],
+      })
     end
-
-    render plain: "#{count} subscriptions were created"
+    render plain: "#{rows.size} subscriptions were created"
   end
 end

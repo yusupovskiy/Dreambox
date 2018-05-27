@@ -1,7 +1,7 @@
 class Subscription < ApplicationRecord
   belongs_to :record_client
 
-  validates :start_at, :finish_at, :record_client_id, :visits, presence: true
+  validates :start_at, :finish_at, :record_client_id, presence: true
   validate :ensure_start_is_less_than_finish
 
   def ensure_start_is_less_than_finish
