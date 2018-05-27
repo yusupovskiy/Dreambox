@@ -4,13 +4,16 @@ class Companies::SubscriptionsController < ApplicationController
   # GET /subscriptions
   # GET /subscriptions.json
   def index
-    @subscriptions = Subscription.all
+    affiliates = Affiliate.where(company_id: params[:company_id])
+    records = Record.where(affiliate: affiliates)
+    rc = RecordClient.where(record: records)
+    @subscriptions = Subscription.where(record_client: rc)
   end
 
   # GET /subscriptions/1
   # GET /subscriptions/1.json
-  def show
-  end
+  # def show
+  # end
 
   # GET /subscriptions/new
   # def new
@@ -27,16 +30,24 @@ class Companies::SubscriptionsController < ApplicationController
     @subscription = Subscription.new(subscription_params)
     rc = RecordClient.eager_load(:record).find @subscription.record_client_id
 
-    @subscription.finish_at = @subscription.start_at + rc.record.abon_period.days
+    if @subscription.finish_at.nil?
+      @subscription.finish_at = @subscription.start_at + rc.record.abon_period.days
+    end
     @subscription.visits = rc.record.total_visits
     @subscription.price = RecordService.where(record_id: rc.record_id).sum(:money_for_abon)
 
     respond_to do |format|
-      if @subscription.save
-        format.html { redirect_to request.referer }
+      no_subscriptions_in_that_range = rc.subscriptions
+        .where('? between start_at and finish_at and ? between start_at and finish_at',
+               @subscription.start_at, @subscription.finish_at)
+        .count.zero?
+      if no_subscriptions_in_that_range and @subscription.save
+        # format.html { redirect_to params[:return_url] }
+        format.html { redirect_to request.referer }  # from records/:id
         format.json { render :show, status: :created, location: @subscription }
       else
-        format.html { render :new }
+        notice = no_subscriptions_in_that_range ? nil : t(:reserved_range_for_subscription)
+        format.html { redirect_to request.referer, notice: notice }
         format.json { render json: @subscription.errors, status: :unprocessable_entity }
       end
     end

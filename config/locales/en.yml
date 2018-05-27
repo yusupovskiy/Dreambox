@@ -37,6 +37,7 @@ en:
   remember_me: Remember me
   forgot_your_password?: Forgot your password?
   didnt_receive_confirmation_instruction?: Didn't receive confirmation instructions?
+  reserved_range_for_subscription: This range is reserved
   sex:
     male: Male
     female: Female
