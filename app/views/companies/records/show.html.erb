@@ -9,8 +9,8 @@
       <div class="panel-show">
         <%= link_to 'Вернуться к списку', company_records_path %>
         <%= link_to 'Редактировать', edit_company_record_path(params[:company_id], @record) %>
-        <div>Продать всем абонементы</div>
-<!--         <div>Автопродление всем</div>
+        <div>Автопродление всем</div>
+<!--        <div>Продать всем абонементы</div>
         <div>Динамические цены</div> -->
       </div>
     </div>
@@ -27,54 +27,7 @@
   <div class="cont-category-book">
     <div class="tab-category information-section">
 
-      <div class="block-information parent-compact block-visit show-hide-panel">
-        <h3><div class="icon-time"></div>Время посещения <span>4</span></h3>
-          <div class="btn-compact click-compact"><div></div></div>
-
-        <div class="container-information">
-            <div class="item-element compact">
-              <div class="left-side-elem">
-                  <div>Сегодня</div>
-                  <div class="panel-show">
-                      <div>Открыть карту</div>
-                      <div>Отменить</div>
-                  </div>
-              </div>
-              <div class="rigth-side-elem">в 12:00 до 15:00</div>
-            </div>
-            <div class="item-element compact">
-              <div class="left-side-elem">
-                  <div>Завтра</div>
-                  <div class="panel-show">
-                      <div>Открыть карту</div>
-                      <div>Отменить</div>
-                  </div>
-              </div>
-              <div class="rigth-side-elem">в 12:00 до 15:00</div>
-            </div>
-            <div class="item-element compact">
-              <div class="left-side-elem">
-                  <div>Послезавтра</div>
-                  <div class="panel-show">
-                      <div>Открыть карту</div>
-                      <div>Отменить</div>
-                  </div>
-              </div>
-              <div class="rigth-side-elem">в 12:00 до 15:00</div>
-            </div>
-            <div class="item-element compact">
-              <div class="left-side-elem">
-                  <div>21 августа 2018</div>
-                  <div class="panel-show">
-                      <div>Открыть карту</div>
-                      <div>Отменить</div>
-                  </div>
-              </div>
-              <div class="rigth-side-elem">в 12:00 до 15:00</div>
-            </div>
-        </div>
-        <div class="add-discount">+ Добавить</div>
-      </div>
+      <% render 'companies/records/visiting_time' %>
 
       <div class="block-information show-hide-panel">
         <h3><div class="icon-user"></div>Записанные <span><%= @records_clients.size %><% if @record.total_clients %><%= ' из ' %><% end %><%= @record.total_clients  %></span></h3>
@@ -109,9 +62,13 @@
               <%=form_with url: company_subscriptions_path(params[:company_id]), model: @subscription,
                 html: {class: 'panel-attachment panel-add-services compact'} do |f|%>
                 <%=f.hidden_field :record_client_id, value: rc.id%>
-                <div class="finput focus">
+                <div class="finput">
                   <label class="finput-label">Дата начала абонемента*</label>
-                  <%= f.date_field :start_at, class: 'finput-input' %>
+                  <%= f.date_field :start_at, value: Date.today, class: 'finput-input' %>
+                </div>
+                <div class="finput">
+                  <label class="finput-label">Дата завершения абонемента*</label>
+                  <%= f.date_field :finish_at, value: Date.today + @record.abon_period.day, class: 'finput-input' %>
                 </div>
                 <div class="btns-confirm">
                   <%= f.submit class: 'btn icon-confirm' %>
@@ -137,19 +94,6 @@
       </div>
 
 
-
-<!--         <div id="" class="panel-attachment panel-add-services">
-          <div class="finput">
-            <label class="finput-label">Услуга</label>
-            <select class="finput-input" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
-              <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
-            </select>
-          </div>
-          <div class="btns-confirm">
-            <input class="btn icon-confirm" type="button" @click="attachService">
-            <input class="btn btn-no" type="button">
-          </div>
-        </div> -->
 
 
       <div id="records_services_part" data-record-id="<%=@record.id%>" class="block-information show-hide-panel">
@@ -289,67 +233,7 @@
         })
       </script>
 
-      <div class="block-information show-hide-panel">
-        <h3><div class="icon-employees"></div>Ответственные <span>2</span></h3>
-          <div class="btn-compact click-compact"><div></div></div>
-
-        <div class="container-information compact">
-          <div class="item-element">
-            <div class="left-side-elem">
-                <img src="/resources/no-image-available.png">
-                <div>Агаева Патимат</div>
-                <div class="panel-show">
-                    <div>Открыть карту</div>
-                    <div>Заморозить выплаты</div>
-                    <div>Редактировать пункт</div>
-                    <div>Удалить пункт</div>
-                </div>
-            </div>
-            <div class="rigth-side-elem">4 500 ₽ (35%)</div>
-          </div>
-          <div class="item-element">
-            <div class="left-side-elem">
-                <img src="/resources/no-image-available.png">
-                <div>Улубекова Зубруд</div>
-                <div class="panel-show">
-                    <div>Открыть карту</div>
-                    <div>Заморозить выплаты</div>
-                    <div>Редактировать пункт</div>
-                    <div>Удалить пункт</div>
-                </div>
-            </div>
-            <div class="rigth-side-elem">5 000 ₽ (фикси.)</div>
-          </div>
-        </div>
-        <div class="add-discount">+ Добавить</div>
-      </div>
-
-      <div class="block-information show-hide-panel">
-        <h3><div class="icon-time"></div>График посещений <span>2</span></h3>
-          <div class="btn-compact click-compact"><div></div></div>
-
-        <div class="container-information compact">
-          <div class="item-element">
-            <div class="left-side-elem">
-                <div>В понедельник</div>
-                <div class="panel-show">
-                    <div>Удалить пункт</div>
-                </div>
-            </div>
-            <div class="rigth-side-elem">с 12:00 по 15:00</div>
-          </div>
-          <div class="item-element">
-            <div class="left-side-elem">
-                <div>Во вторник</div>
-                <div class="panel-show">
-                    <div>Удалить пункт</div>
-                </div>
-            </div>
-            <div class="rigth-side-elem">с 12:00 по 15:00</div>
-          </div>
-        </div>
-        <div class="add-discount">+ Добавить</div>
-      </div>
+      <% render 'companies/records/responsible' %>
 
       <div class="block-information parent-compact show-hide-panel">
         <h3>Настройки записи</h3>

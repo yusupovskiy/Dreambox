@@ -142,6 +142,23 @@
                 <div class="show-hide-panel">
                   <div class="add-discount add-services">+ Продать абонемент</div>
 
+                  <%=form_with url: company_subscriptions_path(params[:company_id]), model: @subscription,
+                    html: {class: 'panel-attachment '} do |f|%>
+                    <%=f.hidden_field :record_client_id, value: rc.id%>
+                    <div class="finput">
+                      <label class="finput-label">Дата начала абонемента*</label>
+                      <%= f.date_field :start_at, value: Date.today, class: 'finput-input' %>
+                    </div>
+                    <div class="finput">
+                      <label class="finput-label">Дата завершения абонемента*</label>
+                      <%= f.date_field :finish_at, value: Date.today + record.abon_period.day, class: 'finput-input' %>
+                    </div>
+                    <div class="btns-confirm">
+                      <%= f.submit class: 'btn icon-confirm' %>
+                      <input class="btn btn-no" type="button">
+                    </div>
+                  <%end%>
+
                 </div>
   <!--               <a href="#" class="subscription">
                   <div class="data-subscriptions"><div class="add-discount">+ Продать абонемент</div></div>
@@ -155,20 +172,36 @@
                         <div class="data-subscriptions">Текущий<br />от <%= sub.start_at.strftime("%d %b %Y") %> до <%= sub.finish_at.strftime("%d %b %Y") %></div>
                         <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
                       <% end %>
+                      
+                      <form class="panel-attachment panel-add-services compact" accept-charset="UTF-8" data-remote="true" method="post" style="display: grid;">
+                        <div class="finput focus">
+                          <label class="finput-label">Сумма*</label>
+                          <input class="finput-input" type="number" name="">
+                        </div>
+                        <div class="btns-confirm">
+                          <input type="submit" name="commit" value="Create Subscription" class="btn icon-confirm" data-disable-with="Create Subscription">
+                          <input class="btn btn-no" type="button">
+                        </div>
+                      </form>
+
                     <% else %>
                       <%= link_to company_subscription_path(params[:company_id], sub.id), class: "subscription" do %>
                         <div class="data-subscriptions">от <%= sub.start_at.strftime("%d %b %Y") %> до <%= sub.finish_at.strftime("%d %b %Y") %></div>
                         <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
                       <% end %>
+
+                      <form class="panel-attachment panel-add-services compact" accept-charset="UTF-8" data-remote="true" method="post" style="display: grid;">
+                        <div class="finput focus">
+                          <label class="finput-label">Сумма*</label>
+                          <input class="finput-input" type="number" name="">
+                        </div>
+                        <div class="btns-confirm">
+                          <input type="submit" name="commit" value="Create Subscription" class="btn icon-confirm" data-disable-with="Create Subscription">
+                          <input class="btn btn-no" type="button">
+                        </div>
+                      </form>
                     <% end %>
                 <% end %>
-
-<!-- 
-                <a href="#" class="subscription active">
-                  <div class="data-subscriptions">Текущий до 21 август 2018</div>
-                  <div class="payment-subs">надо оплатить <span class="amount debt">3 000 ₽</span></div>
-                  <div class="visits-subs">посещений уже нет</div>
-                </a> -->
 
 <!--                 <div class="more-subscriptions">Загрузить еще пять</div> -->
               </div>
