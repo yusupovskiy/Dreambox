@@ -39,8 +39,9 @@
               <div class="left-side-elem">
                   <%=image_tag s3_image(rc.client.avatar), class: "avatar-list" %>
                   <div><%="#{rc.client.last_name} #{rc.client.first_name}"%></div>
-                  <div class="panel-show">
-                      <%= link_to 'Открыть карту', [rc.client.company, rc.client]%>
+                  <div class="panel-show"><!-- 
+                      <%= link_to 'Открыть карту', [rc.client.company, rc.client]%> -->
+                      <a href="<%= company_client_path(params[:company_id], rc.client) %>#2#10">Открыть карту</a>
                       <div class="ticket-sale">Продать абонемент</div>
 <!--                  <div>Автопродление</div>
                       <div>Динамическая цена</div> -->

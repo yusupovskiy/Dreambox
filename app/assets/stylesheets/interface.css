@@ -60,11 +60,12 @@ a {
     user-select: none;
 }
 img.object-avatar {
-    width: 46px;
-    height: 46px;
+    width: 100%;
+    height: 100%;
     box-shadow: 0 0 0 2px white;
     border-radius: 50%;
     background-color: white;
+    overflow: hidden;
 }
 .object-info {
     position: absolute;
@@ -1260,4 +1261,24 @@ input.input-attachment {
 }
 .left-side-elem .amount {
     line-height: 1.95;
+}
+.current-object.mini {
+    width: 36px;
+    height: 36px;
+    right: 30px;
+    top: 40px;
+    left: auto;
+    bottom: auto;
+}
+.current-object.mini .object-avatar {
+    box-shadow: none;
+}
+.current-object.mini .object-info {
+    left: auto;
+    right: 50px;
+}
+.current-object.mini .object-info .name-people {
+    font-size: 14px;
+    font-weight: 400;
+    margin: 8px 0;
 }

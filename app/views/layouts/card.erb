@@ -51,6 +51,15 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
     <% render 'layouts/open_tabs' %>
 
+    <%if signed_in?%>
+      <div class="current-object mini">
+        <img class="object-avatar" src="/resources/no-image-available.png" />
+        <div class="object-info">
+          <span class="name-people"><%="#{current_user.first_name} #{current_user.last_name}"%></span>
+        </div>
+      </div>
+    <%end%>
+
     <div class="card">
       <%=yield%>
     </div>
