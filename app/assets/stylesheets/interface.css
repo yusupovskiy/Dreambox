@@ -2,6 +2,7 @@ body {
     margin: 0;
     background-color: #f5f5f5;
     font-family: Roboto;
+    scroll-behavior: smooth;
 }
 a {
     text-decoration: none;
@@ -430,7 +431,8 @@ input.card-search {
 .card {
     /*background-color: #eceff0;*/
     background-color: #e1e4e8;
-    width: 360px;
+    /*width: 360px;*/
+    width: 400px;
     display: table;
     border-radius: 7px;
     z-index: 5;
@@ -766,7 +768,7 @@ img.logo {
     z-index: 8;
     width: 100%;
 }
-a.subscription.active {
+.subscription.active .data-subscriptions {
     color: #525252;
 }
 .click-compact {
@@ -833,6 +835,8 @@ a.subscription.active {
     background-color: white;
     background-position-y: center;
     padding: 10px 0 10px 31px;
+    display: table;
+    color: #a7a7a7;
 }
 div.info-about-subsc {
     width: 100%;
@@ -858,17 +862,39 @@ div.info-about-subsc {
     color: #a7a7a7;
     transition: .3s;
 }
+.testt {
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: bold;
+    user-select: none;
+    color: #cacaca;
+    float: left;
+    padding: 10px 0;
+    width: 100%;
+}
 a {
     text-decoration: none;
 }
-.payment-subs, .visits-subs {
+.payment-subs {
     padding-left: 20px;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: bold;
+    user-select: none;
+    color: #ff7375;
 }
-.subscription:hover {
+.payment-subs .debt {
+    font-size: 11px;
+    margin-left: 1px;
+}
+.subscription>* {
+    transition: .3s;
+}
+.subscription>*:hover {
     -webkit-transform: translateX(2px);
     -ms-transform: translateX(2px);
     transform: translateX(2px);
-    color: #313131!important;
+    color: #313131 !important;
 }
 .more-subscriptions {
     color: #a7a7a7;
@@ -1276,9 +1302,10 @@ input.input-attachment {
 .current-object.mini .object-info {
     left: auto;
     right: 50px;
+    top: 0;
 }
 .current-object.mini .object-info .name-people {
     font-size: 14px;
     font-weight: 400;
-    margin: 8px 0;
+    margin: 10px 0;
 }
