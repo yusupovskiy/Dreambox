@@ -34,7 +34,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
   <body data-params="<%=params.to_json%>" class="home">
 
     <div class="active-company">
-      <div class="name-company">Школа кулинаров</div>
+      <div class="name-company"><%= $current_company.name %></div>
       <div class="days-subs">356 дн.</div>
     </div>
 
@@ -51,7 +51,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
     <%if signed_in?%>
       <div class="current-object">
-        <img class="object-avatar" src="/resources/no-image-available.png" />
+        <%= image_tag s3_image(current_user.avatar), class: 'object-avatar' %>
         <div class="object-info">
           <span class="name-people"><%="#{current_user.first_name} #{current_user.last_name}"%></span>
           <%= link_to 'Владелец', edit_user_registration_path, class: "roles-people" %>

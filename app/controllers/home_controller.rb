@@ -4,6 +4,7 @@ class HomeController < ApplicationController
   def index
     # TODO: remember the last used company instead of choose the first one
     @current_company = current_user.companies.first
+    $current_company = @current_company
     # NotificationMailer.welcome.deliver_later
   end
 

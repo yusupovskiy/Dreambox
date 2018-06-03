@@ -109,20 +109,20 @@
                 <%=form_with url: discounts_path, model: @discount,
                  html: {class: 'panel-attachment panel-add-services compact'} do |f|%>
                   <%=f.hidden_field :record_client_id, value: rc.id%>
-                  <div class="finput focus">
+                  <div class="finput">
                     <label class="finput-label">Дата начала*</label>
                     <%= f.date_field :start_at, class: 'finput-input', required: 'required' %>
                   </div>
-                  <div class="finput focus">
+                  <div class="finput">
                     <label class="finput-label">Дата завершения*</label>
                     <%= f.date_field :finish_at, class: 'finput-input', required: 'required' %>
                   </div>
-                  <div class="finput focus">
+                  <div class="finput">
                     <label class="finput-label">Сумма коррекции*</label>
                     <%= f.number_field :value, class: 'finput-input', required: 'required' %>
                   </div>
                   <div class="finput-desc">при вводе отрицательного значения, клиент будет получать скидку</div>
-                  <div class="finput focus">
+                  <div class="finput">
                     <label class="finput-label">Примечание*</label>
                     <%= f.text_field :note, class: 'finput-input', required: 'required' %>
                   </div>
@@ -141,7 +141,7 @@
               </div>
 
               <div class="subscriptions">
-                <a class="subscription compact">
+                <a class="subscription compact" style="margin-bottom: 20px;">
                   <div class="data-subscriptions show-hide-panel" style="background-image: none; background-color: transparent;">
                     <div class="add-discount add-services">+ Продать абонемент</div>
                     <%=form_with url: company_subscriptions_path(params[:company_id]), model: @subscription,
