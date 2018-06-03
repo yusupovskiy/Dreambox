@@ -35,10 +35,12 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
   <!-- <body data-params="<%=params.to_json%>" class="page top-panel"> -->
   <body data-params="<%=params.to_json%>" class="">
     
-    <div class="active-company">
-      <div class="name-company"><%= $current_company.name %></div>
-      <div class="days-subs">356 дн.</div>
-    </div>
+    <% if $current_company.present? and signed_in? %>
+      <div class="active-company">
+        <div class="name-company"><%= $current_company.name %></div>
+        <div class="days-subs">356 дн.</div>
+      </div>
+    <% end %>
 
     <%if flash.present?%>
       <div class="message">
