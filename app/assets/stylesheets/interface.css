@@ -292,11 +292,11 @@ img.object-avatar {
     float: left;
     transition: .3s;
 }
-a.btn {
+/*a.btn {
     display: table;
     width: 11px;
     height: 11px;
-}
+}*/
 .avatar-list {
     width: 40px;
     height: 40px;
@@ -470,10 +470,13 @@ input.card-search {
     overflow: hidden;
 }
 .people-avatar {
-    width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
+    display: block;
+    margin: auto;
+    right: 0;
+    left: 0;
 }
 .title-panel {
     padding: 10px 0 18px 0;
@@ -625,11 +628,15 @@ span.debt {
 .add-avatar:hover .icon-add-avatar {
     background-color: #f3f3f3;
 }
-.btn {
-    background-size: 100%;
-    background-repeat: no-repeat;
+input.btn {
     width: 36px;
     height: 36px;
+}
+.btn {
+    background-size: 10px 10px;
+    background-repeat: no-repeat;
+    width: 10px;
+    height: 10px;
     color: transparent;
     padding: 13px;
     background-origin: content-box;
@@ -828,13 +835,12 @@ img.logo {
 .data-subscriptions {
     background-size: 22px 22px;
     background-repeat: no-repeat;
-    padding-left: 31px;
     background-image: url(/images/subs.png);
-    margin-left: -11px;
     background-color: white;
     background-position-y: center;
-    padding: 10px 0 10px 31px;
+    padding: 10px 0 10px 40px;
     display: table;
+    margin-left: -40px;
     color: #a7a7a7;
 }
 div.info-about-subsc {
@@ -860,6 +866,7 @@ div.info-about-subsc {
     display: table;
     color: #a7a7a7;
     transition: .3s;
+    padding-left: 30px;
 }
 .testt {
     text-transform: uppercase;
@@ -870,17 +877,21 @@ div.info-about-subsc {
     float: left;
     padding: 10px 0;
     width: 100%;
+    text-align: center;
+}
+.testt:hover {
+    color: #a7a7a7;
 }
 a {
     text-decoration: none;
 }
 .payment-subs {
-    padding-left: 20px;
     text-transform: uppercase;
     font-size: 10px;
     font-weight: bold;
     user-select: none;
     color: #ff7375;
+    cursor: pointer;
 }
 .payment-subs .debt {
     font-size: 11px;
@@ -1048,7 +1059,6 @@ a {
     display: block;
 }
 .add-avatar canvas {
-    width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
@@ -1095,8 +1105,8 @@ a {
     background-image: url(/images/list.png);
 }
 .left-side-elem>img {
-    width: 21px;
-    height: 21px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     margin: 3px 8px 3px 0;
 }
@@ -1310,4 +1320,71 @@ input.input-attachment {
     font-size: 14px;
     font-weight: 400;
     margin: 10px 0;
+}
+
+
+
+.camera-cont {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999999;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+.panel-video {
+    z-index: 1;
+    width: 300px;
+    height: 300px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    user-select: none;
+    box-shadow: 0 0 120px 40px rgba(0, 0, 0, 0.57);
+    overflow: hidden;
+    background-color: black;
+    border-radius: 20px;
+}
+.contur-video {
+    width: 294px;
+    height: 294px;
+    position: absolute;
+    z-index: 1;
+    border: 3px dashed rgba(192, 192, 192, 0.2);
+    border-radius: 50%;
+}
+.panel-video #camera-stream {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
+#btn-camera-off {
+    color: white;
+}
+.btns-camera .btn {
+    float: left;
+    margin: 0 10px;
+}
+.btns-camera {
+    z-index: 10;
+    position: absolute;
+    right: 0;
+    bottom: 0px;
+    left: 0;
+    margin: 133px 66px 0 66px;
+    display: table;
+}
+
+.icon-camera {
+    background-image: url(/images/camera.png);
+}
+
+.icon-back {
+    background-image: url(/images/back.png);
 }

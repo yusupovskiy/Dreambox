@@ -1,30 +1,31 @@
 <%= form_with(model: [client.company, client], local: true, id: 'main-form',
               data: { 'form-data' => @s3_direct_post.fields, 'url' => @s3_direct_post.url, 'host' => URI.parse(@s3_direct_post.url).host }) do |form| %>
   <div class="conten-card">
+<!-- 
+<a id="btn-camera-on">Сделать снимок</a>
 
-
-<div class="container">
-
-  <div class="app">
-
-    <a href="#" id="start-camera" class="visible">Touch here to start the app.</a>
-    <video id="camera-stream"></video>
+<div class="camera-cont">
+  <div class="panel-video">
+    <div class="contur-video"></div>
+    <video id="camera-stream" height="120" width="160" muted="muted"></video>
     <img id="snap">
 
-    <p id="error-message"></p>
-
-    <div class="controls">
-      <a href="#" id="delete-photo" title="Delete Photo" class="disabled"><i class="material-icons">delete</i></a>
-      <a href="#" id="take-photo" title="Take Photo"><i class="material-icons">camera_alt</i></a>
-      <a href="#" id="download-photo" download="selfie.png" title="Save Photo" class="disabled"><i class="material-icons">file_download</i></a>  
+    <div class="btns-camera">
+      <a class="btn icon-back" id="btn-camera-off" onclick="videoOff()"></a>
+      <div class="btn icon-camera" id="take-photo" title="Take Photo"></div>
+      <a class="btn" id="delete-photo" title="Delete Photo" class="disabled"></a>
+      <a id="download-photo" download="selfie.png" title="Save Photo" class="btn disabled"></a>
     </div>
-
-    <!-- Hidden canvas element. Used for taking snapshot of video. -->
-    <canvas></canvas>
 
   </div>
 
-</div>
+
+
+  <p id="error-message"></p>
+
+  <canvas></canvas>
+</div> -->
+
 
     <div class="information-section">
       <div class="block-information">
@@ -112,175 +113,168 @@
   clientAvatar.on('change', () => clientAvatarField.value = '')
 </script>
 
-
 <script type="text/javascript">
-  
+  // References to all the element we will need.
+  var video = document.querySelector('#camera-stream'),
+      start_camera = document.querySelector('#btn-camera-on'),
+      image = document.querySelector('#snap'),
+      controls = document.querySelector('.controls'),
+      take_photo_btn = document.querySelector('#take-photo'),
+      delete_photo_btn = document.querySelector('#delete-photo'),
+      download_photo_btn = document.querySelector('#download-photo'),
+      error_message = document.querySelector('#error-message');
 
-    // References to all the element we will need.
-    var video = document.querySelector('#camera-stream'),
-        image = document.querySelector('#snap'),
-        start_camera = document.querySelector('#start-camera'),
-        controls = document.querySelector('.controls'),
-        take_photo_btn = document.querySelector('#take-photo'),
-        delete_photo_btn = document.querySelector('#delete-photo'),
-        download_photo_btn = document.querySelector('#download-photo'),
-        error_message = document.querySelector('#error-message');
-
-
-    // The getUserMedia interface is used for handling camera input.
-    // Some browsers need a prefix so here we're covering all the options
-    navigator.getMedia = ( navigator.getUserMedia ||
-    navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia ||
-    navigator.msGetUserMedia);
+  // The getUserMedia interface is used for handling camera input.
+  // Some browsers need a prefix so here we're covering all the options
+  navigator.getMedia = ( navigator.getUserMedia ||
+  navigator.webkitGetUserMedia ||
+  navigator.mozGetUserMedia ||
+  navigator.msGetUserMedia);
 
 
-    if(!navigator.getMedia){
+  start_camera.addEventListener("click", function(e) {
+    $('.camera-cont').show();
+    if(!navigator.getMedia) {
         displayErrorMessage("Your browser doesn't have support for the navigator.getUserMedia interface.");
     }
-    else{
+    else {
+      navigator.getUserMedia(
+        // Настройки
+        {
+            video: true,
+            audio: false
+        },
+        // Колбэк для успешной операции
+        function(stream){
 
-        // Request the camera.
-        navigator.getUserMedia(
-            // Настройки
-            {
-                video: false, 
-                audio:false
-            },
-            // Колбэк для успешной операции
-            function(stream){
+            // Создаём объект для видео потока и
+            // запускаем его в HTLM элементе video.
+            video.src = window.URL.createObjectURL(stream);
+            localstream = stream;
 
-                // Создаём объект для видео потока и
-                // запускаем его в HTLM элементе video.
-                video.src = window.URL.createObjectURL(stream);
+            // Воспроизводим видео.
+            video.play();
 
-                // Воспроизводим видео.
-                video.play();
+        },
+        // Колбэк для не успешной операции
+        function(err){
 
-            },
-            // Колбэк для не успешной операции
-            function(err){
+            // Наиболее частые ошибки — PermissionDenied и DevicesNotFound.
+            console.error(err);
 
-                // Наиболее частые ошибки — PermissionDenied и DevicesNotFound.
-                console.error(err);
-
-            }
-        );
+        }
+      );
     }
+  });
 
 
+  take_photo_btn.addEventListener("click", function(e){
 
-    // Mobile browsers cannot play video without user input,
-    // so here we're using a button to start it manually.
-    start_camera.addEventListener("click", function(e){
+    e.preventDefault();
+$('#drop_zone').addClass('drop');
+          $('#drop_zone').html('<div class="icon-add-avatar"><input id="client_avatar" type="file" style="display: none;"><input id="client_avatar_field" value="" type="hidden" name="client[avatar]"></div><img class="people-avatar" src="https://tbis-uploads.s3.amazonaws.com/images/687f374e-f900-4fbd-95d2-9be468ac3930/l-huile-de-lavande-la-vraie-solution-anti-poux-10779576wmuiv.jpg"><div class="preview-container"><div class="wrapper"><div class="preview"><canvas id="canvas-id" width="730" height="487"></canvas></div><div class="file-name">Depositphotos_44494081_l-2015-730x487.jpg</div><div class="file-uploader-progress-bar"><div class="progress" style="width: 100%;"></div></div></div></div>');
+    var snap = takeSnapshot();
 
-        e.preventDefault();
+    // Show image. 
+    image.setAttribute('src', snap);
 
-        // Start video playback manually.
-        video.play();
-        showVideo();
+    document.querySelector('#client_avatar_field').value = imageDataURL;
 
-    });
+    console.log(snap);
+    image.classList.add("visible");
 
+    // Enable delete and save buttons
+    delete_photo_btn.classList.remove("disabled");
+    download_photo_btn.classList.remove("disabled");
 
-    take_photo_btn.addEventListener("click", function(e){
+    // Set the href attribute of the download button to the snap url.
+    download_photo_btn.href = snap;
 
-        e.preventDefault();
-
-        var snap = takeSnapshot();
-
-        // Show image. 
-        image.setAttribute('src', snap);
-        image.classList.add("visible");
-
-        // Enable delete and save buttons
-        delete_photo_btn.classList.remove("disabled");
-        download_photo_btn.classList.remove("disabled");
-
-        // Set the href attribute of the download button to the snap url.
-        download_photo_btn.href = snap;
-
-        // Pause video playback of stream.
-        video.pause();
-
-    });
+    // Pause video playback of stream.
+    video.pause();
 
 
-    delete_photo_btn.addEventListener("click", function(e){
+  });
 
-        e.preventDefault();
 
-        // Hide image.
-        image.setAttribute('src', "");
-        image.classList.remove("visible");
+  delete_photo_btn.addEventListener("click", function(e){
 
-        // Disable delete and save buttons
-        delete_photo_btn.classList.add("disabled");
-        download_photo_btn.classList.add("disabled");
+    e.preventDefault();
 
-        // Resume playback of stream.
-        video.play();
+    // Hide image.
+    image.setAttribute('src', "");
+    image.classList.remove("visible");
 
-    });
+    // Disable delete and save buttons
+    delete_photo_btn.classList.add("disabled");
+    download_photo_btn.classList.add("disabled");
+
+    // Resume playback of stream.
+    video.play();
+
+  });
 
 
   
-    function showVideo(){
-        // Display the video stream and the controls.
 
-        hideUI();
-        video.classList.add("visible");
-        controls.classList.add("visible");
+
+  function takeSnapshot(){
+    // Here we're using a trick that involves a hidden canvas element.  
+
+    var hidden_canvas = document.querySelector('#canvas-id'),
+        context = hidden_canvas.getContext('2d');
+
+    var width = video.videoWidth,
+        height = video.videoHeight;
+
+    if (width && height) {
+
+        // Setup a canvas with the same dimensions as the video.
+        hidden_canvas.width = width;
+        hidden_canvas.height = height;
+
+        // Make a copy of the current frame in the video on the canvas.
+        context.drawImage(video, 0, 0, width, height);
+
+        // Turn the canvas image into a dataURL that can be used as a src for our photo.
+        return hidden_canvas.toDataURL('image/png');
     }
 
 
-    function takeSnapshot(){
-        // Here we're using a trick that involves a hidden canvas element.  
+  }
 
-        var hidden_canvas = document.querySelector('canvas'),
-            context = hidden_canvas.getContext('2d');
 
-        var width = video.videoWidth,
-            height = video.videoHeight;
-
-        if (width && height) {
-
-            // Setup a canvas with the same dimensions as the video.
-            hidden_canvas.width = width;
-            hidden_canvas.height = height;
-
-            // Make a copy of the current frame in the video on the canvas.
-            context.drawImage(video, 0, 0, width, height);
-
-            // Turn the canvas image into a dataURL that can be used as a src for our photo.
-            return hidden_canvas.toDataURL('image/png');
-        }
+  function displayErrorMessage(error_msg, error){
+    error = error || "";
+    if(error){
+        console.error(error);
     }
 
+    error_message.innerText = error_msg;
 
-    function displayErrorMessage(error_msg, error){
-        error = error || "";
-        if(error){
-            console.error(error);
-        }
+    hideUI();
+    error_message.classList.add("visible");
+  }
 
-        error_message.innerText = error_msg;
+ 
+  function hideUI(){
+    // Helper function for clearing the app UI.
 
-        hideUI();
-        error_message.classList.add("visible");
-    }
-
-   
-    function hideUI(){
-        // Helper function for clearing the app UI.
-
-        controls.classList.remove("visible");
-        start_camera.classList.remove("visible");
-        video.classList.remove("visible");
-        snap.classList.remove("visible");
-        error_message.classList.remove("visible");
-    }
-
-
+    controls.classList.remove("visible");
+    start_camera.classList.remove("visible");
+    video.classList.remove("visible");
+    snap.classList.remove("visible");
+    error_message.classList.remove("visible");
+  }
+    
+    
+  function videoOff() {
+    //clearInterval(theDrawLoop);
+    //ExtensionData.vidStatus = 'off';
+    $('.camera-cont').hide();
+    video.pause();
+    video.src = "";
+    localstream.getTracks()[0].stop();
+  }
 
 </script>
