@@ -1,0 +1,85 @@
+<div class="title-panel">
+  <div class="btns-card">
+    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+    
+    <div class="btn-card top-scroll"></div>
+
+    <div class="btn-card btn-show-list">
+      <div class="panel-show">
+        <%= link_to 'Назад', :back %>
+        <%= link_to 'Перейти к списку', company_fin_operations_path %>
+      </div>
+    </div>
+
+  </div>
+  <div class="role-card">Финансовая операция</div>
+</div>
+
+<div class="conten-card tabs">
+  <div class="cont-category-book">
+    <div class="tab-category information-section">
+
+      <div class="block-information">
+        <div class="container-information">
+
+          <div class="item-information">
+          	<span class="title-input">Сумма операции</span>
+          	<span class="text-input"><span class="amount"><%= @fin_operation.amount %> ₽</span></span>
+          </div>
+
+          <% if @fin_operation.operation_type == 'payment_subscription' %>
+            <div class="item-information">
+              <span class="title-input">Тип операции</span>
+              <span class="text-input"><%= link_to t('operation_type.' + @fin_operation.operation_type), company_subscription_path(params[:company_id], @subscription.id) %></span>
+            </div>
+            <div class="item-information">
+              <span class="title-input">Оплатил</span>
+              <%= link_to company_client_path(params[:company_id], @client_subscription.id), class: 'img-input' do %>
+                <%= image_tag s3_image(@client_subscription.avatar) %>
+                <span><%= @client_subscription.first_name %> <%= @client_subscription.last_name %></span>
+              <% end %>
+            </div>
+          <% elsif @fin_operation.operation_type == 'payment_other' %>
+            <div class="item-information">
+              <span class="title-input">Тип операции</span>
+              <span class="text-input">Оплата за клиента</span>
+            </div>
+            <div class="item-information">
+              <span class="title-input">Оплатил</span>
+              <%= link_to company_client_path(params[:company_id], @subscription.id), class: 'img-input' do %>
+                <%= image_tag s3_image(@subscription.avatar) %>
+                <span><%= @subscription.first_name %> <%= @subscription.last_name %></span>
+              <% end %>
+            </div>
+          <% end %>
+
+          <div class="item-information">
+          	<span class="title-input">Примечание</span>
+          	<span class="text-input"><%= @fin_operation.description %></span>
+          </div>
+          <div class="item-information">
+          	<span class="title-input">Ответственный</span>
+          	<span class="img-input">
+              <%= image_tag s3_image(@responsible.avatar) %>
+          		<span><%= @responsible.first_name %> <%= @responsible.last_name %></span>
+            </span>
+          </div>
+          <div class="item-information">
+          	<span class="title-input">Филиал</span>
+          	<span class="text-input"><%= link_to @affiliate.name, company_affiliate_path(params[:company_id], @affiliate.id) %></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div>
+	<div></div>
+	<div>
+		
+	</div>
+	
+</div>

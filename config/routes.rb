@@ -18,8 +18,7 @@ Rails.application.routes.draw do
     resources :clients, module: :companies
     resources :services, module: :companies
     resources :subscriptions, module: :companies
-
-    resources :crm, controller: 'companies/crm', only: :index
+    resources :fin_operations, module: :companies
   end
   # two primary keys
   delete 'records_services' => 'records_services#destroy'

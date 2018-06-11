@@ -42,8 +42,9 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
     <%if flash.present?%>
       <div class="message">
-        <%=flash[:notice]%>
+        <%=flash[:notice].html_safe%>
         <%=flash[:alert]%>
+        <%=flash[:danger]%>
       </div>
     <%end%>
 
@@ -74,7 +75,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         <div>Оставить отзыв</div>
         <div>Помощь по бизнесу</div>
       </div>
-      <div class="copyright">© 2016 - 2018 Dreambox</div>
+      <div class="copyright">© 2016 - 2018 Dreambox™</div>
     </div>
   
     <div class="back-background"></div>

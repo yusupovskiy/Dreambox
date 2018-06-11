@@ -144,7 +144,7 @@ document.addEventListener('turbolinks:load', function() {
   // //   console.log(activeSideElem); // элемент, на котором произошло событие
   // // });
 
-
+  // focus input
   var focusInput = $('.finput .finput-input');
   focusInput.focus(function() {
     $(this).parents('.finput').addClass('focus');
@@ -156,32 +156,30 @@ document.addEventListener('turbolinks:load', function() {
     input.value && $(input).parents('.finput').addClass('focus')
   }
 
-  var btnTicketSale = $('.ticket-sale');
-  btnTicketSale.click(function() {
-    $(this).parents('.item-element').children('.panel-attachment').css('display', 'grid');
+  // show panel for the sale of a subscription
+  var btnTicketSale = $('.subscription-sale');
+  btnTicketSale.mouseup(function() {
+    $(this).parents('.item-element').children('.show-and-hide-panel').css('display', 'grid');
+    $(this).parents('.panel-show').css('display', 'none');
   });
 
-
-  var btnAddServices = $('.add-services');
-  btnAddServices.click(function() {
-    $(this).parent('.show-hide-panel').children('.panel-attachment').css('display', 'grid');
+  // show and hide panel
+  var btnShowPanel = $('.btn-show-panel');
+  btnShowPanel.click(function() {
+    $(this).parent('.show-and-hide-container').children('.show-and-hide-panel').css('display', 'grid');
     $(this).hide();
   });
-  var btnPanelServices = $('.btn-no');
-  btnPanelServices.click(function() {
-    $(this).parents('.panel-attachment').hide();
-    $(this).parents('.show-hide-panel').children('.add-services').show();
+  var btnHidePanel = $('.btn-hide-panel');
+  btnHidePanel.click(function() {
+    $(this).parents('.show-and-hide-panel').hide();
+    $(this).parents('.show-and-hide-container').children('.btn-show-panel').show();
   });
 
 
-  // скролл при нажатии кнопки
-  // $('.top-scroll').click(function () {
-  //   $('html').scrollTop(0);
-  // });
+
   $('.top-scroll').click(function(){
     $('html, body').animate({scrollTop:$('.footer').position().top}, 1000);
   });
-
 
   $('.icon-sorting').click(function(){
     if($('.panel-sorting').css('display') == 'none') {

@@ -20,8 +20,8 @@
 
 <div class="conten-card tabs">
   <div class="menu-with-options">
-    <div class="option active" title="Те клиенты, которые в данный момент пользуются услугами в вашем филиале">Текущие клиенты <%= @no_archive_clients.size %></div>
-    <div class="option">Должники 0</div>
+    <div class="option active" title="Те клиенты, которые в данный момент пользуются услугами в вашем филиале">Текущие клиенты <%= @current_clients.size %></div>
+    <div class="option">Должники <%= @debt_clients.size %></div>
     <% if @archive_clients.any? then %>
       <div class="option">Архив <%= @archive_clients.size %></div>
     <% end %>
@@ -30,10 +30,10 @@
   <a class="btn icon-plus" href="<%=new_company_client_path %>"></a>
   <div class="cont-category-book">
     <div class="tab-category information-section">
-      <%= render @no_archive_clients %>
+      <%= render @current_clients %>
     </div>
     <div class="tab-category information-section">
-      cписок должников
+      <%= render @debt_clients %>
     </div>
     <% if @archive_clients.any? then %>
       <div class="tab-category information-section">

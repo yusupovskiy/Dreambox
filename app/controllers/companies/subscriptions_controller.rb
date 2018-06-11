@@ -12,8 +12,17 @@ class Companies::SubscriptionsController < ApplicationController
 
   # GET /subscriptions/1
   # GET /subscriptions/1.json
-  # def show
-  # end
+  def show
+    @fin_operation = FinOperation.new
+    record_client_subscription = RecordClient.find(@subscription.record_client_id)
+    @client_subscription = Client.find(record_client_subscription.client_id)
+    @record_client = Record.find(record_client_subscription.record_id)
+
+    @fin_operations_subscription = FinOperation.where("
+      operation_type = 1 AND operation_object_id IN (?)", 
+      @subscription.id,
+      ).order("operation_date DESC")
+  end
 
   # GET /subscriptions/new
   # def new
@@ -43,8 +52,8 @@ class Companies::SubscriptionsController < ApplicationController
         .count.zero?
       if no_subscriptions_in_that_range and @subscription.save
         # format.html { redirect_to params[:return_url] }
-        format.html { redirect_to request.referer }  # from records/:id
-        format.json { render :show, status: :created, location: @subscription }
+        format.html { redirect_to request.referer, notice: "Вы продали <a href=\"#{company_subscription_path(params[:company_id], @subscription.id)}\" class=\"link-style\">абонемент</a> на период от #{@subscription.start_at.strftime("%d %b %Y")} до #{@subscription.finish_at.strftime("%d %b %Y")}" }  # from records/:id
+        format.json { render :show, status: :created, location: @subscription } 
       else
         notice = no_subscriptions_in_that_range ? nil : t(:reserved_range_for_subscription)
         format.html { redirect_to request.referer, notice: notice }
@@ -54,14 +63,21 @@ class Companies::SubscriptionsController < ApplicationController
   end
 
   # PATCH/PUT /subscriptions/1
-  # PATCH/PUT /subscriptions/1.json
+  # PATCH/PUT /subscriptions/1.json 
   def update
+
+    @subscription = Subscription.new(subscription_params)
+
+    @subscription.is_active = :false
+
     respond_to do |format|
       if @subscription.update(subscription_params)
         format.html { redirect_to @subscription, notice: 'Subscription was successfully updated.' }
+        format.html { redirect_to request.referer }  # from records/:id
         format.json { render :show, status: :ok, location: @subscription }
       else
         format.html { render :edit }
+        format.html { redirect_to request.referer, notice: notice }
         format.json { render json: @subscription.errors, status: :unprocessable_entity }
       end
     end

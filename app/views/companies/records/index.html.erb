@@ -21,7 +21,7 @@
       <div class="option">Завершенные <%= @completed_records.size %></div>
     <% end %>
   </div>
-  <a class="btn icon-plus" href="<%=new_company_record_path %>"></a>
+  <a class="btn icon-plus btn-list" href="<%=new_company_record_path %>"></a>
   <div class="cont-category-book">
     <% if @no_completed_records.any? then %>
       <div class="tab-category information-section">

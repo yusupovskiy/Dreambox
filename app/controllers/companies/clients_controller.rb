@@ -9,17 +9,49 @@ class Companies::ClientsController < ApplicationController
   def index
     @clients = Client.where(company: params[:company_id])
     @total_clients = @clients.size
-    @no_archive_clients = Client.where(company: params[:company_id], archive: false)
-    @archive_clients = Client.where(company: params[:company_id], archive: true)
+    @no_archive_clients = @clients.where(archive: false)
+    @archive_clients = @clients.where(archive: true)
+    @current_clients = @no_archive_clients.where(id: RecordClient.where(is_active: :true).select('client_id'))
+
+    @debt_clients = @clients.where(
+      id: RecordClient.where(
+        id: Subscription.select('record_client_id')
+
+      ).select('client_id'))
   end
 
   # GET /clients/1
   # GET /clients/1.json
   def show
-    @records_clients = RecordClient.where(client_id: params[:id])
+    affiliates = Affiliate.where(company_id: params[:company_id])
+    @records = Record.where(affiliate: affiliates)
+    @records_clients = RecordClient.where(record_id: @records)
+    @records_client = RecordClient.where(client_id: params[:id])
+
+    @no_records_client = @records.where.not(id: @records_clients.where(client_id: @client.id, is_active: :true).select('record_id'))
+
+
     @discount = Discount.new
-    @discounts = Discount.where(record_client: @records_clients)
+    @discounts = Discount.where(record_client: @records_client)
+
     @subscription = Subscription.new
+    @fin_operation = FinOperation.new
+
+    @clients = Client.where(archive: false, company_id: @current_company.id)
+
+    subscriptions_client = Subscription.where(record_client: @records_client)
+    @fin_operations_client = FinOperation.where("
+      (operation_type = 1 AND operation_object_id IN (?)) OR 
+      (operation_type = 0 AND operation_object_id = (?))", 
+      subscriptions_client.all.select('id'), 
+      @client.id,
+      ).order("operation_date DESC")
+
+    @payments_subscriptions = FinOperation.where("
+                operation_type = 1 AND operation_object_id IN (?)", 
+                subscriptions_client.select('id'),
+                ).order("operation_date DESC")
+    @debt_for_services =  subscriptions_client.sum(:price) - @payments_subscriptions.sum(:amount)
   end
 
   # GET /clients/new

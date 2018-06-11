@@ -1,4 +1,14 @@
 <%= link_to [client.company, client], class: "item-card" do %>
+<%
+
+    @records_clients = RecordClient.where(client_id: client.id)
+    @subscriptions_clients = Subscription.where(record_client_id: @records_clients)
+    @payments_subscriptions = FinOperation.where("
+                operation_type = 1 AND operation_object_id IN (?)", 
+                @subscriptions_clients.select('id'),
+                ).order("operation_date DESC")
+
+%>
   <%=image_tag s3_image(client.avatar), class: "avatar-list" %>
   <div class="left-content">
     <div class="name-content"><%= client.last_name %>
@@ -6,6 +16,6 @@
     <span class="">Абонементы закончился<!-- Ucmas сегодня в 12:20 --></span>
   </div>
   <div class="right-content">
-    <span class="amount debt">- 6 000 ₽</span>
+    <span class="amount debt"><%= @payments_subscriptions.sum(:amount) - @subscriptions_clients.sum(:price) %> ₽</span>
   </div>
 <%end%>

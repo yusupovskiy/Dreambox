@@ -12,6 +12,10 @@ ru:
     male: Мужской
     female: Женский
     unknown: Не указано
+  operation_type:
+    payment_other: Прочая оплата
+    payment_subscription: Оплата за абонемент
+    payment_salaries: Выплота зарплаты
   record_type:
     grouping: групповая
     personal: индивидуальная
@@ -58,8 +62,8 @@ ru:
       show: 
         completed_ecords: Завершена!
         desc_completed_ecords: Указанный срок подошел к концу
-        record_type: Тип записи
-        visit_type: Тип визита
+        record_type: Запись
+        visit_type: Визит
         abon_period: Период абонемента (в днях)*
         record_type:
           grouping: Групповая запись
@@ -88,4 +92,16 @@ ru:
         birthday: 'Дата рождения'
         sex: 'Пол'
         phone_number: 'Телефон'
+      show:
+        amount: Сумма оплаты*
+        operation_date: Дата оплаты*
+        description: Примечение к оплате*
+        affiliate_id: Филиал*
+
+    fin_operations:
+      form:
+        operation_type: Тип операции
+        amount: Сумма операции
+        operation_date: Дата операции
+        description: Примечение
 

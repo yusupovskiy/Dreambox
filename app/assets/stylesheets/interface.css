@@ -37,6 +37,7 @@ a {
     outline: none;
 }
 .back-background {
+    *background-color: #202125;
     background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/background/background1.jpg);
     background-position: center 20%;
     background-size: cover;
@@ -156,9 +157,13 @@ img.object-avatar {
     transform: translateY(-2px);
 }
 .item-card:hover {
-    -webkit-transform: translateX(-2px);
+    -webkit-transform: translateX(2px);
     -ms-transform: translateX(-2px);
-    transform: translateX(-2px);
+    transform: translateX(2px);
+    opacity: 1!important;
+}
+.information-section:hover .item-card {
+    opacity: 0.6;
 }
 .instrument>div, .item-quick-search>div {
     *color: #919394;
@@ -288,7 +293,7 @@ img.object-avatar {
     margin-bottom: 10px;
     font-size: 14px;
     border-radius: 7px;
-    height: 60px;
+/*    height: 60px;*/
     float: left;
     transition: .3s;
 }
@@ -389,6 +394,8 @@ input.card-search {
     transition: .3s;
     margin: 0 auto 10px;
     display: table;
+    background-color: white;
+    overflow: hidden;
 }
 .loading-block {
     height: 177px;
@@ -463,11 +470,13 @@ input.card-search {
     margin: auto;
     user-select: none;
     transition: .3s;
-    *box-shadow: 0 0 0 2px white;
-    box-shadow: 0 0 0 2px #eceff0;
+    *box-shadow: 0 0 0 2px #eceff0;
+    box-shadow: 0 0 0 2px #e1e4e8;
     border-radius: 50%;
     background-color: white;
     overflow: hidden;
+    transition: 0.4s cubic-bezier(0, 0, 0, 1);
+    cursor: pointer;
 }
 .people-avatar {
     height: 100%;
@@ -477,6 +486,10 @@ input.card-search {
     margin: auto;
     right: 0;
     left: 0;
+}
+.img-card:active {
+    -ms-transform: scale(1.8);
+    transform: scale(1.8);
 }
 .title-panel {
     padding: 10px 0 18px 0;
@@ -500,8 +513,8 @@ input.card-search {
     margin-top: 8px;
     user-select: none;
 }
-span.debt {
-    color: #ff7375;
+.debt {
+    color: #ff7375!important;
 }
 .amount {
     *color: #a5df9e;
@@ -587,6 +600,7 @@ span.debt {
 }
 .icon-confirm {
     background-image: url(/images/confirm.png);
+    background-color: #12ce88!important;
 }
 .bottom-line-list {
     /*box-shadow: 0 0 120px 80px white;*/
@@ -628,9 +642,14 @@ span.debt {
 .add-avatar:hover .icon-add-avatar {
     background-color: #f3f3f3;
 }
-input.btn {
+input.btn, button.btn {
     width: 36px;
     height: 36px;
+}
+.option>.amount {
+    font-family: Roboto;
+    font-size: 13px;
+    margin-left: 4px;
 }
 .btn {
     background-size: 10px 10px;
@@ -650,13 +669,15 @@ input.btn {
     user-select: none;
     border: 0;
     outline: none;
+    float: left;
 }
 .btns-confirm .btn {
     margin: 0 5px;
 }
-.conten-card>.btn {
+.conten-card>.btn, .btn-list  {
     margin: 0 auto 20px;
     display: table;
+    float: none;
 }
 .authorization>.btn {
     top: 0;
@@ -819,7 +840,6 @@ img.logo {
     font-weight: bold;
     user-select: none;
     float: left;
-    width: 100%;
     padding: 10px 0;
 }
 .subscriptions {
@@ -857,8 +877,7 @@ div.info-about-subsc {
     user-select: none;
     display: table;
     color: #a3a3a3;
-    margin: 15px 0 5px 0;
-    width: 100%;
+    margin: 15px auto;
     opacity: .5;
 }
 .subscription {
@@ -874,10 +893,13 @@ div.info-about-subsc {
     font-weight: bold;
     user-select: none;
     color: #cacaca;
-    float: left;
+    float: right;
     padding: 10px 0;
-    width: 100%;
     text-align: center;
+    display: none;
+}
+.parent-compact .testt {
+    display: table;
 }
 .testt:hover {
     color: #a7a7a7;
@@ -890,7 +912,7 @@ a {
     font-size: 10px;
     font-weight: bold;
     user-select: none;
-    color: #ff7375;
+    color: #12ce88;
     cursor: pointer;
 }
 .payment-subs .debt {
@@ -1009,7 +1031,7 @@ a {
 }
 .left-content {
     float: left;
-    margin: 13px 0px 13px 20px;
+    margin: 13px 0px 0 20px;
 }
 .right-content {
     float: right;
@@ -1136,6 +1158,9 @@ a {
     font-size: 12px;
     line-height: 2.3;
 }
+.link-style {
+    color: #4285f4;
+}
 .container-information {
     width: 100%;
     float: left;
@@ -1143,7 +1168,6 @@ a {
 }
 .block-information>h3>span {
     float: right;
-    margin-right: 30px;
     opacity: .5;
 }
 .rigth-side-elem>select {
@@ -1152,6 +1176,28 @@ a {
     padding: 5px;
     border-radius: 4px;
     font-size: 13px;
+}
+.testt.compact {
+    display: block;
+}
+.text-input a, a.img-input {
+    color: #4285f4;
+}
+.img-input {
+    float: right;
+    color: #4a4a4a;
+    margin: 9px 0;
+    font-size: 14px;
+}
+.img-input>img {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: white;
+    overflow: hidden;
+    -ms-transform: scale(1.8);
+    transform: scale(1.8);
+    margin-right: 8px;
 }
 .item-element .panel-show {
     top: 0;
@@ -1163,15 +1209,15 @@ a {
     text-transform: uppercase;
     font-size: 12px;
     font-weight: bold;
-    width: 120px;
     text-align: center;
-    padding: 10px 0;
+    padding: 11px 24px;
     border-radius: 7px;
     margin: 0 auto 20px;
     opacity: .5;
     box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.4);
     cursor: pointer;
     user-select: none;
+    display: table;
 }
 .panel-attachment {
     background-color: #ecf0f1;
@@ -1179,6 +1225,7 @@ a {
     padding: 20px;
     border-radius: 7px;
     margin-top: 10px;
+    min-width: 205px;
 }
 .input-attachment {
     margin-bottom: 10px;
@@ -1210,7 +1257,7 @@ input.input-attachment {
     margin: 0 16px 16px 16px;
 }
 .left-side-elem:hover>.panel-show, .btn-show-list:hover>.panel-show {
-    display: grid;
+    display: grid!important;
 }
 .finput {
     width: 100%;
@@ -1268,8 +1315,13 @@ input.input-attachment {
 }
 .btn-no {
     background-color: #ff7375;
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    background-image: url(/images/plus.png);
+    box-shadow: -1px 1px 6px 0 rgba(0, 0, 0, 0.4);
 }
-.panel-add-services {
+.show-and-hide-panel {
     display: none;
 }
 .link-to {
