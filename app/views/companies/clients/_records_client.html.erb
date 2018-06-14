@@ -126,7 +126,7 @@
 
           </div>
         </a>
-
+        
         <% subs = Subscription.where(record_client_id: rc.id).order("start_at DESC") %>
         <% fin_operations_subscriptions = FinOperation.where("
             operation_type = 1 AND operation_object_id IN (?)", 

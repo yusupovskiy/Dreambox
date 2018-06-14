@@ -18,6 +18,8 @@ class Companies::ClientsController < ApplicationController
         id: Subscription.select('record_client_id')
 
       ).select('client_id'))
+
+
   end
 
   # GET /clients/1

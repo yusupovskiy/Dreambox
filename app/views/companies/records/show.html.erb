@@ -34,11 +34,27 @@
 
         <div class="container-information compact">
           <% if @records_clients.present? %>
+            <% subs_records_clients = Subscription.where(record_client_id: @records_clients).where('? between start_at and finish_at', Date.today) %>
             <% @records_clients.each do |rc| %>
+
+<%
+
+    @subscriptions_client = Subscription.where(record_client_id: rc.id)
+    @payments_subscriptions = FinOperation.where("
+                operation_type = 1 AND operation_object_id IN (?)", 
+                @subscriptions_client.select('id'),
+                ).order("operation_date DESC")
+    debt = @payments_subscriptions.sum(:amount) - @subscriptions_client.sum(:price)
+
+%>
+
               <div class="item-element">
                 <div class="left-side-elem">
                     <%=image_tag s3_image(rc.client.avatar), class: "avatar-list" %>
-                    <div><%="#{rc.client.last_name} #{rc.client.first_name}"%></div>
+                    <div>
+                      <%="#{rc.client.last_name} #{rc.client.first_name}"%> 
+                      <span class="amount<%= debt >= 0 ? '': ' debt'%>" style="opacity: 0.5;"><%= debt %> ₽</span>
+                    </div>
                     <div class="panel-show"><!-- 
                         <%= link_to 'Открыть карту', [rc.client.company, rc.client]%> -->
                         <a href="<%= company_client_path(params[:company_id], rc.client) %>#2#10">Открыть карту</a>
@@ -49,7 +65,15 @@
                     </div>
                 </div>
                 <div class="rigth-side-elem">
-                  Нет абонемента
+                  <% sub_rc = subs_records_clients.where(record_client_id: rc.id) %>
+                  <% if sub_rc.present? %>
+                    <% sub_rc.each do |s| %>
+                      <%= link_to 'до ' + s.finish_at.strftime("%d %b"), company_subscription_path(params[:company_id], s.id), class: 'link-style' %>
+                    <% end %>
+                  <% else %>
+                    Нет абонемента
+                  <% end %>
+
                   <select id="" name="" style="display: none;">
                     <option value="36">Записан</option>
                     <option value="36">Не записан</option>
@@ -138,8 +162,9 @@
             <input class="finput-input" type="number" v-model="moneyForVisit" min="0">
           </div>
           <div class="btns-confirm">
+            <a class="btn icon-plus" href="<%=new_company_service_path%>"></a>
             <input class="btn icon-confirm" type="button" @click="attachService">
-            <input class="btn btn-no btn-hide-panel" type="button">
+            <div class="btn btn-no btn-hide-panel"></div>
           </div>
         </div>
 

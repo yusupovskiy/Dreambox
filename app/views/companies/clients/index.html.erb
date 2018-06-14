@@ -20,28 +20,52 @@
 
 <div class="conten-card tabs">
   <div class="menu-with-options">
-    <div class="option active" title="Те клиенты, которые в данный момент пользуются услугами в вашем филиале">Текущие клиенты <%= @current_clients.size %></div>
-    <div class="option">Должники <%= @debt_clients.size %></div>
-    <% if @archive_clients.any? then %>
+
+    <% if @current_clients.present? then %>
+      <div class="option active" title="Те клиенты, которые в данный момент пользуются услугами в вашем филиале">Текущие клиенты <%= @current_clients.size %></div>
+    <% end %>
+
+    <% if @debt_clients.present? then %>
+      <div class="option">Должники <%= @debt_clients.size %></div>
+    <% end %>
+
+    <div class="option"title="Все клиенты компании, включая архив">Все клиенты <%= @total_clients %></div>
+    <% if @archive_clients.present? then %>
       <div class="option">Архив <%= @archive_clients.size %></div>
     <% end %>
-    <div class="option"title="Все клиенты компании, включая архив">Все клиенты <%= @total_clients %></div>
   </div>
   <a class="btn icon-plus" href="<%=new_company_client_path %>"></a>
   <div class="cont-category-book">
-    <div class="tab-category information-section">
-      <%= render @current_clients %>
-    </div>
-    <div class="tab-category information-section">
-      <%= render @debt_clients %>
-    </div>
-    <% if @archive_clients.any? then %>
+
+    <% if @current_clients.present? then %>
+      <div class="tab-category information-section">
+        <%= render @current_clients %>
+      </div>
+    <% end %>
+
+    <% if @debt_clients.present? then %>
+      <div class="tab-category information-section">
+        <%= render @debt_clients %>
+      </div>
+    <% end %>
+
+    <% if @clients.present? then %>
+      <div class="tab-category information-section">
+        <%= render @clients %>
+      </div>
+    <% else %>
+      <div class="loading-block">
+        <div>
+          <div>Нет клиентов</div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @archive_clients.present? then %>
       <div class="tab-category information-section">
         <%= render @archive_clients %>
       </div>
     <% end %>
-    <div class="tab-category information-section">
-      <%= render @clients %>
-    </div>
+
   </div>
 </div>

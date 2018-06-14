@@ -7,7 +7,7 @@ ru:
   remember_me: Запомнить
   forgot_your_password?: Забыли пароль?
   didnt_receive_confirmation_instruction?: Не получили письмо с активацией?
-  reserved_range_for_subscription: Указанное вами время уже зарезервировано
+  reserved_range_for_subscription: Абонемент на указанную дату уже зарезервирован
   sex:
     male: Мужской
     female: Женский
@@ -101,7 +101,9 @@ ru:
     fin_operations:
       form:
         operation_type: Тип операции
+        operation_object_id: Ссылка на операцию
         amount: Сумма операции
         operation_date: Дата операции
         description: Примечение
+        affiliate_id: Филиал*
 

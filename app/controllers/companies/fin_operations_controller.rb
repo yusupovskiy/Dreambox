@@ -30,14 +30,17 @@ class Companies::FinOperationsController < ApplicationController
     end
   end
 
-  def new
-    @fin_operation = FinOperation.new
-    @affiliates = Affiliate.where(company_id: params[:company_id])
-  end
+  # def new
+  #   @fin_operation = FinOperation.new
+  #   @affiliates = Affiliate.where(company_id: params[:company_id])
+  # end
 
   def create
     @fin_operation = FinOperation.new(fin_operation_params)
     @fin_operation.user_id = current_user.id
+
+    @fin_operation.operation_number = FinOperation.last.nil? ? 0 : FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.operation_number 
+    @fin_operation.operation_number = 1 + @fin_operation.operation_number.to_i
 
     if @fin_operation.save
       redirect_to company_fin_operation_path(params[:company_id], @fin_operation.id), notice: "Финансовая операция #{t('operation_type.' + @fin_operation.operation_type)} на сумму <span class=\"amount\">#{@fin_operation.amount} ₽</span> произведена"

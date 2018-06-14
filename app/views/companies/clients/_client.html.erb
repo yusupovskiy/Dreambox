@@ -8,12 +8,24 @@
                 @subscriptions_clients.select('id'),
                 ).order("operation_date DESC")
 
+    @records = Record.where(id: @records_clients.select('record_id'))
+    @records_service = RecordService.where(record_id: @records.select('id'))
+    @service = Service.where(id: @records_service.select('service_id'))
+
 %>
   <%=image_tag s3_image(client.avatar), class: "avatar-list" %>
   <div class="left-content">
     <div class="name-content"><%= client.last_name %>
     <%= client.first_name %></div>
-    <span class="">Абонементы закончился<!-- Ucmas сегодня в 12:20 --></span>
+    <span class="">
+      <% if @records_clients.present? %>
+        <% @service.each do |s| %>
+          - <%= s.name %>
+        <% end %>
+      <% else %>
+        Услуги не оказываются
+      <% end %>
+    </span>
   </div>
   <div class="right-content">
     <span class="amount debt"><%= @payments_subscriptions.sum(:amount) - @subscriptions_clients.sum(:price) %> ₽</span>

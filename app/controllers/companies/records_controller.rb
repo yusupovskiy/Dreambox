@@ -23,6 +23,9 @@ class Companies::RecordsController < ApplicationController
     @clients = Client.where(archive: false, company_id: @current_company.id)
     @records_clients = RecordClient.eager_load(:client).where(record_id: params[:id], is_active: true)
     @subscription = Subscription.new
+
+
+
   end
 
   # GET /records/new

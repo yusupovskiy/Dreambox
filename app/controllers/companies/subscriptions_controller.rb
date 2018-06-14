@@ -47,7 +47,7 @@ class Companies::SubscriptionsController < ApplicationController
 
     respond_to do |format|
       no_subscriptions_in_that_range = rc.subscriptions
-        .where('? between start_at and finish_at and ? between start_at and finish_at',
+        .where('? between start_at and finish_at or ? between start_at and finish_at',
                @subscription.start_at, @subscription.finish_at)
         .count.zero?
       if no_subscriptions_in_that_range and @subscription.save

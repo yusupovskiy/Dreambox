@@ -293,7 +293,7 @@ img.object-avatar {
     margin-bottom: 10px;
     font-size: 14px;
     border-radius: 7px;
-/*    height: 60px;*/
+    min-height: 60px;
     float: left;
     transition: .3s;
 }
@@ -1156,7 +1156,7 @@ a {
     font-style: italic;
     color: #a7a7a7;
     font-size: 12px;
-    line-height: 2.3;
+    line-height: 2.4;
 }
 .link-style {
     color: #4285f4;
@@ -1350,7 +1350,7 @@ input.input-attachment {
     user-select: none;
 }
 .left-side-elem .amount {
-    line-height: 1.95;
+    /*line-height: 1.95;*/
 }
 .current-object.mini {
     width: 36px;

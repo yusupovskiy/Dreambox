@@ -66,6 +66,10 @@
             </span>
           </div>
           <div class="item-information">
+            <span class="title-input">Номер операции</span>
+            <span class="text-input"><%= @fin_operation.operation_number %></span>
+          </div>
+          <div class="item-information">
           	<span class="title-input">Филиал</span>
           	<span class="text-input"><%= link_to @affiliate.name, company_affiliate_path(params[:company_id], @affiliate.id) %></span>
           </div>
@@ -74,12 +78,4 @@
 
     </div>
   </div>
-</div>
-
-<div>
-	<div></div>
-	<div>
-		
-	</div>
-	
 </div>
