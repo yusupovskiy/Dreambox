@@ -1,4 +1,3 @@
-
 <div class="title-panel">
   <div class="btns-card">
     <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
@@ -11,9 +10,13 @@
         <%= link_to 'Назад', :back %>
         <%= link_to 'Перейти к владельцу', company_client_path(params[:company_id], @client_subscription.id) %>
         <%= link_to 'Перейти к записи', company_record_path(params[:company_id], @record_client.id) %>
-        <div>Сделать перерасчет</div>
-        <div>Отменить абонемент</div>
-        <div>Продлить абонемент</div>
+        <div id="recalculation">Сделать перерасчет</div>
+        <% if Date.today <= @subscription.finish_at and @subscription.is_active == true %>
+          <div id="cancel">Отменить абонемент</div>
+        <% end %>
+        <% if Date.today <= @subscription.finish_at %>
+          <div id="renewal">Продлить абонемент</div>
+        <% end %>
       </div>
     </div>
  
@@ -21,78 +24,85 @@
   <div class="role-card">Абонемент<br />от <%= @subscription.start_at.strftime("%d %b, %Y") %> до <%= @subscription.finish_at.strftime("%d %b, %Y") %></div>
 </div>
 
+
 <div class="conten-card tabs">
   <div class="cont-category-book">
     <div class="tab-category information-section">
 
-<!--       <div class="block-information show-hide-panel">
-        <h3><div class="icon-time"></div>Отмена абонемента</h3>
-
-        <div class="container-information compact">
-          <div class="item-element">
-            <div class="left-side-elem">
-                <div>Пришлось отменить абонемент, чтобы клиента не делал мозги</div>
-            </div>
-            <div class="rigth-side-elem">20 августа 2018</div>
-          </div>
+      <%=form_with url: company_histories_path(params[:company_id]), model: @history, local: true, html: {class: 'block-information', id: 'recalculation-panel', style: 'display: none;'} do |f|%>
+        <h3><div class="icon-time"></div>Перерасчет</h3>
+        <%=f.hidden_field :object_log, value: 'subscription'%>
+        <%=f.hidden_field :object_id, value: @subscription.id %>
+        <%=f.hidden_field :type_history, value: 'recalculation'%>
+        
+        <div class="finput">
+          <label class="finput-label">Сумма перерасчета*</label>
+          <%= f.number_field :price, class: 'finput-input', required: 'required' %>
         </div>
+        <div class="finput">
+          <label class="finput-label">Причина перерасчета*</label>
+          <%= f.text_field :note, class: 'finput-input', required: 'required' %>
+        </div>
+        <div class="btns-confirm">
+          <%= f.submit class: 'btn icon-confirm' %>
+          <div id="btn-recalculation-panel" class="btn btn-no"></div>
+        </div>
+      <%end%>
 
-
-        <%=form_with url: company_subscription_path(params[:company_id], @subscription.id), model: @subscription,
-          html: {class: 'panel-attachment panel-add-services', style: 'display: grid'} do |f|%>
+      <% if Date.today <= @subscription.finish_at and @subscription.is_active == true %>
+        <%=form_with url: company_histories_path(params[:company_id]), model: @history, local: true, html: {class: 'block-information', id: 'cancel-panel', style: 'display: none;'} do |f|%>
+          <h3><div class="icon-time"></div>Отмена абонемента</h3>
+          <%=f.hidden_field :object_log, value: 'subscription'%>
+          <%=f.hidden_field :object_id, value: @subscription.id %>
+          <%=f.hidden_field :type_history, value: 'cancel'%>
           
           <div class="finput">
             <label class="finput-label">Причина отмены*</label>
-            <%= f.text_field :note, class: 'finput-input' %>
+            <%= f.text_field :note, class: 'finput-input', required: 'required' %>
           </div>
           <div class="btns-confirm">
             <%= f.submit class: 'btn icon-confirm' %>
-            <input class="btn btn-no" type="button">
+            <div id="btn-cancel-panel" class="btn btn-no"></div>
           </div>
         <%end%>
+      <% end %>
 
-      </div>
- -->
-
-<!-- 
-      <div class="block-information show-hide-panel">
-        <h3><div class="icon-time"></div>Перерасчет</h3>
-
-        <div class="container-information compact">
-          <div class="item-element">
-            <div class="left-side-elem">
-                <div>Пришлось сделать перасчет, чтобы клиента не делал мозги</div>
-            </div>
-            <div class="rigth-side-elem">20 августа 2018</div>
+      <% if Date.today <= @subscription.finish_at %>
+        <%=form_with url: company_histories_path(params[:company_id]), model: @history, local: true, html: {class: 'block-information', id: 'renewal-panel', style: 'display: none;'} do |f|%>
+          <h3><div class="icon-time"></div>Продление абонемента</h3>
+          <%=f.hidden_field :object_log, value: 'subscription'%>
+          <%=f.hidden_field :object_id, value: @subscription.id %>
+          <%=f.hidden_field :type_history, value: 'renewal'%>
+          
+          <div class="finput">
+            <label class="finput-label">Количество дней продления*</label>
+            <%= f.number_field :price, class: 'finput-input', required: 'required' %>
           </div>
-        </div>
-
-        <form class="panel-attachment panel-add-services compact" accept-charset="UTF-8" data-remote="true" method="post" style="display: grid;">
-          <div class="finput focus">
-            <label class="finput-label">Сумма*</label>
-            <input class="finput-input" type="number" name="">
-          </div>
-          <div class="finput focus">
-            <label class="finput-label">Причина перерасчета*</label>
-            <input class="finput-input" type="text" name="">
+          <div class="finput-desc">при вводе отрицательного значения, дни ониматься текущей даты</div>
+          <div class="finput">
+            <label class="finput-label">Причина продления*</label>
+            <%= f.text_field :note, class: 'finput-input', required: 'required' %>
           </div>
           <div class="btns-confirm">
-            <input type="submit" name="commit" value="Create Subscription" class="btn icon-confirm" data-disable-with="Create Subscription">
-            <input class="btn btn-no" type="button">
+            <%= f.submit class: 'btn icon-confirm' %>
+            <div id="btn-renewal-panel" class="btn btn-no"></div>
           </div>
-        </form>
-      </div> -->
+        <%end%>
+      <%end%>
 
       <div class="block-information show-hide-panel">
         <h3>
           <div class="icon-time"></div>Оплаты 
-          <span class="amount <%= @fin_operations_subscription.sum(:amount) >= @subscription.price ? '' : 'debt' %>"><%= @fin_operations_subscription.sum(:amount) %> ₽ из <%= @subscription.price %> ₽</span>
+          <span class="amount <%= @fin_operations_subscription.sum(:amount) >= @subscription.price.to_i ? '' : 'debt' %>"><%= @fin_operations_subscription.where(is_active: true).sum(:amount) %> ₽ из <%= @subscription.price %> ₽</span>
         </h3>
         <div class="container-information compact">
           <% if @fin_operations_subscription.present? %>
             <% @fin_operations_subscription.each do |fos| %>
               <%= link_to company_fin_operation_path(params[:company_id], fos.id), class: "item-element" do %>
-                <div class="left-side-elem">
+                <div class="left-side-elem" style="line-height: 2;">
+                    <% if fos.is_active == false %>
+                      <span style="margin-right: 5px;">Отмененная оплата!</span>
+                    <% end %>
                     <span class="amount"><%= fos.amount %> ₽</span>
                 </div>
                 <div class="rigth-side-elem"><%= fos.operation_date.strftime("%d %b, %Y") %></div>
@@ -111,7 +121,7 @@
             <%= form.hidden_field :affiliate_id, value: @record_client.affiliate_id %>
             <div class="finput">
               <%= form.label 'Сумма оплаты*', class: 'finput-label' %>
-              <%= form.number_field :amount, class: "finput-input", required: 'required' %>
+              <%= form.number_field :amount, class: "finput-input", required: 'required', value: @subscription.price - @fin_operations_subscription.where(is_active: true).sum(:amount) %>
             </div>
             <div class="finput">
               <%= form.label 'Дата оплаты*', class: 'finput-label' %>
@@ -131,37 +141,25 @@
         <div class="testt click-compact compact">Скрыть</div>
       </div>
 
-<!--       <div class="block-information show-hide-panel">
-        <h3><div class="icon-time"></div>Продление <span>1</span></h3>
-          <div class="btn-compact click-compact"><div></div></div>
-
-        <div class="container-information compact">
-          <div class="item-element">
-            <div class="left-side-elem">
-                <div>Продлили, чтобы клиента не делал мозги  на 2 дня</div>
-            </div>
-            <div class="rigth-side-elem">20 августа 2018</div>
+      <% if @history_subscription.size > 0 %>
+        <div class="block-information show-hide-panel">
+          <h3>
+            <div class="icon-time"></div>История операций<span><%= @history_subscription.size %></span>
+          </h3>
+          <div class="container-information compact">
+            <% @history_subscription.each do |h| %>
+              <% user_history = User.find(h.user_id) %>
+                <div class="item-element">
+                  <div class="left-side-elem"><%= h.note %>
+                  </div>
+                  <div class="rigth-side-elem"><span><%= user_history.first_name %> <%= user_history.last_name %>, </span><span><%= h.created_at.strftime("%d %b %Y") %></span></div>
+                </div>
+              <% end %>
           </div>
+          <div class="testt click-compact">Раскрыть</div>
+          <div class="testt click-compact compact">Скрыть</div>
         </div>
-        <div class="add-discount">+ Добавить</div>
-
-        <form class="panel-attachment panel-add-services compact" accept-charset="UTF-8" data-remote="true" method="post" style="display: grid;">
-          <div class="finput focus">
-            <label class="finput-label">Кол-во дней*</label>
-            <input class="finput-input" type="number" name="">
-          </div>
-          <div class="finput focus">
-            <label class="finput-label">Причина продления*</label>
-            <input class="finput-input" type="text" name="">
-          </div>
-          <div class="btns-confirm">
-            <input type="submit" name="commit" value="Create Subscription" class="btn icon-confirm" data-disable-with="Create Subscription">
-            <input class="btn btn-no" type="button">
-          </div>
-        </form>
-
-      </div> -->
-
+      <% end %>
 
       <div class="block-information parent-compact">
         <h3>Настройки абонемента</h3>

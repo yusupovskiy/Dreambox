@@ -33,7 +33,7 @@
   <div class="menu-with-options">
     <div class="option active">Основное</div>
     <div class="option">Оказание услуг  <span class="amount debt"><%= @debt_for_services %> ₽</span></div>
-    <div class="option">Все финансовые операции  <span class="amount"><%= @fin_operations_client.sum(:amount) %> ₽</span></div>
+    <div class="option">Все финансовые операции  <span class="amount"><%= @fin_operations_client.where(is_active: true).sum(:amount) %> ₽</span></div>
   </div>
   
   <div class="cont-category-book">
@@ -55,7 +55,7 @@
         </div>
       </div>
     </div>
-    <div class="tab-category information-section">
+    <div class="tab-category information-section records-client">
       <%= render 'records_client' %>
     </div>
 

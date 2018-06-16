@@ -561,6 +561,14 @@ input.card-search {
     padding: 11px 20px;
     margin-bottom: 20px;
     position: relative;
+    width: 300px;
+    transition: 0.4s cubic-bezier(0, 0, 0, 1);
+}
+.records-client .parent-compact {
+    opacity: 0.8;
+}
+.records-client .parent-compact:hover {
+    opacity: 1;
 }
 .item-information {
     display: table;

@@ -49,11 +49,11 @@ class Companies::ClientsController < ApplicationController
       @client.id,
       ).order("operation_date DESC")
 
-    @payments_subscriptions = FinOperation.where("
+    @payments_subscriptions = FinOperation.where(" is_active = true AND
                 operation_type = 1 AND operation_object_id IN (?)", 
-                subscriptions_client.select('id'),
+                subscriptions_client.where(is_active: true).select('id'),
                 ).order("operation_date DESC")
-    @debt_for_services =  subscriptions_client.sum(:price) - @payments_subscriptions.sum(:amount)
+    @debt_for_services =  subscriptions_client.where(is_active: true).sum(:price) - @payments_subscriptions.sum(:amount)
   end
 
   # GET /clients/new
@@ -116,6 +116,10 @@ class Companies::ClientsController < ApplicationController
       format.html { redirect_to company_client_path(params[:company_id], params[:id]) }
       format.json { render :show, status: :ok, location: @client }
     end
+  end
+
+  def import
+    text = params.require(:client).permit(:text)
   end
 
   private

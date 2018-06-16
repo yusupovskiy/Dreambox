@@ -28,6 +28,13 @@ class Companies::FinOperationsController < ApplicationController
       record_subscription = RecordClient.find(@subscription.record_client_id)
       @client_subscription = Client.find(record_subscription.client_id)
     end
+
+
+    @history = History.new
+    @history_subscription = History.where("
+      object_log = 'fin_operation' AND object_id IN (?)",
+                                          @fin_operation.id,
+      ).order("created_at DESC")
   end
 
   # def new

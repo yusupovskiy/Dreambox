@@ -189,4 +189,27 @@ document.addEventListener('turbolinks:load', function() {
         $('.panel-sorting').css({'display':'none'});
     }
   });
+
+
+
+  $('#cancel').click(function(){
+    $('#cancel-panel').show();
+  });
+  $('#btn-cancel-panel').click(function(){
+    $('#cancel-panel').hide();
+  });
+
+  $('#renewal').click(function(){
+    $('#renewal-panel').show();
+  });
+  $('#btn-renewal-panel').click(function(){
+    $('#renewal-panel').hide();
+  });
+
+  $('#recalculation').click(function(){
+    $('#recalculation-panel').show();
+  });
+  $('#btn-recalculation-panel').click(function(){
+    $('#recalculation-panel').hide();
+  });
 });

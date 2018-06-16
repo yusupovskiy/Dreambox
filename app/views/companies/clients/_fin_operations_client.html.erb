@@ -31,6 +31,9 @@
         <div class="left-content">
           <div class="name-content"><%= t('operation_type.' + foc.operation_type)%> | <%= foc.operation_date.strftime("%d %b, %Y") %></div>
           <span class="">
+            <% if foc.is_active == false %>
+              <span class="debt" style="margin-right: 5px;">Отмененная оплата!</span>
+            <% end %>
             <%= foc.description %>
           </span>
         </div>

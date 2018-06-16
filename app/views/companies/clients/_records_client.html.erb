@@ -32,7 +32,7 @@
 <% if @records_client.present? %>
   <% @records_client.each do |rc| %>
     <% record = Record.find(rc.record_id)%>
-    <div class="block-information entry parent-compact">
+    <div id="record-<%= record.id%>" class="block-information entry parent-compact">
       <%= link_to record.name, company_record_path(params[:company_id], record), class: 'title-entry' %>
       <div class="btn-compact click-compact"><div></div></div>
 
@@ -56,11 +56,12 @@
 
       <div class="discount-entry compact show-and-hide-container">
         <div class="title-discount">Скида и коррекция цены</div>
-        <%if @discounts.empty? %>
+        <% @discounts_record = @discounts.where(record_client_id: rc.id) %>
+        <%if @discounts_record.empty? %>
           <div class="discount">Список пуст</div>
         <%else%>
           <ul>
-            <%@discounts.each do |d| %>
+            <%@discounts_record.each do |d| %>
               <li>
                 <%=d.note%> <span class="amount"><%=d.value%> ₽</span><br />
                 
@@ -76,11 +77,11 @@
           <%=f.hidden_field :record_client_id, value: rc.id%>
           <div class="finput">
             <label class="finput-label">Дата начала*</label>
-            <%= f.date_field :start_at, class: 'finput-input', required: 'required' %>
+            <%= f.date_field :start_at, class: 'finput-input', required: 'required', value: Date.today %>
           </div>
           <div class="finput">
             <label class="finput-label">Дата завершения*</label>
-            <%= f.date_field :finish_at, class: 'finput-input', required: 'required' %>
+            <%= f.date_field :finish_at, class: 'finput-input', required: 'required', value: Date.today + 30 %>
           </div>
           <div class="finput">
             <label class="finput-label">Сумма коррекции*</label>
@@ -100,10 +101,20 @@
 
       <div class="info-about-subsc">
         Осталось оплатить 
-        <span class="amount debt"><%= @debt_for_services %> ₽</span>
+        <span class="amount debt">
+          <%
+            subscriptions_record = Subscription.where(record_client: rc.id, is_active: true)
+            payment_subscriptions = FinOperation.where("is_active = true AND 
+                        operation_type = 1 AND operation_object_id IN (?)", 
+                        subscriptions_record.select('id'),
+                        ).order("operation_date DESC")
+            debt_for_services =  subscriptions_record.sum(:price) - payment_subscriptions.sum(:amount)
+          %>
+        <%= debt_for_services %> ₽</span>
       </div>
 
       <div class="subscriptions">
+        <% if rc.is_active %>
         <a class="subscription compact" style="margin-bottom: 20px;">
           <div class="data-subscriptions show-and-hide-container" style="background-image: none; background-color: transparent;">
             <div class="add-discount btn-show-panel">+ Продать абонемент</div>
@@ -123,12 +134,12 @@
                   <div class="btn btn-no btn-hide-panel"></div>
               </div>
             <%end%>
-
           </div>
         </a>
+        <% end %>
         
-        <% subs = Subscription.where(record_client_id: rc.id).order("start_at DESC") %>
-        <% fin_operations_subscriptions = FinOperation.where("
+        <% subs = Subscription.where(record_client_id: rc.id, is_active: true).order("start_at DESC") %>
+        <% fin_operations_subscriptions = FinOperation.where("is_active = true AND 
             operation_type = 1 AND operation_object_id IN (?)", 
             subs.select('id'),
             ).order("operation_date DESC") %>
@@ -152,14 +163,16 @@
             <% if  fin_operations_subscriptions.where(operation_object_id: sub.id).sum(:amount).to_f >= sub.price.to_f %>
               <div class="payment-subs compact">оплачено <span class="amount"><%= fin_operations_subscriptions.where(operation_object_id: sub.id).sum(:amount) %> ₽</span></div>
             <% else %>
-              <div class="payment-subs compact btn-show-panel debt">надо оплатить <span class="amount debt"><%= sub.price - fin_operations_subscriptions.where(operation_object_id: sub.id).sum(:amount) %> ₽</span></div>
+              <div class="payment-subs compact btn-show-panel debt">надо оплатить 
+                <span class="amount debt"><%= sum_subs = sub.price - fin_operations_subscriptions.where(operation_object_id: sub.id).sum(:amount) %> ₽</span>
+              </div>
               <%= form_with(url: company_fin_operations_path(params[:company_id]), model: @fin_operation, local: true, html: {class: 'panel-attachment show-and-hide-panel compact'}) do |form| %>
                 <%= form.hidden_field :operation_type, value: :payment_subscription %>
                 <%= form.hidden_field :operation_object_id, value: sub.id %>
                 <%= form.hidden_field :affiliate_id, value: record.affiliate_id %>
                 <div class="finput">
                   <%= form.label 'Сумма оплаты*', class: 'finput-label' %>
-                  <%= form.number_field :amount, class: "finput-input", required: 'required' %>
+                  <%= form.number_field :amount, class: "finput-input", required: 'required', value: sum_subs %>
                 </div>
                 <div class="finput">
                   <%= form.label 'Дата оплаты*', class: 'finput-label' %>

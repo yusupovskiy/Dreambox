@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_13_192836) do
+ActiveRecord::Schema.define(version: 2018_06_15_171412) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,17 @@ ActiveRecord::Schema.define(version: 2018_06_13_192836) do
     t.integer "user_id"
     t.integer "affiliate_id"
     t.integer "operation_number"
+  end
+
+  create_table "histories", force: :cascade do |t|
+    t.string "object_log"
+    t.integer "object_id"
+    t.string "type_history"
+    t.text "note"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_histories_on_user_id"
   end
 
   create_table "records", force: :cascade do |t|
@@ -167,6 +178,7 @@ ActiveRecord::Schema.define(version: 2018_06_13_192836) do
   add_foreign_key "clients", "users"
   add_foreign_key "companies", "users"
   add_foreign_key "discounts", "records_clients", column: "record_client_id"
+  add_foreign_key "histories", "users"
   add_foreign_key "records", "affiliates"
   add_foreign_key "records_clients", "clients"
   add_foreign_key "records_clients", "records"

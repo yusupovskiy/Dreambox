@@ -9,12 +9,25 @@
       <a href="#">СМС рассылка</a>
       <a href="#">Вотсап рассылка</a>
       <a href="#">Импортировать данные</a>
-      <a href="#">Экспортировать данные</a>
     </div>
   </div>
 </div>
 
 <div class="panel-sorting">Сортировка списка</div>
+
+        <%=form_with url: import_company_client_path(params[:company_id]), model: @client, local: true, html: {class: 'block-information', id: 'cancel-panel', style: 'margin: 20px auto;'} do |f|%>
+          <h3><div class="icon-time"></div>Отмена операции</h3>
+          
+          <div class="finput">
+            <label class="finput-label">Причина отмены*</label>
+            <%= f.text_field :text, class: 'finput-input', required: 'required' %>
+          </div>
+          <div class="btns-confirm">
+            <%= f.submit class: 'btn icon-confirm' %>
+            <div id="btn-cancel-panel" class="btn btn-no"></div>
+          </div>
+        <%end%>
+
 
 <input class="card-search" type="text" placeholder="Поиск">
 

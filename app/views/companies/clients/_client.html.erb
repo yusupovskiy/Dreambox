@@ -2,7 +2,7 @@
 <%
 
     @records_clients = RecordClient.where(client_id: client.id)
-    @subscriptions_clients = Subscription.where(record_client_id: @records_clients)
+    @subscriptions_clients = Subscription.where(record_client_id: @records_clients, is_active: true)
     @payments_subscriptions = FinOperation.where("
                 operation_type = 1 AND operation_object_id IN (?)", 
                 @subscriptions_clients.select('id'),
@@ -28,6 +28,6 @@
     </span>
   </div>
   <div class="right-content">
-    <span class="amount debt"><%= @payments_subscriptions.sum(:amount) - @subscriptions_clients.sum(:price) %> ₽</span>
+    <span class="amount debt"><%= @payments_subscriptions.where(is_active: true).sum(:amount) - @subscriptions_clients.sum(:price) %> ₽</span>
   </div>
 <%end%>

@@ -42,9 +42,9 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
       </div>
     <% end %>
 
-    <%if flash.present?%>
+    <%if flash[:notice].present?%>
       <div class="message">
-        <%=flash[:notice].html_safe%>
+        <%= flash[:notice].html_safe %>
         <%=flash[:alert]%>
         <%=flash[:danger]%>
       </div>

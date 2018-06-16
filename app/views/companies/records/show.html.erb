@@ -34,17 +34,17 @@
 
         <div class="container-information compact">
           <% if @records_clients.present? %>
-            <% subs_records_clients = Subscription.where(record_client_id: @records_clients).where('? between start_at and finish_at', Date.today) %>
+            <% subs_records_clients = Subscription.where(record_client_id: @records_clients, is_active: true).where('? between start_at and finish_at', Date.today) %>
             <% @records_clients.each do |rc| %>
 
 <%
 
-    @subscriptions_client = Subscription.where(record_client_id: rc.id)
+    @subscriptions_client = Subscription.where(record_client_id: rc.id, is_active: true)
     @payments_subscriptions = FinOperation.where("
                 operation_type = 1 AND operation_object_id IN (?)", 
                 @subscriptions_client.select('id'),
                 ).order("operation_date DESC")
-    debt = @payments_subscriptions.sum(:amount) - @subscriptions_client.sum(:price)
+    debt = @payments_subscriptions.where(is_active: true).sum(:amount) - @subscriptions_client.sum(:price)
 
 %>
 

@@ -9,6 +9,9 @@
       <div class="panel-show">
         <%= link_to 'Назад', :back %>
         <%= link_to 'Перейти к списку', company_fin_operations_path %>
+        <% if @fin_operation.is_active == true %>
+          <div id="cancel">Отменить оплату</div>
+        <% end %>
       </div>
     </div>
 
@@ -19,6 +22,24 @@
 <div class="conten-card tabs">
   <div class="cont-category-book">
     <div class="tab-category information-section">
+
+      <% if @fin_operation.is_active == true %>
+        <%=form_with url: company_histories_path(params[:company_id]), model: @history, local: true, html: {class: 'block-information', id: 'cancel-panel', style: 'display: none;'} do |f|%>
+          <h3><div class="icon-time"></div>Отмена операции</h3>
+          <%=f.hidden_field :object_log, value: 'fin_operation'%>
+          <%=f.hidden_field :object_id, value: @fin_operation.id %>
+          <%=f.hidden_field :type_history, value: 'cancel'%>
+          
+          <div class="finput">
+            <label class="finput-label">Причина отмены*</label>
+            <%= f.text_field :note, class: 'finput-input', required: 'required' %>
+          </div>
+          <div class="btns-confirm">
+            <%= f.submit class: 'btn icon-confirm' %>
+            <div id="btn-cancel-panel" class="btn btn-no"></div>
+          </div>
+        <%end%>
+      <% end %>
 
       <div class="block-information">
         <div class="container-information">
@@ -53,7 +74,6 @@
               <% end %>
             </div>
           <% end %>
-
           <div class="item-information">
           	<span class="title-input">Примечание</span>
           	<span class="text-input"><%= @fin_operation.description %></span>
@@ -70,11 +90,35 @@
             <span class="text-input"><%= @fin_operation.operation_number %></span>
           </div>
           <div class="item-information">
+            <span class="title-input">Активность</span>
+            <span class="text-input"><%= @fin_operation.is_active %></span>
+          </div>
+          <div class="item-information">
           	<span class="title-input">Филиал</span>
           	<span class="text-input"><%= link_to @affiliate.name, company_affiliate_path(params[:company_id], @affiliate.id) %></span>
           </div>
         </div>
       </div>
+
+      <% if @history_subscription.size > 0 %>
+        <div class="block-information show-hide-panel">
+          <h3>
+            <div class="icon-time"></div>История операций<span><%= @history_subscription.size %></span>
+          </h3>
+          <div class="container-information compact">
+            <% @history_subscription.each do |h| %>
+              <% user_history = User.find(h.user_id) %>
+              <div class="item-element">
+                <div class="left-side-elem"><%= h.note %>
+                </div>
+                <div class="rigth-side-elem"><span><%= user_history.first_name %> <%= user_history.last_name %>, </span><span><%= h.created_at.strftime("%d %b %Y") %></span></div>
+              </div>
+            <% end %>
+          </div>
+          <div class="testt click-compact">Раскрыть</div>
+          <div class="testt click-compact compact">Скрыть</div>
+        </div>
+      <% end %>
 
     </div>
   </div>

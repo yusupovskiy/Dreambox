@@ -15,10 +15,21 @@ Rails.application.routes.draw do
     resources :affiliates, module: :companies
     resources :records, module: :companies
     post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
-    resources :clients, module: :companies
+    resources :clients, module: :companies 
+    # do
+    #   member do
+    #     patch 'import'
+    #   end
+    # end
+    post 'clients/import' => 'companies/clients#import'
     resources :services, module: :companies
-    resources :subscriptions, module: :companies
+    resources :subscriptions, module: :companies do
+      member do
+        patch 'cancel'
+      end
+    end
     resources :fin_operations, module: :companies
+    resources :histories, module: :companies
   end
   # two primary keys
   delete 'records_services' => 'records_services#destroy'

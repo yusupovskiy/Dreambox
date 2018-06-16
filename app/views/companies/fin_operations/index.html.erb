@@ -15,19 +15,22 @@
 
   <div class="cont-category-book">
     <div class="tab-category information-section">
-<% @fin_operations.each do |fo| %>
-    <%= link_to company_fin_operation_path(params[:company_id], fo.id), class: "item-card" do %>
-      <div class="left-content">
-        <div class="name-content"><%= t('operation_type.' + fo.operation_type)%> | <%= fo.operation_date.strftime("%d %b, %Y") %></div>
-        <span class="">
-          <%= fo.description %>
-        </span>
-      </div>
-      <div class="right-content">
-        <span class="amount"><%= fo.amount %> ₽</span>
-      </div>
-    <% end %>
-<% end %>
+      <% @fin_operations.each do |fo| %>
+          <%= link_to company_fin_operation_path(params[:company_id], fo.id), class: "item-card" do %>
+            <div class="left-content">
+              <div class="name-content"><%= t('operation_type.' + fo.operation_type)%> | <%= fo.operation_date.strftime("%d %b, %Y") %></div>
+              <span class="">
+                <% if fo.is_active == false %>
+                  <span class="debt" style="margin-right: 5px;">Отмененная оплата!</span>
+                <% end %>
+                <%= fo.description %>
+              </span>
+            </div>
+            <div class="right-content">
+              <span class="amount"><%= fo.amount %> ₽</span>
+            </div>
+          <% end %>
+      <% end %>
     </div>
     <div class="tab-category information-section">
       cписок расходов
