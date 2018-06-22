@@ -49,26 +49,30 @@
       $('.result-quick-search').html(data);
     }
 
-    $('.katalog').on("input",function(ev){
-      var textSearch = $(ev.target).val(); 
-      var arrayTextSearch = textSearch.split(' ');
+    var lastId = null;
+    $('.katalog input').on("input", function(){
+      var textSearch = this.value.trim();
+      clearTimeout(lastId)
 
-      if(textSearch != "" && textSearch != " " ) {
-        $.ajax( {
-          url: '/search_result',
-          method: 'GET',
-          data: {
-            request: arrayTextSearch
-          },
-          dataType: 'HTML',
-          beforeSend: funcBefore,
-          success: funcSuccess
-        });
-      }
-      else {
+      if(textSearch === "") {
         $('.result-quick-search').html('');
       }
-
+      else {
+        funcBefore()
+        lastId = setTimeout(() => {
+          var arrayTextSearch = textSearch.split(' ');
+          $.ajax( {
+            url: '/search_result',
+            method: 'GET',
+            data: {
+              request: arrayTextSearch
+            },
+            dataType: 'HTML',
+            // beforeSend: funcBefore,
+            success: funcSuccess
+          });
+        }, 500)
+      }
     });
   });
 </script>

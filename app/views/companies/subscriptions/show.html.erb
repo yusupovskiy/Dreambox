@@ -37,7 +37,7 @@
         
         <div class="finput">
           <label class="finput-label">Сумма перерасчета*</label>
-          <%= f.number_field :price, class: 'finput-input', required: 'required' %>
+          <%= f.number_field :conversion_amount, class: 'finput-input', required: 'required' %>
         </div>
         <div class="finput">
           <label class="finput-label">Причина перерасчета*</label>
@@ -76,7 +76,7 @@
           
           <div class="finput">
             <label class="finput-label">Количество дней продления*</label>
-            <%= f.number_field :price, class: 'finput-input', required: 'required' %>
+            <%= f.number_field :days_for_correction, class: 'finput-input', required: 'required' %>
           </div>
           <div class="finput-desc">при вводе отрицательного значения, дни ониматься текущей даты</div>
           <div class="finput">
@@ -121,7 +121,7 @@
             <%= form.hidden_field :affiliate_id, value: @record_client.affiliate_id %>
             <div class="finput">
               <%= form.label 'Сумма оплаты*', class: 'finput-label' %>
-              <%= form.number_field :amount, class: "finput-input", required: 'required', value: @subscription.price - @fin_operations_subscription.where(is_active: true).sum(:amount) %>
+              <%= form.number_field :amount, class: "finput-input", required: 'required', value: @subscription.price.to_f - @fin_operations_subscription.where(is_active: true).sum(:amount) %>
             </div>
             <div class="finput">
               <%= form.label 'Дата оплаты*', class: 'finput-label' %>

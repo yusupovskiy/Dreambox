@@ -46,7 +46,7 @@ class Companies::FinOperationsController < ApplicationController
     @fin_operation = FinOperation.new(fin_operation_params)
     @fin_operation.user_id = current_user.id
 
-    @fin_operation.operation_number = FinOperation.last.nil? ? 0 : FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.operation_number 
+    @fin_operation.operation_number = FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.nil? ? 0 : FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.operation_number 
     @fin_operation.operation_number = 1 + @fin_operation.operation_number.to_i
 
     if @fin_operation.save

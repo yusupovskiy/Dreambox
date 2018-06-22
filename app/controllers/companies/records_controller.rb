@@ -54,7 +54,7 @@ class Companies::RecordsController < ApplicationController
 
     respond_to do |format|
       if @record.save
-        format.html { redirect_to [@record.affiliate.company, @record], notice: 'Record was successfully created.' }
+        format.html { redirect_to [@record.affiliate.company, @record], notice: 'Запись была успешно создана.' }
         format.json { render :show, status: :created, location: @record }
       else
         format.html { render :new }
@@ -68,7 +68,7 @@ class Companies::RecordsController < ApplicationController
   def update
     respond_to do |format|
       if @record.update(record_params)
-        format.html { redirect_to [@record.affiliate.company, @record], notice: 'Record was successfully updated.' }
+        format.html { redirect_to [@record.affiliate.company, @record], notice: 'Запись была успешно обновлена.' }
         format.json { render :show, status: :ok, location: @record }
       else
         format.html { render :edit }

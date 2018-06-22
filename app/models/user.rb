@@ -17,5 +17,6 @@ class User < ApplicationRecord
   module Role
     COMPANY_OWNER = 1
     CLIENT = 2
+    STUFF = 4
   end
 end

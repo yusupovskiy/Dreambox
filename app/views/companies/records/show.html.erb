@@ -57,7 +57,8 @@
                     </div>
                     <div class="panel-show"><!-- 
                         <%= link_to 'Открыть карту', [rc.client.company, rc.client]%> -->
-                        <a href="<%= company_client_path(params[:company_id], rc.client) %>#2#10">Открыть карту</a>
+                        <a href="<%= company_client_path(params[:company_id], rc.client) %>">Карта клиента</a>
+                        <a href="<%= company_client_path(params[:company_id], rc.client) %>#tab-2#record-<%= @record.id %>">Все абонементы<br />клиета в записи</a>
                         <div class="subscription-sale">Продать абонемент</div>
   <!--                  <div>Автопродление</div>
                         <div>Динамическая цена</div> -->

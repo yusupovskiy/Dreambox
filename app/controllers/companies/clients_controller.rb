@@ -119,7 +119,7 @@ class Companies::ClientsController < ApplicationController
   end
 
   def import
-    text = params.require(:client).permit(:text)
+    text = params[:text]
   end
 
   private

@@ -15,7 +15,7 @@
 
 <div class="panel-sorting">Сортировка списка</div>
 
-        <%=form_with url: import_company_client_path(params[:company_id]), model: @client, local: true, html: {class: 'block-information', id: 'cancel-panel', style: 'margin: 20px auto;'} do |f|%>
+<!--         <%=form_with url: company_clients_import_path(params[:company_id]), model: @client, local: true, html: {class: 'block-information', id: 'cancel-panel', style: 'margin: 20px auto;'} do |f|%>
           <h3><div class="icon-time"></div>Отмена операции</h3>
           
           <div class="finput">
@@ -26,7 +26,7 @@
             <%= f.submit class: 'btn icon-confirm' %>
             <div id="btn-cancel-panel" class="btn btn-no"></div>
           </div>
-        <%end%>
+        <%end%> -->
 
 
 <input class="card-search" type="text" placeholder="Поиск">

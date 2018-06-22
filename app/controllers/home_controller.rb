@@ -27,23 +27,33 @@ class HomeController < ApplicationController
     today = Date.today
     date_of_last_day_of_previous_month = today - today.day.days
     sql = <<SQL
-select rc.*, r.total_visits from (
+select rc.*, c.archive, r.total_visits, r.finished_at from (
   SELECT row_number() over(partition by record_client_id order by finish_at desc) rn, *
   FROM "subscriptions"
+  WHERE is_active = true
 ) s inner join records_clients rc on s.record_client_id = rc.id
     inner join records r on rc.record_id = r.id
-where rn = 1 and finish_at = '#{date_of_last_day_of_previous_month}'
+    inner join clients c on rc.client_id = c.id
+where rn = 1 and finish_at = '#{date_of_last_day_of_previous_month}' and rc.is_active = true 
+      and r.finished_at > '#{Date.today}' and c.archive = false
 SQL
 
     start_at = date_of_last_day_of_previous_month + 1.day
     finish_at = date_of_last_day_of_previous_month + Time.days_in_month(today.month).days
     rows = ActiveRecord::Base.connection.select_all(sql).to_hash
+
     rows.each do |rc|
+
+      price_service = RecordService.where(record_id: rc['record_id']).sum(:money_for_abon).to_f
+      price_correction = Discount.where(record_client_id: rc['id']).sum(:value)
+      price = price_service + price_correction
+
       Subscription.create!({
         start_at: start_at,
         finish_at: finish_at,
         visits: rc['total_visits'],
         record_client_id: rc['id'],
+        price: price,
       })
     end
     render plain: "#{rows.size} subscriptions were created"
