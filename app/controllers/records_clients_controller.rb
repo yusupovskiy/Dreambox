@@ -9,7 +9,7 @@ class RecordsClientsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to request.referer, notice: 'Клиент записан' }
+      format.html { redirect_to request.referer, notice: "Запись клиента: #{Record.find(record_client.record_id).name}" }
       format.json { render json: record_client }
     end
   end

@@ -39,7 +39,7 @@
     <% end %>
 
     <% if @debt_clients.present? then %>
-      <div class="option">Должники <%= @debt_clients.size %></div>
+      <div class="option">Должники <%= @clients_debtors.size %></div>
     <% end %>
 
     <div class="option"title="Все клиенты компании, включая архив">Все клиенты <%= @total_clients %></div>
@@ -58,7 +58,7 @@
 
     <% if @debt_clients.present? then %>
       <div class="tab-category information-section">
-        <%= render @debt_clients %>
+        <%= render @clients_debtors %>
       </div>
     <% end %>
 
