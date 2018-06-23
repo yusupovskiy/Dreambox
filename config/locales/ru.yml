@@ -13,7 +13,7 @@ ru:
     female: Женский
     unknown: Не указано
   operation_type:
-    payment_other: Прочая оплата
+    payment_other: Прочая оплата за клиента
     payment_subscription: Оплата за абонемент
     payment_salaries: Выплота зарплаты
   record_type:

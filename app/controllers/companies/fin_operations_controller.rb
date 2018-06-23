@@ -48,9 +48,16 @@ class Companies::FinOperationsController < ApplicationController
 
     @fin_operation.operation_number = FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.nil? ? 0 : FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.operation_number 
     @fin_operation.operation_number = 1 + @fin_operation.operation_number.to_i
+ 
+    if @fin_operation.operation_type = 1
+      subscription = Subscription.find(@fin_operation.operation_object_id)
+      @fin_operation.description = "Оплата абонемента на период от #{subscription.start_at.strftime("%d %B %Y")} до #{subscription.finish_at.strftime("%d %B %Y")}"
+    end
 
-    if @fin_operation.save
-      redirect_to company_fin_operation_path(params[:company_id], @fin_operation.id), notice: "Финансовая операция #{t('operation_type.' + @fin_operation.operation_type)} на сумму <span class=\"amount\">#{@fin_operation.amount} ₽</span> произведена"
+    if @fin_operation.amount.to_i == 0
+      redirect_to request.referer, notice: "Оплата не создана, необходимо указать сумму больше <span class=\"amount\">0.0 ₽</span>"      
+    elsif @fin_operation.save
+      redirect_to request.referer, notice: "Финансовая операция <a href=\"#{company_fin_operation_path(params[:company_id], @fin_operation.id)}\" class=\"link-style\" style=\"text-transform: lowercase;\">#{t('operation_type.' + @fin_operation.operation_type)}</a> на сумму <span class=\"amount\">#{@fin_operation.amount} ₽</span> произведена"
     else
       render :new
     end

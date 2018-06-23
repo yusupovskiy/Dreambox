@@ -127,10 +127,6 @@
               <%= form.label 'Дата оплаты*', class: 'finput-label' %>
               <%= form.date_field :operation_date, value: Date.today, class: "finput-input", required: 'required' %>
             </div>
-            <div class="finput">
-              <%= form.label 'Примечение к оплате*', class: 'finput-label' %>
-              <%= form.text_field :description, class: "finput-input", required: 'required' %>
-            </div>
             <div class="btns-confirm">
               <%= form.submit class: 'btn icon-confirm' %>
               <div class="btn btn-no btn-hide-panel"></div>

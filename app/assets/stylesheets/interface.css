@@ -312,7 +312,6 @@ img.object-avatar {
     float: left;
 }
 input.card-search {
-    width: 340px;
     display: table;
     margin: 20px 30px 0;
     padding: 12px 20px;
@@ -453,6 +452,7 @@ input.card-search:hover {
     margin-top: 150px;
     margin-bottom: 50px;
     padding-bottom: 10px;
+    display: grid;
 }
 .block-information>h3 {
     color: #a3a3a3;
@@ -566,7 +566,7 @@ input.card-search:hover {
     padding: 11px 20px;
     margin-bottom: 20px;
     position: relative;
-    width: 300px;
+    /*width: 300px;*/
     transition: 0.4s cubic-bezier(0, 0, 0, 1);
 }
 .records-client .parent-compact {
@@ -597,9 +597,6 @@ input.card-search:hover {
 }
 .icon-closed-card:hover {
     background-image: url(/images/close-hover.png);
-}
-.conten-card {
-    margin-top: 20px;
 }
 .input-panel {
     width: 100%;
@@ -999,7 +996,6 @@ a {
 }
 .card-search {
     font-size: 18px;
-    width: 100%;
     margin: 30px 0 10px 0;
     box-sizing: border-box;
     padding: 0 30px;
