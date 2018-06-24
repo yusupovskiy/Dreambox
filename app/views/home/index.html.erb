@@ -1,40 +1,40 @@
-
-
-
 <div class="katalog">
   <div class="header-katalog">
-    <a class="logo" href="<%=root_path%>"><img src="/images/logo-mini.png" /></a>
+    <a class="logo" href="<%=root_path%>"><img src="/images/lflflf.png" /></a>
     <input type="text" placeholder="Быстрый поиск..." />
   </div>
   <div class="content-katalog katalog-scrollbar">
     <div class="result-quick-search"></div>
     <div class="instruments">
       <div class="title-section">Инструменты</div>
-      <a href="<%=company_clients_path @current_company%>" class="instrument">
+      <a href="<%= company_clients_path @current_company.id %>" class="instrument">
         <img src="/images/user.png" />
         <div>Клиенты</div>
       </a>
-      <a href="<%=company_records_path @current_company%>" class="instrument">
-        <img src="/images/pencil.png" />
-        <div>Запись</div>
+      <a href="<%=company_records_path @current_company.id %>" class="instrument">
+        <img src="/images/group.png" />
+        <div>Группы</div>
       </a>
-      <a href="<%=company_fin_operations_path @current_company%>" class="instrument">
+      <a href="<%=company_fin_operations_path @current_company.id %>" class="instrument">
         <img src="/images/2.png" />
         <div>Финансы</div>
       </a>
-      <a href="<%=company_services_path @current_company%>" class="instrument">
-        <img src="/images/list.png" />
-        <div>Услуги</div>
-      </a>
-      <a href="<%=company_affiliates_path @current_company%>" class="instrument">
-        <!-- <img src="/images/office3.png" /> -->
-        <img src="/images/workflow.png" />
-        <div>Филиалы</div>
-      </a>
-<!--       <div class="instrument">
-        <img src="/images/teacher.png" />
-        <div>Сотрудники</div>
-      </div> -->
+      <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
+      <% if work_director.present? %>
+        <a href="<%=company_workers_path @current_company.id %>" class="instrument">
+          <img src="/images/teacher.png" />
+          <div>Сотрудники</div>
+        </a>
+        <a href="<%=company_services_path @current_company.id %>" class="instrument">
+          <img src="/images/list.png" />
+          <div>Услуги</div>
+        </a>
+        <a href="<%=company_affiliates_path @current_company.id %>" class="instrument">
+          <!-- <img src="/images/office3.png" /> -->
+          <img src="/images/workflow.png" />
+          <div>Филиалы</div>
+        </a>
+      <% end %>
     </div>
   </div>
 </div>

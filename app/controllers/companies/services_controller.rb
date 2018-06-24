@@ -5,7 +5,7 @@ class Companies::ServicesController < ApplicationController
   # GET /companies/services
   # GET /companies/services.json
   def index
-    @services = Service.where(company_id: params[:company_id])
+    @services = Service.where(company_id: @current_company.id)
     @total_services = @services.count
   end
 
@@ -16,7 +16,7 @@ class Companies::ServicesController < ApplicationController
 
   # GET /companies/services/new
   def new
-    @service = Service.new company_id: params[:company_id]
+    @service = Service.new company_id: @current_company.id
   end
 
   # GET /companies/services/1/edit
@@ -66,13 +66,13 @@ class Companies::ServicesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_companies_service
-      @service = Service.where(company_id: params[:company_id]).find(params[:id])
+      @service = Service.where(company_id: @current_company.id).find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
       params.require(:service)
           .permit(:name)
-          .merge(company_id: params[:company_id])
+          .merge(company_id: @current_company.id)
     end
 end

@@ -1,24 +1,30 @@
 class HomeController < ApplicationController
+  before_action :set_company
   layout 'application'
 
   def index
-    # TODO: remember the last used company instead of choose the first one
-    @current_company = current_user.companies.first
-    $current_company = @current_company
-    # NotificationMailer.welcome.deliver_later
   end
 
   def search_result
     @search_request = params[:request]
+    clients_company = Client.where company_id: @current_company.id
+
     if @search_request.size == 1 and @search_request[0].size >= 1 or @search_request[1].size == 0
-      @products = Client.where("LOWER(last_name) LIKE LOWER('#{@search_request[0]}%')")
+      @products = clients_company.where("LOWER(last_name) LIKE LOWER('#{@search_request[0]}%')")
     elsif @search_request.size == 2 and @search_request[1].size >= 1 or @search_request[2].size == 0
-      @products = Client.where("LOWER(last_name) LIKE LOWER('%#{@search_request[0]}%') AND LOWER(first_name) LIKE LOWER('#{@search_request[1]}%')")
+      @products = clients_company.where("LOWER(last_name) LIKE LOWER('%#{@search_request[0]}%') AND LOWER(first_name) LIKE LOWER('#{@search_request[1]}%')")
     elsif @search_request.size == 3 and @search_request[2].size >= 1
-      @products = Client.where("LOWER(last_name) LIKE LOWER('#{@search_request[0]}%') AND LOWER(first_name) LIKE LOWER('#{@search_request[1]}%') AND LOWER(patronymic) LIKE LOWER('#{@search_request[2]}%')")
+      @products = clients_company.where("LOWER(last_name) LIKE LOWER('#{@search_request[0]}%') AND LOWER(first_name) LIKE LOWER('#{@search_request[1]}%') AND LOWER(patronymic) LIKE LOWER('#{@search_request[2]}%')")
     else
       @products = ""
     end
+
+    render layout: false
+  end
+
+  def account
+    @email = params[:request]
+    @user_accounts = User.find_by(email: @email)
 
     render layout: false
   end

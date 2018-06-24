@@ -1,0 +1,91 @@
+<div class="title-panel avatar">
+  <div class="btns-card">
+    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+    
+    <div class="btn-card top-scroll"></div>
+
+    <div class="btn-card btn-show-list">
+      <div class="panel-show">
+        <%= link_to 'Назад', :back %>
+        <%= link_to 'Перейти в список', company_clients_path %>
+        <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
+        <%if @client.archive%>
+          <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>
+        <%else%>
+          <%= link_to 'Отправить в архив', company_clients_archive_path(params[:company_id], params[:id], 1), method: :post%>
+        <%end%>
+        <% if (@client.role.to_i & Client::Role::CLIENT) == 0 %>
+          <%= link_to 'Сделать клиентом', role_client_company_client_path(params[:company_id])%>
+        <% end %>
+
+        <% if (@client.role.to_i & Client::Role::STUFF) == 0 %>
+          <%= link_to 'Сделать сотрудником', role_employee_company_client_path(params[:company_id])%>
+        <% end %>
+
+<!--         <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %> -->
+      </div>
+    </div>
+  </div>
+  <div class="img-card">
+    <%if @client.archive%>
+      <div title="Клиент в архиве" class="people-archive"></div>
+    <%end%>
+    <%= image_tag s3_image(@client.avatar), class: 'people-avatar' %>
+  </div>
+  <div class="title-card"><%= @client.last_name %> <%= @client.first_name %><br /><%= @client.patronymic %></div>
+  <div class="role-card"><%= corrent_role(@client.role) %></div>
+</div>
+
+<div class="conten-card tabs">
+  <div class="menu-with-options">
+    <div class="option active">Основное</div>
+    <% if (@client.role.to_i & Client::Role::STUFF) != 0 %>
+      <div class="option">Долность и ставка</div>
+    <% end %>
+    <% if (@client.role.to_i & Client::Role::CLIENT) != 0 %>
+      <div class="option">Оказание услуг  <span class="amount debt"><%= @debt_for_services %> ₽</span></div>
+      <div class="option">Все оплаты  <span class="amount"><%= @fin_operations_client.where(is_active: true).sum(:amount) %> ₽</span></div>
+    <% end %>
+  </div>
+  
+  <div class="cont-category-book">
+    <div class="tab-category information-section">
+      <div class="block-information">
+        <div class="item-information">
+          <span class="title-input">Возвраст (лет)</span><span class="text-input"><%= @client.birthday.nil? ? 'Не указан' : Date.today.year - @client.birthday.year %></span></div>
+        <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= @client.birthday.nil? ? 'Не указана' : @client.birthday.strftime("%d %b, %Y") %></span></div>
+        <div class="item-information"><span class="title-input">Пол</span><span class="text-input"><%= t("sex.#{@client.sex}") %></span></div>
+        <div class="item-information"><span class="title-input">Телефон</span><span class="text-input"><%= @client.phone_number %></span></div>
+      </div>
+      <% if @blocks_clients.present? %>
+        <% @blocks_clients.each do |b| %>
+          <% fields_block = @field_templates_clients.where(block_id: b.id) %>
+          <% fields_data = FieldDatum.where(field_id: fields_block.select('id'), client_id: @client.id) %>
+          <% if fields_data.present? %>
+            <div class="block-information">
+              <h3><%= b.name %></h3>
+              <div class="btn-compact click-compact"><div></div></div>
+              <div class="container-info compact">
+                <% fields_data.each do |fd| %>
+                  <% fields_t = fields_block.find(fd.field_id) %>
+                  <div class="item-information"><span class="title-input"><%= fields_t.name %> </span><span class="text-input"><%= fd.value %></span></div>                  
+                <%end%>
+              </div>
+            </div>
+          <%end%>
+        <%end%>
+      <%end%>
+
+    </div>
+    <% if (@client.role.to_i & Client::Role::CLIENT) != 0 %>
+      <div class="tab-category information-section records-client">
+        <%= render 'records_client' %>
+      </div>
+      <div class="tab-category information-section">
+        <%= render 'fin_operations_client' %>
+      </div>
+    <%end%>
+
+  </div>
+</div>

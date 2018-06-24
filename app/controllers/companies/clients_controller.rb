@@ -1,16 +1,29 @@
 class Companies::ClientsController < ApplicationController
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
-  before_action :set_client, only: [:show, :edit, :update, :destroy, :archive]
   before_action :ensure_user_has_company
   before_action :set_s3_direct_post, only: [:new, :edit]
+  before_action :set_people
+  before_action :set_company
+  before_action :set_access
+  before_action :set_record_client
+  before_action :set_client, only: [:show, :edit, :update, :destroy, :archive]
 
   # GET /clients
   # GET /clients.json
   def index
-    @clients = Client.where(company: params[:company_id])
-    @total_clients = @clients.size
+    @people = Client.where(company: @current_company.id)
+    @clients = @people.where("(role & #{Client::Role::CLIENT}) != 0")
     @no_archive_clients = @clients.where(archive: false)
     @archive_clients = @clients.where(archive: true)
+<<<<<<< HEAD
+    
+    affiliates = Affiliate.where(company_id: @current_company.id)
+    @records = Record.where(affiliate: affiliates)
+    current_record = @records.where("finished_at > ?", Date.today)
+    @current_clients = @no_archive_clients.where(id: 
+      RecordClient.where(is_active: :true, record_id: 
+        current_record.select('id')).select('client_id'))
+=======
     @current_clients = @no_archive_clients.where(id: RecordClient.where(is_active: :true).select('client_id'))
 
     @debt_clients = @clients.where(
@@ -24,6 +37,7 @@ class Companies::ClientsController < ApplicationController
     #   select("operation_object_id, sum(amount) as amount").
     #   order("operation_object_id")
 
+>>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
 
     unpaid_subscriptions = Subscription.find_by_sql("
       SELECT subscriptions.id
@@ -37,51 +51,111 @@ class Companies::ClientsController < ApplicationController
              GROUP BY operation_object_id, operation_type
             ) AS results
       WHERE total_amount >= price) AND subscriptions.is_active = true")
-    @clients_debtors = @clients.where(id: RecordClient.where(id: Subscription.where(id: unpaid_subscriptions).select('record_client_id')).select('client_id'))
+    @clients_debtors = @clients.where(id: 
+      RecordClient.where(id: 
+        Subscription.where(id: 
+          unpaid_subscriptions).select('record_client_id')).
+      select('client_id'))
 
+    @all_people = @clients
+    @show_in_view = [@current_clients, @clients_debtors, @all_people, @archive_clients]
   end
 
   # GET /clients/1
   # GET /clients/1.json
   def show
-    affiliates = Affiliate.where(company_id: params[:company_id])
-    @records = Record.where(affiliate: affiliates)
-    @records_clients = RecordClient.where(record_id: @records)
-    @records_client = RecordClient.where(client_id: params[:id])
+    if @client.present?
+      # если пустое, то редиректить и писать что нет такого человека в компании
 
+<<<<<<< HEAD
+      @affiliates = Affiliate.where(company_id: @current_company.id)
+      @records = Record.where(affiliate: @affiliates)
+      @records_clients = RecordClient.where(record_id: @records)
+      @records_client = RecordClient.where(client_id: params[:id], id: @current_record_client)
+=======
     @no_records_client = @records.where.not(id: @records_clients.where(client_id: @client.id, is_active: :true).select('record_id'))
+>>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
+
+      current_record = @current_record.where("finished_at > ?", Date.today)
+      @no_records_client = current_record.where.not(id: @records_clients.where(client_id: @client.id, is_active: :true).select('record_id'))
+
+      tester = 1
+
+      @unpaid_subscriptions = Subscription.find_by_sql("
+        SELECT subscriptions.*
+        FROM subscriptions
+        WHERE subscriptions.id NOT IN (
+          SELECT operation_object_id
+          FROM (
+           SELECT operation_object_id, sum(amount) as total_amount
+           FROM fin_operations
+           WHERE operation_type = 1 AND is_active = true
+           GROUP BY operation_object_id, operation_type
+          ) AS results
+          WHERE total_amount >= price) 
+        AND subscriptions.is_active = true 
+        AND subscriptions.record_client_id IN (
+          SELECT  records_clients.id
+          FROM records_clients 
+          WHERE records_clients.client_id = #{params[:id]})
+
+        ")
+
+      @discount = Discount.new
+      @discounts = Discount.where(record_client: @records_client)
+
+      @subscription = Subscription.new
+      @fin_operation = FinOperation.new
+      @work = Work.new
+      @salary = Work.new
+      @work_salary = WorkSalary.new
+
+      @clients = Client.where(archive: false, company_id: @current_company.id)
+
+      subscriptions_client = Subscription.where(record_client: @records_client)
+      @fin_operations_client = FinOperation.where("
+        (operation_type = 1 AND operation_object_id IN (?)) OR 
+        (operation_type = 0 AND operation_object_id = (?))", 
+        subscriptions_client.all.select('id'), 
+        @client.id,
+        ).order("operation_date DESC")
+
+      @payments_subscriptions = FinOperation.where(" is_active = true AND
+                  operation_type = 1 AND operation_object_id IN (?)", 
+                  subscriptions_client.where(is_active: true).select('id'),
+                  ).order("operation_date DESC")
+      @debt_for_services =  subscriptions_client.where(is_active: true).sum(:price) - @payments_subscriptions.sum(:amount)
 
 
-    @discount = Discount.new
-    @discounts = Discount.where(record_client: @records_client)
+      @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
+      @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients)
 
-    @subscription = Subscription.new
-    @fin_operation = FinOperation.new
-
-    @clients = Client.where(archive: false, company_id: @current_company.id)
-
-    subscriptions_client = Subscription.where(record_client: @records_client)
-    @fin_operations_client = FinOperation.where("
-      (operation_type = 1 AND operation_object_id IN (?)) OR 
-      (operation_type = 0 AND operation_object_id = (?))", 
-      subscriptions_client.all.select('id'), 
-      @client.id,
-      ).order("operation_date DESC")
-
-    @payments_subscriptions = FinOperation.where(" is_active = true AND
-                operation_type = 1 AND operation_object_id IN (?)", 
-                subscriptions_client.where(is_active: true).select('id'),
-                ).order("operation_date DESC")
-    @debt_for_services =  subscriptions_client.where(is_active: true).sum(:price) - @payments_subscriptions.sum(:amount)
+      @works_client = Work.where people_id: @client.id
+    else
+      redirect_to company_clients_url, notice: "В компании нет такого человека"
+    end
   end
 
   # GET /clients/new
   def new
-    @client = Client.new company_id: params[:company_id]
+    @client = Client.new company_id: @current_company.id
+    @new_block = InfoBlock.new
+    @new_template_field = FieldTemplate.new
+    @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
+    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients)
+    @new_field_data = FieldDatum.new
+    1.times { @client.field_data.build }
   end
 
   # GET /clients/1/edit
   def edit
+    @client_new = Client.new company_id: @current_company.id
+    @new_block = InfoBlock.new
+    @new_template_field = FieldTemplate.new
+    @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
+    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients)
+    @new_field_data = FieldDatum.new 
+    # 1.times { @client.field_data.build }
   end
 
   # POST /clients
@@ -89,16 +163,23 @@ class Companies::ClientsController < ApplicationController
   def create
     prms = client_params
     @client = Client.new(prms)
-    if email = params[:email]
-      # TODO: create account (using transaction)
+
+    email = params[:client][:email]
+
+    account = User.find_by(email: email)
+    if account.present?
+      @client.user_id = account.id
     end
+
+    @client.role = (Client::Role::CLIENT).to_s(2).to_i
+
 
     respond_to do |format|
       if @client.save
         format.html { redirect_to [@client.company, @client], notice: t('client.created') }
         format.json { render :show, status: :created }
       else
-        format.html { ensure_current_user; set_s3_direct_post; render :new }
+        format.html { ensure_current_user; set_s3_direct_post; render :new } #   redirect_to request.referer
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
     end
@@ -107,6 +188,13 @@ class Companies::ClientsController < ApplicationController
   # PATCH/PUT /clients/1
   # PATCH/PUT /clients/1.json
   def update
+    email = params[:client][:email]
+
+    account = User.find_by(email: email)
+    if account.present?
+      @client.user_id = account.id
+    end
+
     respond_to do |format|
       if @client.update(client_params)
         format.html { redirect_to [@client.company, @client], notice: t('client.updated') }
@@ -132,7 +220,7 @@ class Companies::ClientsController < ApplicationController
     @client.archive = params[:archive_status] == '1'
     @client.save!
     respond_to do |format|
-      format.html { redirect_to company_client_path(params[:company_id], params[:id]) }
+      format.html { redirect_to company_client_path(@current_company.id, params[:id]) }
       format.json { render :show, status: :ok, location: @client }
     end
   end
@@ -141,17 +229,57 @@ class Companies::ClientsController < ApplicationController
     text = params[:text]
   end
 
+  def role_employee
+    people = Client.find params[:id]
+    if (people.role.to_i & Client::Role::STUFF) == 0
+      new_role = people.role.to_i + (Client::Role::STUFF).to_s(2).to_i
+      people.update_attribute(:role, new_role)
+      redirect_to company_client_path(@current_company.id, params[:id]), notice: "#{people.last_name} #{people.first_name} получает роль \"Сотрудник\""
+    elsif (people.role.to_i & Client::Role::CLIENT) > 0
+      redirect_to company_client_path(@current_company.id, params[:id]), notice: "Человек уже является сотрудником"
+    else
+      redirect_to company_client_path(@current_company.id, params[:id]), notice: "Не удалось изменить роль"
+    end
+  end
+
+  def role_client
+    people = Client.find params[:id]
+    if (people.role.to_i & Client::Role::CLIENT) == 0
+      new_role = people.role.to_i + (Client::Role::CLIENT).to_s(2).to_i
+      people.update_attribute(:role, new_role)
+      redirect_to company_client_path(@current_company.id, params[:id]), notice: "#{people.last_name} #{people.first_name} получает роль \"Клиент\""
+    elsif (people.role.to_i & Client::Role::CLIENT) > 0
+      redirect_to company_client_path(@current_company.id, params[:id]), notice: "Человек уже является клиентом"
+    else
+      redirect_to company_client_path(@current_company.id, params[:id]), notice: "Не удалось изменить роль"
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
+    def set_record_client
+      # clients_user_company = Client.where company_id: @current_company, user_id: current_user.people_id
+      # получаем связи с записями выбранного пользователем человека
+      records_clients = RecordClient.where client_id: current_user.people_id
+
+      @current_record_client = RecordClient.where("
+        record_id IN (?) OR id IN (?)",
+        @current_record.select(:id),
+        records_clients.select(:id))
+    end
+
     def set_client
-      @client = Client.find(params[:id])
+      @client = Client.find_by(company_id: @current_company.id, id: params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def client_params
       res = params.require(:client)
-          .permit(:first_name, :last_name, :patronymic, :birthday, :phone_number, :sex, :avatar)
-          .merge(company_id: params[:company_id])
+        .permit(:first_name, :last_name, :patronymic, 
+                :birthday, :phone_number, :sex, :avatar,
+                field_data_attributes: [:id, :field_id, :value])
+        .merge(company_id: @current_company.id)
+
       res[:avatar] = nil if params[:client][:avatar].blank?
       res
     end

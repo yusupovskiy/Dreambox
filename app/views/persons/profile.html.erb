@@ -1,0 +1,49 @@
+<div class="title-panel avatar">
+  <div class="btns-card">
+    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+    
+    <div class="btn-card top-scroll"></div>
+
+    <div class="btn-card btn-show-list">
+      <div class="panel-show">
+        <%= link_to 'Назад', :back %>
+        <%= link_to 'Редактировать', edit_user_registration_path %>
+      </div>
+    </div>
+  </div>
+  <div class="img-card">
+    <%= image_tag s3_image(current_user.avatar), class: 'people-avatar' %>
+  </div>
+  <div class="title-card"><%= current_user.last_name %> <%= current_user.first_name %><br /><%= current_user.patronymic %></div>
+</div>
+
+<div class="conten-card tabs">
+  <div class="menu-with-options">
+    <div class="option active">Основное</div>
+    <div class="option">Компании</div>
+  </div>
+  
+  <div class="cont-category-book">
+    <div class="tab-category information-section">
+      <div class="block-information">
+        <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= current_user.birthday.nil? ? 'Не указана' : current_user.birthday.strftime("%d %b, %Y") %></span></div>
+        <div class="item-information"><span class="title-input">Почта</span><span class="text-input"><%= current_user.email %></span></div>
+        <div class="item-information"><span class="title-input">id</span><span class="text-input"><%= current_user.id %></span></div>
+      </div>
+    </div>
+    <div class="tab-category information-section">
+      <% if @people_user.present? %>
+        <% @people_user.each do |p| %>
+            <%= link_to role_person_path(p.id), class: "item-card" do %>
+              <div class="left-content">
+                <div class="name-content"><%= Company.find(p.company_id).name %></div>
+                <span class=""><%= corrent_role(p.role, '- ', ' ') %></span>
+              </div>
+              <div class="right-content"></div>
+            <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

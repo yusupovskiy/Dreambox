@@ -159,14 +159,14 @@ document.addEventListener('turbolinks:load', function() {
   // show panel for the sale of a subscription
   var btnTicketSale = $('.subscription-sale');
   btnTicketSale.mouseup(function() {
-    $(this).parents('.item-element').children('.show-and-hide-panel').css('display', 'grid');
+    $(this).parents('.item-element').children('.show-and-hide-panel').css('display', 'block');
     $(this).parents('.panel-show').css('display', 'none');
   });
 
   // show and hide panel
   var btnShowPanel = $('.btn-show-panel');
   btnShowPanel.click(function() {
-    $(this).parent('.show-and-hide-container').children('.show-and-hide-panel').css('display', 'grid');
+    $(this).parent('.show-and-hide-container').children('.show-and-hide-panel').css('display', 'block');
     $(this).hide();
   });
   var btnHidePanel = $('.btn-hide-panel');

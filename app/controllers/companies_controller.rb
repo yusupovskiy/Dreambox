@@ -1,13 +1,21 @@
 class CompaniesController < ApplicationController
   before_action :ensure_current_user
   before_action :ensure_company_owner_role, except: [:new, :create]
-  before_action :set_company, only: [:edit, :update, :destroy]
+  before_action :set_company
   layout 'card'
 
+  def add_field
+    @new_block = InfoBlock.new
+    @new_template_field = FieldTemplate.new
+    @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
+    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients)
+  end
+  
   # GET /companies
   # GET /companies.json
   def index
     @companies = Company.where(user: current_user)
+    
   end
 
   # GET /companies/1
@@ -33,7 +41,12 @@ class CompaniesController < ApplicationController
     success_saving = ActiveRecord::Base.transaction do
       raise ActiveRecord::Rollback unless @company.save
       user = company_params[:user]
+      people = Client.create(
+        first_name: user.first_name, last_name: user.last_name, company_id: @company.id, sex: 0, user_id: user.id)
+      people.role |= (Client::Role::COMPANY_OWNER).to_s(2).to_i + (Client::Role::STUFF).to_s(2).to_i
       user.role |= User::Role::COMPANY_OWNER
+      user.update_attribute(:people_id, people.id)
+      people.save!
       user.save!
     end
 
@@ -75,10 +88,11 @@ class CompaniesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_company
-      @company = Company.find(params[:id])
-      if @company.user_id != current_user.id
-        redirect_to companies_path, notice: t('company.not_yours')
-      end
+      current_client = Client.find current_user.people_id
+      @current_company = Company.find(current_client.company_id)
+      # if @company.user_id != current_user.id
+      #   redirect_to companies_path, notice: t('company.not_yours')
+      # end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

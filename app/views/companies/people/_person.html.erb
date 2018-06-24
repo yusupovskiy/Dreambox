@@ -1,0 +1,13 @@
+<%= link_to [person.company, person], class: "item-card" do %>
+  <%=image_tag s3_image(person.avatar), class: "avatar-list" %>
+  <div class="left-content">
+    <div class="name-content">
+      <%= person.last_name %>
+      <%= person.first_name %>
+    </div>
+    <span class="desc-content"><%= desc_content(person.id) %></span>
+  </div>
+  <div class="right-content">
+    <span class="amount debt"><%= monetary_indicator(person.id) %> ₽</span>
+  </div>
+<%end%>

@@ -12,6 +12,17 @@ ru:
     male: Мужской
     female: Женский
     unknown: Не указано
+  position_work:
+    administrator: Администратор
+    moderator: Модератор
+    accountant: Бухгалтер
+    responsible: Ответственный
+    director: Руководитель
+  field_type:
+    field_text: Поле для текста
+    field_date: Поле для даты
+    field_number: Поле для чисел
+    field_datetime: Полея для даты и времени
   operation_type:
     payment_other: Прочая оплата за клиента
     payment_subscription: Оплата за абонемент
@@ -86,6 +97,13 @@ ru:
         
     clients:
       form:
+        last_name: 'Фамилия*'
+        first_name: 'Имя*'
+        patronymic: 'Отчество'
+        birthday: 'Дата рождения'
+        sex: 'Пол'
+        phone_number: 'Телефон'
+      edit:
         last_name: 'Фамилия*'
         first_name: 'Имя*'
         patronymic: 'Отчество'

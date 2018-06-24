@@ -1,0 +1,224 @@
+<div class="show-and-hide-container">
+  <div class="btn-subs btn-show-panel">+ Записать</div>
+  <% if @no_records_client.present? %>
+    <%= form_with url: records_clients_path, model: @records_clients, local: true, class: 'block-information show-and-hide-panel' do |f|%>
+      <%=f.hidden_field :client_id, value: @client.id %>
+      <div class="finput">
+        <%= f.label 'Записи', class: 'finput-label' %>
+        <%= f.select :record_id, @no_records_client.map{|a| [a.name, a.id]}, {}, {class: "finput-input"} %>
+      </div>
+      <div class="btns-confirm">
+        <a class="btn icon-plus" href="<%=new_company_record_path %>"></a>
+        <%= f.button '', class: 'btn icon-confirm' %>
+        <div class="btn btn-no btn-hide-panel"></div>
+      </div>
+    <%end%>
+  <% else %>
+    <div class="block-information show-and-hide-panel">
+      <div class="loading-block">
+        <div>
+          <img src="/images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;">
+          <div>Нет записей<br /><br />или<br /><br />клиент уже записан на все</div>
+        </div>
+      </div>
+      <div class="btns-confirm">
+        <a class="btn icon-plus" href="<%=new_company_record_path %>"></a>
+        <div class="btn btn-no btn-hide-panel"></div>
+      </div>
+    </div>
+  <%end%>
+</div>
+
+<% if @records_client.present? %>
+  <% @records_client.each do |rc| %>
+    <% record = Record.find(rc.record_id)%>
+    <div id="record-<%= record.id%>" class="block-information entry parent-compact">
+      <%= link_to record.name, company_record_path(params[:company_id], record), class: 'title-entry' %>
+      <div class="btn-compact click-compact"><div></div></div>
+
+      <div class="service-entry">
+        <% record_service = RecordService.where(record_id: rc.record_id) %>
+        <% if record_service.present? %>
+          <% record_service.each do |rservice|%>
+              <% service = Service.find(rservice.service_id)%>
+              <%= link_to service.name, [service.company, service] %>
+          <% end %>
+        <% else %>
+          <div>Нет услуги</div>
+        <% end %>
+      </div>
+
+      <% if rc.is_active %>
+        <%=link_to 'Отписать', records_client_path(rc, deactivate_instead_of_destroying: 1), method: :delete, class: 'unsubscribe compact' %>
+      <% else %>
+        <%=link_to 'Записать', records_clients_path(record_client: {record_id: rc.record_id, client_id: rc.client_id}), method: :post, class: 'subscribe compact' %>
+      <% end %>
+
+      <div class="discount-entry compact show-and-hide-container">
+        <div class="title-discount">Скида и коррекция цены</div>
+        <% @discounts_record = @discounts.where(record_client_id: rc.id) %>
+        <%if @discounts_record.empty? %>
+          <div class="discount">Список пуст</div>
+        <%else%>
+          <ul>
+            <%@discounts_record.each do |d| %>
+              <li>
+                <%=d.note%> <span class="amount"><%=d.value%> ₽</span><br />
+                
+                от <%=d.start_at.strftime("%d %b, %Y")%>
+                до <%=d.finish_at.strftime("%d %b, %Y")%>
+              </li>
+            <%end%>
+          </ul>
+        <%end%>
+        <div class="add-discount btn-show-panel">+ Добавить скидку</div>
+        <%=form_with url: discounts_path, model: @discount,
+         html: {class: 'panel-attachment show-and-hide-panel compact'} do |f|%>
+          <%=f.hidden_field :record_client_id, value: rc.id%>
+          <div class="finput">
+            <label class="finput-label">Дата начала*</label>
+            <%= f.date_field :start_at, class: 'finput-input', required: 'required', value: Date.today %>
+          </div>
+          <div class="finput">
+            <label class="finput-label">Дата завершения*</label>
+            <%= f.date_field :finish_at, class: 'finput-input', required: 'required', value: Date.today + 30 %>
+          </div>
+          <div class="finput">
+            <label class="finput-label">Сумма коррекции*</label>
+            <%= f.number_field :value, class: 'finput-input', required: 'required' %>
+          </div>
+          <div class="finput-desc">при вводе отрицательного значения, клиент будет получать скидку</div>
+          <div class="finput">
+            <label class="finput-label">Примечание*</label>
+            <%= f.text_field :note, class: 'finput-input', required: 'required' %>
+          </div>
+          <div class="btns-confirm">
+            <%= f.submit class: 'btn icon-confirm' %>
+            <div class="btn btn-no btn-hide-panel"></div>
+          </div>
+        <%end%>
+      </div>
+
+      <%
+        subs = Subscription.where(record_client_id: rc.id, is_active: true).order("start_at DESC")
+        payment_subscriptions = FinOperation.where("is_active = true AND 
+                    operation_type = 1 AND operation_object_id IN (?)", 
+                    subs.select('id'),
+                    ).order("operation_date DESC")
+        debt_for_services =  subs.sum(:price) - payment_subscriptions.sum(:amount)
+      %>
+
+      <div class="info-about-subsc">
+        <% if debt_for_services > 0 %>
+          Осталось оплатить 
+          <span class="amount debt">
+
+          <%= debt_for_services %> ₽</span>
+        <% else %>
+          <span class="amount">Задолжности нет</span>
+        <% end %>
+      </div>
+
+      <div class="subscriptions">
+        <% if rc.is_active %>
+        <a class="subscription compact" style="margin-bottom: 20px;">
+          <div class="data-subscriptions show-and-hide-container" style="background-image: none; background-color: transparent;">
+            <div class="add-discount btn-show-panel">+ Продать абонемент</div>
+
+
+
+            <%=form_with url: company_subscriptions_path(params[:company_id]), model: @subscription,
+              html: {class: 'panel-attachment show-and-hide-panel'} do |f|%>
+              <% autodata_subscription = autodata_subscription(rc) %>
+              <%=f.hidden_field :record_client_id, value: rc.id%>
+  
+              <dfn data-info="<%= autodata_subscription[:message_start_date] %>">
+                <div class="finput">
+                  <label class="finput-label">Дата начала абонемента*</label>
+                  <%= f.date_field :start_at, value: autodata_subscription[:start_date], class: 'finput-input' %>
+                </div>
+              </dfn>
+              <dfn data-info="<%= autodata_subscription[:message_finish_date] %>">
+                <div class="finput">
+                  <label class="finput-label">Дата завершения абонемента*</label>
+                  <%= f.date_field :finish_at, value: autodata_subscription[:finish_date], class: 'finput-input' %>
+                </div>
+              </dfn>
+              <dfn data-info="В этом поле можно сразу оплатить абонемент">
+                <div class="finput">
+                  <%= f.label 'Сумма оплаты', class: 'finput-label' %>
+                  <%= f.number_field :amount, class: "finput-input" %>
+                </div>
+              </dfn>
+              <div class="btns-confirm">
+                <%= f.submit class: 'btn icon-confirm' %>
+                  <div class="btn btn-no btn-hide-panel"></div>
+              </div>
+            <%end%>
+          </div>
+        </a>
+        <% end %>
+        
+        <%  %>
+        <% fin_operations_subscriptions = FinOperation.where("is_active = true AND 
+            operation_type = 1 AND operation_object_id IN (?)", 
+            subs.select('id'),
+            ).order("operation_date DESC") %>
+
+        <% subs.each do |sub| %>
+            <%=  %>
+            <% if sub.start_at <= Date.today && Date.today <= sub.finish_at %>
+              <div class="subscription show-and-hide-container active">
+                <%= link_to company_subscription_path(params[:company_id], sub.id), class: "data-subscriptions" do %>Текущий абонемент<br />от <%= sub.start_at.strftime("%d %b %Y") %> до <%= sub.finish_at.strftime("%d %b %Y") %>
+                <% end %>
+            <% elsif sub.start_at > Date.today && Date.today < sub.finish_at %>
+              <div class="subscription show-and-hide-container compact">
+                <%= link_to company_subscription_path(params[:company_id], sub.id), class: "data-subscriptions" do %>Предстоящий абонемент<br />от <%= sub.start_at.strftime("%d %b %Y") %> до <%= sub.finish_at.strftime("%d %b %Y") %>
+                <% end %>
+            <% else  %>
+              <div class="subscription show-and-hide-container compact">
+                <%= link_to company_subscription_path(params[:company_id], sub.id), class: "data-subscriptions" do %>Завершенный абонемент<br />от <%= sub.start_at.strftime("%d %b %Y") %> до <%= sub.finish_at.strftime("%d %b %Y") %>
+                <% end %>
+            <% end %>
+
+            <% if  fin_operations_subscriptions.where(operation_object_id: sub.id).sum(:amount).to_f >= sub.price.to_f %>
+              <div class="payment-subs compact">оплачено <span class="amount"><%= fin_operations_subscriptions.where(operation_object_id: sub.id).sum(:amount) %> ₽</span></div>
+            <% else %>
+              <div class="payment-subs compact btn-show-panel debt">надо оплатить 
+                <span class="amount debt"><%= sum_subs = sub.price - fin_operations_subscriptions.where(operation_object_id: sub.id).sum(:amount) %> ₽</span>
+              </div>
+              <%= form_with(url: company_fin_operations_path(params[:company_id]), model: @fin_operation, local: true, html: {class: 'panel-attachment show-and-hide-panel compact'}) do |form| %>
+                <%= form.hidden_field :operation_type, value: :payment_subscription %>
+                <%= form.hidden_field :operation_object_id, value: sub.id %>
+                <%= form.hidden_field :affiliate_id, value: record.affiliate_id %>
+                <div class="finput">
+                  <%= form.label 'Сумма оплаты*', class: 'finput-label' %>
+                  <%= form.number_field :amount, class: "finput-input", required: 'required', value: sum_subs %>
+                </div>
+                <div class="finput">
+                  <%= form.label 'Дата оплаты*', class: 'finput-label' %>
+                  <%= form.date_field :operation_date, value: Date.today, class: "finput-input", required: 'required' %>
+                </div>
+                <div class="btns-confirm">
+                  <%= form.submit class: 'btn icon-confirm' %>
+                  <div class="btn btn-no btn-hide-panel"></div>
+                </div>
+              <%end%>
+            <% end %>
+
+          </div>
+        <% end %>
+      </div>
+
+      <div class="testt click-compact" style="width: 100%;">Раскрыть</div>
+      <div class="testt click-compact compact" style="width: 100%;">Скрыть</div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="loading-block">
+    <div>
+      <img src="/images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;">
+      <div>Ничего нет</div>
+    </div>
+  </div>
+<% end %>

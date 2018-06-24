@@ -22,9 +22,9 @@
             <div id="drop_zone" class="add-avatar">
               <div class="icon-add-avatar">
                 <input id="client_avatar" type="file" style="display: none;">
-                <%=f.hidden_field :avatar, id: 'client_avatar_field', value: @user.avatar%>
+                <%=f.hidden_field :avatar, id: 'client_avatar_field', value: current_user.avatar%>
               </div>
-              <%= image_tag s3_image(@user.avatar), class: 'people-avatar' %>
+              <%= image_tag s3_image(current_user.avatar), class: 'people-avatar' %>
             </div>
             
 <!--             <% if @minimum_password_length %>

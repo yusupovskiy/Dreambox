@@ -4,7 +4,7 @@ class Companies::SubscriptionsController < ApplicationController
   # GET /subscriptions
   # GET /subscriptions.json
   def index
-    affiliates = Affiliate.where(company_id: params[:company_id])
+    affiliates = Affiliate.where(company_id: @current_company.id)
     records = Record.where(affiliate: affiliates)
     rc = RecordClient.where(record: records)
     @subscriptions = Subscription.where(record_client: rc)
@@ -81,8 +81,32 @@ class Companies::SubscriptionsController < ApplicationController
         format.html { redirect_to request.referer, notice: "Внимание! Невозможно продать абонемент, так как клиент отписан от данной записи" }  # from records/:id
         format.json { render :show, status: :created, location: @subscription }
       elsif no_subscriptions_in_that_range and @subscription.save
+<<<<<<< HEAD
+        if amount <= 0
+          amount_notice = "<br /><br />- Оплата не произведена, так как вы ввели ноль"
+        elsif amount > @subscription.price
+          amount_notice = "<br /><br />- Оплата не произведена, так как не может превышать стоимость абонемента"
+        else
+            payment = FinOperation.new(
+            amount: amount, 
+            affiliate_id: r.affiliate_id, 
+            operation_type: 1, 
+            operation_object_id: @subscription.id, 
+            operation_date: @subscription.start_at, 
+            description: "Оплата абонемента на период 
+            от #{@subscription.start_at.strftime("%d %B %Y")} 
+            до #{@subscription.finish_at.strftime("%d %B %Y")}", 
+            user_id: current_user.id
+          )
+          payment.save
+          amount_notice = "<br /><br />Финансовая операция <a href=\"#{company_fin_operation_path(@current_company.id, payment.id)}\" class=\"link-style\" style=\"text-transform: lowercase;\">#{t('operation_type.payment_subscription')}</a> на сумму <span class=\"amount\">#{amount} ₽</span> произведена"
+        end
+        # format.html { redirect_to params[:return_url] }
+        format.html { redirect_to request.referer, notice: "<hr class=\"status-complet completed\" />Вы продали <a href=\"#{company_subscription_path(@current_company.id, @subscription.id)}\" class=\"link-style\">абонемент</a> на период от #{@subscription.start_at.strftime("%d %b %Y")} до #{@subscription.finish_at.strftime("%d %b %Y")}" + amount_notice }  # from records/:id
+=======
         # format.html { redirect_to params[:return_url] }
         format.html { redirect_to request.referer, notice: "Вы продали <a href=\"#{company_subscription_path(params[:company_id], @subscription.id)}\" class=\"link-style\">абонемент</a> на период от #{@subscription.start_at.strftime("%d %b %Y")} до #{@subscription.finish_at.strftime("%d %b %Y")}" }  # from records/:id
+>>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
         format.json { render :show, status: :created, location: @subscription } 
       else
         notice = no_subscriptions_in_that_range ? nil : t(:reserved_range_for_subscription)

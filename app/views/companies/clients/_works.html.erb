@@ -1,0 +1,152 @@
+<!-- <div class="btn-subs btn-show-panel">+ Выплатить зарплату</div> -->
+
+<div class="show-and-hide-container">
+  <div class="btn-subs btn-show-panel">+ Добавить работу</div>
+  <%= form_with(url: company_works_path(params[:company_id]), model: @work, local: true, html: {class: 'block-information show-and-hide-panel'}) do |form| %>
+    <%= form.hidden_field :people_id, value: @client.id %>
+
+    <div class="finput">
+      <%= form.label 'Должность*', class: 'finput-label' %>
+      <%= form.select :position_work, options_for(Work.position_works, 'position_work'), {selected: @work.position_work}, {class: "finput-input"}%>
+    </div>
+
+    <dfn data-info="Если не указать, то ставка будет динамическая">
+      <div class="finput">
+        <%= form.label 'Ставка', class: 'finput-label' %>
+        <%= form.number_field :fixed_rate, class: "finput-input" %>
+      </div>
+    </dfn>
+    <div class="finput">
+      <%= form.label t('.affiliate_id'), class: 'finput-label' %>
+      <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]}, {}, {class: "finput-input"} %>
+    </div>
+    <div class="btns-confirm">
+      <%= form.submit class: 'btn icon-confirm' %>
+      <div class="btn btn-no btn-hide-panel"></div>
+    </div>
+  <%end%>
+</div>
+
+
+
+<% if @works_client.present? %>
+  <% @works_client.each do |w| %>
+    <% affiliate = Affiliate.find w.affiliate_id %>
+    <div id="work-<%= w.id%>" class="block-information entry parent-compact">
+      <div class="title-entry"><%= t('position_work.' + w.position_work) %></div>
+<!--       <div class="btn-compact click-compact"><div></div></div> -->
+
+      <div class="service-entry">
+        <dfn data-info="Место работы"><%= affiliate.name %>
+        </dfn>
+      </div>
+      <span class="amount debt" style="margin-bottom: 10px; float: left; font-size: 13px; margin-top: -9px;"><%= w.fixed_rate %> ₽</span>
+
+
+
+      <div class="discount-entry show-and-hide-container">
+        <div class="title-discount">Доступ:</div>
+<%
+
+    client = Client.find current_user.people_id
+    company_user = Company.find client.company_id
+    affiliate_company_user = Affiliate.where company_id: company_user.id
+    company_work_salary = WorkSalary.where work_id: @works_client.select('id'), affiliate_id: affiliate_company_user.select('id')
+
+%>
+        <% work_salary = WorkSalary.where(work_id: w.id) %>
+        <% affiliate_work = @affiliates.where(id: work_salary.select('affiliate_id')) %>
+        <% affiliate = @affiliates.where.not(id: company_work_salary.select('affiliate_id')) %>
+
+      <% if w.position_work != 'director' %>
+        <%if affiliate_work.empty? %>
+          <div class="discount">Список пуст</div>
+        <%else%>
+          <ul style="margin-top: 5px;">
+            <% affiliate_work.each do |a| %>
+              <% affiliate_work_salary = WorkSalary.find_by(affiliate_id: a.id, work_id: w.id) %>
+              <li>
+                <span><%= a.name %> <%= link_to 'Удалить', works_salary_path(affiliate_work_salary.id), method: :delete, data: { confirm: 'Точно хотите ограничить доступ?' }, class: "link-to" %></span>
+              </li>
+            <%end%>
+          </ul>
+        <%end%>
+
+        <% if affiliate.present?%>
+          <div class="add-discount btn-show-panel">+ Добавить филиал</div>
+          <%=form_with url: works_salaries_path, model: @work_salary,
+           html: {class: 'panel-attachment show-and-hide-panel'} do |f|%>
+            <%=f.hidden_field :work_id, value: w.id %>
+
+            <dfn data-info="Укажите филиал, к иноформации которого хотите предоставить доступ">
+              <div class="finput">
+                <%= f.label t('.affiliate_id'), class: 'finput-label' %>
+                <%= f.select :affiliate_id, affiliate.map{|a| [a.name, a.id]}, {}, {class: "finput-input"} %>
+              </div>
+            </dfn>
+
+            <div class="btns-confirm">
+              <%= f.submit class: 'btn icon-confirm' %>
+              <div class="btn btn-no btn-hide-panel"></div>
+            </div>
+          <%end%>
+        <%end%>
+      <% else %>
+        Полный доступ
+      <% end %>
+
+      </div>
+
+      <!-- <div class="info-about-subsc">
+          Необходимо выплатить
+          <span class="amount debt">18000 ₽</span>
+      </div>
+
+      <div class="subscriptions">
+        <% if w.is_active %>
+          <a class="subscription compact" style="margin-bottom: 20px;">
+            <div class="data-subscriptions show-and-hide-container" style="background-image: none; background-color: transparent;">
+              <div class="add-discount btn-show-panel">+ Добавить оклад</div>
+
+
+
+              <%=form_with url: company_salaries_path(params[:company_id]), model: @salary,
+                html: {class: 'panel-attachment show-and-hide-panel'} do |f|%>
+    
+                <dfn data-info="">
+                  <div class="finput">
+                    <label class="finput-label">Дата начала оклада*</label>
+                    <%= f.date_field :start_at, class: 'finput-input' %>
+                  </div>
+                </dfn>
+                <dfn data-info="">
+                  <div class="finput">
+                    <label class="finput-label">Дата завершения оклада*</label>
+                    <%= f.date_field :finish_at, class: 'finput-input' %>
+                  </div>
+                </dfn>
+                <div class="btns-confirm">
+                  <%= f.submit class: 'btn icon-confirm' %>
+                    <div class="btn btn-no btn-hide-panel"></div>
+                </div>
+              <%end%>
+            </div>
+          </a>
+        <% end %>
+        
+      </div> -->
+      <!--  -->
+
+
+<!--       <div class="testt click-compact" style="width: 100%;">Раскрыть</div>
+      <div class="testt click-compact compact" style="width: 100%;">Скрыть</div> -->
+    </div>
+  <% end %>
+<% else %>
+  <div class="loading-block">
+    <div>
+      <img src="/images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;">
+      <div>Ничего нет</div>
+    </div>
+  </div>
+<% end %>

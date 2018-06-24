@@ -1,12 +1,12 @@
 class Companies::AffiliatesController < ApplicationController
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
   before_action :set_affiliate, only: [:show, :edit, :update, :destroy]
-  layout 'card'
+  before_action :set_company
 
   # GET /affiliates
   # GET /affiliates.json
   def index
-    @affiliates = Affiliate.where(company: params[:company_id])
+    @affiliates = Affiliate.where(company_id: @current_company.id)
     @total_affiliates = @affiliates.count
   end
 
@@ -17,7 +17,7 @@ class Companies::AffiliatesController < ApplicationController
 
   # GET /affiliates/new
   def new
-    @affiliate = Affiliate.new company_id: params[:company_id]
+    @affiliate = Affiliate.new company_id: @current_company.id
   end
 
   # GET /affiliates/1/edit
@@ -75,6 +75,6 @@ class Companies::AffiliatesController < ApplicationController
     def affiliate_params
       params.require(:affiliate)
           .permit(:name, :address, :email, :phone_number)
-          .merge(company_id: params[:company_id])
+          .merge(company_id: @current_company.id)
     end
 end

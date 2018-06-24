@@ -60,3 +60,4 @@ gem 'execjs'
 gem 'therubyracer', :platforms => :ruby
 gem 'aws-sdk', '~> 3'
 gem 'aws-sdk-s3', '~> 1'
+gem 'slim-rails'

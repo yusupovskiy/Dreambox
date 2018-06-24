@@ -1,0 +1,2 @@
+module WorksSalariesHelper
+end

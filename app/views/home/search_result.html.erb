@@ -1,24 +1,23 @@
-<% sleep 0.5 %>
 <% if @products.size != 0 %>
-	<div class="title-section" style="margin-top: 20px;">Клиентов найдено: <%= @products.size %></div>
-	<div class="items-katalog">
-		<% @products.each do |client| %>
-		  <%= link_to [client.company, client], class: "item-quick-search" do %>
-		    <%=image_tag s3_image(client.avatar) %>
-		      <div>	
-		          <%= client.last_name %> <%= client.first_name %>
-		          <% if @search_request[2] %>
-		          <%= client.patronymic %>
-		          <% end %>	
-				</div>
-			<% end %>
-		<% end %>
-	</div>
+  <div class="title-section" style="margin-top: 20px;">Клиентов найдено: <%= @products.size %></div>
+  <div class="items-katalog">
+    <% @products.each do |client| %>
+      <%= link_to [client.company, client], class: "item-quick-search" do %>
+        <%=image_tag s3_image(client.avatar) %>
+          <div> 
+            <%= client.last_name %> <%= client.first_name %>
+            <% if @search_request[2] %>
+              <%= client.patronymic %>
+            <% end %> 
+        </div>
+      <% end %>
+    <% end %>
+  </div>
 <% else %>
-<div class="loading-block">
-	<div>
-		<img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
-		<div>Ничего не найдено</div>
-	</div>
-</div>
+  <div class="loading-block">
+    <div>
+      <img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
+      <div>Ничего не найдено</div>
+    </div>
+  </div>
 <% end %>

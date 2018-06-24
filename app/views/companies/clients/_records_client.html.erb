@@ -99,22 +99,66 @@
         <%end%>
       </div>
 
+      <%
+        subs = Subscription.where(record_client_id: rc.id, is_active: true).order("start_at DESC")
+        payment_subscriptions = FinOperation.where("is_active = true AND 
+                    operation_type = 1 AND operation_object_id IN (?)", 
+                    subs.select('id'),
+                    ).order("operation_date DESC")
+        debt_for_services =  subs.sum(:price) - payment_subscriptions.sum(:amount)
+      %>
+
       <div class="info-about-subsc">
-        Осталось оплатить 
-        <span class="amount debt">
-          <%
-            subscriptions_record = Subscription.where(record_client: rc.id, is_active: true)
-            payment_subscriptions = FinOperation.where("is_active = true AND 
-                        operation_type = 1 AND operation_object_id IN (?)", 
-                        subscriptions_record.select('id'),
-                        ).order("operation_date DESC")
-            debt_for_services =  subscriptions_record.sum(:price) - payment_subscriptions.sum(:amount)
-          %>
-        <%= debt_for_services %> ₽</span>
+        <% if debt_for_services > 0 %>
+          Осталось оплатить 
+          <span class="amount debt">
+            <%= debt_for_services %> ₽
+          </span>
+        <% else %>
+          <span class="amount">Задолжности нет</span>
+        <% end %>
       </div>
 
       <div class="subscriptions">
         <% if rc.is_active %>
+<<<<<<< HEAD
+          <a class="subscription compact" style="margin-bottom: 20px;">
+            <div class="data-subscriptions show-and-hide-container" style="background-image: none; background-color: transparent;">
+              <div class="add-discount btn-show-panel">+ Продать абонемент</div>
+
+
+
+              <%=form_with url: company_subscriptions_path(params[:company_id]), model: @subscription,
+                html: {class: 'panel-attachment show-and-hide-panel'} do |f|%>
+                <% autodata_subscription = autodata_subscription(rc) %>
+                <%=f.hidden_field :record_client_id, value: rc.id%>
+    
+                <dfn data-info="<%= autodata_subscription[:message_start_date] %>">
+                  <div class="finput">
+                    <label class="finput-label">Дата начала абонемента*</label>
+                    <%= f.date_field :start_at, value: autodata_subscription[:start_date], class: 'finput-input' %>
+                  </div>
+                </dfn>
+                <dfn data-info="<%= autodata_subscription[:message_finish_date] %>">
+                  <div class="finput">
+                    <label class="finput-label">Дата завершения абонемента*</label>
+                    <%= f.date_field :finish_at, value: autodata_subscription[:finish_date], class: 'finput-input' %>
+                  </div>
+                </dfn>
+                <dfn data-info="В этом поле можно сразу оплатить абонемент">
+                  <div class="finput">
+                    <%= f.label 'Сумма оплаты', class: 'finput-label' %>
+                    <%= f.number_field :amount, class: "finput-input" %>
+                  </div>
+                </dfn>
+                <div class="btns-confirm">
+                  <%= f.submit class: 'btn icon-confirm' %>
+                    <div class="btn btn-no btn-hide-panel"></div>
+                </div>
+              <%end%>
+            </div>
+          </a>
+=======
         <a class="subscription compact" style="margin-bottom: 20px;">
           <div class="data-subscriptions show-and-hide-container" style="background-image: none; background-color: transparent;">
             <div class="add-discount btn-show-panel">+ Продать абонемент</div>
@@ -136,9 +180,10 @@
             <%end%>
           </div>
         </a>
+>>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
         <% end %>
         
-        <% subs = Subscription.where(record_client_id: rc.id, is_active: true).order("start_at DESC") %>
+        <%  %>
         <% fin_operations_subscriptions = FinOperation.where("is_active = true AND 
             operation_type = 1 AND operation_object_id IN (?)", 
             subs.select('id'),

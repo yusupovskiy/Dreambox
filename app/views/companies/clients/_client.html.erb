@@ -1,33 +1,13 @@
 <%= link_to [client.company, client], class: "item-card" do %>
-<%
-
-    @records_clients = RecordClient.where(client_id: client.id)
-    @subscriptions_clients = Subscription.where(record_client_id: @records_clients, is_active: true)
-    @payments_subscriptions = FinOperation.where("
-                operation_type = 1 AND operation_object_id IN (?)", 
-                @subscriptions_clients.select('id'),
-                ).order("operation_date DESC")
-
-    @records = Record.where(id: @records_clients.select('record_id'))
-    @records_service = RecordService.where(record_id: @records.select('id'))
-    @service = Service.where(id: @records_service.select('service_id'))
-
-%>
   <%=image_tag s3_image(client.avatar), class: "avatar-list" %>
   <div class="left-content">
-    <div class="name-content"><%= client.last_name %>
-    <%= client.first_name %></div>
-    <span class="">
-      <% if @records_clients.present? %>
-        <% @service.each do |s| %>
-          - <%= s.name %>
-        <% end %>
-      <% else %>
-        Услуги не оказываются
-      <% end %>
-    </span>
+    <div class="name-content">
+      <%= client.last_name %>
+      <%= client.first_name %>
+    </div>
+    <span class="desc-content"><%= desc_content(client.id) %></span>
   </div>
   <div class="right-content">
-    <span class="amount debt"><%= @payments_subscriptions.where(is_active: true).sum(:amount) - @subscriptions_clients.sum(:price) %> ₽</span>
+    <span class="amount debt"><%= monetary_indicator(client.id) %> ₽</span>
   </div>
 <%end%>

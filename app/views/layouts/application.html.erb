@@ -33,31 +33,101 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
   <body data-params="<%=params.to_json%>" class="home">
 
-    <% if $current_company.present? %>
-      <div class="active-company">
-        <div class="name-company"><%= $current_company.name %></div>
-        <div class="days-subs">356 дн.</div>
-      </div>
-    <% end %>
+    <div class="active-company">
+      <% if signed_in? %>
+        <div class="btn-show-list">
+          <div class="name-company"><%= @current_company.name %></div>
 
-    <%if flash[:notice].present?%>
-      <div class="message">
-        <%= flash[:notice].html_safe %>
-        <%=flash[:alert]%>
-        <%=flash[:danger]%>
-      </div>
-    <%end%>
+          <div class="panel-show" style="width: 240px;">
+            <%= link_to '+Добавить новою компанию', new_company_path, class: "add-discount" %>
+            <div style="background-color: #e6eaed;">
+                <div class="img-input" style="float: left;">
+                  <%= image_tag s3_image(@current_people.avatar) %>
+                  <%= Company.find(@current_people.company_id).name %>
+                  <div style="font-size: 12px; color: darkgrey; margin-top: 5px;">
+                    <%if (@current_people.role.to_i & Client::Role::CLIENT) > 0 %>
+                      - Клиент
+                    <%end %>
+                    <% work = Work.where people_id: @current_people.id %>
+                    <% work.each do |w| %>
+                      - <%= t('position_work.' + w.position_work) %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% @people_user = Client.where(user_id: current_user.id).where.not(id: @current_people.id) %>
+            <% @people_user.each do |p| %>
+              <%= link_to role_person_path(p.id), method: :post do %>
+                <div class="img-input" style="float: left;">
+                  <%= image_tag s3_image(p.avatar) %>
+                  <%= Company.find(p.company_id).name %>
+                  <div style="font-size: 12px; color: darkgrey; margin-top: 5px;">
+                    <%if (p.role.to_i & Client::Role::CLIENT) > 0 %>
+                      - Клиент
+                    <%end %>
+                    <% work = Work.where people_id: p.id %>
+                    <% work.each do |w| %>
+                      - <%= t('position_work.' + w.position_work) %>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
 
-    <%=render 'shared/authorization_fields'%>
+        <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
+        <% work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator' %>
+        <% if work_director.present? %>
+          <div class="days-subs">356 дн.</div>
+        <% end %>
+
+
+        <% if work_director.present? or work_administrator.present? %>
+          <div class="btn-show-list">
+            <div class="btn-add-home">+Добавить</div>
+            <div class="panel-show" style="width: 240px;">
+              <%= link_to new_company_record_path(@current_company.id) do %>
+                <img src="/images/group.png"><span>Группу</span>
+              <% end %>
+              <%= link_to new_company_client_path(@current_company.id) do %>
+                <img src="/images/user.png"><span>Клиента</span>
+              <% end %>
+              <%= link_to new_company_worker_path(@current_company.id) do %>
+                <img src="/images/teacher.png"><span>Сотрудника</span>
+              <% end %>
+              <%= link_to new_company_affiliate_path(@current_company.id) do %>
+                <img src="/images/list.png"><span>Филиал</span>
+              <% end %>
+              <%= link_to new_company_service_path(@current_company.id) do %>
+                <img src="/images/workflow.png"><span>Услугу</span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+
+      <% end %>
+      <%if flash[:notice].present?%>
+        <div class="message">
+          <%= flash[:notice].html_safe %>
+          <%=flash[:alert]%>
+          <%=flash[:danger]%>
+        </div>
+      <%end%>
+    </div>
 
     <% render 'layouts/open_tabs' %>
 
-    <%if signed_in?%>
+    <%if signed_in? and current_user.people_id %>
       <div class="current-object">
-        <%= image_tag s3_image(current_user.avatar), class: 'object-avatar' %>
+        <% client = Client.find current_user.people_id %>
+        <%=link_to persons_profile_path do %>
+          <%= image_tag s3_image(current_user.avatar), class: 'object-avatar' %>
+        <% end %>
         <div class="object-info">
           <span class="name-people"><%="#{current_user.first_name} #{current_user.last_name}"%></span>
-          <%= link_to 'Владелец', edit_user_registration_path, class: "roles-people" %>
+          <span class="roles-people"><%= corrent_role(client.role, '', ' ') %></span>
         </div>
         <%= link_to 'выход', destroy_user_session_path, method: :delete, class: "sign-out" %>
       </div>
@@ -75,7 +145,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         <div>Оставить отзыв</div>
         <div>Помощь по бизнесу</div>
       </div>
-      <div class="copyright">© 2016 - 2018 Dreambox™</div>
+      <div class="copyright">© 2016 - 2018 Dreambox™ alpha</div>
     </div>
   
     <div class="back-background"></div>

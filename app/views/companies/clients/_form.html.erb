@@ -1,5 +1,7 @@
-<%= form_with(model: [client.company, client], local: true, id: 'main-form',
-              data: { 'form-data' => @s3_direct_post.fields, 'url' => @s3_direct_post.url, 'host' => URI.parse(@s3_direct_post.url).host }) do |form| %>
+<%= form_for(client, url: [client.company, client], local: true, html: {id: 'main-form'}, data: { 'form-data' => @s3_direct_post.fields, 'url' => @s3_direct_post.url, 'host' => URI.parse(@s3_direct_post.url).host }) do |form| %>
+
+
+
   <div class="conten-card">
 <!-- 
 <a id="btn-camera-on">Сделать снимок</a>
@@ -34,7 +36,7 @@
             <input id="client_avatar" type="file" style="display: none;">
             <%=form.hidden_field :avatar, id: 'client_avatar_field', value: client.avatar%>
           </div>
-          <%= image_tag s3_image(@client.avatar), class: 'people-avatar' %>
+          <%= image_tag s3_image(client.avatar), class: 'people-avatar' %>
         </div>
         <div class="finput">
           <%= form.label t('.last_name'), class: 'finput-label' %>
@@ -63,7 +65,46 @@
           <%= form.label t('.phone_number'), class: 'finput-label' %>
           <%= form.telephone_field :phone_number, id: :client_phone_number, class: "finput-input" %>
         </div>
+<<<<<<< HEAD
+
+=======
+>>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
       </div>
+
+
+      <% if @blocks_clients.present? %>
+        <% @blocks_clients.each do |b| %>
+          <% fields_block = @field_templates_clients.where(block_id: b.id) %>
+              <% if fields_block.present? %>
+          <div class="block-information">
+            <h3><%= b.name %></h3>
+            <div class="container-info compact">
+                <% fields_block.each do |ft| %>
+                  <%= form.fields_for :field_data do |field_value_form| %>
+                    <%= field_value_form.hidden_field :id %>
+                    <%= field_value_form.hidden_field :field_id, value: ft.id %>
+                    <div class="finput">
+                      <%= field_value_form.label ft.name, class: 'finput-label' %>
+
+                      <% if ft.field_type == 'text' %>
+                        <%= field_value_form.text_field :value, class: "finput-input" %>
+                      <% elsif ft.field_type == 'date' %>
+                        <%= field_value_form.date_field :value, class: "finput-input" %>
+                      <% elsif ft.field_type == 'number' %>
+                        <%= field_value_form.number_field :value, class: "finput-input" %>
+                      <% elsif ft.field_type == 'datetime' %>
+                        <%= field_value_form.datetime_field :value, class: "finput-input" %>
+                      <% end %>
+
+                    </div>
+                  <% end %>
+                <% end %>
+            </div>
+          </div>
+              <% end %>
+        <%end%>
+      <%end%>
+
     </div>
     <%= form.submit class: "btn icon-confirm" %>
   </div>

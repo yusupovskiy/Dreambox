@@ -1,24 +1,28 @@
 class Companies::RecordsController < ApplicationController
+  before_action :ensure_user_has_company
   before_action :set_record, only: [:show, :edit, :update, :destroy]
   before_action :set_company, only: [:index, :create, :show, :edit, :new]
+  before_action :set_people
+  before_action :set_company
+  before_action :set_access
 
   # GET /records
   # GET /records.json
   def index
     ids = @current_company.affiliates.select(:id)
     @records = Record.where(affiliate: ids)
-    @completed_records = @records.where("finished_at < ?", Date.today)
-    @no_completed_records = @records.where("finished_at > ?", Date.today)
+    @completed_records = @current_record.where("finished_at < ?", Date.today)
+    @no_completed_records = @current_record.where("finished_at > ?", Date.today)
 
   end
 
   # GET /records/1
   # GET /records/1.json
   def show
-    unless @record.affiliate.company_id == @current_company.id
-      return render html: "Record with id = #{@record.id} does not belong to you"
-    end
-    @services = Service.where(company_id: params[:company_id])
+    # unless @record.affiliate.company_id == @current_company.id
+    #   return render html: "Record with id = #{@record.id} does not belong to you"
+    # end
+    @services = Service.where(company_id: @current_company.id)
     @record_client = RecordClient.new(record_id: params[:id])
     @clients = Client.where(archive: false, company_id: @current_company.id)
     @records_clients = RecordClient.eager_load(:client).where(record_id: params[:id], is_active: true)
@@ -31,12 +35,12 @@ class Companies::RecordsController < ApplicationController
   # GET /records/new
   def new
     @record = Record.new
-    @services = Service.where(company_id: params[:company_id])
+    @services = Service.where(company_id: @current_company.id)
   end
 
   # GET /records/1/edit
   def edit
-    @services = Service.where(company_id: params[:company_id])
+    @services = Service.where(company_id: @current_company.id)
   end
 
   # POST /records
@@ -82,7 +86,7 @@ class Companies::RecordsController < ApplicationController
   def destroy
     @record.destroy
     respond_to do |format|
-      format.html { redirect_to company_records_path(params[:company_id]), notice: 'Record was successfully destroyed.' }
+      format.html { redirect_to company_records_path(@current_company.id), notice: 'Record was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
@@ -101,7 +105,7 @@ class Companies::RecordsController < ApplicationController
                 :record_type, :visit_type)
     end
     def set_company
-      @current_company = Company.find(params[:company_id])
-      render html: "Sorry, but the company with id = #{@current_company} is not yours" unless @current_company.user_id == current_user.id
+      current_client = Client.find current_user.people_id
+      @current_company = Company.find(current_client.company_id)
     end
 end

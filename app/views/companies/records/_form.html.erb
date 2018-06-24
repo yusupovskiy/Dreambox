@@ -1,4 +1,6 @@
 <%= form_with(url: [@current_company, record], model: record, local: true) do |form| %>
+      <%=form.hidden_field :record_type, value: :grouping %>
+      <%=form.hidden_field :visit_type, value: :one_time_abon %>
   <div class="conten-card">
     <div class="information-section">
       <div class="block-information">
@@ -11,6 +13,48 @@
       <div class="block-information">
         <h3>Настройка группы</h3>
 
+<<<<<<< HEAD
+<!--         <dfn data-info="Запись группы или индивидуально">
+          <div class="finput">
+            <%= form.label t('.record_type'), class: 'finput-label' %>
+            <%= form.select :record_type, options_for(Record.record_types, 'record_type'), {selected: record.record_type}, {class: "finput-input"}%>
+          </div>
+        </dfn>
+        <dfn data-info="Что необходимо для посещения">
+          <div class="finput">
+            <%= form.label t('.visit_type'), class: 'finput-label' %>
+            <%= form.select :visit_type, options_for(Record.visit_types, 'visit_type'), {selected: record.visit_type}, {class: "finput-input"}%>
+          </div>
+        </dfn> -->
+<!--         <dfn data-info="Количество мест в записи клиентов">
+          <div class="finput">
+            <%= form.label t('.total_clients'), class: 'finput-label' %>
+            <%= form.number_field :total_clients, class: "finput-input" %>
+          </div> -->
+        </dfn>
+        <dfn data-info="Дата, когда начнется запись">
+          <div class="finput">
+            <%= form.label t('.created_at'), class: 'finput-label' %>
+            <%= form.date_field :created_at, class: "finput-input", required: 'required', value: Date.today %>
+          </div>
+        </dfn>
+        <dfn data-info="Дата, когда подойдет время завешения записи">
+          <div class="finput">
+            <%= form.label t('.finished_at'), class: 'finput-label' %>
+            <%= form.date_field :finished_at, class: "finput-input", required: 'required'%>
+          </div>
+        </dfn>
+        <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
+        <% work = Work.where people_id: @current_people.id %>
+        <% work_salary = WorkSalary.where work_id: work %>
+               
+        <dfn data-info="Филиал, к которому относится запись">
+          <div class="finput">
+            <%= form.label t('.affiliate_id'), class: 'finput-label' %>
+            <%= form.select :affiliate_id, @current_company.affiliates.where(id: work_salary.select(:affiliate_id)).map{|a| [a.name, a.id]}, {}, {class: "finput-input"} %>
+          </div>
+        </dfn>
+=======
         <div class="finput">
           <%= form.label t('.record_type'), class: 'finput-label' %>
           <%= form.select :record_type, options_for(Record.record_types, 'record_type'), {selected: record.record_type}, {class: "finput-input"}%>
@@ -36,10 +80,33 @@
           <%= form.label t('.affiliate_id'), class: 'finput-label' %>
           <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]}, {}, {class: "finput-input"} %>
         </div>
+>>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
        
       </div>
       <div class="block-information">
         <h3>Настройка абонементов</h3>
+<<<<<<< HEAD
+        <dfn data-info="Тут задается количиство дней абонемента">
+          <div class="finput">
+            <%= form.label t('.abon_period'), class: 'finput-label' %>
+            <%= form.number_field :abon_period, class: "finput-input", value: "30", required: 'required' %>
+          </div>
+        </dfn>
+
+        <dfn data-info="Создает абонементы автоматически. ⚫ по завершению: создает абонемент после того, как у клиента закончится абонемент. ⚫ по календарю: создает абонемент с первого числа до конца месяца">
+          <div class="finput focus">
+            <%= form.label 'Автопродление абонемента*', class: 'finput-label' %>
+            <%= form.select :is_automatic, options_for(Record.is_automatics, 'is_automatic'), {selected: record.is_automatic}, {class: "finput-input"} %>
+          </div>
+        </dfn>
+
+<!--         <dfn data-info="Количество посещений за один проданный абонемент клиенту">
+          <div class="finput">
+            <%= form.label t('.total_visits'), class: 'finput-label' %>
+            <%= form.number_field :total_visits, class: "finput-input" %>
+          </div>
+        </dfn> -->
+=======
         <div class="finput">
           <%= form.label t('.abon_period'), class: 'finput-label' %>
           <%= form.number_field :abon_period, class: "finput-input", value: "30", required: 'required' %>
@@ -48,6 +115,7 @@
           <%= form.label t('.total_visits'), class: 'finput-label' %>
           <%= form.number_field :total_visits, class: "finput-input" %>
         </div>
+>>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
       </div>
     </div>
     <%= form.submit class: "btn icon-confirm btn-fix" %>

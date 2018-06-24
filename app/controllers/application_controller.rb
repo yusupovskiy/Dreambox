@@ -5,8 +5,11 @@ class ApplicationController < ActionController::Base
   before_action :store_user_location!, if: :storable_location?
   before_action :authenticate_user!
   before_action :set_locale
+  before_action :set_people
+  before_action :set_company
+  before_action :set_access
+  before_action :set_affiliate
   layout 'card'
-
 
   private
     # def current_user
@@ -44,11 +47,65 @@ class ApplicationController < ActionController::Base
       end
     end
     def ensure_user_has_company
-      redirect_to user_session_path, notice: t('devise.failure.unauthenticated') if current_user.nil?
-      @current_company = Company.find_by_id(params[:company_id])
-      redirect_to root_path, notice: t('company.not_yours') unless @current_company.user_id == @current_user.id
-      redirect_to new_company_path, notice: t('create_a_company_first') if @current_company.nil?
+      # redirect_to user_session_path, notice: t('devise.failure.unauthenticated') if current_user.nil?
+      # @current_company = Company.find_by_id(params[:company_id])
+      # redirect_to root_path, notice: t('company.not_yours') unless @current_company.user_id == @current_user.id
+      # redirect_to new_company_path, notice: t('create_a_company_first') if @current_company.nil?
     end
+    def set_company
+      if signed_in?
+        if @current_people.present?
+          @current_company = Company.find @current_people.company_id
+        else
+          return redirect_to persons_profile_path, notice: "Выберите компанию в вкладке"
+        end
+      end
+    end
+    def set_access
+      if signed_in?
+        work_director = Work.where people_id: @current_people.id, position_work: 'director'
+        work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator'
+
+        if work_director.present?
+          affiliates_company = Affiliate.where company_id: @current_company
+          @current_record = Record.where affiliate_id: affiliates_company
+        # elsif (@current_people.role.to_i & Client::Role::STUFF) > 0
+        elsif work_administrator.present?
+          client_work = Work.where people_id: @current_people.id
+          work_salary = WorkSalary.where work_id: client_work.select(:id)
+          @current_record = Record.where affiliate_id: work_salary.select(:affiliate_id)
+
+        elsif (@current_people.role.to_i & Client::Role::CLIENT) > 0
+          # unless company_client_url(@current_company.id, @current_people.id)
+          #   return redirect_to company_client_path(@current_company.id, @current_people.id), notice: ""
+          # end 
+          # unless request.original_url.split('/').last == 'profile'
+          #   return redirect_to persons_profile_path, notice: ""
+          # end 
+        end
+      end
+    end
+    def set_people
+      if signed_in?
+        @current_people = Client.find_by id: current_user.people_id
+      end
+    end
+    def set_affiliate
+      if signed_in?
+        work_director = Work.where people_id: @current_people.id, position_work: 'director'
+        work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator'
+
+        if work_director.present?
+          @current_affiliate = Affiliate.where company_id: @current_company
+
+        elsif work_administrator.present?
+          work = Work.where people_id: @current_people.id
+          work_salary = WorkSalary.where work_id: work
+          @current_affiliate = Affiliate.where id: work_salary, company_id: @current_company
+        end
+      end
+    end
+
     def set_locale
       I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first.presence || 'en'
     end

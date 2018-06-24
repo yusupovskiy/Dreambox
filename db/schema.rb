@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_15_171412) do
+ActiveRecord::Schema.define(version: 2018_07_02_104414) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 2018_06_15_171412) do
     t.boolean "archive", default: false, null: false
     t.integer "sex", null: false
     t.string "avatar"
+    t.integer "role"
     t.index ["company_id"], name: "index_clients_on_company_id"
     t.index ["user_id"], name: "index_clients_on_user_id"
   end
@@ -57,6 +58,25 @@ ActiveRecord::Schema.define(version: 2018_06_15_171412) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["record_client_id"], name: "index_discounts_on_record_client_id"
+  end
+
+  create_table "field_data", force: :cascade do |t|
+    t.string "value"
+    t.bigint "field_id", null: false
+    t.bigint "client_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_field_data_on_client_id"
+    t.index ["field_id"], name: "index_field_data_on_field_id"
+  end
+
+  create_table "field_templates", force: :cascade do |t|
+    t.string "name"
+    t.integer "block_id", null: false
+    t.string "field_type"
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "fin_operations", force: :cascade do |t|
@@ -85,6 +105,15 @@ ActiveRecord::Schema.define(version: 2018_06_15_171412) do
     t.index ["user_id"], name: "index_histories_on_user_id"
   end
 
+  create_table "info_blocks", force: :cascade do |t|
+    t.string "name"
+    t.string "model_object"
+    t.integer "company_id", null: false
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "records", force: :cascade do |t|
     t.string "name", null: false
     t.integer "abon_period"
@@ -96,6 +125,7 @@ ActiveRecord::Schema.define(version: 2018_06_15_171412) do
     t.datetime "updated_at", null: false
     t.integer "record_type", null: false
     t.integer "visit_type", null: false
+    t.string "is_automatic", default: "not", null: false
     t.index ["affiliate_id"], name: "index_records_on_affiliate_id"
   end
 
@@ -121,6 +151,17 @@ ActiveRecord::Schema.define(version: 2018_06_15_171412) do
     t.float "money_for_visit"
     t.index ["record_id"], name: "index_records_services_on_record_id"
     t.index ["service_id"], name: "index_records_services_on_service_id"
+  end
+
+  create_table "salaries", force: :cascade do |t|
+    t.date "start_at", null: false
+    t.date "finish_at", null: false
+    t.float "pay", null: false
+    t.bigint "work_id", null: false
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["work_id"], name: "index_salaries_on_work_id"
   end
 
   create_table "services", force: :cascade do |t|
@@ -168,9 +209,35 @@ ActiveRecord::Schema.define(version: 2018_06_15_171412) do
     t.string "unconfirmed_email"
     t.integer "role", default: 0, null: false
     t.string "avatar"
+    t.integer "people_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "work_salaries", force: :cascade do |t|
+    t.string "pay_status", default: "fixed"
+    t.float "pay_object", default: 0.0
+    t.boolean "is_active", default: true, null: false
+    t.integer "work_id", null: false
+    t.bigint "record_id"
+    t.bigint "affiliate_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["affiliate_id"], name: "index_work_salaries_on_affiliate_id"
+    t.index ["record_id"], name: "index_work_salaries_on_record_id"
+  end
+
+  create_table "works", force: :cascade do |t|
+    t.string "position_work", null: false
+    t.float "fixed_rate"
+    t.boolean "is_active", default: true
+    t.bigint "affiliate_id"
+    t.bigint "people_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["affiliate_id"], name: "index_works_on_affiliate_id"
+    t.index ["people_id"], name: "index_works_on_people_id"
   end
 
   add_foreign_key "affiliates", "companies"
@@ -186,4 +253,8 @@ ActiveRecord::Schema.define(version: 2018_06_15_171412) do
   add_foreign_key "records_services", "services"
   add_foreign_key "services", "companies"
   add_foreign_key "subscriptions", "records_clients", column: "record_client_id"
+  add_foreign_key "work_salaries", "affiliates"
+  add_foreign_key "work_salaries", "records"
+  add_foreign_key "works", "affiliates"
+  add_foreign_key "works", "clients", column: "people_id"
 end

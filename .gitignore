@@ -54,4 +54,3 @@ config/database.yml
 # Better would be to config your git, but just in case
 .idea
 .vscode
-
