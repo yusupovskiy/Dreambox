@@ -5,6 +5,7 @@ class Companies::ClientsController < ApplicationController
   before_action :set_people
   before_action :set_company
   before_action :set_access
+  before_action :set_affiliate
   before_action :set_record_client
   before_action :set_client, only: [:show, :edit, :update, :destroy, :archive]
 
@@ -15,7 +16,6 @@ class Companies::ClientsController < ApplicationController
     @clients = @people.where("(role & #{Client::Role::CLIENT}) != 0")
     @no_archive_clients = @clients.where(archive: false)
     @archive_clients = @clients.where(archive: true)
-<<<<<<< HEAD
     
     affiliates = Affiliate.where(company_id: @current_company.id)
     @records = Record.where(affiliate: affiliates)
@@ -23,21 +23,6 @@ class Companies::ClientsController < ApplicationController
     @current_clients = @no_archive_clients.where(id: 
       RecordClient.where(is_active: :true, record_id: 
         current_record.select('id')).select('client_id'))
-=======
-    @current_clients = @no_archive_clients.where(id: RecordClient.where(is_active: :true).select('client_id'))
-
-    @debt_clients = @clients.where(
-      id: RecordClient.where(
-        id: Subscription.select('record_client_id')
-
-      ).select('client_id'))
-
-    # @subscription_payments = FinOperation.where(operation_type: 1, is_active: true).
-    #   group("operation_object_id, operation_type").
-    #   select("operation_object_id, sum(amount) as amount").
-    #   order("operation_object_id")
-
->>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
 
     unpaid_subscriptions = Subscription.find_by_sql("
       SELECT subscriptions.id
@@ -67,14 +52,10 @@ class Companies::ClientsController < ApplicationController
     if @client.present?
       # если пустое, то редиректить и писать что нет такого человека в компании
 
-<<<<<<< HEAD
       @affiliates = Affiliate.where(company_id: @current_company.id)
       @records = Record.where(affiliate: @affiliates)
       @records_clients = RecordClient.where(record_id: @records)
       @records_client = RecordClient.where(client_id: params[:id], id: @current_record_client)
-=======
-    @no_records_client = @records.where.not(id: @records_clients.where(client_id: @client.id, is_active: :true).select('record_id'))
->>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
 
       current_record = @current_record.where("finished_at > ?", Date.today)
       @no_records_client = current_record.where.not(id: @records_clients.where(client_id: @client.id, is_active: :true).select('record_id'))

@@ -41,7 +41,7 @@ select rc.*, c.archive, r.total_visits, r.finished_at from (
     inner join records r on rc.record_id = r.id
     inner join clients c on rc.client_id = c.id
 where rn = 1 and finish_at = '#{date_of_last_day_of_previous_month}' and rc.is_active = true 
-      and r.finished_at > '#{Date.today}' and c.archive = false
+      and r.finished_at > '#{Date.today}' and c.archive = false AND r.is_automatic = 'calendar'
 SQL
 
     start_at = date_of_last_day_of_previous_month + 1.day
@@ -54,12 +54,20 @@ SQL
       price_correction = Discount.where(record_client_id: rc['id']).sum(:value)
       price = price_service + price_correction
 
-      Subscription.create!({
+      subs = Subscription.new({
         start_at: start_at,
         finish_at: finish_at,
         visits: rc['total_visits'],
         record_client_id: rc['id'],
         price: price,
+      })
+      subs.save
+      History.create!({
+        object_log: 'subscription', 
+        object_id: subs.id, 
+        type_history: 'auto_create', 
+        note: 'Автоматическое создание абонемента', 
+        user_id: 0
       })
     end
     render plain: "#{rows.size} subscriptions were created"

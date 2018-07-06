@@ -987,15 +987,14 @@ a {
 }
 .message, #error_explanation {
     background-color: white;
-    font-size: 14px;
-    border-radius: 0 20px 20px 20px;
+    font-size: 15px;
+    border-radius: 0 15px 15px 15px;
     position: fixed;
     left: 30px;
     z-index: 4;
     top: 100px;
     max-width: 190px;
     padding: 10px 20px;
-<<<<<<< HEAD
     overflow: hidden;
     color: #171717;
 }
@@ -1013,8 +1012,6 @@ a {
 }
 .not-completed {
     background-color: #ff7375;
-=======
->>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
 }
 .card-search {
     font-size: 18px;
@@ -1473,7 +1470,6 @@ input.input-attachment {
 
 .icon-back {
     background-image: url(/images/back.png);
-<<<<<<< HEAD
 }
 .show-content {
     text-transform: uppercase;
@@ -1525,6 +1521,4 @@ input.input-attachment {
 }
 .mini:hover {
     z-index: 9;
-=======
->>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
 }

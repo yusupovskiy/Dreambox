@@ -2,42 +2,56 @@ class Companies::HistoriesController < ApplicationController
   def create
     @history = History.new(params.require(:history).permit(:object_log, :object_id, :type_history, :note))
     @history.user_id = current_user.id
-    subsctiption_history = Subscription.find(@history.object_id)
+
+    if @history.object_log == 'subscription'
+      subsctiption_history = Subscription.find(@history.object_id)
+    end
 
     respond_to do |format|
       if @history.type_history == 'recalculation'
         conversion_amount = params[:history][:conversion_amount]
-        if conversion_amount != nil and @history.note != ''
-          @history.note = "Сумма перерасчета #{conversion_amount} ₽ | Причина: " + @history.note
-          if @history.save 
-            subsctiption_history.update_attribute(:price, conversion_amount)
-            format.html { redirect_to request.referer, notice: "Перерасчет на сумму #{conversion_amount} ₽ произведен" }
-            format.json { render :show, status: :created, location: @history } 
-          else
-            format.html { redirect_to request.referer, notice: 'Внимание! Перерасчет не произведен' }
-            format.json { render json: @history.errors, status: :unprocessable_entity }
-          end
+
+        subscription = Subscription.find(@history.object_id)
+        subscription_payments = FinOperation.where("is_active = true AND operation_type = 1 AND operation_object_id IN (?)", subscription.id).sum(:amount)
+
+      
+        if conversion_amount.to_i <= 0
+          format.html { redirect_to request.referer, notice: t('not_completed') + '<hr class=\"status-complet not-completed\" />Для перерасчета необходимо указать число больше нуля' }
+        elsif subscription_payments > conversion_amount.to_i
+          format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Перерасчет не может быть произведен, так как оплаты за абонемент превышают сумму перерасчета.<br /><br />Вы можете отмените недействительные оплаты и попробовать еще раз сделать перерасчет' }
         else
-          format.html { redirect_to request.referer, notice: 'Внимание! Для перерасчета необходимо заполнить все поля' }
+          if conversion_amount != nil and @history.note != ''
+            @history.note = "Сумма перерасчета #{conversion_amount} ₽ | Причина: " + @history.note
+            if @history.save 
+              subsctiption_history.update_attribute(:price, conversion_amount)
+              format.html { redirect_to request.referer, notice: "<hr class=\"status-complet completed\" />Перерасчет на сумму #{conversion_amount} ₽ произведен" }
+              format.json { render :show, status: :created, location: @history } 
+            else
+              format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Перерасчет не произведен' }
+              format.json { render json: @history.errors, status: :unprocessable_entity }
+            end
+          else
+            format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Для перерасчета необходимо заполнить все поля' }
+          end
         end
       elsif @history.type_history == 'cancel'
         if @history.object_log == 'subscription'
           if @history.note != '' 
-            if Date.today <= subsctiption_history.finish_at
+            # if Date.today <= subsctiption_history.finish_at
               @history.note = "Отмена абонемента | Причина: " + @history.note
               if subsctiption_history.is_active == true and @history.save 
                 subsctiption_history.update_attribute(:is_active, false)
-                format.html { redirect_to request.referer, notice: "Отмена абонемента произведена" }
+                format.html { redirect_to request.referer, notice: "<hr class=\"status-complet completed\" />Отмена абонемента произведена" }
                 format.json { render :show, status: :created, location: @history } 
               else
-                format.html { redirect_to request.referer, notice: 'Внимание! Отмена абонемента не произведена' }
+                format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Отмена абонемента не произведена' }
                 format.json { render json: @history.errors, status: :unprocessable_entity }
               end
-            else
-              format.html { redirect_to request.referer, notice: 'Внимание! Нельзя отменять абонементы с истекшим сроком' }
-            end
+            # else
+            #   format.html { redirect_to request.referer, notice: 'Внимание! Нельзя отменять абонементы с истекшим сроком' }
+            # end
           else
-            format.html { redirect_to request.referer, notice: 'Внимание! Для отмены необходимо указать причину' }
+            format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Для отмены необходимо указать причину' }
           end
         elsif @history.object_log == 'fin_operation'
           fin_operation_history = FinOperation.find(@history.object_id)
@@ -45,14 +59,14 @@ class Companies::HistoriesController < ApplicationController
               @history.note = "Отмена финансовой операции | Причина: " + @history.note
               if fin_operation_history.is_active == true and @history.save
                 fin_operation_history.update_attribute(:is_active, false)
-                format.html { redirect_to request.referer, notice: "Отмена финансовой операции произведена" }
+                format.html { redirect_to request.referer, notice: "<hr class=\"status-complet completed\" />Отмена финансовой операции произведена" }
                 format.json { render :show, status: :created, location: @history }
               else
-                format.html { redirect_to request.referer, notice: 'Внимание! Отмена финансовой операции не произведена' }
+                format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Отмена финансовой операции не произведена' }
                 format.json { render json: @history.errors, status: :unprocessable_entity }
               end
           else
-            format.html { redirect_to request.referer, notice: 'Внимание! Для отмены необходимо указать причину' }
+            format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Для отмены необходимо указать причину' }
           end
         end
       elsif @history.type_history == 'renewal'
@@ -68,21 +82,21 @@ class Companies::HistoriesController < ApplicationController
             if reserved_time
               if @history.save 
                 subsctiption_history.update_attribute(:finish_at, modified_date)
-                format.html { redirect_to request.referer, notice: "Продление абонемента произведено" }
+                format.html { redirect_to request.referer, notice: "<hr class=\"status-complet completed\" />Продление абонемента произведено" }
                 format.json { render :show, status: :created, location: @history } 
               else
-                format.html { redirect_to request.referer, notice: 'Внимание! Продление абонемента не произведено' }
+                format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Продление абонемента не произведено' }
                 format.json { render json: @history.errors, status: :unprocessable_entity }
               end
             else
-                format.html { redirect_to request.referer, notice: 'Внимание! На продливаемые дни уже существует абонемент' }
+                format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />На продливаемые дни уже существует абонемент' }
                 format.json { render json: @history.errors, status: :unprocessable_entity }
             end
           else
-            format.html { redirect_to request.referer, notice: 'Внимание! Для продления абонемента необходимо заполнить все поля' }
+            format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Для продления абонемента необходимо заполнить все поля' }
           end
         else
-            format.html { redirect_to request.referer, notice: 'Внимание! Нельзя продлевать абонементы с истекшим сроком' }
+            format.html { redirect_to request.referer, notice: '<hr class=\"status-complet not-completed\" />Нельзя продлевать абонементы с истекшим сроком' }
         end
       end
     end

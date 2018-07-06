@@ -50,7 +50,6 @@ class Companies::FinOperationsController < ApplicationController
     @fin_operation.operation_number = FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.nil? ? 0 : FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.operation_number 
     @fin_operation.operation_number = 1 + @fin_operation.operation_number.to_i
  
-<<<<<<< HEAD
     
     if @fin_operation.amount.to_i <= 0
       redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />Операция не произведена, необходимо указать сумму больше <span class=\"amount\">0.0 ₽</span>"      
@@ -69,14 +68,8 @@ class Companies::FinOperationsController < ApplicationController
       subscription = Subscription.find(@fin_operation.operation_object_id)
       subscription_payments = FinOperation.where("is_active = true AND operation_type = 1 AND operation_object_id IN (?)", subscription.id).sum(:amount)
       amount_payment = subscription.price - subscription_payments
-=======
-    if @fin_operation.operation_type = 1
-      subscription = Subscription.find(@fin_operation.operation_object_id)
->>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
       @fin_operation.description = "Оплата абонемента на период от #{subscription.start_at.strftime("%d %B %Y")} до #{subscription.finish_at.strftime("%d %B %Y")}"
-    end
 
-<<<<<<< HEAD
       if @fin_operation.amount > amount_payment
         redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />Вы внесли сумму больше чем необходимо заплатить за абонемент. Вам необходимо оплатить <span class=\"amount\">#{subscription.price - subscription_payments} ₽</span> вместо <span class=\"amount\">#{@fin_operation.amount} ₽</span>"
       elsif @fin_operation.save
@@ -84,14 +77,6 @@ class Companies::FinOperationsController < ApplicationController
       else
         render :new
       end
-=======
-    if @fin_operation.amount.to_i == 0
-      redirect_to request.referer, notice: "Оплата не создана, необходимо указать сумму больше <span class=\"amount\">0.0 ₽</span>"      
-    elsif @fin_operation.save
-      redirect_to request.referer, notice: "Финансовая операция <a href=\"#{company_fin_operation_path(params[:company_id], @fin_operation.id)}\" class=\"link-style\" style=\"text-transform: lowercase;\">#{t('operation_type.' + @fin_operation.operation_type)}</a> на сумму <span class=\"amount\">#{@fin_operation.amount} ₽</span> произведена"
-    else
-      render :new
->>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
     end
 
   end

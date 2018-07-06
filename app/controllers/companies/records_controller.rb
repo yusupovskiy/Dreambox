@@ -5,6 +5,7 @@ class Companies::RecordsController < ApplicationController
   before_action :set_people
   before_action :set_company
   before_action :set_access
+  before_action :set_affiliate
 
   # GET /records
   # GET /records.json
@@ -26,6 +27,7 @@ class Companies::RecordsController < ApplicationController
     @record_client = RecordClient.new(record_id: params[:id])
     @clients = Client.where(archive: false, company_id: @current_company.id)
     @records_clients = RecordClient.eager_load(:client).where(record_id: params[:id], is_active: true)
+    @potential_clients = @clients.where.not(id: @records_clients.where(is_active: true).select('client_id'))
     @subscription = Subscription.new
 
 
@@ -58,7 +60,7 @@ class Companies::RecordsController < ApplicationController
 
     respond_to do |format|
       if @record.save
-        format.html { redirect_to [@record.affiliate.company, @record], notice: 'Запись была успешно создана.' }
+        format.html { redirect_to [@record.affiliate.company, @record], notice: "<hr class=\"status-complet completed\" />Запись была успешно создана" }
         format.json { render :show, status: :created, location: @record }
       else
         format.html { render :new }
@@ -72,7 +74,7 @@ class Companies::RecordsController < ApplicationController
   def update
     respond_to do |format|
       if @record.update(record_params)
-        format.html { redirect_to [@record.affiliate.company, @record], notice: 'Запись была успешно обновлена.' }
+        format.html { redirect_to [@record.affiliate.company, @record], notice: "<hr class=\"status-complet completed\" />Запись была успешно обновлена" }
         format.json { render :show, status: :ok, location: @record }
       else
         format.html { render :edit }
@@ -102,7 +104,7 @@ class Companies::RecordsController < ApplicationController
       params.require(:record)
         .permit(:name, :abon_period, :total_clients, :total_visits,
                 :created_at, :finished_at, :affiliate_id,
-                :record_type, :visit_type)
+                :record_type, :visit_type, :is_automatic)
     end
     def set_company
       current_client = Client.find current_user.people_id

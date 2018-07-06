@@ -85,11 +85,6 @@ class ApplicationController < ActionController::Base
         end
       end
     end
-    def set_people
-      if signed_in?
-        @current_people = Client.find_by id: current_user.people_id
-      end
-    end
     def set_affiliate
       if signed_in?
         work_director = Work.where people_id: @current_people.id, position_work: 'director'
@@ -103,6 +98,11 @@ class ApplicationController < ActionController::Base
           work_salary = WorkSalary.where work_id: work
           @current_affiliate = Affiliate.where id: work_salary, company_id: @current_company
         end
+      end
+    end
+    def set_people
+      if signed_in?
+        @current_people = Client.find_by id: current_user.people_id
       end
     end
 

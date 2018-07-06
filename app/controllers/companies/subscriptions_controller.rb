@@ -44,6 +44,17 @@ class Companies::SubscriptionsController < ApplicationController
   def create
     @subscription = Subscription.new(subscription_params)
     rc = RecordClient.eager_load(:record).find @subscription.record_client_id
+    r = Record.find rc.record_id
+    amount = params[:subscription][:amount].to_f
+    # conversion_amount = params[:subscription][:conversion_amount].to_f
+    # note = params[:subscription][:note]
+
+    # if conversion_amount > 0 note == ""
+    #   @subscription.price = conversion_amount
+    #   conversion_amount_notice = "<br /><br />Вы сделали перерасчет, стоимость абонемента теперь <span class=\"amount\">#{@subscription.price} ₽</span>"
+    # else
+    #   conversion_amount_notice = ""
+    # end
 
     if @subscription.finish_at.nil?
       @subscription.finish_at = @subscription.start_at + rc.record.abon_period.days
@@ -69,19 +80,18 @@ class Companies::SubscriptionsController < ApplicationController
       in_archive_whether_client = Client.where(id: rc.client_id, archive: false).count.zero?
 
       if has_record_expired
-        format.html { redirect_to request.referer, notice: "Внимание! В завершенной записи нельзя продавать абонементы" }  # from records/:id
+        format.html { redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />В завершенной записи нельзя продавать абонементы" }  # from records/:id
         format.json { render :show, status: :created, location: @subscription }
       elsif price_services.count.zero? or price_services.sum(:money_for_abon) == 0
-        format.html { redirect_to request.referer, notice: "Внимание! Перед продажей абонемента необходимо в записи добавить услугу, либо указать стоимость услуги больше нуля" }  # from records/:id
+        format.html { redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />Перед продажей абонемента необходимо в записи добавить услугу, либо указать стоимость услуги больше нуля" }  # from records/:id
         format.json { render :show, status: :created, location: @subscription }
       elsif in_archive_whether_client
-        format.html { redirect_to request.referer, notice: "Внимание! Данному клиенту нельзя продавать абонементы, так как он в архиве" }  # from records/:id
+        format.html { redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />Данному клиенту нельзя продавать абонементы, так как он в архиве" }  # from records/:id
         format.json { render :show, status: :created, location: @subscription }
       elsif rc.is_active == false
-        format.html { redirect_to request.referer, notice: "Внимание! Невозможно продать абонемент, так как клиент отписан от данной записи" }  # from records/:id
+        format.html { redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />Невозможно продать абонемент, так как клиент отписан от данной записи" }  # from records/:id
         format.json { render :show, status: :created, location: @subscription }
       elsif no_subscriptions_in_that_range and @subscription.save
-<<<<<<< HEAD
         if amount <= 0
           amount_notice = "<br /><br />- Оплата не произведена, так как вы ввели ноль"
         elsif amount > @subscription.price
@@ -103,10 +113,6 @@ class Companies::SubscriptionsController < ApplicationController
         end
         # format.html { redirect_to params[:return_url] }
         format.html { redirect_to request.referer, notice: "<hr class=\"status-complet completed\" />Вы продали <a href=\"#{company_subscription_path(@current_company.id, @subscription.id)}\" class=\"link-style\">абонемент</a> на период от #{@subscription.start_at.strftime("%d %b %Y")} до #{@subscription.finish_at.strftime("%d %b %Y")}" + amount_notice }  # from records/:id
-=======
-        # format.html { redirect_to params[:return_url] }
-        format.html { redirect_to request.referer, notice: "Вы продали <a href=\"#{company_subscription_path(params[:company_id], @subscription.id)}\" class=\"link-style\">абонемент</a> на период от #{@subscription.start_at.strftime("%d %b %Y")} до #{@subscription.finish_at.strftime("%d %b %Y")}" }  # from records/:id
->>>>>>> parent of 2d6a41a... Добавлена возможность делать оплату при создании абонемента, при автоматическом создании календарных абонементов создается лог
         format.json { render :show, status: :created, location: @subscription } 
       else
         notice = no_subscriptions_in_that_range ? nil : t(:reserved_range_for_subscription)
