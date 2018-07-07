@@ -2,31 +2,38 @@
 <div class="btns-card">
   <a href="/" title="Закрыть" class="btn-card icon-closed-card"></a>
   <a href="/" title="На главную" class="btn-card icon-home"></a>
-  <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div>
+  <!-- <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div> -->
 </div>
 
-<div class="panel-sorting">
+<!-- <div class="panel-sorting">
   Сортировка списка
-</div>
-<input class="card-search" type="text" placeholder="Поиск услуг...">
+</div> -->
+<!-- <input class="card-search" type="text" placeholder="Поиск услуг..."> -->
 
 <div class="conten-card">
-  <div class="menu-with-options">
-    <div class="option active">Все услуги 2</div>
-  </div>
-  <a class="btn icon-plus" href="<%=new_company_service_path%>"></a>
-  <div class="cont-category-book">
-    <div class="tab-category information-section">
-      <% @services.each do |service| %>
-        <%= link_to [service.company, service], class: "item-card" do %>
-            <div class="left-content">
-              <div class="name-content"><%=service.name%></div>
-              <span class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount debt">1 140 000 ₽</span><span style="margin: 0 2px;">из</span><span class="amount">1 441 000 ₽</span></span>
-            </div>
-            <div class="right-content">
-            </div>
-          <%end %>
-      <%end%>
+  <% if @services.present? %>
+    <div class="menu-with-options">
+      <div class="option active">Все услуги <%= @services.size %></div>
     </div>
-  </div>
+    <div class="cont-category-book">
+      <div class="tab-category information-section">
+        <% @services.each do |service| %>
+          <%= link_to [service.company, service], class: "item-card" do %>
+              <div class="left-content">
+                <div class="name-content"><%=service.name%></div>
+                <span class="debt-for-course"><span style="margin-right: 4px;">Текущий месяц</span> <span class="amount debt">1 140 000 ₽</span><span style="margin: 0 2px;">из</span><span class="amount">1 441 000 ₽</span></span>
+              </div>
+              <div class="right-content">
+              </div>
+            <%end %>
+        <%end%>
+      </div>
+    </div>
+  <% else %>
+    <div class="loading-block">
+      <div>
+        <div>Нет услуг</div>
+      </div>
+    </div>
+  <% end %>
 </div>

@@ -32,47 +32,60 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
   </head>
 
   <body data-params="<%=params.to_json%>" class="home">
-
-    <div class="active-company">
-      <% if signed_in? %>
+<div class="active-company">
+      <% if signed_in? and Client.exists? id: current_user.people_id %>
         <div class="btn-show-list">
           <div class="name-company"><%= @current_company.name %></div>
 
-          <div class="panel-show" style="width: 240px;">
-            <%= link_to '+Добавить новою компанию', new_company_path, class: "add-discount" %>
+          <div class="panel-show" style="width: 260px;">
             <div style="background-color: #e6eaed;">
-                <div class="img-input" style="float: left;">
-                  <%= image_tag s3_image(@current_people.avatar) %>
-                  <%= Company.find(@current_people.company_id).name %>
+                <div style="float: left;">
+                  <div style="font-size: 15px; font-weight: 600;"><%= Company.find(@current_people.company_id).name %></div>
+                  <div class="img-input" style="width: 100%; font-size: 13px;">
+                    <%= image_tag s3_image(@current_people.avatar), style: 'width: 10px; height: 10px; margin: 0 5px;' %>
+                    <%= @current_people.last_name %> <%= @current_people.first_name %>
+                  </div>
                   <div style="font-size: 12px; color: darkgrey; margin-top: 5px;">
+                    <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
+                    <% work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator' %>
+                    <%if work_director.present?%>
+                      - Директор
+                    <%end %>                    
+                    <%if work_administrator.present? %>
+                      - Администратор
+                    <%end %>
                     <%if (@current_people.role.to_i & Client::Role::CLIENT) > 0 %>
                       - Клиент
                     <%end %>
-                    <% work = Work.where people_id: @current_people.id %>
-                    <% work.each do |w| %>
-                      - <%= t('position_work.' + w.position_work) %>
-                    <% end %>
                   </div>
                 </div>
               </div>
             <% @people_user = Client.where(user_id: current_user.id).where.not(id: @current_people.id) %>
             <% @people_user.each do |p| %>
+              <% work_director = Work.where people_id: p.id, position_work: 'director' %>
+              <% work_administrator = Work.where people_id: p.id, position_work: 'administrator' %>
               <%= link_to role_person_path(p.id), method: :post do %>
-                <div class="img-input" style="float: left;">
-                  <%= image_tag s3_image(p.avatar) %>
-                  <%= Company.find(p.company_id).name %>
+                <div style="float: left;">
+                  <div style="font-size: 15px; font-weight: 600;"><%= Company.find(p.company_id).name %></div>
+                  <div class="img-input" style="width: 100%; font-size: 13px;">
+                    <%= image_tag s3_image(p.avatar), style: 'width: 10px; height: 10px; margin: 0 5px;' %>
+                    <%= p.last_name %> <%= p.first_name %>
+                  </div>
                   <div style="font-size: 12px; color: darkgrey; margin-top: 5px;">
+                    <%if work_director.present?%>
+                      - Директор
+                    <%end %>                    
+                    <%if work_administrator.present? %>
+                      - Администратор
+                    <%end %>
                     <%if (p.role.to_i & Client::Role::CLIENT) > 0 %>
                       - Клиент
                     <%end %>
-                    <% work = Work.where people_id: p.id %>
-                    <% work.each do |w| %>
-                      - <%= t('position_work.' + w.position_work) %>
-                    <% end %>
                   </div>
                 </div>
               <% end %>
             <% end %>
+            <%= link_to '+Добавить новою компанию', new_company_path, class: "add-discount" %>
           </div>
         </div>
 

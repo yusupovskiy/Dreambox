@@ -1,5 +1,8 @@
 class Companies::FinOperationsController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy]
+  before_action :set_people
   before_action :set_company
+  before_action :set_access
   before_action :set_affiliate
 
   def index
@@ -13,7 +16,7 @@ class Companies::FinOperationsController < ApplicationController
       affiliate_id IN (?))", 
       subscriptions.all.select('id'), 
       Client.where(company_id: @current_company.id).select('id'),
-      @current_affiliate.select(:id),
+      @current_affiliate,
       ).order("operation_date DESC")
   end
 

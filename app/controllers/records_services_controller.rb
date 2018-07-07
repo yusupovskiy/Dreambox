@@ -1,4 +1,5 @@
 class RecordsServicesController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy]
   before_action :record_service_params, only: :create
   layout false
 

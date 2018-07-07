@@ -1,7 +1,6 @@
 class Companies::SalariesController < ApplicationController
-  def show
-    
-  end
+  before_action :confirm_actions, only: [:create]
+  
   def create
     prms = params.require(:salary).permit(:start_at, :finish_at, 
       :work_id)

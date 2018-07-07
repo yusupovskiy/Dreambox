@@ -3,15 +3,19 @@ module ClientsHelper
     options_for(Client.sexes, 'sex')
   end
   def info_sub(id)
-    # subscription = Subscription.find_by(id: id)
-    # records_client_sub = @records_client.find(subscription.record_client_id)
-    # records_sub = @records.find(records_client_sub.record_id).name
-    # payments_subscription = FinOperation.where(operation_type: 1, is_active: true, operation_object_id: subscription.id).sum(:amount)
+    subscription = Subscription.find_by(id: id)
+    if @records_client.exists?(id: subscription.record_client_id)
+      records_client_sub = @records_client.find(subscription.record_client_id)
+      records_sub = Record.find(records_client_sub.record_id).name
+      payments_subscription = FinOperation.where(operation_type: 1, is_active: true, operation_object_id: subscription.id).sum(:amount)
 
-    # price_subscription = subscription.price - payments_subscription.to_f
+      price_subscription = subscription.price - payments_subscription.to_f
 
-   	# "#{price_subscription} ₽ | #{records_sub} | по #{subscription.start_at.strftime("%d %B %Y")} 
-   	# до #{subscription.finish_at.strftime("%d %B %Y")}"
+      "#{price_subscription} ₽ | #{records_sub} | по #{subscription.start_at.strftime("%d %B %Y")} 
+      до #{subscription.finish_at.strftime("%d %B %Y")}"
+    else
+      "Такого абонемента нет"
+    end
   end
   def email_user( id)
     if id.present?

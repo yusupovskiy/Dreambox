@@ -3,6 +3,7 @@ class PersonsController < ApplicationController
   
   def profile
   	@people_user = Client.where user_id: current_user.id
+    @company = Company.new
   end
 
   def new_profile

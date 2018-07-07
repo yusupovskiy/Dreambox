@@ -1,4 +1,5 @@
 class Companies::SubscriptionsController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy]
   before_action :set_subscription, only: [:show, :edit, :update, :destroy, :cancel]
 
   # GET /subscriptions
@@ -36,8 +37,8 @@ class Companies::SubscriptionsController < ApplicationController
   # end
 
   # GET /subscriptions/1/edit
-  def edit
-  end
+  # def edit
+  # end
 
   # POST /subscriptions
   # POST /subscriptions.json

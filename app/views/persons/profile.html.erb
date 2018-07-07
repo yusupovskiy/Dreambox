@@ -9,6 +9,7 @@
       <div class="panel-show">
         <%= link_to 'Назад', :back %>
         <%= link_to 'Редактировать', edit_user_registration_path %>
+        <%= link_to 'Выход', destroy_user_session_path, method: :delete %>
       </div>
     </div>
   </div>
@@ -33,9 +34,24 @@
       </div>
     </div>
     <div class="tab-category information-section">
+      <div class="show-and-hide-container">
+        <div class="btn-subs btn-show-panel">+ Добавить компанию</div>
+        <%= form_with(url: companies_path, model: @company, local: true, html: {class: 'block-information show-and-hide-panel'}) do |form| %>
+       
+          <div class="finput">
+            <%= form.label :name, class: 'finput-label' %>
+            <%= form.text_field :name, class: 'finput-input' %>
+          </div>
+          <div class="btns-confirm">
+            <%= form.submit class: 'btn icon-confirm' %>
+            <div class="btn btn-no btn-hide-panel"></div>
+          </div>
+        <%end%>
+      </div>
+
       <% if @people_user.present? %>
         <% @people_user.each do |p| %>
-            <%= link_to role_person_path(p.id), class: "item-card" do %>
+            <%= link_to role_person_path(p.id), method: :post, class: "item-card" do %>
               <div class="left-content">
                 <div class="name-content"><%= Company.find(p.company_id).name %></div>
                 <span class=""><%= corrent_role(p.role, '- ', ' ') %></span>

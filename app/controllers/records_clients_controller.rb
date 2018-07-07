@@ -1,4 +1,5 @@
 class RecordsClientsController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy]
 
   def create
     pms = record_client_params

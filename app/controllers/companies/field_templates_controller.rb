@@ -1,4 +1,5 @@
 class Companies::FieldTemplatesController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy]
   
   def create
     new_field_template = FieldTemplate.new(params.require(:field_template).permit(:name, :field_type, :block_id))

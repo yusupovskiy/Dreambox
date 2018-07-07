@@ -1,32 +1,37 @@
 <div class="title-panel avatar">
   <div class="btns-card">
-    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
-    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+    <% if Work.exists? people_id: @current_people.id, position_work: 'director' or Work.exists? people_id: @current_people.id, position_work: 'administrator' %>
+      <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+      <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+    <% end %>
     
     <div class="btn-card top-scroll"></div>
 
-    <div class="btn-card btn-show-list">
-      <div class="panel-show">
-        <%= link_to 'Назад', :back %>
-        <%= link_to 'Перейти в список', company_clients_path %>
-        <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
-        <%if @client.archive%>
-          <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>
-        <%else%>
-          <%= link_to 'Отправить в архив', company_clients_archive_path(params[:company_id], params[:id], 1), method: :post%>
-        <%end%>
-        <% if (@client.role.to_i & Client::Role::CLIENT) == 0 %>
-          <%= link_to 'Сделать клиентом', role_client_company_client_path(params[:company_id])%>
-        <% end %>
+    <% if Work.exists? people_id: @current_people.id, position_work: 'director' or Work.exists? people_id: @current_people.id, position_work: 'administrator' %>
+      <div class="btn-card btn-show-list">
+        <div class="panel-show">
 
-        <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
-        <% if work_director.present? and (@client.role.to_i & Client::Role::STUFF) == 0 %>
-          <%= link_to 'Сделать сотрудником', role_employee_company_client_path(params[:company_id])%>
-        <% end %>
+          <%= link_to 'Назад', :back %>
+          <%= link_to 'Перейти в список', company_clients_path %>
+          <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
+          <%if @client.archive%>
+            <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>
+          <%else%>
+            <%= link_to 'Отправить в архив', company_clients_archive_path(params[:company_id], params[:id], 1), method: :post%>
+          <%end%>
+          <% if (@client.role.to_i & Client::Role::CLIENT) == 0 %>
+            <%= link_to 'Сделать клиентом', role_client_company_client_path(params[:company_id])%>
+          <% end %>
 
-<!--         <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %> -->
+          <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
+          <% if work_director.present? and (@client.role.to_i & Client::Role::STUFF) == 0 %>
+            <%= link_to 'Сделать сотрудником', role_employee_company_client_path(params[:company_id])%>
+          <% end %>
+
+  <!--         <%= link_to 'Удалить', company_client_path(@current_company, @client), method: :delete, data: {confirm: 'Вы уверены, что хотите удалить клиента?'} %> -->
+        </div>
       </div>
-    </div>
+    <% end %>
   </div>
   <div class="img-card">
     <%if @client.archive%>

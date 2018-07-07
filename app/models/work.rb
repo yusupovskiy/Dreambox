@@ -7,5 +7,5 @@ class Work < ApplicationRecord
 
   # enum position_work: {administrator: 'administrator', director: 'director'}
 
-  validates :position_work, :affiliate_id, :people_id, presence: true
+  validates :position_work, :people_id, presence: true
 end

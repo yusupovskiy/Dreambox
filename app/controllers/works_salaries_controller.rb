@@ -1,7 +1,9 @@
 class WorksSalariesController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy]
   before_action :set_people
   before_action :set_company
   before_action :set_access
+  before_action :set_affiliate
   before_action :access_level
   
   def create

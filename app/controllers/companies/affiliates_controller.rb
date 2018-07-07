@@ -1,4 +1,5 @@
 class Companies::AffiliatesController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
   before_action :set_affiliate, only: [:show, :edit, :update, :destroy]
   before_action :set_company

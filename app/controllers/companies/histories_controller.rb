@@ -1,4 +1,5 @@
 class Companies::HistoriesController < ApplicationController
+  before_action :confirm_actions, only: [:create]
   def create
     @history = History.new(params.require(:history).permit(:object_log, :object_id, :type_history, :note))
     @history.user_id = current_user.id

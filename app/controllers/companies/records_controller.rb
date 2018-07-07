@@ -1,4 +1,5 @@
 class Companies::RecordsController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :ensure_user_has_company
   before_action :set_record, only: [:show, :edit, :update, :destroy]
   before_action :set_company, only: [:index, :create, :show, :edit, :new]
@@ -25,9 +26,13 @@ class Companies::RecordsController < ApplicationController
     # end
     @services = Service.where(company_id: @current_company.id)
     @record_client = RecordClient.new(record_id: params[:id])
-    @clients = Client.where(archive: false, company_id: @current_company.id)
-    @records_clients = RecordClient.eager_load(:client).where(record_id: params[:id], is_active: true)
-    @potential_clients = @clients.where.not(id: @records_clients.where(is_active: true).select('client_id'))
+    @clients = Client.where("(role & #{Client::Role::CLIENT}) != 0 
+      AND archive = false
+      AND company_id = #{@current_company.id}
+    ")
+    @records_clients = RecordClient.where(record_id: params[:id], is_active: true)
+
+    @potential_clients = @clients.where.not(id: @records_clients.select('client_id'))
     @subscription = Subscription.new
 
 

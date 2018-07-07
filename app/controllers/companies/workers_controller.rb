@@ -1,4 +1,5 @@
 class Companies::WorkersController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :set_company
   
   def index

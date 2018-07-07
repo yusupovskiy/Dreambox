@@ -52,60 +52,70 @@ class ApplicationController < ActionController::Base
       # redirect_to root_path, notice: t('company.not_yours') unless @current_company.user_id == @current_user.id
       # redirect_to new_company_path, notice: t('create_a_company_first') if @current_company.nil?
     end
+    def set_people
+      if signed_in?
+        if Client.exists? id: current_user.people_id and current_user.people_id.to_i != 0 and current_user.people_id != nil
+          @current_people = Client.find_by id: current_user.people_id
+        else
+          unless request.original_url.split('/')[3] == 'persons' or request.original_url.split('/').last == 'edit' or request.original_url.split('/').last == 'new' or request.original_url.split('/').last == 'sign_out'  or request.original_url.split('/').last == 'companies' 
+            return redirect_to persons_profile_path, notice: "Создайте или выберите компанию"
+          end
+        end
+      end
+    end
     def set_company
       if signed_in?
         if @current_people.present?
           @current_company = Company.find @current_people.company_id
         else
-          return redirect_to persons_profile_path, notice: "Выберите компанию в вкладке"
+          # return redirect_to persons_profile_path, notice: "Выберите компанию в вкладке"
         end
       end
     end
     def set_access
-      if signed_in?
-        work_director = Work.where people_id: @current_people.id, position_work: 'director'
-        work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator'
+      if signed_in? and Client.exists? user_id: current_user.id and current_user.people_id.to_i != 0
 
-        if work_director.present?
+        if Work.exists? people_id: @current_people.id, position_work: 'director'
           affiliates_company = Affiliate.where company_id: @current_company
           @current_record = Record.where affiliate_id: affiliates_company
         # elsif (@current_people.role.to_i & Client::Role::STUFF) > 0
-        elsif work_administrator.present?
+        elsif Work.exists? people_id: @current_people.id, position_work: 'administrator'
           client_work = Work.where people_id: @current_people.id
           work_salary = WorkSalary.where work_id: client_work.select(:id)
           @current_record = Record.where affiliate_id: work_salary.select(:affiliate_id)
 
         elsif (@current_people.role.to_i & Client::Role::CLIENT) > 0
-          # unless company_client_url(@current_company.id, @current_people.id)
-          #   return redirect_to company_client_path(@current_company.id, @current_people.id), notice: ""
-          # end 
-          # unless request.original_url.split('/').last == 'profile'
-          #   return redirect_to persons_profile_path, notice: ""
-          # end 
+          @current_record = Record.where(id: 0)
+          url = request.original_url.split('/')
+          unless url.last(2) == ["clients", "#{@current_people.id}"] or url[3] == 'persons' or url.last(2) == ["auth", "edit"] or url.last(2) == ["companies", "new"] or url.last == 'sign_out' or url.last == 'companies' 
+            return redirect_to company_client_path(1, @current_people.id)
+          end
         end
       end
     end
     def set_affiliate
-      if signed_in?
+      if signed_in? and Client.exists? user_id: current_user.id and current_user.people_id.to_i != 0
+
         work_director = Work.where people_id: @current_people.id, position_work: 'director'
         work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator'
 
-        if work_director.present?
-          @current_affiliate = Affiliate.where company_id: @current_company
+        if Work.exists? people_id: @current_people.id, position_work: 'director'
+          @current_affiliates = Affiliate.where company_id: @current_company
 
-        elsif work_administrator.present?
+        elsif Work.exists? people_id: @current_people.id, position_work: 'administrator'
           work = Work.where people_id: @current_people.id
           work_salary = WorkSalary.where work_id: work
-          @current_affiliate = Affiliate.where id: work_salary, company_id: @current_company
+          @current_affiliates = Affiliate.where id: work_salary, company_id: @current_company
+        else
+          @current_affiliates = Affiliate.where id: 0
         end
       end
     end
-    def set_people
-      if signed_in?
-        @current_people = Client.find_by id: current_user.people_id
+    def confirm_actions
+      unless Work.exists? people_id: @current_people.id, position_work: 'director' or Work.exists? people_id: @current_people.id, position_work: 'administrator'
+        return redirect_to request.referer, notice: "Для этого действия, у вас нет нужного уровня доступа"
       end
     end
-
     def set_locale
       I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first.presence || 'en'
     end

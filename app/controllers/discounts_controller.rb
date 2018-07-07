@@ -1,4 +1,5 @@
 class DiscountsController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy]
 
   def create
     discount = Discount.create! discount_params

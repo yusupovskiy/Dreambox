@@ -41,18 +41,23 @@ class CompaniesController < ApplicationController
     success_saving = ActiveRecord::Base.transaction do
       raise ActiveRecord::Rollback unless @company.save
       user = company_params[:user]
+
       people = Client.create(
-        first_name: user.first_name, last_name: user.last_name, company_id: @company.id, sex: 0, user_id: user.id)
-      people.role |= (Client::Role::COMPANY_OWNER).to_s(2).to_i + (Client::Role::STUFF).to_s(2).to_i
-      user.role |= User::Role::COMPANY_OWNER
+        first_name: user.first_name, last_name: user.last_name, 
+        company_id: @company.id, sex: 0, 
+        user_id: user.id, role: (Client::Role::STUFF).to_s(2).to_i)
+
       user.update_attribute(:people_id, people.id)
-      people.save!
+
+      Work.create(position_work: :director, people_id: people.id)
+
+      # user.role |= User::Role::COMPANY_OWNER
       user.save!
     end
 
     respond_to do |format|
       if success_saving
-        format.html { redirect_to @company, notice: t('company.created') }
+        format.html { redirect_to root_path, notice: t('company.created') }
         format.json { render :show, status: :created, location: @company }
       else
         format.html { render :new }
@@ -77,24 +82,15 @@ class CompaniesController < ApplicationController
 
   # DELETE /companies/1
   # DELETE /companies/1.json
-  def destroy
-    @company.destroy
-    respond_to do |format|
-      format.html { redirect_to companies_url, notice: t('company.destroyed') }
-      format.json { head :no_content }
-    end
-  end
+  # def destroy
+  #   @company.destroy
+  #   respond_to do |format|
+  #     format.html { redirect_to companies_url, notice: t('company.destroyed') }
+  #     format.json { head :no_content }
+  #   end
+  # end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_company
-      current_client = Client.find current_user.people_id
-      @current_company = Company.find(current_client.company_id)
-      # if @company.user_id != current_user.id
-      #   redirect_to companies_path, notice: t('company.not_yours')
-      # end
-    end
-
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_params
       params.require(:company).permit(:name).merge(user: current_user)

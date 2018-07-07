@@ -17,8 +17,8 @@
       </div>
     </dfn>
     <div class="finput">
-      <%= form.label t('.affiliate_id'), class: 'finput-label' %>
-      <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.name, a.id]}, {}, {class: "finput-input"} %>
+      <%= form.label 'Место работы', class: 'finput-label' %>
+      <%= form.select :affiliate_id, @current_company.affiliates.map{|a| [a.address, a.id]}, {}, {class: "finput-input"} %>
     </div>
     <div class="btns-confirm">
       <%= form.submit class: 'btn icon-confirm' %>
@@ -31,32 +31,33 @@
 
 <% if @works_client.present? %>
   <% @works_client.each do |w| %>
-    <% affiliate = Affiliate.find w.affiliate_id %>
+    <% affiliate = Affiliate.find_by id: w.affiliate_id %>
     <div id="work-<%= w.id%>" class="block-information entry parent-compact">
       <div class="title-entry"><%= t('position_work.' + w.position_work) %></div>
 <!--       <div class="btn-compact click-compact"><div></div></div> -->
 
-      <div class="service-entry">
-        <dfn data-info="Место работы"><%= affiliate.name %>
-        </dfn>
-      </div>
-      <span class="amount debt" style="margin-bottom: 10px; float: left; font-size: 13px; margin-top: -9px;"><%= w.fixed_rate %> ₽</span>
+      <% if affiliate.present? %>
+        <div class="service-entry">
+          <dfn data-info="Место работы"><%= affiliate.address %>
+          </dfn>
+        </div>
+      <% end %>
+      <% if w.fixed_rate.present? %>
+        <span class="amount debt" style="margin-bottom: 10px; float: left; font-size: 13px; margin-top: -9px;"><%= w.fixed_rate %> ₽</span>
+      <% end %>
 
 
 
       <div class="discount-entry show-and-hide-container">
-        <div class="title-discount">Доступ:</div>
+        <div class="title-discount">Доступная информация:</div>
 <%
 
-    client = Client.find current_user.people_id
-    company_user = Company.find client.company_id
-    affiliate_company_user = Affiliate.where company_id: company_user.id
-    company_work_salary = WorkSalary.where work_id: @works_client.select('id'), affiliate_id: affiliate_company_user.select('id')
+    affiliates_work_salary = WorkSalary.where work_id: @works_client.select('id'), affiliate_id: @current_affiliates.select('id')
 
 %>
         <% work_salary = WorkSalary.where(work_id: w.id) %>
-        <% affiliate_work = @affiliates.where(id: work_salary.select('affiliate_id')) %>
-        <% affiliate = @affiliates.where.not(id: company_work_salary.select('affiliate_id')) %>
+        <% affiliate_work = @current_affiliates.where(id: work_salary.select('affiliate_id')) %>
+        <% affiliate = @current_affiliates.where.not(id: affiliates_work_salary.select('affiliate_id')) %>
 
       <% if w.position_work != 'director' %>
         <%if affiliate_work.empty? %>

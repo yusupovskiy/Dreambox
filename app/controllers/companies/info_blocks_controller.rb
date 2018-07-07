@@ -1,4 +1,5 @@
 class Companies::InfoBlocksController < ApplicationController
+  before_action :confirm_actions, only: [:create]
 
   def create
     new_block = InfoBlock.new(params.require(:info_block).permit(:name, :model_object))

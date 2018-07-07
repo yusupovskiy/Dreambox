@@ -1,4 +1,5 @@
 class Companies::ServicesController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :set_companies_service, only: [:show, :edit, :update, :destroy]
   layout 'card'
 
