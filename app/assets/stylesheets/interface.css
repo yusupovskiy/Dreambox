@@ -1526,3 +1526,10 @@ input.input-attachment {
 .mini:hover {
     z-index: 9;
 }
+.name-company {
+    background-size: 8px 6px;
+    background-repeat: no-repeat;
+    background-image: url(/images/arrow-bottom.png);
+    padding-right: 15px;
+    background-position: right center;
+}

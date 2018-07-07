@@ -1,7 +1,10 @@
 class CompaniesController < ApplicationController
   before_action :ensure_current_user
-  before_action :ensure_company_owner_role, except: [:new, :create]
+  before_action :set_people
   before_action :set_company
+  before_action :set_access
+  before_action :set_affiliate
+  before_action :confirm_actions, except: [:new, :create]
   layout 'card'
 
   def add_field

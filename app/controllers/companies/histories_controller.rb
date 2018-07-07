@@ -1,4 +1,8 @@
 class Companies::HistoriesController < ApplicationController
+  before_action :set_people
+  before_action :set_company
+  before_action :set_access
+  before_action :set_affiliate
   before_action :confirm_actions, only: [:create]
   def create
     @history = History.new(params.require(:history).permit(:object_log, :object_id, :type_history, :note))

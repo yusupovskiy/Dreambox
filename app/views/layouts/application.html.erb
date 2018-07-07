@@ -34,8 +34,8 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
   <body data-params="<%=params.to_json%>" class="home">
 <div class="active-company">
       <% if signed_in? and Client.exists? id: current_user.people_id %>
-        <div class="btn-show-list">
-          <div class="name-company"><%= @current_company.name %></div>
+        <div class="btn-show-list" style="width: 100%; display: table;">
+          <div class="name-company" style="float: left;"><%= @current_company.name %></div>
 
           <div class="panel-show" style="width: 260px;">
             <div style="background-color: #e6eaed;">

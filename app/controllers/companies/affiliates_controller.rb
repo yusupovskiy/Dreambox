@@ -1,8 +1,10 @@
 class Companies::AffiliatesController < ApplicationController
+  before_action :set_people
+  before_action :set_company
+  before_action :set_access
+  before_action :set_affiliate
   before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
-  before_action :set_affiliate, only: [:show, :edit, :update, :destroy]
-  before_action :set_company
 
   # GET /affiliates
   # GET /affiliates.json
@@ -66,12 +68,6 @@ class Companies::AffiliatesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_affiliate
-      # @affiliate = Affiliate.where(company: current_user.company).find(params[:id])
-      @affiliate = Affiliate.find(params[:id])
-    end
-
     # Never trust parameters from the scary internet, only allow the white list through.
     def affiliate_params
       params.require(:affiliate)
