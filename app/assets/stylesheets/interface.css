@@ -1533,3 +1533,13 @@ input.input-attachment {
     padding-right: 15px;
     background-position: right center;
 }
+.show-container {
+    display: table;
+    width: 100%;
+}
+.show-container>.btn-show-panel {
+    display: none;
+}
+.show-container>.show-and-hide-panel {
+    display: block;
+}

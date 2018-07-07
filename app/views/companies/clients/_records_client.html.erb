@@ -137,10 +137,10 @@
 
 
 
-              <%=form_with url: company_subscriptions_path(params[:company_id]), model: @subscription,
+              <%=form_with url: company_subscriptions_path(@current_company), model: @subscription,
                 html: {class: 'panel-attachment show-and-hide-panel'} do |f|%>
                 <% autodata_subscription = autodata_subscription(rc) %>
-                <%=f.hidden_field :record_client_id, value: rc.id%>
+                <%=f.hidden_field :record_client_id, value: rc.id %>
     
                 <dfn data-info="<%= autodata_subscription[:message_start_date] %>">
                   <div class="finput">

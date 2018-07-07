@@ -49,7 +49,7 @@ class Companies::SubscriptionsController < ApplicationController
   def create
     @subscription = Subscription.new(subscription_params)
     rc = RecordClient.eager_load(:record).find @subscription.record_client_id
-    r = Record.find rc.record_id
+    r = @current_record.find rc.record_id
     amount = params[:subscription][:amount].to_f
     # conversion_amount = params[:subscription][:conversion_amount].to_f
     # note = params[:subscription][:note]
@@ -60,6 +60,7 @@ class Companies::SubscriptionsController < ApplicationController
     # else
     #   conversion_amount_notice = ""
     # end
+
 
     if @subscription.finish_at.nil?
       @subscription.finish_at = @subscription.start_at + rc.record.abon_period.days
@@ -84,6 +85,16 @@ class Companies::SubscriptionsController < ApplicationController
       price_services = RecordService.where(record_id: 4)
       in_archive_whether_client = Client.where(id: rc.client_id, archive: false).count.zero?
 
+      unless @subscription.price.to_i > 0
+        return redirect_to request.referer, 
+        notice: "<hr class=\"status-complet not-completed\" />Стоимость абонемента не может 
+        быть ниже или равное нулю"
+      end
+      unless RecordClient.exists? record_id: @current_record, id: @subscription.record_client_id, client_id: rc.client_id
+        return redirect_to request.referer, 
+        notice: "<hr class=\"status-complet not-completed\" />У клиента нет такой записи"
+      end
+
       if has_record_expired
         format.html { redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />В завершенной записи нельзя продавать абонементы" }  # from records/:id
         format.json { render :show, status: :created, location: @subscription }
@@ -98,7 +109,7 @@ class Companies::SubscriptionsController < ApplicationController
         format.json { render :show, status: :created, location: @subscription }
       elsif no_subscriptions_in_that_range and @subscription.save
         if amount <= 0
-          amount_notice = "<br /><br />- Оплата не произведена, так как вы ввели ноль"
+          amount_notice = ""
         elsif amount > @subscription.price
           amount_notice = "<br /><br />- Оплата не произведена, так как не может превышать стоимость абонемента"
         else

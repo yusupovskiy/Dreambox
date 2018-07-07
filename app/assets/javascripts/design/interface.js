@@ -156,23 +156,14 @@ document.addEventListener('turbolinks:load', function() {
     input.value && $(input).parents('.finput').addClass('focus')
   }
 
-  // show panel for the sale of a subscription
-  var btnTicketSale = $('.subscription-sale');
-  btnTicketSale.mouseup(function() {
-    $(this).parents('.item-element').children('.show-and-hide-panel').css('display', 'block');
-    $(this).parents('.panel-show').css('display', 'none');
-  });
-
-  // show and hide panel
+  // show panel
   var btnShowPanel = $('.btn-show-panel');
   btnShowPanel.click(function() {
-    $(this).parent('.show-and-hide-container').children('.show-and-hide-panel').css('display', 'block');
-    $(this).hide();
+    $(this).parents('.show-and-hide-container').addClass('show-container');
   });
   var btnHidePanel = $('.btn-hide-panel');
   btnHidePanel.click(function() {
-    $(this).parents('.show-and-hide-panel').hide();
-    $(this).parents('.show-and-hide-container').children('.btn-show-panel').show();
+    $(this).parents('.show-and-hide-container').removeClass('show-container');
   });
 
 

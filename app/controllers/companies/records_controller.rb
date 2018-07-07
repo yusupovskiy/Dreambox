@@ -23,8 +23,10 @@ class Companies::RecordsController < ApplicationController
     # unless @record.affiliate.company_id == @current_company.id
     #   return render html: "Record with id = #{@record.id} does not belong to you"
     # end
-    @services = Service.where(company_id: @current_company.id)
+    @subscription = Subscription.new
     @record_client = RecordClient.new(record_id: params[:id])
+    
+    @services = Service.where(company_id: @current_company.id)
     @clients = Client.where("(role & #{Client::Role::CLIENT}) != 0 
       AND archive = false
       AND company_id = #{@current_company.id}
@@ -32,7 +34,6 @@ class Companies::RecordsController < ApplicationController
     @records_clients = RecordClient.where(record_id: params[:id], is_active: true)
 
     @potential_clients = @clients.where.not(id: @records_clients.select('client_id'))
-    @subscription = Subscription.new
 
 
 

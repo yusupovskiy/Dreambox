@@ -34,7 +34,7 @@
 
 
 
-      <div id="records_services_part" data-record-id="<%=@record.id%>" class="block-information show-and-hide-container">
+      <div id="records_services_part" data-record-id="<%=@record.id%>" class="block-information">
         <h3><div class="icon-list"></div>Оказываемые услуги <span>{{recordsServices.length}}</span></h3>
         
         <div class="container-information compact">
@@ -51,28 +51,30 @@
           </div>
         </div>
 
-        <div class="add-discount btn-show-panel">+ Добавить</div>
-        <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+        <div class="show-and-hide-container">
+          <div class="add-discount btn-show-panel">+ Добавить</div>
+          <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
 
-        <div id="" class="panel-attachment show-and-hide-panel">
-          <div class="finput">
-            <label class="finput-label">Услуга</label>
-            <select class="finput-input" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
-              <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
-            </select>
-          </div>
-          <div class="finput">
-            <label class="finput-label">Цена за абонемент</label>
-            <input class="finput-input" type="number" v-model="moneyForAbon" min="0">
-          </div>
-          <div class="finput">
-            <label class="finput-label">Цена за посещение</label>
-            <input class="finput-input" type="number" v-model="moneyForVisit" min="0">
-          </div>
-          <div class="btns-confirm">
-            <a class="btn icon-plus" href="<%=new_company_service_path%>"></a>
-            <input class="btn icon-confirm" type="button" @click="attachService">
-            <div class="btn btn-no btn-hide-panel"></div>
+          <div id="" class="panel-attachment show-and-hide-panel">
+            <div class="finput">
+              <label class="finput-label">Услуга</label>
+              <select class="finput-input" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
+                <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
+              </select>
+            </div>
+            <div class="finput">
+              <label class="finput-label">Цена за абонемент</label>
+              <input class="finput-input" type="number" v-model="moneyForAbon" min="0">
+            </div>
+            <div class="finput">
+              <label class="finput-label">Цена за посещение</label>
+              <input class="finput-input" type="number" v-model="moneyForVisit" min="0">
+            </div>
+            <div class="btns-confirm">
+              <a class="btn icon-plus" href="<%=new_company_service_path%>"></a>
+              <input class="btn icon-confirm" type="button" @click="attachService">
+              <div class="btn btn-no btn-hide-panel"></div>
+            </div>
           </div>
         </div>
 
