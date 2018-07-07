@@ -16,10 +16,13 @@
       <%end%>
     <% else %>
       <div class="block-information show-and-hide-panel">
-        <div class="loading-block">
+        <div class="loading-block" style="height: 60px">
           <div>
-            <img src="/images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;">
-            <div>Нет записей<br /><br />или<br /><br />клиент уже записан на все</div>
+            <% unless @current_record.present? %>
+              <div>Нет записей</div>
+            <% else %>
+              <div>Уже записан на все</div>
+            <% end %>
           </div>
         </div>
         <div class="btns-confirm">

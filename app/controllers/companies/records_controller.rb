@@ -5,6 +5,7 @@ class Companies::RecordsController < ApplicationController
   before_action :set_affiliate
   before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :ensure_user_has_company
+  before_action :set_record, only: [:show]
 
   # GET /records
   # GET /records.json
@@ -98,9 +99,9 @@ class Companies::RecordsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    # def set_record
-    #   @record = Record.eager_load(:affiliate).find(params[:id])
-    # end
+    def set_record
+      @record = Record.eager_load(:affiliate).find(params[:id])
+    end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def record_params

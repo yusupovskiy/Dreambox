@@ -24,15 +24,18 @@ class Companies::ClientsController < ApplicationController
     unpaid_subscriptions = Subscription.find_by_sql("
       SELECT subscriptions.id
       FROM subscriptions
-      WHERE subscriptions.id NOT IN 
-      (SELECT operation_object_id
-            FROM (
-             SELECT operation_object_id, sum(amount) as total_amount
-             FROM fin_operations
-             WHERE operation_type = 1 AND is_active = true
-             GROUP BY operation_object_id, operation_type
-            ) AS results
-      WHERE total_amount >= price) AND subscriptions.is_active = true")
+      WHERE subscriptions.id NOT IN (
+        SELECT operation_object_id
+        FROM (
+          SELECT operation_object_id, sum(amount) as total_amount
+          FROM fin_operations
+          WHERE operation_type = 1 AND is_active = true
+          GROUP BY operation_object_id, operation_type)
+          AS results
+        WHERE total_amount >= price)
+      AND subscriptions.is_active = true
+      AND NOT price = 0
+    ")
     
     @clients_debtors = @people_clients.where(id: 
       RecordClient.where(id: 
