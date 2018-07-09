@@ -10,7 +10,7 @@ class Record < ApplicationRecord
 
   enum record_type: {grouping: 0}
   enum visit_type: {one_time_abon: 0}
-  enum is_automatic: {not_automatic: 'not', upon_completion_automatic: 'calendar_automatic', calendar_automatic: 'calendar'}
+  # enum is_automatic: {not_automatic: 'not', upon_completion_automatic: 'calendar_automatic', calendar_automatic: 'calendar'}
 
   validates :name, :record_type, :visit_type, :created_at, :finished_at, :abon_period, :affiliate_id, :is_automatic, presence: true
 end

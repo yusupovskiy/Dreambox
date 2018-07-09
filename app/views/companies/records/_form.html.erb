@@ -63,12 +63,7 @@
           </div>
         </dfn>
 
-        <dfn data-info="Создает абонементы автоматически. ⚫ по завершению: создает абонемент после того, как у клиента закончится абонемент. ⚫ по календарю: создает абонемент с первого числа до конца месяца">
-          <div class="finput focus">
-            <%= form.label 'Автопродление абонемента*', class: 'finput-label' %>
-            <%= form.select :is_automatic, options_for(Record.is_automatics, 'is_automatic'), {selected: record.is_automatic}, {class: "finput-input"} %>
-          </div>
-        </dfn>
+
 
 <!--         <dfn data-info="Количество посещений за один проданный абонемент клиенту">
           <div class="finput">
