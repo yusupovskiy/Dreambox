@@ -8,14 +8,15 @@ class Companies::WorkersController < ApplicationController
 
     @all_people = @clients
     @show_in_view = [@all_people]
-    render :template => 'companies/people/index'
+    render :template => 'companies/clients/index'
   end
   def show
 
-    render :template => 'companies/people/show'
+    render :template => 'companies/clients/show'
   end
   def new
     @client = Client.new company_id: @current_company.id, role: (Client::Role::STUFF).to_s(2).to_i
+    render :template => 'companies/clients/new'
   end
   def create
     prms = client_params
