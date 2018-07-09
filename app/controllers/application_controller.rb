@@ -122,23 +122,27 @@ class ApplicationController < ActionController::Base
           @user_client = (@current_people.role.to_i & Client::Role::CLIENT) > 0
 
           @current_company = Company.find @current_people.company_id
-          @expired = @current_company.time_limit < Date.today
+          @expired = @current_company.time_limit >= Date.today
 
           ra = Record.where affiliate_id: Affiliate.where(company_id: @current_company)
           rc = RecordClient.where(record_id: ra, is_active: true)
           @current_clients_company = Client.where id: rc.select(:client_id)
 
           if @user_director
-            if @expired and url.last != 'company' and url.last(2) != ["clients", "#{@current_people.id}"] and url[3] != 'persons' and url.last(2) != ["auth", "edit"] and url.last(2) != ["companies", "new"] and url.last != 'sign_out' and url.last != 'companies'
-              return redirect_to company_path
+            unless @expired
+              unless url.last == 'company' or url.last(2) == ["clients", "#{@current_people.id}"] or url[3] == 'persons' or url.last(2) == ["auth", "edit"] or url.last(2) == ["companies", "new"] or url.last == 'sign_out' or url.last == 'companies' or url[3] == 'auth'
+                return redirect_to company_path, notice: "Запрещено, пока не продлите подписку"
+              end
             else
               @current_affiliates = Affiliate.where company_id: @current_company
               @current_record = Record.where affiliate_id: @current_affiliates
             end
 
           elsif @user_administrator
-            if @expired and url.last != 'company' and url.last(2) != ["clients", "#{@current_people.id}"] and url[3] != 'persons' and url.last(2) != ["auth", "edit"] and url.last(2) != ["companies", "new"] and url.last != 'sign_out' and url.last != 'companies'
-              return redirect_to company_path
+            unless @expired
+              unless url.last == 'company' or url.last(2) == ["clients", "#{@current_people.id}"] or url[3] == 'persons' or url.last(2) == ["auth", "edit"] or url.last(2) == ["companies", "new"] or url.last == 'sign_out' or url.last == 'companies' or url[3] == 'auth'
+                return redirect_to company_path, notice: "Запрещено, пока не продлите подписку"
+              end
             else
               client_work = Work.where people_id: @current_people.id, is_active: true
               work_salary = WorkSalary.where work_id: client_work.select(:id), is_active: true
@@ -150,7 +154,7 @@ class ApplicationController < ActionController::Base
           elsif @user_client
             @current_affiliates = Affiliate.where id: 0
             @current_record = Record.where(id: 0)
-            unless url.last(2) == ["clients", "#{@current_people.id}"] or url[3] == 'persons' or url.last(2) == ["auth", "edit"] or url.last(2) == ["companies", "new"] or url.last == 'sign_out' or url.last == 'companies'
+            unless url.last(2) == ["clients", "#{@current_people.id}"] or url[3] == 'persons' or url.last(2) == ["auth", "edit"] or url.last(2) == ["companies", "new"] or url.last == 'sign_out' or url.last == 'companies' or url[3] == 'auth'
               return redirect_to company_client_path(1, @current_people.id)
             end
           end
