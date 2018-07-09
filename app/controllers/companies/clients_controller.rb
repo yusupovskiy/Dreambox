@@ -2,10 +2,6 @@ class Companies::ClientsController < ApplicationController
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
   before_action :ensure_user_has_company
   before_action :set_s3_direct_post, only: [:new, :edit]
-  before_action :set_people
-  before_action :set_company
-  before_action :set_access
-  before_action :set_affiliate
   before_action :confirm_actions, only: [:create, :update, :destroy, :archive, :role_employee, :role_client, :new, :edit]
   before_action :set_record_client
   before_action :set_client, only: [:show, :edit, :update, :destroy, :archive]
@@ -59,6 +55,7 @@ class Companies::ClientsController < ApplicationController
     @work = Work.new
     @salary = Work.new
     @work_salary = WorkSalary.new
+    @new_record_client = RecordClient.new
 
     @records_client = RecordClient.where(client_id: params[:id], id: @current_record_client)
     current_record = @current_record.where("finished_at > ?", Date.today)
@@ -113,7 +110,7 @@ class Companies::ClientsController < ApplicationController
 
   # GET /clients/new
   def new
-    @client = Client.new company_id: @current_company.id
+    @client = Client.new company_id: @current_company.id, role: (Client::Role::CLIENT).to_s(2).to_i
     @new_block = InfoBlock.new
     @new_template_field = FieldTemplate.new
     @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')

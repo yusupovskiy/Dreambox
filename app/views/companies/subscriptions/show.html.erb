@@ -8,8 +8,8 @@
     <div class="btn-card btn-show-list">
       <div class="panel-show">
         <%= link_to 'Назад', :back %>
-        <%= link_to 'Перейти к владельцу', company_client_path(params[:company_id], @client_subscription.id) %>
-        <%= link_to 'Перейти к записи', company_record_path(params[:company_id], @record_client.id) %>
+        <%= link_to 'Перейти к владельцу', company_client_path(@current_company, @client_subscription.id) %>
+        <%= link_to 'Перейти к записи', company_record_path(@current_company, @record_client.id) %>
         <div id="recalculation">Сделать перерасчет</div>
         <% if Date.today <= @subscription.finish_at and @subscription.is_active == true %>
           <div id="cancel">Отменить абонемент</div>
@@ -29,7 +29,7 @@
   <div class="cont-category-book">
     <div class="tab-category information-section">
 
-      <%=form_with url: company_histories_path(params[:company_id]), model: @history, local: true, html: {class: 'block-information', id: 'recalculation-panel', style: 'display: none;'} do |f|%>
+      <%=form_with url: company_histories_path(@current_company), model: @history, local: true, html: {class: 'block-information', id: 'recalculation-panel', style: 'display: none;'} do |f|%>
         <h3><div class="icon-time"></div>Перерасчет</h3>
         <%=f.hidden_field :object_log, value: 'subscription'%>
         <%=f.hidden_field :object_id, value: @subscription.id %>
@@ -50,7 +50,7 @@
       <%end%>
 
       <% if Date.today <= @subscription.finish_at and @subscription.is_active == true %>
-        <%=form_with url: company_histories_path(params[:company_id]), model: @history, local: true, html: {class: 'block-information', id: 'cancel-panel', style: 'display: none;'} do |f|%>
+        <%=form_with url: company_histories_path(@current_company), model: @history, local: true, html: {class: 'block-information', id: 'cancel-panel', style: 'display: none;'} do |f|%>
           <h3><div class="icon-time"></div>Отмена абонемента</h3>
           <%=f.hidden_field :object_log, value: 'subscription'%>
           <%=f.hidden_field :object_id, value: @subscription.id %>
@@ -68,7 +68,7 @@
       <% end %>
 
       <% if Date.today <= @subscription.finish_at %>
-        <%=form_with url: company_histories_path(params[:company_id]), model: @history, local: true, html: {class: 'block-information', id: 'renewal-panel', style: 'display: none;'} do |f|%>
+        <%=form_with url: company_histories_path(@current_company), model: @history, local: true, html: {class: 'block-information', id: 'renewal-panel', style: 'display: none;'} do |f|%>
           <h3><div class="icon-time"></div>Продление абонемента</h3>
           <%=f.hidden_field :object_log, value: 'subscription'%>
           <%=f.hidden_field :object_id, value: @subscription.id %>
@@ -98,7 +98,7 @@
         <div class="container-information compact">
           <% if @fin_operations_subscription.present? %>
             <% @fin_operations_subscription.each do |fos| %>
-              <%= link_to company_fin_operation_path(params[:company_id], fos.id), class: "item-element" do %>
+              <%= link_to company_fin_operation_path(@current_company, fos.id), class: "item-element" do %>
                 <div class="left-side-elem" style="line-height: 2;">
                     <% if fos.is_active == false %>
                       <span style="margin-right: 5px;">Отмененная оплата!</span>
@@ -115,7 +115,7 @@
         <div class="show-and-hide-container">
           <div class="add-discount btn-show-panel">+ Добавить</div>
 
-          <%= form_with(url: company_fin_operations_path(params[:company_id]), model: @fin_operation, local: true, html: {class: 'panel-attachment show-and-hide-panel'}) do |form| %>
+          <%= form_with(url: company_fin_operations_path(@current_company), model: @fin_operation, local: true, html: {class: 'panel-attachment show-and-hide-panel'}) do |form| %>
             <%= form.hidden_field :operation_type, value: :payment_subscription %>
             <%= form.hidden_field :operation_object_id, value: @subscription.id %>
             <div class="finput">
@@ -162,7 +162,7 @@
         <div class="container-information compact">
           <div class="item-information">
             <span class="title-input">Владелец</span>
-            <%= link_to company_client_path(params[:company_id], @client_subscription.id), class: 'img-input' do %>
+            <%= link_to company_client_path(@current_company, @client_subscription.id), class: 'img-input' do %>
               <%= image_tag s3_image(@client_subscription.avatar) %>
               <span><%= @client_subscription.first_name %> <%= @client_subscription.last_name %></span>
             <% end %>
@@ -170,7 +170,7 @@
           <div class="item-information">
             <span class="title-input">Запись</span>
             <span class="text-input">
-              <%= link_to @record_client.name, company_record_path(params[:company_id], @record_client.id) %>
+              <%= link_to @record_client.name, company_record_path(@current_company, @record_client.id) %>
             </span>
           </div>
           <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input"><%= @subscription.start_at.strftime("%d %b, %Y") %></span></div>

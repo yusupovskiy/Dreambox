@@ -68,6 +68,7 @@
       </div>
 
 
+    <% if (@client.role.to_i & Client::Role::CLIENT) > 0 %>
       <% if @blocks_clients.present? %>
         <% @blocks_clients.each do |b| %>
           <% fields_block = @field_templates_clients.where(block_id: b.id) %>
@@ -100,6 +101,7 @@
               <% end %>
         <%end%>
       <%end%>
+    <%end%>
 
     </div>
     <%= form.submit class: "btn icon-confirm" %>

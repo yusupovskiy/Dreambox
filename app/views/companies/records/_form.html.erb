@@ -49,7 +49,7 @@
         <dfn data-info="Филиал, к которому относится запись">
           <div class="finput">
             <%= form.label t('.affiliate_id'), class: 'finput-label' %>
-            <%= form.select :affiliate_id, @current_affiliates.map{|a| [a.name, a.id]}, {}, {class: "finput-input"} %>
+            <%= form.select :affiliate_id, @current_affiliates.map{|a| [a.address, a.id]}, {}, {class: "finput-input"} %>
           </div>
         </dfn>
        

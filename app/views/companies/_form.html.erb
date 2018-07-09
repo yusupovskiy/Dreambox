@@ -16,8 +16,12 @@
         <% end %>
 
         <div class="finput">
-          <%= form.label 'Название', class: 'finput-label' %>
-          <%= form.text_field :name, id: :company_name, class: 'finput-input' %>
+          <%= form.label 'Название*', class: 'finput-label' %>
+          <%= form.text_field :name, id: :company_name, class: 'finput-input', required: 'required' %>
+        </div>
+        <div class="finput">
+          <%= form.label 'Адрес*', class: 'finput-label' %>
+          <%= form.text_field :address, class: 'finput-input', required: 'required' %>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 class Affiliate < ApplicationRecord
   belongs_to :company
 
-  validates :name, :address, presence: true
+  validates :address, presence: true
 end

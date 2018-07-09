@@ -1,5 +1,4 @@
 class PersonsController < ApplicationController
-  before_action :set_company
   
   def profile
   	@people_user = Client.where user_id: current_user.id

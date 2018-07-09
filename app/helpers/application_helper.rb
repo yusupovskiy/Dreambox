@@ -18,4 +18,21 @@ module ApplicationHelper
       false
     end
   end
+  def powers_director
+    if Work.exists? people_id: @current_people.id, position_work: 'director'
+      true
+    else
+      false
+    end
+  end
+  def time_limit(date)
+    time_limit = (date.year * 12 * 30) + (date.month * 30) + date.day
+    today = (Date.today.year * 12 * 30) + (Date.today.month * 30) + Date.today.day
+    day = time_limit - today
+    if day < 0
+      day = 0
+    else
+      day
+    end
+  end
 end

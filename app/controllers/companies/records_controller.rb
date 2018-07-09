@@ -1,8 +1,4 @@
 class Companies::RecordsController < ApplicationController
-  before_action :set_people
-  before_action :set_company
-  before_action :set_access
-  before_action :set_affiliate
   before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :ensure_user_has_company
   before_action :set_record, only: [:show]

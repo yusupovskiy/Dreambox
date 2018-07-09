@@ -41,7 +41,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
           <div class="name-company" style="float: left;"><%= @current_company.name %></div>
 
           <div class="panel-show" style="width: 260px;">
-            <div style="background-color: #e6eaed;">
+            <div style="background-color: #e6eaed; cursor: default;">
                 <div style="float: left;">
                   <div style="font-size: 15px; font-weight: 600;"><%= Company.find(@current_people.company_id).name %></div>
                   <div class="img-input" style="width: 100%; font-size: 13px;">
@@ -92,14 +92,9 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
           </div>
         </div>
 
-        <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
-        <% work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator' %>
-        <% if work_director.present? %>
-          <div class="days-subs">356 дн.</div>
-        <% end %>
 
-
-        <% if work_director.present? or work_administrator.present? %>
+        <% if @user_director or @user_administrator %>
+          <div class="days-subs"><%= time_limit(@current_company.time_limit) %> дн.</div>
           <div class="btn-show-list">
             <div class="btn-add-home">+Добавить</div>
             <div class="panel-show" style="width: 240px;">
@@ -112,18 +107,30 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
               <%= link_to new_company_worker_path(@current_company.id) do %>
                 <img src="/images/teacher.png"><span>Сотрудника</span>
               <% end %>
-              <%= link_to new_company_affiliate_path(@current_company.id) do %>
+              <% link_to new_company_affiliate_path(@current_company.id) do %>
                 <img src="/images/list.png"><span>Филиал</span>
               <% end %>
-              <%= link_to new_company_service_path(@current_company.id) do %>
+              <% link_to new_company_service_path(@current_company.id) do %>
                 <img src="/images/workflow.png"><span>Услугу</span>
               <% end %>
             </div>
           </div>
+          <% if time_limit(@current_company.time_limit) <= 5 %>
+            <div class="message">
+              <hr class="status-complet not-completed" />
+              Осталось <%= time_limit(@current_company.time_limit) %> дней до завершения "<%= @current_company.note %>", обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
+            </div>
+          <% end %>
+          <% if (@current_company.record_limit - @current_clients_company.count) <= 5 %>
+            <div class="message">
+              <hr class="status-complet not-completed" />
+              Лимит по текущим клиентам скоро будет привышен, осталось <%= @current_company.record_limit - @current_clients_company.count %> мест, обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
+            </div>
+          <% end %>
         <% end %>
-
-
       <% end %>
+
+
       <%if flash[:notice].present?%>
         <div class="message">
           <%= flash[:notice].html_safe %>

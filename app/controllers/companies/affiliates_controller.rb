@@ -1,10 +1,7 @@
 class Companies::AffiliatesController < ApplicationController
-  before_action :set_people
-  before_action :set_company
-  before_action :set_access
-  before_action :set_affiliate
   before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
+  before_action :set_affiliate, only: [:show, :new, :edit]
 
   # GET /affiliates
   # GET /affiliates.json
@@ -34,10 +31,11 @@ class Companies::AffiliatesController < ApplicationController
 
     respond_to do |format|
       if @affiliate.save
-        format.html { redirect_to [@affiliate.company, @affiliate], notice: t('affiliate.created') }
+        format.html { redirect_to request.referer, notice: t('affiliate.created') }
         format.json { render :show, status: :created, location: @affiliate }
       else
-        format.html { render :new }
+        # format.html { render :new, notice: "Действие не произведено"  }
+        format.html { redirect_to request.referer, notice: "Действие не произведено"  }
         format.json { render json: @affiliate.errors, status: :unprocessable_entity }
       end
     end
@@ -69,6 +67,9 @@ class Companies::AffiliatesController < ApplicationController
 
   private
     # Never trust parameters from the scary internet, only allow the white list through.
+    def set_affiliate
+      @current_affiliate = Affiliate.find_by company_id: @current_company
+    end
     def affiliate_params
       params.require(:affiliate)
           .permit(:name, :address, :email, :phone_number)

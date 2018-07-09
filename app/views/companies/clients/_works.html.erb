@@ -49,6 +49,7 @@
 
 
       <div class="discount-entry show-and-hide-container">
+      <% if w.position_work != 'director' %>
         <div class="title-discount">Доступная информация:</div>
 <%
 
@@ -59,7 +60,6 @@
         <% affiliate_work = @current_affiliates.where(id: work_salary.select('affiliate_id')) %>
         <% affiliate = @current_affiliates.where.not(id: affiliates_work_salary.select('affiliate_id')) %>
 
-      <% if w.position_work != 'director' %>
         <%if affiliate_work.empty? %>
           <div class="discount">Список пуст</div>
         <%else%>
@@ -67,7 +67,7 @@
             <% affiliate_work.each do |a| %>
               <% affiliate_work_salary = WorkSalary.find_by(affiliate_id: a.id, work_id: w.id) %>
               <li>
-                <span><%= a.name %> <%= link_to 'Удалить', works_salary_path(affiliate_work_salary.id), method: :delete, data: { confirm: 'Точно хотите ограничить доступ?' }, class: "link-to" %></span>
+                <span><%= a.address %> <%= link_to 'удалить', works_salary_path(affiliate_work_salary.id), method: :delete, data: { confirm: 'Точно хотите ограничить доступ?' }, class: "link-delete link-to" %></span>
               </li>
             <%end%>
           </ul>
@@ -82,7 +82,7 @@
             <dfn data-info="Укажите филиал, к иноформации которого хотите предоставить доступ">
               <div class="finput">
                 <%= f.label t('.affiliate_id'), class: 'finput-label' %>
-                <%= f.select :affiliate_id, affiliate.map{|a| [a.name, a.id]}, {}, {class: "finput-input"} %>
+                <%= f.select :affiliate_id, affiliate.map{|a| [a.address, a.id]}, {}, {class: "finput-input"} %>
               </div>
             </dfn>
 

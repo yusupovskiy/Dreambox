@@ -39,8 +39,12 @@
         <%= form_with(url: companies_path, model: @company, local: true, html: {class: 'block-information show-and-hide-panel'}) do |form| %>
        
           <div class="finput">
-            <%= form.label :name, class: 'finput-label' %>
-            <%= form.text_field :name, class: 'finput-input' %>
+            <%= form.label 'Название*', class: 'finput-label' %>
+            <%= form.text_field :name, class: 'finput-input', required: 'required' %>
+          </div>
+          <div class="finput">
+            <%= form.label 'Адрес*', class: 'finput-label' %>
+            <%= form.text_field :address, class: 'finput-input', required: 'required' %>
           </div>
           <div class="btns-confirm">
             <%= form.submit class: 'btn icon-confirm' %>

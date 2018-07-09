@@ -2,7 +2,7 @@
   <div class="show-and-hide-container">
     <div class="btn-subs btn-show-panel">+ Записать</div>
     <% if @no_records_client.present? %>
-      <%= form_with url: records_clients_path, model: @records_clients, local: true, class: 'block-information show-and-hide-panel' do |f|%>
+      <%= form_with url: records_clients_path, model: @new_record_client, local: true, class: 'block-information show-and-hide-panel' do |f|%>
         <%=f.hidden_field :client_id, value: @client.id %>
         <div class="finput">
           <%= f.label 'Записи', class: 'finput-label' %>

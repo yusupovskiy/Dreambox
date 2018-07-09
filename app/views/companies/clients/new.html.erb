@@ -10,7 +10,11 @@
       </div>
 
 	</div>
-    <div class="title-card">Добавление клиента</div>
+    <% if (@client.role.to_i & Client::Role::CLIENT) > 0 %>
+      <div class="title-card">Добавление клиента</div>
+    <% else %>
+      <div class="title-card">Добавление сотрудника</div>
+    <% end %>
 </div>
 
 <%= render 'form', client: @client %>

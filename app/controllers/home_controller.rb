@@ -1,10 +1,8 @@
 class HomeController < ApplicationController
-  before_action :set_company
   layout 'application'
 
   def index
   end
-
   def search_result
     @search_request = params[:request]
     clients_company = Client.where company_id: @current_company.id

@@ -1,11 +1,19 @@
 class CompaniesController < ApplicationController
   before_action :ensure_current_user
-  before_action :set_people
-  before_action :set_company
-  before_action :set_access
-  before_action :set_affiliate
   before_action :confirm_actions, except: [:new, :create]
   layout 'card'
+
+  def company
+    unless @user_director or @user_administrator
+      return redirect_to request.referer, notice: "Для этого действия, у вас нет нужного уровня доступа"
+    end
+
+    @new_affiliate = Affiliate.new company_id: @current_company.id
+    @new_service = Service.new company_id: @current_company.id
+
+    @affiliates_company = Affiliate.where company_id: @current_company
+    @services_company = Service.where company_id: @current_company
+  end
 
   def add_field
     @new_block = InfoBlock.new
@@ -41,9 +49,15 @@ class CompaniesController < ApplicationController
   def create
     @company = Company.new(company_params)
 
+    @company.record_limit = 20
+    @company.time_limit = Date.today + 30
+    @company.note = "Пробный период"
+
     success_saving = ActiveRecord::Base.transaction do
       raise ActiveRecord::Rollback unless @company.save
       user = company_params[:user]
+
+      affiliate = Affiliate.create(address: params[:company][:address], company_id: @company.id)
 
       people = Client.create(
         first_name: user.first_name, last_name: user.last_name, 
@@ -52,7 +66,7 @@ class CompaniesController < ApplicationController
 
       user.update_attribute(:people_id, people.id)
 
-      Work.create(position_work: :director, people_id: people.id)
+      Work.create(position_work: :director, people_id: people.id, affiliate_id: affiliate.id)
 
       # user.role |= User::Role::COMPANY_OWNER
       user.save!

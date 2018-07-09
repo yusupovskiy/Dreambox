@@ -4,6 +4,7 @@ class WorksSalariesController < ApplicationController
   before_action :set_access
   before_action :set_affiliate
   before_action :confirm_actions, only: [:create, :update, :destroy]
+  before_action :access_level
   
   def create
     prms = params.require(:work_salary).permit(:work_id, :affiliate_id)
@@ -37,7 +38,7 @@ class WorksSalariesController < ApplicationController
     work_salary = WorkSalary.find(params[:id])
     work_salary.destroy
     respond_to do |format|
-      format.html { redirect_to request.referer, notice: "Доступ к филиалу ограничен" }
+      format.html { redirect_to request.referer, notice: "Теперь доступ к филиалу у сотрудника ограничен" }
       format.json { head :no_content }
     end
   end

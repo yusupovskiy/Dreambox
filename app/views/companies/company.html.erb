@@ -1,0 +1,138 @@
+<div class="title-panel">
+  <div class="btns-card">
+    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+    
+    <div class="btn-card top-scroll"></div>
+
+    <div class="btn-card btn-show-list">
+      <div class="panel-show">
+        <%= link_to 'Назад', :back %>
+      </div>
+    </div>
+  </div>
+  <div class="title-card"><%= @current_company.name %></div>
+  <div class="role-card">Компания</div>
+</div>
+
+
+<div class="conten-card tabs">
+  <div class="cont-category-book">
+
+
+    <div class="tab-category information-section">
+
+
+      <div class="block-information">
+        <h3>Тариф</h3>
+    
+        <div class="container-information" style="color: #4a4a4a;">
+          <% if @user_director %>
+            <div class="days-subs" style="font-weight: 600;">
+              <%= @current_clients_company.count %> из 
+              <%= @current_company.record_limit %></div>
+            лимит текущих клиентов
+            <br />
+            <br />
+          <% end %>
+          <div class="days-subs" style="font-weight: 600;"><%= time_limit(@current_company.time_limit) %></div>
+          оставшихся дней
+          <br />
+          <br />
+          <div style="float: left; font-size: 14px; margin-bottom: 10px; font-style: italic; color: #ababab;">
+            <% if time_limit(@current_company.time_limit) == 0 %>
+              <div class="debt" style="font-size: 12px; margin-bottom: 5px;">Время периода использования исчерпан!</div>
+              Вы можете продлить его связавшись с менеджером по номеру: 8 (918) 730 10 05
+            <% else %>
+              Чтобы продлить или сменить тариф вы можете связаться с менеджером по номеру: 8 (918) 730 10 05
+            <% end %>
+          </div>
+
+
+        </div>
+      </div>
+
+
+      <% if @user_director %>
+        <div class="block-information show-hide-panel">
+          <h3><div class="icon-affiliate"></div>Услуги | <%= @services_company.size %></h3>
+
+          <div class="container-information compact">
+
+            <% if @services_company.present? %>
+              <% @services_company.each do |s| %>
+                <div class="item-element">
+                  <div class="left-side-elem" style="line-height: 2;"><%= s.name %></div>
+                  <div class="rigth-side-elem">
+                  </div>
+                </div>
+
+              <% end %>
+            <% else %>
+              <div class="discount">Список пуст</div>
+            <% end %>
+          </div>
+
+          <div class="show-and-hide-container">
+            <div class="add-discount btn-show-panel">+ Добавить</div>
+
+            <%= form_with(url: company_services_path(@current_company), model: @new_service, local: true, html: {class: 'panel-attachment show-and-hide-panel'}) do |form| %>
+
+              <div class="finput">
+                <%= form.label 'Услуга*', class: 'finput-label' %>
+                <%= form.text_field :name, class: "finput-input", required: 'required' %>
+              </div>
+              <div class="btns-confirm">
+                <%= form.submit class: 'btn icon-confirm' %>
+                <div class="btn btn-no btn-hide-panel"></div>
+              </div>
+            <%end%>
+          </div>
+
+          <div class="testt click-compact">Раскрыть</div>
+          <div class="testt click-compact compact">Скрыть</div>
+        </div>
+        <div class="block-information show-hide-panel">
+          <h3><div class="icon-affiliate"></div>Филиалы | <%= @affiliates_company.size %></h3>
+
+          <div class="container-information compact">
+
+            <% if @affiliates_company.present? %>
+              <% @affiliates_company.each do |fos| %>
+                <div class="item-element">
+                  <div class="left-side-elem" style="line-height: 2;"><%= fos.address %></div>
+                  <div class="rigth-side-elem">
+                    <!-- <div class="number-people">12</div> -->
+                  </div>
+                </div>
+
+              <% end %>
+            <% else %>
+              <div class="discount">Список пуст</div>
+            <% end %>
+          </div>
+
+          <div class="show-and-hide-container">
+            <div class="add-discount btn-show-panel">+ Добавить</div>
+
+            <%= form_with(url: company_affiliates_path(@current_company), model: @new_affiliate, local: true, html: {class: 'panel-attachment show-and-hide-panel'}) do |form| %>
+              <%= form.hidden_field :name, value: " " %>
+
+              <div class="finput">
+                <%= form.label 'Адрес филиала*', class: 'finput-label' %>
+                <%= form.text_field :address, class: "finput-input", required: 'required' %>
+              </div>
+              <div class="btns-confirm">
+                <%= form.submit class: 'btn icon-confirm' %>
+                <div class="btn btn-no btn-hide-panel"></div>
+              </div>
+            <%end%>
+          </div>
+
+          <div class="testt click-compact">Раскрыть</div>
+          <div class="testt click-compact compact">Скрыть</div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

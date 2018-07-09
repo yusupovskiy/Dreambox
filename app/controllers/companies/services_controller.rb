@@ -1,8 +1,4 @@
 class Companies::ServicesController < ApplicationController
-  before_action :set_people
-  before_action :set_company
-  before_action :set_access
-  before_action :set_affiliate
   before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :set_companies_service, only: [:show, :edit, :update, :destroy]
   layout 'card'
@@ -35,10 +31,10 @@ class Companies::ServicesController < ApplicationController
 
     respond_to do |format|
       if @service.save
-        format.html { redirect_to [@service.company, @service], notice: t('service.created') }
+        format.html { redirect_to request.referer, notice: t('service.created') }
         format.json { render :show, status: :created }
       else
-        format.html { render :new }
+        format.html { redirect_to request.referer }
         format.json { render json: @service.errors, status: :unprocessable_entity }
       end
     end

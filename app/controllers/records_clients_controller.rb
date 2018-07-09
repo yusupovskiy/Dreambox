@@ -1,8 +1,5 @@
 class RecordsClientsController < ApplicationController
-  before_action :set_people
-  before_action :set_company
-  before_action :set_access
-  before_action :set_affiliate
+  # before_action :access_levels
   before_action :confirm_actions, only: [:create, :update, :destroy]
 
   def create
@@ -10,6 +7,10 @@ class RecordsClientsController < ApplicationController
     record = Record.find(params[:record_client][:record_id])
 
     respond_to do |format|
+      if (@current_company.record_limit - @current_clients_company.count) <= 0
+        return redirect_to company_path, notice: "<hr class=\"status-complet not-completed\" />Вы достигли лимита"
+      end
+      
       if record.finished_at < Date.today
         format.html { redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />Невозможно делать запись когда ее срок истек" }
       else

@@ -19,21 +19,24 @@
         <img src="/images/2.png" />
         <div>Финансы</div>
       </a>
-      <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
-      <% if work_director.present? %>
-        <a href="<%=company_workers_path @current_company.id %>" class="instrument">
+
+      <% if @user_director %>
+        <%= link_to company_workers_path(@current_company.id), class: "instrument" do %>
           <img src="/images/teacher.png" />
           <div>Сотрудники</div>
-        </a>
-        <a href="<%=company_services_path @current_company.id %>" class="instrument">
+        <% end %>
+<!--         <a href="<%=company_services_path @current_company.id %>" class="instrument">
           <img src="/images/list.png" />
           <div>Услуги</div>
         </a>
         <a href="<%=company_affiliates_path @current_company.id %>" class="instrument">
-          <!-- <img src="/images/office3.png" /> -->
           <img src="/images/workflow.png" />
           <div>Филиалы</div>
-        </a>
+        </a> -->
+        <%= link_to company_path, class: "instrument" do %>
+          <img src="/images/office3.png" />
+          <div>Компания</div>
+        <% end %>
       <% end %>
     </div>
   </div>

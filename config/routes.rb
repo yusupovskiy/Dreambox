@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'persons/profile'
   get 'persons/new_profile'
   post 'persons/role_person/:role_person' => 'persons#role_person', as: 'role_person'
+  get 'company' => 'companies#company'
 
   resources :companies do
     get 'add_field' => 'companies#add_field', module: :companies
