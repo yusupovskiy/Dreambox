@@ -1,11 +1,11 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
-  before_action :access_levels
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :ensure_current_user
   before_action :store_user_location!, if: :storable_location?
   before_action :authenticate_user!
   before_action :set_locale
+  before_action :access_levels
   layout 'card'
 
   private
@@ -22,9 +22,9 @@ class ApplicationController < ActionController::Base
       params[:return_url] || '/'
     end
 
-    # def after_sign_in_path_for(resource)
-    #   params[:return_url] || '/'
-    # end
+    def after_sign_in_path_for(resource)
+      params[:return_url] || '/'
+    end
     def storable_location?
       request.get? && is_navigational_format? && !devise_controller? && !request.xhr? 
     end

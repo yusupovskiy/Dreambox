@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   end
 
   root 'home#index'
-  get 'tbis' => 'home#add_subscriptions_automatically'
+  get 'upewuadesutgqavgimmwvdwfizyfgw' => 'home#add_subscriptions_automatically'
 
   devise_for :users, path: 'auth', controllers: {confirmations: 'confirmations'}
   get 'auth' => 'home#auth'

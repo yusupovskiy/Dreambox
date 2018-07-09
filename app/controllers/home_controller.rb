@@ -60,12 +60,12 @@ SQL
         price: price,
       })
       subs.save
-      History.create!({
+      History.create({
         object_log: 'subscription', 
         object_id: subs.id, 
         type_history: 'auto_create', 
         note: 'Автоматическое создание абонемента', 
-        user_id: 0
+        user_id: current_user.id
       })
     end
     render plain: "#{rows.size} subscriptions were created"
