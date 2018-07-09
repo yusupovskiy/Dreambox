@@ -30,12 +30,12 @@ Rails.application.routes.draw do
         post 'add_field'
       end
     end
-    # resources :workers, module: :companies do
-    #   member do
-    #     get 'role_employee'
-    #     get 'role_client'
-    #   end
-    # end
+    resources :workers, module: :companies do
+      member do
+        get 'role_employee'
+        get 'role_client'
+      end
+    end
     post 'clients/import' => 'companies/clients#import'
     resources :services, module: :companies
     resources :subscriptions, module: :companies do
