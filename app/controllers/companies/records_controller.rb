@@ -105,7 +105,7 @@ class Companies::RecordsController < ApplicationController
       params.require(:record)
         .permit(:name, :abon_period, :total_clients, :total_visits,
                 :created_at, :finished_at, :affiliate_id,
-                :record_type, :visit_type, :is_automatic)
+                :record_type, :visit_type)
     end
     # def set_company
     #   current_client = Client.find current_user.people_id
