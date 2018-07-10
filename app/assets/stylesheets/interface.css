@@ -32,7 +32,7 @@ a {
     font-size: 16px;
     width: 100%;
     box-sizing: border-box;
-    padding: 27px 30px 26px 90px;
+    padding: 27px 30px 26px 75px;
     border: 0;
     outline: none;
 }
@@ -1558,4 +1558,33 @@ input.input-attachment {
     padding-left: 14px;
     background-image: url(/images/visitors1.png);
     background-position: left center;
+}
+
+
+.logo {
+    z-index: 99;
+    display: table;
+    width: 32px;
+    height: 32px;
+    margin: 5px 0;
+    top: 20px;
+    left: 0;
+    transition: 0.4s cubic-bezier(0, 0, 0, 1);
+    margin-bottom: 0px;
+    float: left;
+}
+.logo>img {
+    width: 100%;
+}
+.logo:hover {
+    -ms-transform: scale(1.5);
+    transform: scale(1.5);
+}
+.search-icon {
+    width: 16px;
+    height: 16px;
+    margin: 27px 35px;
+    opacity: 0.4;
+    float: left;
+    position: absolute;
 }
