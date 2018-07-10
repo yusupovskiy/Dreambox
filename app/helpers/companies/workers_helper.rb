@@ -51,18 +51,18 @@ module Companies::WorkersHelper
 
     @payments_subscriptions.sum(:amount) - @subscriptions_clients.sum(:price)
   end
-  # def name_tab(i)
-  #   if i == 0
-  #     "Сотрудники"
-  #   else
-  #     "Без названия"
-  #   end
-  # end
-  # def info_tab(i)
-  #   if i == 0
-  #     "Все сотрудники компании"
-  #   else
-  #     "Без названия"
-  #   end
-  # end
+  def name_tab_workers(i)
+    if i == 0
+      "Сотрудники"
+    else
+      "Без названия"
+    end
+  end
+  def info_tab(i)
+    if i == 0
+      "Все сотрудники компании"
+    else
+      "Без названия"
+    end
+  end
 end

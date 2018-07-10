@@ -8,37 +8,35 @@ class Companies::WorkersController < ApplicationController
 
     @all_people = @clients
     @show_in_view = [@all_people]
-    render :template => 'companies/clients/index'
   end
   def show
-
     render :template => 'companies/clients/show'
   end
   def new
-    @client = Client.new company_id: @current_company.id, role: (Client::Role::STUFF).to_s(2).to_i
-    render :template => 'companies/clients/new'
+    @worker = Client.new company_id: @current_company.id, role: (Client::Role::STUFF).to_s(2).to_i
+
   end
   def create
     prms = client_params
-    @client = Client.new(prms)
+    @worker = Client.new(prms)
 
     email = params[:client][:email]
 
     account = User.find_by(email: email)
     if account.present?
-      @client.user_id = account.id
+      @worker.user_id = account.id
     end
 
-    @client.role = (Client::Role::STUFF).to_s(2).to_i
+    @worker.role = (Client::Role::STUFF).to_s(2).to_i
 
 
     respond_to do |format|
-      if @client.save
-        format.html { redirect_to [@client.company, @client], notice: t('client.created') }
+      if @worker.save
+        format.html { redirect_to [@worker.company, @worker], notice: t('client.created') }
         format.json { render :show, status: :created }
       else
         format.html { ensure_current_user; set_s3_direct_post; render :new } #   redirect_to request.referer
-        format.json { render json: @client.errors, status: :unprocessable_entity }
+        format.json { render json: @worker.errors, status: :unprocessable_entity }
       end
     end
   end

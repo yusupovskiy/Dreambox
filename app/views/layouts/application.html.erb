@@ -105,10 +105,10 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
               <%= link_to new_company_worker_path(@current_company.id) do %>
                 <img src="/images/teacher.png"><span>Сотрудника</span>
               <% end %>
-              <% link_to new_company_affiliate_path(@current_company.id) do %>
+              <%= link_to company_path do %>
                 <img src="/images/list.png"><span>Филиал</span>
               <% end %>
-              <% link_to new_company_service_path(@current_company.id) do %>
+              <%= link_to company_path do %>
                 <img src="/images/workflow.png"><span>Услугу</span>
               <% end %>
             </div>

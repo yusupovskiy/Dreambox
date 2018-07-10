@@ -42,9 +42,9 @@ ru:
     automatic_abon: Автоматический абонемент
     dynamic_abon: Динамический абонемент
   client:
-    created: Клиент успешно создан
-    updated: Клиент успешно сохранён
-    destroyed: Клиент успешно удалён
+    created: Успешно создан
+    updated: Успешно сохранён
+    destroyed: Успешно удалён
   company:
     created: Компания успешно создана
     updated: Компания успешно сохранёна
