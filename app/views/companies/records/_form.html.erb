@@ -12,7 +12,7 @@
 
       <div class="block-information">
         <h3>Настройка группы</h3>
-<!--         <dfn data-info="Запись группы или индивидуально">
+        <dfn data-info="Запись группы или индивидуально">
           <div class="finput">
             <%= form.label t('.record_type'), class: 'finput-label' %>
             <%= form.select :record_type, options_for(Record.record_types, 'record_type'), {selected: record.record_type}, {class: "finput-input"}%>
@@ -23,7 +23,7 @@
             <%= form.label t('.visit_type'), class: 'finput-label' %>
             <%= form.select :visit_type, options_for(Record.visit_types, 'visit_type'), {selected: record.visit_type}, {class: "finput-input"}%>
           </div>
-        </dfn> -->
+        </dfn>
 <!--         <dfn data-info="Количество мест в записи клиентов">
           <div class="finput">
             <%= form.label t('.total_clients'), class: 'finput-label' %>
@@ -43,8 +43,6 @@
           </div>
         </dfn>
         <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
-        <% work = Work.where people_id: @current_people.id %>
-        <% work_salary = WorkSalary.where work_id: work %>
                
         <dfn data-info="Филиал, к которому относится запись">
           <div class="finput">
