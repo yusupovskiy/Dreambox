@@ -11,7 +11,7 @@ class RecordsClientsController < ApplicationController
         return redirect_to company_path, notice: "<hr class=\"status-complet not-completed\" />Вы достигли лимита"
       end
       
-      if record.finished_at < Date.today
+      if record.finished_at.present? and record.finished_at < Date.today
         format.html { redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />Невозможно делать запись когда ее срок истек" }
       else
         if record_client = RecordClient.find_by(pms.permit(:record_id, :client_id))

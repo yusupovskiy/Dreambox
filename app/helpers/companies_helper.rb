@@ -2,6 +2,7 @@ module CompaniesHelper
   def autodata_subscription(record_client)
     record = Record.find(record_client.record_id)
     last_subscriptions_client = Subscription.where(record_client_id: record_client.id, is_active: true).order('finish_at').last
+    
     if last_subscriptions_client.present? and last_subscriptions_client.finish_at > Date.today
       message_start_date = "Подставилась дата на свободное число, после текущего и предстоящего абонементов"
       start_date = last_subscriptions_client.finish_at + 1.days
@@ -9,7 +10,7 @@ module CompaniesHelper
       message_start_date = "Эта дата свободна"
       start_date = Date.today
     end
-    if record.is_automatic == 'calendar_automatic'
+    if record.subscription_sale == 'by_calendar' or record.subscription_sale == 'automatically_by_calendar'
       message_finish_date = "Так как в этой записи указаны абонементы по календарю, дата завершения абонемента подставляется на конец месяца"
       today = start_date
       date_of_last_day_of_previous_month = today - today.day.days

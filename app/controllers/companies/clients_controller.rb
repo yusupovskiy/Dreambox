@@ -58,7 +58,11 @@ class Companies::ClientsController < ApplicationController
     @new_record_client = RecordClient.new
 
     @records_client = RecordClient.where(client_id: params[:id], id: @current_record_client)
-    current_record = @current_record.where("finished_at > ?", Date.today)
+    
+    completed_records = @current_record.where("finished_at < ?", Date.today)
+
+    current_record = @current_record.where.not(id: completed_records)
+
     @no_records_client = current_record.where.not(id: @records_client.where(client_id: @client.id, is_active: :true).select('record_id'))
 
     @unpaid_subscriptions = Subscription.find_by_sql("

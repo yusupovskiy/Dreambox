@@ -39,7 +39,7 @@
         <dfn data-info="Дата, когда подойдет время завешения записи">
           <div class="finput">
             <%= form.label t('.finished_at'), class: 'finput-label' %>
-            <%= form.date_field :finished_at, class: "finput-input", required: 'required'%>
+            <%= form.date_field :finished_at, class: "finput-input" %>
           </div>
         </dfn>
         <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
@@ -63,6 +63,13 @@
           </div>
         </dfn>
 
+
+        <dfn data-info="Создает абонементы автоматически. ⚫ по завершению: создает абонемент после того, как у клиента закончится абонемент. ⚫ по календарю: создает абонемент с первого числа до конца месяца">
+          <div class="finput focus">
+            <%= form.label 'Продажа абонемента*', class: 'finput-label' %>
+            <%= form.select :subscription_sale, options_for(Record.subscription_sales, 'subscription_sale'), {selected: record.subscription_sale}, {class: "finput-input"} %>
+          </div>
+        </dfn>
 
 
 <!--         <dfn data-info="Количество посещений за один проданный абонемент клиенту">

@@ -7,8 +7,6 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   before_action :access_levels
 
-
-
   # before_action :set_people
   # before_action :set_company
   # before_action :set_access

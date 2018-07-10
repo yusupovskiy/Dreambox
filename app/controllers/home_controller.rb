@@ -39,7 +39,7 @@ select rc.*, c.archive, r.total_visits, r.finished_at from (
     inner join records r on rc.record_id = r.id
     inner join clients c on rc.client_id = c.id
 where rn = 1 and finish_at = '#{date_of_last_day_of_previous_month}' and rc.is_active = true 
-      and r.finished_at > '#{Date.today}' and c.archive = false AND r.is_automatic = 'calendar'
+      and r.finished_at > '#{Date.today}' and c.archive = false AND r.subscription_sale = 'automatically_by_calendar'
 SQL
 
     start_at = date_of_last_day_of_previous_month + 1.day

@@ -20,7 +20,11 @@ Rails.application.routes.draw do
     get 'add_field' => 'companies#add_field', module: :companies
 
     resources :affiliates, module: :companies
-    resources :records, module: :companies
+    resources :records, module: :companies do
+      member do
+        get 'end_recording'
+      end
+    end
     post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
     resources :clients, module: :companies do
       member do

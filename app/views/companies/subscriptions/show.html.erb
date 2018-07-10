@@ -11,7 +11,7 @@
         <%= link_to 'Перейти к владельцу', company_client_path(@current_company, @client_subscription.id) %>
         <%= link_to 'Перейти к записи', company_record_path(@current_company, @record_client.id) %>
         <div id="recalculation">Сделать перерасчет</div>
-        <% if Date.today <= @subscription.finish_at and @subscription.is_active == true %>
+        <% if @subscription.is_active == true %>
           <div id="cancel">Отменить абонемент</div>
         <% end %>
         <% if Date.today <= @subscription.finish_at %>
@@ -49,7 +49,7 @@
         </div>
       <%end%>
 
-      <% if Date.today <= @subscription.finish_at and @subscription.is_active == true %>
+      <% if @subscription.is_active == true %>
         <%=form_with url: company_histories_path(@current_company), model: @history, local: true, html: {class: 'block-information', id: 'cancel-panel', style: 'display: none;'} do |f|%>
           <h3><div class="icon-time"></div>Отмена абонемента</h3>
           <%=f.hidden_field :object_log, value: 'subscription'%>

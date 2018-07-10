@@ -30,10 +30,11 @@ ru:
   record_type:
     grouping: групповая
     personal: индивидуальная
-  is_automatic:
-    not_automatic: отключено
-    upon_completion_automatic: по завершению
-    calendar_automatic: по календарю
+  subscription_sale:
+    by_period: по периоду
+    by_calendar: по календарю
+    automatically_by_period: автоматически по периоду
+    automatically_by_calendar: автоматически по календарю
   visit_type:
     one_time_visit: Одноразовое посещение
     reusable_visit: Многоразовое посещение
@@ -90,7 +91,7 @@ ru:
         name: Название*
         total_clients: Лимит в группе
         created_at: Дата начала*
-        finished_at: Дата завершения*
+        finished_at: Дата завершения
         affiliate_id: Филиал*
         total_visits: Посещений за абонемент
       edit:

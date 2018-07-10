@@ -9,7 +9,7 @@ class Companies::RecordsController < ApplicationController
     ids = @current_company.affiliates.select(:id)
     @records = Record.where(affiliate: ids)
     @completed_records = @current_record.where("finished_at < ?", Date.today)
-    @no_completed_records = @current_record.where("finished_at > ?", Date.today)
+    @no_completed_records = @current_record.where.not(id: @completed_records)
 
   end
 
@@ -94,6 +94,12 @@ class Companies::RecordsController < ApplicationController
     end
   end
 
+  def end_recording
+    record = Record.find params[:id]
+    record.update_attribute(:finished_at, Date.today - 1)
+    redirect_to request.referer, notice: "Запись завершена"
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_record
@@ -105,7 +111,7 @@ class Companies::RecordsController < ApplicationController
       params.require(:record)
         .permit(:name, :abon_period, :total_clients, :total_visits,
                 :created_at, :finished_at, :affiliate_id,
-                :record_type, :visit_type)
+                :record_type, :visit_type, :subscription_sale)
     end
     # def set_company
     #   current_client = Client.find current_user.people_id

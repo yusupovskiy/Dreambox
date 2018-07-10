@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_08_221513) do
+ActiveRecord::Schema.define(version: 2018_07_10_104852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -129,6 +129,7 @@ ActiveRecord::Schema.define(version: 2018_07_08_221513) do
     t.integer "record_type", null: false
     t.integer "visit_type", null: false
     t.string "is_automatic", default: "not", null: false
+    t.string "subscription_sale", default: ""
     t.index ["affiliate_id"], name: "index_records_on_affiliate_id"
   end
 
