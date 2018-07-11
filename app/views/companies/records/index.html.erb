@@ -12,7 +12,7 @@
 <!-- <input class="card-search" type="text" placeholder="Поиск..."> -->
 
 <div class="conten-card tabs">
-  <% if @no_completed_records.present? or @no_completed_records.present? %>
+  <% if @no_completed_records.present? or @completed_records.present? %>
     <div class="menu-with-options">
       <% if @no_completed_records.present? then %>
         <div class="option">Текущие <%= @no_completed_records.size %></div>

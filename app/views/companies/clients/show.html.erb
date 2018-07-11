@@ -1,15 +1,13 @@
 <div class="title-panel avatar">
   <div class="btns-card">
-    <% if Work.exists? people_id: @current_people.id, position_work: 'director' or Work.exists? people_id: @current_people.id, position_work: 'administrator' %>
-      <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
-      <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
-    <% end %>
     
+    <%= link_to '', :back, class: "btn-card icon-arroy" %>
+
     <div class="btn-card top-scroll"></div>
 
     <% if Work.exists? people_id: @current_people.id, position_work: 'director' or Work.exists? people_id: @current_people.id, position_work: 'administrator' %>
       <div class="btn-card btn-show-list">
-        <div class="panel-show">
+        <div class="panel-show" style="left: auto; right: 10px;">
 
           <%= link_to 'Назад', :back %>
           <%= link_to 'Перейти в список', company_clients_path %>

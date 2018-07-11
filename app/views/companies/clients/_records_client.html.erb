@@ -56,9 +56,9 @@
 
       <% if confirm_actions %>
         <% if rc.is_active %>
-          <%=link_to 'Отписать', records_client_path(rc, deactivate_instead_of_destroying: 1), method: :delete, class: 'unsubscribe compact' %>
+          <%=link_to 'Отписать', records_client_path(rc, deactivate_instead_of_destroying: 1), method: :delete, class: 'unsubscribe' %>
         <% else %>
-          <%=link_to 'Записать', records_clients_path(record_client: {record_id: rc.record_id, client_id: rc.client_id}), method: :post, class: 'subscribe compact' %>
+          <%=link_to 'Записать', records_clients_path(record_client: {record_id: rc.record_id, client_id: rc.client_id}), method: :post, class: 'subscribe' %>
         <% end %>
       <% end %>
 

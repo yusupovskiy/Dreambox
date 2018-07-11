@@ -77,7 +77,12 @@ class Companies::SubscriptionsController < ApplicationController
         .where('(? between start_at and finish_at or ? between start_at and finish_at) and is_active = true',
                @subscription.start_at, @subscription.finish_at)
         .count.zero?
-      has_record_expired = Record.where("id = ? AND finished_at > ?", rc.record_id, Date.today).count.zero?
+
+
+      completed_records = Record.where("finished_at < ?", Date.today)
+      no_completed_records = Record.where.not(id: completed_records)
+      has_record_expired = no_completed_records.exists? id: rc.record_id
+
       price_services = RecordService.where(record_id: 4)
       in_archive_whether_client = Client.where(id: rc.client_id, archive: false).count.zero?
 
@@ -91,7 +96,7 @@ class Companies::SubscriptionsController < ApplicationController
         notice: "<hr class=\"status-complet not-completed\" />У клиента нет такой записи"
       end
 
-      if has_record_expired
+      if !has_record_expired
         format.html { redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />В завершенной записи нельзя продавать абонементы" }  # from records/:id
         format.json { render :show, status: :created, location: @subscription }
       elsif price_services.count.zero? or price_services.sum(:money_for_abon) == 0

@@ -1,7 +1,7 @@
 class Companies::RecordsController < ApplicationController
   before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :ensure_user_has_company
-  before_action :set_record, only: [:show]
+  before_action :set_record, only: [:show, :edit]
 
   # GET /records
   # GET /records.json
@@ -43,7 +43,6 @@ class Companies::RecordsController < ApplicationController
 
   # GET /records/1/edit
   def edit
-    @services = Service.where(company_id: @current_company.id)
   end
 
   # POST /records

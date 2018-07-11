@@ -4,7 +4,8 @@ Rails.application.routes.draw do
   end
 
   root 'home#index'
-  get 'upewuadesutgqavgimmwvdwfizyfgw' => 'home#add_subscriptions_automatically'
+  get 'iairgmqqimuuoeexaspwkjykrtaocalendar' => 'home#add_subscriptions_automatically'
+  get 'upewuadesutgqavgimmwvdwfizyfgwperiod' => 'home#automatically_by_period'
 
   devise_for :users, path: 'auth', controllers: {confirmations: 'confirmations'}
   get 'auth' => 'home#auth'

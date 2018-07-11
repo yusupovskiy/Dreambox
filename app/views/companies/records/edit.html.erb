@@ -6,7 +6,7 @@
         <div class="btn-card top-scroll"></div>
         <div class="btn-card btn-show-list">
           <div class="panel-show">
-            <%= link_to 'Вернуться к карте', company_record_path(params[:company_id], @record) %>
+            <%= link_to 'Вернуться к карте', company_record_path(@current_company, @record) %>
             <%= link_to 'Перейти к списку', company_records_path %>
           </div>
         </div>
