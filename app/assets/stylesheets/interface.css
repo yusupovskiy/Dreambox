@@ -1580,7 +1580,7 @@ input.input-attachment {
 }
 
 
-.logo {
+a.logo {
     z-index: 99;
     display: table;
     width: 32px;

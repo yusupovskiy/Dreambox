@@ -123,20 +123,20 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
             </div>
           </div>
         <% end %>
+        <% if time_limit(@current_company.time_limit) <= 5 %>
+          <div class="message">
+            <hr class="status-complet not-completed" />
+            Осталось <%= time_limit(@current_company.time_limit) %> дней до завершения "<%= @current_company.note %>", обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
+          </div>
+        <% end %>
+        <% if (@current_company.record_limit - @current_clients_company.count) <= 5 %>
+          <div class="message">
+            <hr class="status-complet not-completed" />
+            Лимит по текущим клиентам скоро будет привышен, осталось <%= @current_company.record_limit - @current_clients_company.count %> мест, обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
+          </div>
+        <% end %>
       <% end %>
 
-      <% if time_limit(@current_company.time_limit) <= 5 %>
-        <div class="message">
-          <hr class="status-complet not-completed" />
-          Осталось <%= time_limit(@current_company.time_limit) %> дней до завершения "<%= @current_company.note %>", обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
-        </div>
-      <% end %>
-      <% if (@current_company.record_limit - @current_clients_company.count) <= 5 %>
-        <div class="message">
-          <hr class="status-complet not-completed" />
-          Лимит по текущим клиентам скоро будет привышен, осталось <%= @current_company.record_limit - @current_clients_company.count %> мест, обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
-        </div>
-      <% end %>
 
       <%if flash[:notice].present?%>
         <div class="message">
