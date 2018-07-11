@@ -1,7 +1,7 @@
 class Companies::RecordsController < ApplicationController
   before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :ensure_user_has_company
-  before_action :set_record, only: [:show, :edit]
+  before_action :set_record, only: [:show, :edit, :update]
 
   # GET /records
   # GET /records.json
