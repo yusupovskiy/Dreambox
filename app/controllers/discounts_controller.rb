@@ -2,11 +2,17 @@ class DiscountsController < ApplicationController
   before_action :confirm_actions, only: [:create, :update, :destroy]
 
   def create
-    discount = Discount.create! discount_params
+    discount = Discount.new discount_params
+
+    unless discount.value > 0
+      return redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />Цена не может быть равно нулю"
+    end
 
     respond_to do |format|
-      format.html { redirect_to request.referer }
-      format.json { render json: discount }
+      if discount.save
+        format.html { redirect_to request.referer, notice: "<hr class=\"status-complet completed\" />Коррекция цены произведена" }
+        format.json { render json: discount }
+      end
     end
   end
 

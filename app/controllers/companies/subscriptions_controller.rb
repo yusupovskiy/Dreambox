@@ -70,7 +70,9 @@ class Companies::SubscriptionsController < ApplicationController
                  record_client_id = ?', 
                  Date.today, @subscription.record_client_id)
 
-    @subscription.price = @subscription.price + discounts_record_client.sum(:value)
+    if discounts_record_client.present?
+      @subscription.price = discounts_record_client.sum(:value)
+    end
 
     respond_to do |format|
       no_subscriptions_in_that_range = rc.subscriptions

@@ -51,15 +51,24 @@ SQL
     rows.each do |rc|
 
       price_service = RecordService.where(record_id: rc['record_id']).sum(:money_for_abon).to_f
-      price_correction = Discount.where(record_client_id: rc['id']).sum(:value)
-      price = price_service + price_correction
+
+      price_correction = Discount.where('
+                   (? between start_at and finish_at) and 
+                   is_active = true and 
+                   record_client_id = ?', 
+                   Date.today, rc['id']).sum(:value)
+
+
+      if price_correction.present?
+        price_service = price_correction
+      end
 
       subs = Subscription.new({
         start_at: start_at,
         finish_at: finish_at,
         visits: rc['total_visits'],
         record_client_id: rc['id'],
-        price: price,
+        price: price_service,
       })
       subs.save
       History.create({

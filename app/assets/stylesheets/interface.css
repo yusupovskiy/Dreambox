@@ -1527,7 +1527,6 @@ input.input-attachment {
     cursor: pointer;
     user-select: none;
     display: table;
-    margin-top: 15px;
 }
 .btn-show-list {
     position: relative;
@@ -1595,7 +1594,7 @@ a.logo {
 .logo>img {
     width: 100%;
 }
-.logo:hover {
+a.logo:hover {
     -ms-transform: scale(1.5);
     transform: scale(1.5);
 }
