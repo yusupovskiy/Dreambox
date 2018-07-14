@@ -33,6 +33,6 @@ module ApplicationHelper
       day = 0
     else
       day
-    end
+    end 
   end
 end

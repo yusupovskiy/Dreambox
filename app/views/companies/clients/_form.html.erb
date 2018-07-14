@@ -1,4 +1,4 @@
-<%= form_for(client, url: [client.company, client], local: true, html: {id: 'main-form'}, data: { 'form-data' => @s3_direct_post.fields, 'url' => @s3_direct_post.url, 'host' => URI.parse(@s3_direct_post.url).host }) do |form| %>
+<%= form_with(url: [client.company, client], model: client, local: true, html: {id: 'main-form'}, data: { 'form-data' => @s3_direct_post.fields, 'url' => @s3_direct_post.url, 'host' => URI.parse(@s3_direct_post.url).host }) do |form| %>
 
 
 
@@ -65,43 +65,100 @@
           <%= form.label t('.phone_number'), class: 'finput-label' %>
           <%= form.telephone_field :phone_number, id: :client_phone_number, class: "finput-input" %>
         </div>
+
       </div>
 
+      <%  %>
 
-    <% if (@client.role.to_i & Client::Role::CLIENT) > 0 %>
-      <% if @blocks_clients.present? %>
-        <% @blocks_clients.each do |b| %>
-          <% fields_block = @field_templates_clients.where(block_id: b.id) %>
-              <% if fields_block.present? %>
-          <div class="block-information">
-            <h3><%= b.name %></h3>
-            <div class="container-info compact">
-                <% fields_block.each do |ft| %>
-                  <%= form.fields_for :field_data do |field_value_form| %>
-                    <%= field_value_form.hidden_field :id %>
-                    <%= field_value_form.hidden_field :field_id, value: ft.id %>
-                    <div class="finput">
-                      <%= field_value_form.label ft.name, class: 'finput-label' %>
-
-                      <% if ft.field_type == 'text' %>
-                        <%= field_value_form.text_field :value, class: "finput-input" %>
-                      <% elsif ft.field_type == 'date' %>
-                        <%= field_value_form.date_field :value, class: "finput-input" %>
-                      <% elsif ft.field_type == 'number' %>
-                        <%= field_value_form.number_field :value, class: "finput-input" %>
-                      <% elsif ft.field_type == 'datetime' %>
-                        <%= field_value_form.datetime_field :value, class: "finput-input" %>
-                      <% end %>
-
-                    </div>
-                  <% end %>
-                <% end %>
+      <div class="block-information">
+        <h3>Аккаунт</h3>
+        <div class="container-info compact">
+          <dfn data-info="Указав почту, будет создан аккаунт или у уже имеющегося появится доступ к информации этой карты">
+            <div class="finput">
+              <%= form.label 'Почта', class: 'finput-label' %>
+              <%= form.email_field :email, class: "finput-input ajax", value:
+              email_user(@client.user_id) %>
             </div>
-          </div>
+          </dfn>
+          <div class="get_account"></div>
+        </div>
+      </div>
+
+<script type="text/javascript">
+  document.addEventListener('turbolinks:load', function() {
+
+    function funcBefore() {
+      $('.get_account').html('<div class="loading-block"><img src="/images/loading.gif"</div>');
+    }
+    function funcSuccess(data) {
+      $('.get_account').html(data);
+    }
+
+    var lastId = null;
+    $('.ajax').on("input", function(){
+      var textSearch = this.value.trim();
+      clearTimeout(lastId)
+
+      if(textSearch === "") {
+        $('.get_account').html('');
+      }
+      else {
+        funcBefore()
+        lastId = setTimeout(() => {
+          $.ajax( {
+            url: '/account',
+            method: 'GET',
+            data: {
+              request: textSearch
+            },
+            dataType: 'HTML',
+            // beforeSend: funcBefore,
+            success: funcSuccess
+          });
+        }, 500)
+      }
+    });
+  });
+</script>
+
+
+<% if @blocks_clients.present? %>
+  <% i = 0 %>
+  <% @blocks_clients.each do |b| %>
+    <% fields_templates = @field_templates_clients.where(block_id: b.id) %>
+    <% if fields_templates.present? %>
+      <div class="block-information">
+        <h3><%= b.name %></h3>
+        <div class="container-info compact">
+          <% fields_templates.each do |ft| %>
+
+            <% f = @client.field_data.find_by(field_id: ft.id) %>
+            <input type="hidden" name="client[field_data_attributes][<%= i %>][id]" id="client_field_data_attributes_0_id" value="<%=f.nil? ? '' : f.id %>">
+
+            <input value="<%= ft.id %>" type="hidden" name="client[field_data_attributes][<%= i %>][field_id]" id="client_field_data_attributes_0_field_id">
+
+            <div class="finput">
+              <%= form.label ft.name, class: 'finput-label' %>
+              <% if ft.field_type == 'text' %>
+                <input value="<%=f.nil? ? '' : f.value %>" name="client[field_data_attributes][<%= i %>][value]" type="text" class="finput-input" />
+              <% elsif ft.field_type == 'date' %>
+                <input value="<%=f.nil? ? '' : f.value %>" name="client[field_data_attributes][<%= i %>][value]" type="date" class="finput-input" />
+              <% elsif ft.field_type == 'number' %>
+                <input value="<%=f.nil? ? '' : f.value %>" name="client[field_data_attributes][<%= i %>][value]" type="number" class="finput-input" />
+              <% elsif ft.field_type == 'datetime' %>
+                <input value="<%=f.nil? ? '' : f.value %>" name="client[field_data_attributes][<%= i %>][value]" type="datetime" class="finput-input" />
               <% end %>
-        <%end%>
-      <%end%>
+            </div>
+            <% i = i + 1 %>
+          <%end%>
+        </div>
+      </div>
     <%end%>
+  <%end%>
+<%end%>
+
+    
+
 
     </div>
     <%= form.submit class: "btn icon-confirm" %>

@@ -152,6 +152,16 @@ class Companies::ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.save
+        email = params[:client][:email]
+
+        account = User.find_by(email: email)
+        if account.present?
+          @client.user_id = account.id
+          unless account.people_id.present?
+            account.update_attribute(:people_id, @client.id)
+          end
+        end
+
         format.html { redirect_to [@client.company, @client], notice: t('client.created') }
         format.json { render :show, status: :created }
       else
@@ -164,16 +174,19 @@ class Companies::ClientsController < ApplicationController
   # PATCH/PUT /clients/1
   # PATCH/PUT /clients/1.json
   def update
-    email = params[:client][:email]
-
-    account = User.find_by(email: email)
-    if account.present?
-      @client.user_id = account.id
-      current_user.update_attribute(:people_id, @client.id)
-    end
 
     respond_to do |format|
       if @client.update(client_params)
+        email = params[:client][:email]
+
+        account = User.find_by(email: email)
+        if account.present?
+          @client.user_id = account.id
+          unless account.people_id.present?
+            account.update_attribute(:people_id, @client.id)
+          end
+        end
+        
         format.html { redirect_to [@client.company, @client], notice: t('client.updated') }
         format.json { render :show, status: :ok, location: @client }
       else
