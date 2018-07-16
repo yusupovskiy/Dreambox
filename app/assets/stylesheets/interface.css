@@ -604,6 +604,7 @@ input.card-search:hover {
     margin: 9px 0;
     user-select: none;
     font-size: 14px;
+    z-index: 20;
 }
 .text-input {
     float: right;
