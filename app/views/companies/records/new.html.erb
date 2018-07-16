@@ -1,15 +1,11 @@
 <div class="title-panel">
-	<div class="btns-card">
-	  <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
-	  <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
-      <div class="btn-card top-scroll"></div>
-      <div class="btn-card btn-show-list">
-        <div class="panel-show">
-          <%= link_to 'Вернуться к списку', company_records_path(@current_company) %>
-        </div>
-      </div>
-	</div>
-    <div class="title-card">Добавление групповой записи</div>
+  <div class="btns-card" style="position: absolute;">
+    <%= link_to company_records_path(@current_company), class: "btn-card", style: "float: left;" do %>
+      <ion-icon name="arrow-back"></ion-icon>
+    <% end %>
+    <div class="btn-card top-scroll"></div>
+  </div>
+  <div class="title-card">Добавление групповой записи</div>
 </div>
 
 <%= render 'form', record: @record %>

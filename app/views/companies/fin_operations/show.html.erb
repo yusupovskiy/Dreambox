@@ -1,20 +1,18 @@
 <div class="title-panel">
-  <div class="btns-card">
-    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
-    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+  <div class="btns-card" style="position: absolute;">
     
-    <div class="btn-card top-scroll"></div>
+    <%= link_to company_fin_operations_path(@current_company), class: "btn-card", style: "float: left;" do %>
+      <ion-icon name="arrow-back"></ion-icon>
+    <% end %>
 
-    <div class="btn-card btn-show-list">
-      <div class="panel-show">
-        <%= link_to 'Назад', :back %>
-        <%= link_to 'Перейти к списку', company_fin_operations_path %>
-        <%= link_to 'Распечатать', doc_pko_company_fin_operation_path(@current_company, params[:id]) %>
-        <% if @fin_operation.is_active == true %>
-          <div id="cancel">Отменить оплату</div>
-        <% end %>
+    <% if @fin_operation.is_active == true %>
+      <div class="btn-card btn-show-list">
+        <div class="panel-show" style="left: auto; right: 10px;">
+            <%= link_to 'Распечатать', doc_pko_company_fin_operation_path(@current_company, params[:id]) %>
+            <div id="cancel">Отменить оплату</div>
+        </div>
       </div>
-    </div>
+    <% end %>
 
   </div>
   <div class="role-card">Финансовая операция</div>
@@ -91,13 +89,15 @@
             <span class="text-input"><%= @fin_operation.operation_number %></span>
           </div>
           <div class="item-information">
-            <span class="title-input">Активность</span>
-            <span class="text-input"><%= @fin_operation.is_active %></span>
+            <span class="title-input">Примечание</span>
+            <span class="text-input"><%= @fin_operation.description %></span>
           </div>
-          <div class="item-information">
-          	<span class="title-input">Филиал</span>
-          	<span class="text-input"><%= link_to @affiliate.name, company_affiliate_path(params[:company_id], @affiliate.id) %></span>
-          </div>
+          <% if @fin_operation.affiliate_id.present? %>
+            <div class="item-information">
+            	<span class="title-input">Филиал</span>
+            	<span class="text-input"><%= Affiliate.find(@fin_operation.affiliate_id).address %></span>
+            </div>
+          <% end %>
         </div>
       </div>
 

@@ -1,17 +1,9 @@
 <div class="btns-card">
-  <a href="/" title="Закрыть" class="btn-card icon-closed-card"></a>
-  <a href="/" title="На главную" class="btn-card icon-home"></a>
   <!-- <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div> -->
+  <%= link_to root_path, class: "btn-card", style: "float: left;" do %>
+    <ion-icon name="arrow-back"></ion-icon>
+  <% end %>
   <div class="btn-card top-scroll"></div>
-  <div class="btn-card btn-show-list">
-    <div class="panel-show">
-      <%= link_to "Добавить свои поля", company_add_field_path(params[:company_id]) %>
-      <a href="#">Майл рассылка</a>
-      <a href="#">СМС рассылка</a>
-      <a href="#">Вотсап рассылка</a>
-      <a href="#">Импортировать данные</a>
-    </div>
-  </div>
 </div>
 <!-- <div class="panel-sorting">Сортировка списка</div>
 <input class="card-search" type="text" placeholder="Поиск"> -->

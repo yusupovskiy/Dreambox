@@ -1,8 +1,9 @@
-<div id="notice"><%= notice %></div>
 <div class="btns-card">
-  <a href="/" title="Закрыть" class="btn-card icon-closed-card"></a>
-  <a href="/" title="На главную" class="btn-card icon-home"></a>
   <!-- <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div> -->
+  <%= link_to root_path, class: "btn-card", style: "float: left;" do %>
+    <ion-icon name="arrow-back"></ion-icon>
+  <% end %>
+  <div class="btn-card top-scroll"></div>
 </div>
 
 <div class="panel-sorting">

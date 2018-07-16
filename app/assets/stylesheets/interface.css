@@ -89,9 +89,13 @@ img.object-avatar {
     color: white;
 }
 .menu-with-options {
-    margin: 24px 30px 14px 30px;
+    margin: 0 30px 14px 30px;
     display: table;
     user-select: none;
+}
+a.btn-card>ion-icon {
+    width: 100%;
+    height: 100%;
 }
 .option {
     font-size: 12px;
@@ -546,8 +550,8 @@ input.card-search:hover {
     user-select: none;
     width: 100%;
     height: 50px;
-    position: absolute;
-    z-index: 20;
+/*    position: absolute;
+    z-index: 20;*/
 }
 .btn-card {
     background-size: 100%;
@@ -560,6 +564,7 @@ input.card-search:hover {
     cursor: pointer;
     background-origin: content-box;
     border-radius: 50%;
+    color: #2b2b2b;
 }
 .btn-card:hover {
     background-color: #d4d4d4;
@@ -1080,7 +1085,7 @@ a {
 }
 .left-content {
     float: left;
-    margin: 13px 0px 0 20px;
+    margin: 13px 20px 0px 20px;
 }
 .right-content {
     float: right;

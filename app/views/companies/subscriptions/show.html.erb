@@ -1,13 +1,14 @@
 <div class="title-panel">
-  <div class="btns-card">
-    <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
-    <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+  <div class="btns-card" style="position: absolute;">
+    
+    <%= link_to company_client_path(@current_company, @client_subscription.id), class: "btn-card", style: "float: left;" do %>
+      <ion-icon name="arrow-back"></ion-icon>
+    <% end %>
     
     <div class="btn-card top-scroll"></div>
 
     <div class="btn-card btn-show-list">
-      <div class="panel-show">
-        <%= link_to 'Назад', :back %>
+      <div class="panel-show" style="left: auto; right: 10px;">
         <%= link_to 'Перейти к владельцу', company_client_path(@current_company, @client_subscription.id) %>
         <%= link_to 'Перейти к записи', company_record_path(@current_company, @record_client.id) %>
         <div id="recalculation">Сделать перерасчет</div>

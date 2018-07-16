@@ -1,6 +1,8 @@
 <div class="btns-card">
-  <a href="/" title="Закрыть" class="btn-card icon-closed-card"></a>
-  <a href="/" title="На главную" class="btn-card icon-home"></a>
+  <%= link_to root_path, class: "btn-card", style: "float: left;" do %>
+    <ion-icon name="arrow-back"></ion-icon>
+  <% end %>
+  <div class="btn-card top-scroll"></div>
 </div>
 
 <!-- <input class="card-search" type="text" placeholder="Поиск"> -->

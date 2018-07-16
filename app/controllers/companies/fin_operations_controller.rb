@@ -46,9 +46,8 @@ class Companies::FinOperationsController < ApplicationController
     @fin_operation = FinOperation.new(fin_operation_params)
     @fin_operation.user_id = current_user.id
 
-    @fin_operation.operation_number = FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.nil? ? 0 : FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last.operation_number 
-    @fin_operation.operation_number = 1 + @fin_operation.operation_number.to_i
- 
+    # сделать проверку, ответственнен ли сотрудник за указанный филиал
+    # при реализации функционала расходов, сделать чтобы номер шол отдельно от них, только за оплаты
     
     if @fin_operation.amount.to_i <= 0
       redirect_to request.referer, notice: "<hr class=\"status-complet not-completed\" />Операция не произведена, необходимо указать сумму больше <span class=\"amount\">0.0 ₽</span>"      
@@ -63,6 +62,13 @@ class Companies::FinOperationsController < ApplicationController
       record_client = RecordClient.find(subscription.record_client_id)
       record = Record.find(record_client.record_id)
       @fin_operation.affiliate_id = record.affiliate_id
+
+      if FinOperation.exists?(affiliate_id: @fin_operation.affiliate_id)
+        fin_operation = FinOperation.where(affiliate_id: @fin_operation.affiliate_id).last
+        @fin_operation.operation_number = 1 + fin_operation.operation_number.to_i
+      else
+        @fin_operation.operation_number = 1
+      end
 
       subscription = Subscription.find(@fin_operation.operation_object_id)
       subscription_payments = FinOperation.where("is_active = true AND operation_type = 1 AND operation_object_id IN (?)", subscription.id).sum(:amount)

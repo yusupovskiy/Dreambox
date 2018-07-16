@@ -1,7 +1,9 @@
 <div class="title-panel avatar">
-  <div class="btns-card">
+  <div class="btns-card" style="position: absolute;">
     
-    <%= link_to '', :back, class: "btn-card icon-arroy" %>
+    <%= link_to company_clients_path(@current_company), class: "btn-card", style: "float: left;" do %>
+      <ion-icon name="arrow-back"></ion-icon>
+    <% end %>
 
     <div class="btn-card top-scroll"></div>
 
@@ -9,8 +11,6 @@
       <div class="btn-card btn-show-list">
         <div class="panel-show" style="left: auto; right: 10px;">
 
-          <%= link_to 'Назад', :back %>
-          <%= link_to 'Перейти в список', company_clients_path %>
           <%= link_to 'Редактировать', [:edit, @current_company, @client] %>
           <%if @client.archive%>
             <%= link_to 'Убрать из архива', company_clients_archive_path(params[:company_id], params[:id], 0), method: :post%>

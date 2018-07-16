@@ -1,12 +1,9 @@
 <div class="title-panel">
-  <div class="btns-card">
-    <div class="btn-card top-scroll"></div>
+  <div class="btns-card" style="position: absolute;">
+  <%= link_to root_path, class: "btn-card", style: "float: left;" do %>
+    <ion-icon name="arrow-back"></ion-icon>
+  <% end %>
 
-    <div class="btn-card btn-show-list">
-      <div class="panel-show" style="left: auto; right: 10px;">
-        <%= link_to 'Назад', :back %>
-      </div>
-    </div>
   </div>
   <div class="title-card"><%= @current_company.name %></div>
   <div class="role-card">Компания</div>
