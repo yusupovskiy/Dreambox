@@ -9,6 +9,7 @@
       <div class="panel-show">
         <%= link_to 'Назад', :back %>
         <%= link_to 'Перейти к списку', company_fin_operations_path %>
+        <%= link_to 'Распечатать', doc_pko_company_fin_operation_path(@current_company, params[:id]) %>
         <% if @fin_operation.is_active == true %>
           <div id="cancel">Отменить оплату</div>
         <% end %>
@@ -76,7 +77,7 @@
           <% end %>
           <div class="item-information">
           	<span class="title-input">Примечание</span>
-          	<span class="text-input"><%= @fin_operation.description %></span>
+          	<span class="text-input"><%= @fin_operation.amount %></span>
           </div>
           <div class="item-information">
           	<span class="title-input">Ответственный</span>

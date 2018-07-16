@@ -140,15 +140,7 @@ class Companies::ClientsController < ApplicationController
     prms = client_params
     @client = Client.new(prms)
 
-    email = params[:client][:email]
-
-    account = User.find_by(email: email)
-    if account.present?
-      @client.user_id = account.id
-    end
-
     @client.role = (Client::Role::CLIENT).to_s(2).to_i
-
 
     respond_to do |format|
       if @client.save

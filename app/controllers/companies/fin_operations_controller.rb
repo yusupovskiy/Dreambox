@@ -80,6 +80,14 @@ class Companies::FinOperationsController < ApplicationController
 
   end
 
+  def doc_pko
+    @fin_operation = FinOperation.find(params[:id])
+
+    render :template => 'companies/fin_operations/doc_pko',layout: false
+    # render 
+    
+  end
+
   private
     def fin_operation_params
       params.require(:fin_operation).permit(:amount, :operation_date, :operation_type, :operation_object_id, :is_active, :description, :description_cancellation, :affiliate_id)

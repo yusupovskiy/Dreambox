@@ -547,6 +547,7 @@ input.card-search:hover {
     width: 100%;
     height: 50px;
     position: absolute;
+    z-index: 20;
 }
 .btn-card {
     background-size: 100%;

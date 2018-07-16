@@ -48,7 +48,11 @@ Rails.application.routes.draw do
         patch 'cancel'
       end
     end
-    resources :fin_operations, module: :companies
+    resources :fin_operations, module: :companies do
+      member do
+        get 'doc_pko'
+      end
+    end
     resources :histories, module: :companies
     resources :info_blocks, module: :companies
     resources :field_templates, module: :companies
