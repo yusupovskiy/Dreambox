@@ -2,7 +2,7 @@
 
 <div class="show-and-hide-container">
   <div class="btn-subs btn-show-panel">+ Добавить работу</div>
-  <%= form_with(url: company_works_path(params[:company_id]), model: @work, local: true, html: {class: 'block-information show-and-hide-panel'}) do |form| %>
+  <%= form_with(url: company_works_path(@current_company), model: @work, local: true, html: {class: 'block-information show-and-hide-panel'}) do |form| %>
     <%= form.hidden_field :people_id, value: @client.id %>
 
     <div class="finput">
