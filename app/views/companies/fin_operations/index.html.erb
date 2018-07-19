@@ -10,9 +10,27 @@
 <div class="panel-content"></div>
 
 <div class="conten-card tabs">
+
+  <div style="margin: 0 30px 30px;">
+  <%= form_with url: company_fin_operations_path(@current_company.id), local: true, method: :get, class: 'block-information' do |f|%>
+    <h3>Сортировка по дате</h3>
+    <div class="finput">
+      <%= f.label 'Начала периода', class: 'finput-label' %>
+      <%= f.date_field :start_date, value: @start_date, class: "finput-input" %>
+    </div>
+    <div class="finput">
+      <%= f.label 'Конец периода', class: 'finput-label' %>
+      <%= f.date_field :finish_date, value: @finish_date, class: "finput-input" %>
+    </div>
+    <div class="btns-confirm">
+      <%= f.button '', class: 'btn icon-confirm' %>
+    </div>
+  <%end%>
+  </div>
+
   <div class="menu-with-options">
-    <div class="option active" title="">Доход</div>
-    <div class="option" title="">Расход</div>
+    <div class="option active" title="">Доход<span class="amount"><%= @fin_operations.where(is_active: true).sum(:amount) %> ₽</span></div>
+    <!-- <div class="option" title="">Расход</div> -->
   </div>
 
 

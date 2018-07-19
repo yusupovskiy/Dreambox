@@ -1,11 +1,13 @@
 class Companies::FinOperationsController < ApplicationController
   before_action :confirm_actions, only: [:create, :update, :destroy]
+  before_action :fin_operation_params, only: [:create, :update, :destroy]
 
   def index
     affiliates = Affiliate.where(company_id: @current_company.id)
     records = Record.where(affiliate: affiliates)
     rc = RecordClient.where(record: records)
     subscriptions = Subscription.where(record_client: rc)
+
     @fin_operations = FinOperation.where("(
       (operation_type = 1 AND operation_object_id IN (?)) OR 
       (operation_type = 0 AND operation_object_id IN (?)) AND
@@ -14,6 +16,29 @@ class Companies::FinOperationsController < ApplicationController
       Client.where(company_id: @current_company.id).select('id'),
       @current_affiliate,
       ).order("operation_date DESC")
+
+    if params[:start_date].nil?
+      @start_date = @fin_operations.last.operation_date
+    else
+      @start_date = params[:start_date].nil? ? '' : params[:start_date]
+    end
+
+    if params[:finish_date].nil?
+      @finish_date = @fin_operations.first.operation_date
+    else
+      @finish_date = params[:finish_date].nil? ? '' : params[:finish_date]
+    end
+
+    @fin_operations = FinOperation.where("( 
+      operation_date >= '#{@start_date}' and operation_date <= '#{@finish_date}' AND
+      (operation_type = 1 AND operation_object_id IN (?)) OR 
+      (operation_type = 0 AND operation_object_id IN (?)) AND
+      affiliate_id IN (?))", 
+      subscriptions.all.select('id'), 
+      Client.where(company_id: @current_company.id).select('id'),
+      @current_affiliate,
+      ).order("operation_date DESC")
+
   end
 
   def show
@@ -89,9 +114,15 @@ class Companies::FinOperationsController < ApplicationController
   def doc_pko
     @fin_operation = FinOperation.find(params[:id])
 
-    render :template => 'companies/fin_operations/doc_pko',layout: false
-    # render 
-    
+    if @fin_operation.operation_type == 'payment_other'
+      @client_subscription = Client.find(@fin_operation.operation_object_id)
+    elsif @fin_operation.operation_type == 'payment_subscription'
+      @subscription = Subscription.find(@fin_operation.operation_object_id)
+      record_subscription = RecordClient.find(@subscription.record_client_id)
+      @client_subscription = Client.find(record_subscription.client_id)
+    end
+
+    render :template => 'companies/fin_operations/doc_pko',layout: false    
   end
 
   private

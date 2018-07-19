@@ -36,6 +36,7 @@
   float: left;
   border: 1px dashed black;
   border-width: 0 1px 0 0;
+  position: relative;
 }
 .right {
   width: 297px;
@@ -43,6 +44,7 @@
   float: right;
   border: 1px dashed black;
   border-width: 0 0 0 1px;
+  position: relative;
 }
 .field_1 {
   text-align: center;
@@ -77,11 +79,12 @@
 }
 .field_2>div {
   width: 31%;
-    border: 1px solid black;
-    border-width: 0 0 1.2px 0;
-    padding-bottom: 1px;
-    text-align: center;
-    float: right;
+  border: 1px solid black;
+  border-width: 0 0 2px 0;
+  padding-bottom: 1px;
+  text-align: center;
+  float: right;
+  height: 13px;
 }
 .field_3 {
     font-size: 12px;
@@ -125,7 +128,7 @@
     font-size: 10px;
 }
 .word {
-    height: 1122.519685039px;
+    /*height: 1122.519685039px;*/
     width: 793.7007874016px;
     background: #ffffff;
      margin: 0 auto 20px;
@@ -260,7 +263,7 @@ ion-icon.hydrated:hover {
         <td colspan="2" style="text-align: center; font-size: 13px; font-weight: bold;">ПРИХОДНЫЙ КАССОВЫЙ ОРДЕР</td>
 
         <td style="width: 90px; border: 2px solid black; text-align: center; border-width: 2px 1px 2px 2px;"><%= @fin_operation.operation_number %></td>
-        <td style="width: 90px; border: 2px solid black; text-align: center; border-width: 2px 2px 2px 1px;">02.02.1996</td>
+        <td style="width: 90px; border: 2px solid black; text-align: center; border-width: 2px 2px 2px 1px;"><%= @fin_operation.operation_date.strftime("%d.%m.%Y") %></td>
       </tr>
     </table>
 
@@ -281,7 +284,7 @@ ion-icon.hydrated:hover {
       <tr>
         <td style="padding: 1px 3px; border: 2px solid black; text-align: center; border-width: 1px 1px 2px 2px; width: 30px;">
           <div class="field">
-            <input type="text" value="вводить долг за абонемент" style="font-size: 10px;">
+            <input type="text" value="<%= debt(@fin_operation.operation_object_id, @fin_operation.amount, @fin_operation.operation_type) %>" style="font-size: 10px!important">
           </div>
         </td>
         <td style="padding: 1px 3px; border: 2px solid black; text-align: center; border-width: 1px 1px 2px 1px; width: 15px;"></td>
@@ -310,7 +313,7 @@ ion-icon.hydrated:hover {
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 10px 3px 1px 3px;">Принято от</td>
-        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; text-align: center; border-width: 0 0 2px 0;">Магомедов Магомед Магомедович</td>
+        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;"><%= @client_subscription.first_name %> <%= @client_subscription.last_name %> <%= @client_subscription.patronymic %></td>
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 10px 3px 1px 3px;">Основание:</td>
@@ -360,7 +363,7 @@ ion-icon.hydrated:hover {
       </tr>
 
       <tr style="font-size: 12px;">
-        <td colspan="3" style="padding: 13px 3px 1px 3px;">Главный бухгалтер</td>
+        <td colspan="3" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
         <td colspan="4" style="padding: 13px 3px 1px 3px;">
           <div class="field" style="float: left; margin-right: 20px;">
             <div style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 84px; height: 15px;"></div>
@@ -373,7 +376,7 @@ ion-icon.hydrated:hover {
         </td>
       </tr>
       <tr style="font-size: 12px;">
-        <td colspan="3" style="padding: 13px 3px 1px 3px;">Главный бухгалтер</td>
+        <td colspan="3" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
         <td colspan="4" style="padding: 13px 3px 1px 3px;">
           <div class="field" style="float: left; margin-right: 20px;">
             <div style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 84px; height: 15px;"></div>
@@ -391,6 +394,7 @@ ion-icon.hydrated:hover {
 
         </div>
       </div>
+      <span style="position: absolute; bottom: 0; right: 10px; font-size: 9px; color: #c6c6c6;"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Квитанция подготовлена сервисом для учета Dreambox</span>
     </div>
     <div class="right">
       <div class="column">
@@ -405,46 +409,40 @@ ion-icon.hydrated:hover {
         </div>
         <div class="field_3">
           <div>от</div> 
-          <div>"<span style="padding: 0 8px; border: 1px solid black; border-width: 0 0 1px 0; padding-bottom: 1px; text-align: center;">02</span>"</div> 
+          <div>"<span style="padding: 0 8px; border: 1px solid black; border-width: 0 0 2px 0; padding-bottom: 1px; text-align: center;"><%= @fin_operation.operation_date.strftime("%d") %></span>"</div> 
           <div style="    padding: 0 18px;
       border: 1px solid black;
-      border-width: 0 0 1px 0;
+      border-width: 0 0 2px 0;
       padding-bottom: 1px;
       text-align: center;
-      min-width: 40px;">авгеста</div> 
+      min-width: 40px;"><%= @fin_operation.operation_date.strftime("%B") %></div> 
           <div style="    padding: 0 13px;
       border: 1px solid black;
-      border-width: 0 0 1px 0;
+      border-width: 0 0 2px 0;
       padding-bottom: 1px;
-      text-align: center;">2018</div> г.
+      text-align: center;"><%= @fin_operation.operation_date.strftime("%Y") %></div> г.
         </div>
         <div class="field_4">
           <span>Принято от</span>
           <span style="    padding: 0 3px;
       border: 1px solid black;
-      border-width: 0 0 1px 0;
-      padding-bottom: 1px;">Магомедов Магомед Магомедович</span>
+      border-width: 0 0 2px 0;
+      padding-bottom: 1px;"><%= @client_subscription.first_name %> <%= @client_subscription.last_name %> <%= @client_subscription.patronymic %></span>
         </div>
         <div class="field_4">
           <span>Основание</span>
           <span style="    padding: 0 3px;
       border: 1px solid black;
-      border-width: 0 0 1px 0;
-      padding-bottom: 1px;">Магомедов Магомед Магомедович Магомедов Магомед Магомедович Магомедов Магомед Магомедович</span>
-        </div>
-        <div class="field_4">
-          <span>Основание</span>
-          <span style="    padding: 0 3px;
-      border: 1px solid black;
-      border-width: 0 0 1px 0;
-      padding-bottom: 1px;">Магомедов Магомед Магомедович Магомедов Магомед Магомедович Магомедов Магомед Магомедович</span>
+      border-width: 0 0 2px 0;
+      padding-bottom: 1px; line-height: 1.5;"><%= @fin_operation.description %></span>
         </div>
       </div>
+      <span style="position: absolute; bottom: 0; left: 10px; font-size: 9px; color: #c6c6c6;"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Квитанция подготовлена сервисом для учета Dreambox</span>
     </div>
 
   </div>
 
-  <div class="test">1 из 2</div>
+  <!-- <div class="test">1 из 2</div> -->
 </div>
 
 
