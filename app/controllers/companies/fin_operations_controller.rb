@@ -17,27 +17,30 @@ class Companies::FinOperationsController < ApplicationController
       @current_affiliate,
       ).order("operation_date DESC")
 
-    if params[:start_date].nil?
-      @start_date = @fin_operations.last.operation_date
-    else
-      @start_date = params[:start_date].nil? ? '' : params[:start_date]
+    if @fin_operations.present?
+      if params[:start_date].nil?
+        @start_date = @fin_operations.last.operation_date
+      else
+        @start_date = params[:start_date].nil? ? '' : params[:start_date]
+      end
+
+      if params[:finish_date].nil?
+        @finish_date = @fin_operations.first.operation_date
+      else
+        @finish_date = params[:finish_date].nil? ? '' : params[:finish_date]
+      end
+      
+      @fin_operations = FinOperation.where("( 
+        operation_date >= '#{@start_date}' and operation_date <= '#{@finish_date}' AND
+        (operation_type = 1 AND operation_object_id IN (?)) OR 
+        (operation_type = 0 AND operation_object_id IN (?)) AND
+        affiliate_id IN (?))", 
+        subscriptions.all.select('id'), 
+        Client.where(company_id: @current_company.id).select('id'),
+        @current_affiliate,
+        ).order("operation_date DESC")
     end
 
-    if params[:finish_date].nil?
-      @finish_date = @fin_operations.first.operation_date
-    else
-      @finish_date = params[:finish_date].nil? ? '' : params[:finish_date]
-    end
-
-    @fin_operations = FinOperation.where("( 
-      operation_date >= '#{@start_date}' and operation_date <= '#{@finish_date}' AND
-      (operation_type = 1 AND operation_object_id IN (?)) OR 
-      (operation_type = 0 AND operation_object_id IN (?)) AND
-      affiliate_id IN (?))", 
-      subscriptions.all.select('id'), 
-      Client.where(company_id: @current_company.id).select('id'),
-      @current_affiliate,
-      ).order("operation_date DESC")
 
   end
 
