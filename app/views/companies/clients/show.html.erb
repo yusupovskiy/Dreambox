@@ -79,7 +79,7 @@
       <% if @blocks_clients.present? %>
         <% @blocks_clients.each do |b| %>
           <% fields_block = @field_templates_clients.where(block_id: b.id) %>
-          <% fields_data = FieldDatum.where(field_id: fields_block.select('id'), client_id: @client.id) %>
+          <% fields_data = FieldDatum.where(field_id: fields_block.select('id'), client_id: @client.id).order('id') %>
           <% if fields_data.present? %>
             <div class="block-information">
               <h3><%= b.name %></h3>

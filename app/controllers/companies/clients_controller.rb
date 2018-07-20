@@ -148,7 +148,7 @@ class Companies::ClientsController < ApplicationController
 
         account = User.find_by(email: email)
         if account.present?
-          @client.user_id = account.id
+          @client.update_attribute(:user_id, account.id)
           unless account.people_id.present?
             account.update_attribute(:people_id, @client.id)
           end
@@ -173,7 +173,7 @@ class Companies::ClientsController < ApplicationController
 
         account = User.find_by(email: email)
         if account.present?
-          @client.user_id = account.id
+          @client.update_attribute(:user_id, account.id)
           unless account.people_id.present?
             account.update_attribute(:people_id, @client.id)
           end
