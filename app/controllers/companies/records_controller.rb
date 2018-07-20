@@ -29,7 +29,7 @@ class Companies::RecordsController < ApplicationController
     ")
     @records_clients = RecordClient.where(record_id: params[:id], is_active: true)
 
-    @potential_clients = @clients.where.not(id: @records_clients.select('client_id'))
+    @potential_clients = @clients.where.not(id: @records_clients.select('client_id')).order(:first_name, :last_name)
 
 
 

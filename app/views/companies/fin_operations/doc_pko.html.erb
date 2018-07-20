@@ -422,22 +422,95 @@ ion-icon.hydrated:hover {
       padding-bottom: 1px;
       text-align: center;"><%= @fin_operation.operation_date.strftime("%Y") %></div> г.
         </div>
-        <div class="field_4">
-          <span>Принято от</span>
-          <span style="    padding: 0 3px;
-      border: 1px solid black;
-      border-width: 0 0 2px 0;
-      padding-bottom: 1px;"><%= @client_subscription.first_name %> <%= @client_subscription.last_name %> <%= @client_subscription.patronymic %></span>
-        </div>
-        <div class="field_4">
-          <span>Основание</span>
-          <span style="    padding: 0 3px;
-      border: 1px solid black;
-      border-width: 0 0 2px 0;
-      padding-bottom: 1px; line-height: 1.5;"><%= @fin_operation.description %></span>
-        </div>
-      </div>
-      <span style="position: absolute; bottom: 0; left: 10px; font-size: 9px; color: #c6c6c6;"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Квитанция подготовлена сервисом для учета Dreambox</span>
+
+
+
+    <table style="width: 100%; font-size: 10px; padding-top: 15px;" cellspacing="0">
+      <tr style="font-size: 12px;">
+        <td colspan="2" style="padding: 10px 3px 1px 3px;">Принято от</td>
+        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;"><%= @client_subscription.first_name %> <%= @client_subscription.last_name %> <%= @client_subscription.patronymic %></td>
+      </tr>
+      <tr style="font-size: 12px;">
+        <td colspan="2" style="padding: 10px 3px 1px 3px;">Основание:</td>
+        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;"><%= @fin_operation.description %></td>
+      </tr>
+      <tr style="font-size: 12px;">
+        <td colspan="8" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; height: 22px;"></td>
+      </tr>
+      <tr style="font-size: 12px;">
+        <td colspan="1" style="padding: 3px 3px 1px 3px;">Сумма</td>
+        <td colspan="7" style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; text-align: center;">
+            <div class="field">
+              <div>Четыре тысячи</div>
+              <span>(структурное подразделение)</span>
+          </div>
+        </td>
+      </tr>
+      <tr style="font-size: 12px;">
+        <td colspan="5" style="padding: 13px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
+          <div class="field" style="">
+            <input type="text" value="-">
+          </div>
+        </td>
+        <td style="padding: 13px 3px 1px 3px; text-align: center;">руб.</td>
+        <td style="padding: 13px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
+          <div class="field" style="">
+            <input type="text" value="00">
+          </div>
+        </td>
+        <td style="padding: 13px 3px 3px 3px; text-align: center;">коп.</td>
+      </tr>
+      <tr style="font-size: 12px;">
+        <td colspan="2" style="padding: 3px 3px 1px 3px;">В том числе</td>
+        <td colspan="6" style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
+          <div class="field" style="">
+            <input type="text" value="">
+          </div>
+        </td>
+      </tr>
+      <tr style="font-size: 12px;">
+        <td colspan="2" style="padding: 3px 3px 1px 3px;">Приложение</td>
+        <td colspan="6" style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
+          <div class="field" style="">
+            <input type="text" value="">
+          </div>
+        </td>
+      </tr>
+
+      <tr style="font-size: 12px;">
+        <td colspan="3" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
+        <td colspan="4" style="padding: 13px 3px 1px 3px;">
+          <div class="field" style="float: left; margin-right: 20px;">
+            <div style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 84px; height: 15px;"></div>
+            <span style="bottom: -50%;">(подпись)</span>
+          </div>
+          <div class="field" style="float: left;">
+            <input type="text" value="" style="padding: 3px 3px 4px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px;">
+            <span style="bottom: -50%;">(расшифровка подписи)</span>
+          </div>
+        </td>
+      </tr>
+      <tr style="font-size: 12px;">
+        <td colspan="3" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
+        <td colspan="4" style="padding: 13px 3px 1px 3px;">
+          <div class="field" style="float: left; margin-right: 20px;">
+            <div style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 84px; height: 15px;"></div>
+            <span style="bottom: -50%;">(подпись)</span>
+          </div>
+          <div class="field" style="float: left;">
+            <input type="text" value="" style="padding: 3px 3px 4px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px;">
+            <span style="bottom: -50%;">(расшифровка подписи)</span>
+          </div>
+        </td>
+      </tr>
+
+    </table>
+  </div>
+
+
+
+<!--       <span style="position: absolute; bottom: 0; left: 10px; font-size: 9px; color: #c6c6c6;"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Полную информацию можно получить в сервисе Dreambox</span> -->
+      <span style="position: absolute; bottom: 0; left: 10px; font-size: 9px; color: #c6c6c6;"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Получайте полную информацию в сервисе Dreambox</span>
     </div>
 
   </div>
