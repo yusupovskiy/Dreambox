@@ -30,13 +30,13 @@
         width: 100%;
         border-radius: 0;
     }
-.current-object {
-    right: auto;
-    left: 40px;
-}
-.current-object.mini .object-info .name-people {
-    display: none;
-}
+    .current-object {
+        right: auto;
+        left: 40px;
+    }
+    .current-object.mini .object-info .name-people {
+        display: none;
+    } 
 }
 @media (max-width: 415px) {
     .card {

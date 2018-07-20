@@ -107,7 +107,7 @@ class Companies::ClientsController < ApplicationController
 
 
     @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
-    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients)
+    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients).order("id")
 
     @works_client = Work.where people_id: @client.id
   end
@@ -118,7 +118,7 @@ class Companies::ClientsController < ApplicationController
     @new_block = InfoBlock.new
     @new_template_field = FieldTemplate.new
     @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
-    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients)
+    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients).order("id")
     @new_field_data = FieldDatum.new
     1.times { @client.field_data.build }
   end
@@ -129,7 +129,7 @@ class Companies::ClientsController < ApplicationController
     @new_block = InfoBlock.new
     @new_template_field = FieldTemplate.new
     @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
-    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients)
+    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients).order("id")
     @new_field_data = FieldDatum.new 
     # 1.times { @client.field_data.build }
   end
