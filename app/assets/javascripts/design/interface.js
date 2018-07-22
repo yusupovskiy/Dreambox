@@ -2,8 +2,8 @@ document.addEventListener('turbolinks:load', function() {
 
   $(".open-tabs>div>div").niceScroll({cursorcolor:"transparent", cursorborder:"transparent"});
 
-  totalHeight();
-  $(window).resize(totalHeight);
+  // totalHeight();
+  // $(window).resize(totalHeight);
   
   var scrollPanel = function () {
     $('html, body').animate({scrollTop: $('html').height()}, 500);
@@ -13,12 +13,10 @@ document.addEventListener('turbolinks:load', function() {
 
   
   function totalHeight() {
-    var constHeaderOpenObjects = 84;
+    var constHeaderOpenObjects = 80;
     var windowHeight = window.innerHeight;
     var desiredHeight = windowHeight - constHeaderOpenObjects;
-    var topMargin = windowHeight / 1.55;
-    $('.katalog').css({'height':''+desiredHeight+'px', 'margin-top':''+topMargin+'px'});
-    $('.open-tabs>div>div>div').css({'margin-left':parseFloat($('.katalog').css('margin-left'))});
+    $('.panel-list').css({'height':''+desiredHeight+'px'});
   }
 
   // При нажатии за пределами блока

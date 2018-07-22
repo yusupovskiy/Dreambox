@@ -132,6 +132,9 @@ class ApplicationController < ActionController::Base
 
           ra = Record.where affiliate_id: Affiliate.where(company_id: @current_company)
           rc = RecordClient.where(record_id: ra, is_active: true)
+
+          @total_clients_company = Client.where("company_id = #{} and (role & #{Client::Role::CLIENT}) != 0")
+          
           @current_clients_company = Client.where id: rc.select(:client_id)
 
           if @user_director
@@ -169,10 +172,7 @@ class ApplicationController < ActionController::Base
           unless url[3] == 'persons' or url.last == 'edit' or url.last == 'new' or url.last == 'sign_out'  or url.last == 'companies' 
             return redirect_to persons_profile_path, notice: "Создайте или выберите компанию"
           end
-        end
-
-
-
+        end      
       end
     end
 

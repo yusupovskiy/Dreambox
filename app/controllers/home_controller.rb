@@ -3,19 +3,63 @@ class HomeController < ApplicationController
 
   def index
   end
+
+  def clients
+
+    # @search_clients = params[:searchClients]
+    @last_name_search = params[:lastNameClients]
+    @first_name_search = params[:firstNameClients]
+    @patronymic_search = params[:patronymicClients]
+
+    if params[:record].present?
+      record_id = params[:record]
+      record = Record.find record_id
+      record_clients = RecordClient.where record_id: record
+      query_record = "AND id IN (#{record_clients.select(:client_id)})"
+    # else
+    #   query_record = ''
+    end
+
+    # if @last_name_search.present? and @first_name_search.present?
+    #   if @last_name_search.size > 0
+    #     last_name = "LOWER(last_name) LIKE LOWER('#{@last_name_search}%')"
+    #   end
+
+    #   if @first_name_search.size > 0
+    #     first_name = "LOWER(first_name) LIKE LOWER('#{@first_name_search}%')"
+    #   end
+    # end
+
+    # clients = Client.where("LOWER(last_name) LIKE LOWER('#{@search_clients[0]}%') 
+    #     AND id IN (?)", record_clients.select(:client_id))
+
+    # clients = Client.where("#{last_name} and #{first_name}")
+
+    clients = Client.where("
+      LOWER(last_name) LIKE LOWER('#{@last_name_search}%') 
+      and LOWER(first_name) LIKE LOWER('#{@first_name_search}%') 
+      and LOWER(patronymic) LIKE LOWER('#{@patronymic_search}%') 
+    ")
+
+    respond_to do |format|
+      format.json { render json: clients, status: :ok }
+    end
+  end
+
   def search_result
     @search_request = params[:request]
-    clients_company = Client.where company_id: @current_company.id
 
     if @search_request.size == 1 and @search_request[0].size >= 1 or @search_request[1].size == 0
-      @products = clients_company.where("LOWER(last_name) LIKE LOWER('#{@search_request[0]}%')")
+      @products = @total_clients_company.where("LOWER(last_name) LIKE LOWER('#{@search_request[0]}%')")
     elsif @search_request.size == 2 and @search_request[1].size >= 1 or @search_request[2].size == 0
-      @products = clients_company.where("LOWER(last_name) LIKE LOWER('%#{@search_request[0]}%') AND LOWER(first_name) LIKE LOWER('#{@search_request[1]}%')")
+      @products = @total_clients_company.where("LOWER(last_name) LIKE LOWER('%#{@search_request[0]}%') AND LOWER(first_name) LIKE LOWER('#{@search_request[1]}%')")
     elsif @search_request.size == 3 and @search_request[2].size >= 1
-      @products = clients_company.where("LOWER(last_name) LIKE LOWER('#{@search_request[0]}%') AND LOWER(first_name) LIKE LOWER('#{@search_request[1]}%') AND LOWER(patronymic) LIKE LOWER('#{@search_request[2]}%')")
+      @products = @total_clients_company.where("LOWER(last_name) LIKE LOWER('#{@search_request[0]}%') AND LOWER(first_name) LIKE LOWER('#{@search_request[1]}%') AND LOWER(patronymic) LIKE LOWER('#{@search_request[2]}%')")
     else
       @products = ""
     end
+
+    @products = Client.where company_id: @current_company.id
 
     render layout: false
   end

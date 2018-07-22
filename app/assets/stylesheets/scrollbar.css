@@ -15,7 +15,7 @@
     border-radius: 20px;
 }
 .cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #e7e7e7;
+    background-color: #cfcece;
 }
 /*.cool-scrollbar:hover.cool-scrollbar::-webkit-scrollbar {
     display: block;

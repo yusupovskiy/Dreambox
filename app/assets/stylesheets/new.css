@@ -1,0 +1,255 @@
+input {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+content {
+    left: 71px;
+    top: 0;
+    bottom: 0;
+    position: fixed;
+    z-index: 20;
+}
+.search-field:focus {
+    background: #edededf5;
+}
+.icon-menu {
+    background-image: url(/images/menu.png);
+    width: 14px;
+    height: 14px;
+    padding: 11px;
+    background-origin: content-box;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+.menu {
+    height: 100%;
+    width: 61px;
+    position: fixed;
+    z-index: 40;
+    top: 0;
+}
+.item-menu.icon-menu {
+    background-image: url(/images/menu.png);
+    margin: 11px 7px;
+    cursor: pointer;
+}
+.icon-client {
+    background-image: url(/images/clients.png);
+}
+.icon-company {
+    background-image: url(/images/company.png);
+}
+.icon-finance {
+    background-image: url(/images/finance.png);
+}
+.item-menu {
+    width: 19px;
+    height: 19px;
+    padding: 14px;
+    margin: 3px 7px;
+    background-origin: content-box;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    border-radius: 50%;    
+    float: left;
+}
+.item-menu:hover {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+header {
+    position: fixed;
+    z-index: 30;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+}
+.panel-list {
+    width: 400px;
+    background-color: white;
+    border-radius: 4px 4px 0 0;
+    top: 75px;
+    bottom: 0;
+    position: absolute;
+}
+.panels-content {
+    width: 400px;
+    top: 75px;
+    bottom: 0;
+    left: 430px;
+    position: absolute;
+}
+.search-field {
+    width: 100%;
+    padding: 24px 20px 20px 65px;
+    font-size: 17px;
+    height: 60px;
+    border: 0;
+    border-radius: 4px;
+    background-color: #f5f5f5f5;
+    outline: none;
+}
+.list {
+    user-select: none;
+    display: table;
+    padding: 10px 0 80px 0;
+    list-style-type: none;
+    margin: 0;
+    width: 100%;
+}
+.item-list {
+    width: 100%;
+    padding: 0 25px;
+    box-sizing: border-box;
+    float: left;
+    cursor: pointer;
+}
+.avatar-listt {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 10px 15px 10px 0;
+    float: left;
+}
+div.left-content {
+    float: left;
+    margin: 13px 20px 0px 0;
+}
+.name-content {
+    font-size: 14px;
+    color: #252525;
+    margin-bottom: 2px;
+}
+.left-content>span {
+    font-size: 11px;
+    color: #545454;
+}
+.right-content {
+    float: right;
+}
+.debt {
+    margin: 22px 0 22px 0;
+    display: table;
+}
+.debt {
+    color: #ff7375;
+}
+.container-list {
+    margin-top: 60px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    overflow-y: overlay;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+img.search-icon {
+    width: 16px;
+    height: 16px;
+    margin: 22px 25px;
+    opacity: 0.4;
+    float: left;
+    position: absolute;
+}
+.panel-content {
+    width: 400px;
+    height: 200px;
+    background-color: white;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.panel-logo {
+    float: left;
+    height: 32px;
+    margin: 19px 70px;
+}
+a.logo {
+    width: 32px;
+    height: 32px;
+    margin: auto;
+    transition: 0.4s cubic-bezier(0, 0, 0, 1);
+    float: left;
+}
+a.logo:hover {
+    -ms-transform: scale(1.5);
+    transform: scale(1.5);
+}
+.logo>img {
+    width: 100%;
+}
+.info-logo {
+    float: left;
+    margin-left: 10px;
+}
+.biz-logo {
+    color: #99c9f1;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: default;
+    user-select: none;
+}
+.company-logo {
+    color: white;
+    width: 100%;
+    display: table;
+}
+.btn-show-list {
+    position: relative;
+}
+.name-company {
+    background-size: 8px 6px;
+    background-repeat: no-repeat;
+    background-image: url(/images/arrow-bottom.png);
+    padding-right: 15px;
+    background-position: right center;
+    font-size: 14px;
+    cursor: pointer;
+}
+.panel-show {
+    position: absolute;
+    background-color: white;
+    top: 10px;
+    left: 10px;
+    font-size: 14px;
+    padding: 10px 0;
+    border-radius: 7px;
+    display: none;
+    box-shadow: 0 1px 8px -2px rgba(0, 0, 0, 0.5)!important;
+    box-shadow: 0 0 5px -2px rgba(0, 0, 0, 0.6);
+    z-index: 999;
+    user-select: none;
+    min-width: 190px;
+    max-height: 60vh;
+    overflow-y: overlay;
+}
+.left-side-elem:hover>.panel-show, .btn-show-list:hover>.panel-show {
+    display: grid!important;
+}
+.panel-show>* {
+    color: #494949;
+    padding: 10px 20px;
+    float: left;
+    cursor: pointer;
+}
+.panel-account {
+    height: 36px;
+    float: right;
+    margin: 17px;
+}
+.account-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: white;
+}
+.panel-account>* {
+    float: left;
+}
+.account-name {
+    padding: 10px 15px;
+    color: white;
+    font-size: 14px;
+}
