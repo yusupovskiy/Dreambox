@@ -97,6 +97,9 @@ header {
     list-style-type: none;
     margin: 0;
     width: 100%;
+    background-color: white;
+    position: relative;
+    z-index: 25;
 }
 .item-list {
     width: 100%;
@@ -136,14 +139,14 @@ div.left-content {
     color: #ff7375;
 }
 .container-list {
-    margin-top: 60px;
     box-sizing: border-box;
     position: absolute;
-    top: 0;
-    overflow-y: overlay;
+    top: 60px;
     bottom: 0;
     left: 0;
     right: 0;
+    overflow-y: overlay;
+    z-index: 10;
 }
 img.search-icon {
     width: 16px;
@@ -155,10 +158,10 @@ img.search-icon {
 }
 .panel-content {
     width: 400px;
-    height: 200px;
     background-color: white;
     border-radius: 4px;
     margin-bottom: 20px;
+    display: table;
 }
 
 .panel-logo {
@@ -252,4 +255,72 @@ a.logo:hover {
     padding: 10px 15px;
     color: white;
     font-size: 14px;
+}
+.indecator {
+    float: left;
+    color: #9ac1fe;
+    font-weight: bold;
+    margin: 20px 30px;
+    cursor: pointer;
+}
+.indecator:hover {
+    color: #3880ff;
+}
+.indecator>div {
+    font-size: 36px;
+}
+.indecator>span {
+    font-size: 10px;
+    text-transform: uppercase;
+}
+.loading {
+    background-color: white;
+    position: absolute;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+}
+.loading>img {
+    width: 60px;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    /* bottom: 0; */
+    left: 0;
+    margin: auto;
+    user-select: none;
+}
+.panel-footer {
+    width: 100%;
+    float: left;
+    background: whitesmoke;
+    padding: 10px 20px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 0 0 4px 4px;
+    color: #464646;
+    user-select: none;
+    cursor: default;
+}
+.panel-footer>div {
+    float: left;
+    margin-right: 20px;
+}
+.loading>div {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: bold;
+    user-select: none;
+    display: table;
+    color: #a3a3a3;
+    width: 100%;
+    text-align: center;
 }

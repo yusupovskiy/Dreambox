@@ -35,11 +35,42 @@ class HomeController < ApplicationController
 
     # clients = Client.where("#{last_name} and #{first_name}")
 
-    clients = Client.where("
+    @people_company = Client.where(company: @current_company.id)
+    @clients_company = @people_company.where("(role & #{Client::Role::CLIENT}) != 0")
+
+    if params[:typeOfClients] == 'debtors'
+      unpaid_subscriptions = Subscription.find_by_sql("
+        SELECT subscriptions.id
+        FROM subscriptions
+        WHERE subscriptions.id NOT IN (
+          SELECT operation_object_id
+          FROM (
+            SELECT operation_object_id, sum(amount) as total_amount
+            FROM fin_operations
+            WHERE operation_type = 1 AND is_active = true
+            GROUP BY operation_object_id, operation_type)
+            AS results
+          WHERE total_amount >= price)
+        AND subscriptions.is_active = true
+        AND NOT price = 0
+      ")
+      
+      @clients_company = @clients_company.where(id: 
+        RecordClient.where(id: 
+          Subscription.where(id: 
+            unpaid_subscriptions).select('record_client_id')).
+        select('client_id'))
+    elsif params[:typeOfClients] == 'total'
+      @clients_company = @people_company
+    end
+
+
+    clients = @clients_company.where("
       LOWER(last_name) LIKE LOWER('#{@last_name_search}%') 
       and LOWER(first_name) LIKE LOWER('#{@first_name_search}%') 
       and LOWER(patronymic) LIKE LOWER('#{@patronymic_search}%') 
-    ")
+    ").order(:last_name, :first_name, :patronymic)
+
 
     respond_to do |format|
       format.json { render json: clients, status: :ok }

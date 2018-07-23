@@ -123,14 +123,15 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
       <div class="panel-list">
         <div class="search">
           <img src="/images/search.png" class="search-icon">
-          <input v-on:input="searchQuery($event.target.value)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
+          <input v-on:input="sendQuery('search', $event.target.value)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
           <div class="search-info">
             <div class="item-search"></div>
           </div>
         </div>
 
-        <div class="container-list cool-scrollbar">
-          <ul v-if="searchClients" class="list">
+        <div v-if="loadComplete == false" class="loading"><img src="images/loading.gif" /></div>
+        <div v-if="loadComplete == true" class="container-list cool-scrollbar">
+          <ul v-if="searchClients.length > 0" class="list">
             <li v-for="client in searchClients" class="item-list">
               <img class="avatar-listt" src="/resources/no-image-available.png">
               <div class="left-content">
@@ -142,27 +143,51 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
               </div>
             </li>
           </ul>
-          <div v-else>
-            записей нет
+          <div v-if="searchClients.length <= 0" class="loading">
+            <div>
+              <img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
+              <div>Ничего не найдено</div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="panels-content">
-            <div class="panel-content">
+        <div class="panel-content">
+          <div @click="sendQuery('clients', 'current')" class="indecator">
+            <div>32</div>
+            <span>Текущие клиенты</span>
+          </div>
+          <div @click="sendQuery('clients', 'debtors')" class="indecator">
+            <div>14</div>
+            <span>Должники</span>
+          </div>
+          <div @click="sendQuery('clients', 'total')" class="indecator">
+            <div>255</div>
+            <span>Все клиенты</span>
+          </div>
+
+          <div class="panel-footer">
+            <div>
               <div>{{ searchClients.length }}</div>
-              <div>количество найденных клиентов</div>
+              <div>кол-во в списке</div>
             </div>
-            <% if params[:record].present? %>
-            <div class="panel-content">
-              Группа
+            <div>
+              <div>10000</div>
+              <div>долг</div>
             </div>
-            <% end %>
+          </div>
+        </div>
+        <% if params[:record].present? %>
+          <div class="panel-content">
+            Группа
+          </div>
+        <% end %>
       </div>
 
     </content>
     
-    
+
     <%yield%>
     
   
@@ -173,53 +198,62 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
     <script type="text/javascript">
 
       // clients= total | current | debtors  если значения нет, то по умолчанию current
-
+      // if total elsif debtors else (current)
 
       var valueInput = document.getElementById("search").value
+      var lastId = null;
+
       new Vue ({
         el: '#app',
         data: {
           titleInput: "Поиск клиентов", // будет подставляться название группы
-          searchClients: []
-          // нужно получуить, еслить клиенты в компании вообще, если нет, выводить специальный блок, где будет написано клиентов нет, и кнопка добавить, а также возможность импорта
+          searchClients: [],
+          loadComplete: false
         },
         methods: {
-          searchQuery(value) {
-            url = window.location.href
-            newUrl = updateURLParameter(url, 'search', value);
-
-            this.clients(newUrl);
+          sendQuery(type, value) {
+            url = window.location.href;
+            newUrl = updateURLParameter(url, type, value);
+            this.clientsQuery(newUrl);
           },
-          clients(url) {
+          clientsQuery(url) {
+
             urlHash = new URL(url);
             clientQuery = urlHash.searchParams.get("search");
+            typeOfClients = urlHash.searchParams.get("clients");
 
             arrayClientQuery = validSpaces(clientQuery).split(' ');
-            
-            this.clientsQuery(arrayClientQuery)
-            history.pushState('', clientQuery, newUrl);
+
+            clearTimeout(lastId)
+            this.loadComplete = false;
+
+
+            lastId = setTimeout(() => {
+              $.get(
+                '/clients.json', 
+                {
+                  typeOfClients: typeOfClients,
+                  lastNameClients: arrayClientQuery[0],
+                  firstNameClients: arrayClientQuery[1],
+                  patronymicClients: arrayClientQuery[2]
+                // ,
+                // record: 29
+                },
+                searchClients => this.searchClients = searchClients
+              );
+
+              this.loadComplete = true;
+              history.pushState('', clientQuery, url);
+
+            }, 600);
+
           },
-          clientsQuery(arrayClientQuery) {
-            $.get(
-              '/clients.json', 
-              {
-              lastNameClients: arrayClientQuery[0],
-              firstNameClients: arrayClientQuery[1],
-              patronymicClients: arrayClientQuery[2]
-              // ,
-              // record: 29
-              },
-              searchClients => this.searchClients = searchClients
-            );
+          getQuery() {
 
           }
-
-          // нужно получать все покатели фильтрации, весь его отправять на фильтрация/ сделать 3 секундную задержку, если пусто выводить, если нет клиентов, также выводить надпись об этом
-          // и по нему менять url
         },
         created() {
-          arrayClientQuery = validSpaces(valueInput).split(' ');
-          this.clientsQuery(arrayClientQuery)
+          this.sendQuery('search', valueInput);
         }
       });
     </script>
