@@ -18,7 +18,16 @@ Rails.application.routes.draw do
   get 'company' => 'companies#company'
 
 
-  get 'clients' => 'home#clients'
+  resources :clients do
+    member do
+      # patch 'import'
+      get 'role_employee'
+      get 'role_client'
+      post 'add_field'
+    end
+  end
+  post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
+  get 'get_clients' => 'clients#get_clients'
 
   resources :companies do
     get 'add_field' => 'companies#add_field', module: :companies
@@ -27,15 +36,6 @@ Rails.application.routes.draw do
     resources :records, module: :companies do
       member do
         get 'end_recording'
-      end
-    end
-    post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
-    resources :clients, module: :companies do
-      member do
-        # patch 'import'
-        get 'role_employee'
-        get 'role_client'
-        post 'add_field'
       end
     end
     resources :workers, module: :companies do

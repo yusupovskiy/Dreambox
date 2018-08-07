@@ -1,4 +1,4 @@
-class Companies::ClientsController < ApplicationController
+class ClientsController < ApplicationController
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
   before_action :ensure_user_has_company
   before_action :set_s3_direct_post, only: [:new, :edit]
@@ -42,6 +42,83 @@ class Companies::ClientsController < ApplicationController
     @all_people = @people_clients
     @show_in_view = [@current_clients, @clients_debtors, @all_people, @archive_clients]
   end
+
+
+  def get_clients
+
+    # @search_clients = params[:searchClients]
+    @last_name_search = params[:lastNameClients]
+    @first_name_search = params[:firstNameClients]
+    @patronymic_search = params[:patronymicClients]
+
+    if params[:record].present?
+      record_id = params[:record]
+      record = Record.find record_id
+      record_clients = RecordClient.where record_id: record
+      query_record = "AND id IN (#{record_clients.select(:client_id)})"
+    # else
+    #   query_record = ''
+    end
+
+    # if @last_name_search.present? and @first_name_search.present?
+    #   if @last_name_search.size > 0
+    #     last_name = "LOWER(last_name) LIKE LOWER('#{@last_name_search}%')"
+    #   end
+
+    #   if @first_name_search.size > 0
+    #     first_name = "LOWER(first_name) LIKE LOWER('#{@first_name_search}%')"
+    #   end
+    # end
+
+    # clients = Client.where("LOWER(last_name) LIKE LOWER('#{@search_clients[0]}%') 
+    #     AND id IN (?)", record_clients.select(:client_id))
+
+    # clients = Client.where("#{last_name} and #{first_name}")
+
+    @people_company = Client.where(company: @current_company.id)
+    @clients_company = @people_company.where("(role & #{Client::Role::CLIENT}) != 0")
+
+    if params[:typeOfClients] == 'debtors'
+      unpaid_subscriptions = Subscription.find_by_sql("
+        SELECT subscriptions.id
+        FROM subscriptions
+        WHERE subscriptions.id NOT IN (
+          SELECT operation_object_id
+          FROM (
+            SELECT operation_object_id, sum(amount) as total_amount
+            FROM fin_operations
+            WHERE operation_type = 1 AND is_active = true
+            GROUP BY operation_object_id, operation_type)
+            AS results
+          WHERE total_amount >= price)
+        AND subscriptions.is_active = true
+        AND NOT price = 0
+      ")
+      
+      @clients_company = @clients_company.where(id: 
+        RecordClient.where(id: 
+          Subscription.where(id: 
+            unpaid_subscriptions).select('record_client_id')).
+        select('client_id'))
+    elsif params[:typeOfClients] == 'total'
+      @clients_company = @people_company
+    else
+      @clients_company = @people_company
+    end
+
+
+    clients = @clients_company.where("
+      LOWER(last_name) LIKE LOWER('#{@last_name_search}%') 
+      and LOWER(first_name) LIKE LOWER('#{@first_name_search}%') 
+      and LOWER(patronymic) LIKE LOWER('#{@patronymic_search}%') 
+    ").order(:last_name, :first_name, :patronymic)
+
+
+    respond_to do |format|
+      format.json { render json: clients, status: :ok }
+    end
+  end
+
 
   # GET /clients/1
   # GET /clients/1.json

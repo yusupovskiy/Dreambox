@@ -113,6 +113,14 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
     <nav class="menu">
       <div class="item-menu icon-menu"></div>
+      <div style="width: 17px;
+    height: 17px;
+    padding: 10px;
+    margin: 3px 12px;
+    border-radius: 50%;
+    float: left;
+    background: white;
+    color: black;"><ion-icon style="width: 100%; height: 100%;" name="add"></ion-icon></div>
       <a href="#" class="item-menu icon-client"></a>
       <a href="#" class="item-menu icon-company"></a>
       <a href="#" class="item-menu icon-finance"></a>
@@ -132,7 +140,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         <div v-if="loadComplete == false" class="loading"><img src="images/loading.gif" /></div>
         <div v-if="loadComplete == true" class="container-list cool-scrollbar">
           <ul v-if="searchClients.length > 0" class="list">
-            <li v-for="client in searchClients" class="item-list">
+            <li v-for="client in searchClients" @click="openCardClient(client.id)" class="item-list" :key="client.id">
               <img class="avatar-listt" src="/resources/no-image-available.png">
               <div class="left-content">
                 <div class="name-content">{{ client.last_name }} {{ client.first_name }} {{ client.patronymic }}</div>
@@ -152,7 +160,10 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         </div>
       </div>
 
-      <div class="panels-content">
+      <div class="panels-content hide-scrollbar">
+
+        <div>
+
         <div class="panel-content">
           <div @click="sendQuery('clients', 'current')" class="indecator">
             <div>32</div>
@@ -178,11 +189,63 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
             </div>
           </div>
         </div>
+
+
+        <div v-if="clientTest.length != 0" class="">
+          <div class="panel-content">
+            <div class="panel-info">
+              <img v-if="clientTest.length != 0" class="avatar-client" src="/resources/no-image-available.png">
+              <div class="" style="display: grid; margin: 3px 0 3px 15px; float: left;">
+                <div class="name-panel">{{clientTest.last_name}} {{clientTest.first_name}}</div>
+                <div style="font-size: 13px; color: #444444;">{{clientTest.patronymic}} {{clientTest.phone_number}}</div>
+              </div>
+            </div>
+            <div class="panel-panel">
+
+              <div class="amount">
+                <div class="amount-price">14000.0 ₽</div>
+                <div class="amount-name">Оплатил</div>
+              </div>
+
+              <div class="amount" style="color: #ff7375;">
+                <div class="amount-price">6000.0 ₽</div>
+                <div class="amount-name">Долг</div>
+              </div>
+
+              <div class="btn-show-panel btn-show-list">
+                <div class="panel-show" style="left: auto; right: 10px;">
+                  <a href="/clients/199/edit">Редактировать</a>
+                </div>
+                <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
+              </div>
+              <div class="btn-add-panel">
+                  <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
+              </div>
+
+            </div>
+          </div>
+          <div class="panel-content">
+            <div class="panel-header">
+              <div class="title-panel">Транзакции</div>
+              <div class="show-panel">Показать все</div>
+            </div>
+            <div class="list-panel">
+              <div class="item-panel">
+                <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
+                <div class="right-item-panel">6000.0 ₽</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
         <% if params[:record].present? %>
           <div class="panel-content">
             Группа
           </div>
         <% end %>
+
+        </div>
       </div>
 
     </content>
@@ -194,6 +257,10 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
     <div class="back-background"></div>
     <script src="https://unpkg.com/ionicons@4.2.4/dist/ionicons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+<!-- 
+
+ -->
 
     <script type="text/javascript">
 
@@ -201,6 +268,11 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
       // if total elsif debtors else (current)
 
       var valueInput = document.getElementById("search").value
+
+      var staticUrlHash = new URL(window.location.href);
+      var clientId = staticUrlHash.searchParams.get("client");
+
+
       var lastId = null;
 
       new Vue ({
@@ -208,12 +280,28 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         data: {
           titleInput: "Поиск клиентов", // будет подставляться название группы
           searchClients: [],
-          loadComplete: false
+          loadComplete: false,
+          client: clientId,
+          clientTest: [],
+          clientsCompany: []
         },
         methods: {
+          openCardClient(value) {
+
+            test = _.find(this.clientsCompany, {id:value});
+            this.clientTest = test;
+
+            this.client = value;
+            url = window.location.href;
+            newUrl = updateURLParameter(url, 'client', value);
+            history.pushState('', 'Клиент', newUrl);
+
+          },
           sendQuery(type, value) {
             url = window.location.href;
             newUrl = updateURLParameter(url, type, value);
+
+
             this.clientsQuery(newUrl);
           },
           clientsQuery(url) {
@@ -230,7 +318,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
             lastId = setTimeout(() => {
               $.get(
-                '/clients.json', 
+                '/get_clients.json', 
                 {
                   typeOfClients: typeOfClients,
                   lastNameClients: arrayClientQuery[0],
@@ -244,7 +332,6 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
               this.loadComplete = true;
               history.pushState('', clientQuery, url);
-
             }, 600);
 
           },
@@ -254,6 +341,20 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         },
         created() {
           this.sendQuery('search', valueInput);
+
+          $.get(
+            '/get_clients.json',
+            clientsCompany => this.clientsCompany = clientsCompany
+          );
+
+        },
+        beforeUpdate() {
+          urlHash = new URL(window.location.href);
+          id = urlHash.searchParams.get("client");
+          if(id != null) {
+            id = parseInt(id, 10)
+            this.openCardClient(id);
+          }
         }
       });
     </script>

@@ -4,14 +4,11 @@ input {
           box-sizing: border-box;
 }
 content {
-    left: 71px;
+    left: 61px;
     top: 0;
     bottom: 0;
     position: fixed;
     z-index: 20;
-}
-.search-field:focus {
-    background: #edededf5;
 }
 .icon-menu {
     background-image: url(/images/menu.png);
@@ -79,6 +76,7 @@ header {
     bottom: 0;
     left: 430px;
     position: absolute;
+    overflow-y: overlay;
 }
 .search-field {
     width: 100%;
@@ -89,11 +87,18 @@ header {
     border-radius: 4px;
     background-color: #f5f5f5f5;
     outline: none;
+    transition: .3s;
+    z-index: 50;
+    position: relative;
+}
+.search-field:focus {
+    background: #fffffff5;
+    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.3);
 }
 .list {
     user-select: none;
     display: table;
-    padding: 10px 0 80px 0;
+    padding: 10px 0 30px 0;
     list-style-type: none;
     margin: 0;
     width: 100%;
@@ -155,6 +160,7 @@ img.search-icon {
     opacity: 0.4;
     float: left;
     position: absolute;
+    z-index: 60;
 }
 .panel-content {
     width: 400px;
@@ -323,4 +329,104 @@ a.logo:hover {
     color: #a3a3a3;
     width: 100%;
     text-align: center;
+}
+.avatar-client {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    float: left;
+}
+.item-list:hover {
+    background: #f5f5f5;
+}
+
+.panel-info {
+    padding: 23px 20px;
+    display: table;
+}
+.name-panel {
+    color: #444444;
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0;
+    float: left;
+    padding: 0;
+    margin-bottom: 4px;
+}
+.panel-panel {
+    height: 73px;
+    background: whitesmoke;
+    border-radius: 0 0 4px 4px;
+    width: 100%;
+}
+.btn-add-panel {
+    width: 15px;
+    height: 15px;
+    padding: 12px;
+    border-radius: 50%;
+    background: #3880ff;
+    color: white;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.3);
+    opacity: .5;
+    cursor: pointer;
+    transition: .3s;
+    margin: 17px 0;
+    float: right;
+}
+.btn-add-panel:hover {
+    opacity: 1;
+}
+.amount {
+    color: #12ce88;
+    float: left;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 17px 0 17px 20px;
+}
+.amount-price {
+    font-size: 24px;
+}
+.amount-name {
+    font-size: 10px;
+    font-weight: bold;
+}
+.panel-header {
+    padding: 23px 20px;
+    user-select: none;
+    display: table;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.title-panel {
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #808080;
+    padding: 0;
+    float: left;
+}
+.show-panel {
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #3880ff;
+    padding: 0;
+    float: right;
+    cursor: pointer;
+}
+.list-panel {    
+    margin: 0 20px 30px 20px;
+}
+.btn-show-panel {
+    width: 23px;
+    height: 23px;
+    padding: 8px;
+    border-radius: 50%;
+    color: black;
+    cursor: pointer;
+    transition: .3s;
+    margin: 17px 7px 17px 7px;
+    float: right;
 }

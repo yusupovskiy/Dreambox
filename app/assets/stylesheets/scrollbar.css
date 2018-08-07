@@ -42,3 +42,11 @@
 .katalog-scrollbar:hover.katalog-scrollbar::-webkit-scrollbar {
     display: block;
 }
+
+
+.hide-scrollbar::-webkit-scrollbar {
+    width: 14px;
+    margin: 3px;
+    background-color: white;
+    display: none;
+}
