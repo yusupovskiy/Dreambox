@@ -20,7 +20,7 @@ class RecordsClientsController < ApplicationController
           record_client = RecordClient.create!(pms.merge(is_automatic: false, is_dynamic: false))
         end
 
-        format.html { redirect_to [record.company, record], notice: "<hr class=\"status-complet completed\" />Запись клиента: #{Record.find(record_client.record_id).name}" }
+        # format.html { redirect_to [record.company, record], notice: "<hr class=\"status-complet completed\" />Запись клиента: #{Record.find(record_client.record_id).name}" }
         format.json { render json: record_client }
       end
     end

@@ -43,6 +43,36 @@ class ClientsController < ApplicationController
     @show_in_view = [@current_clients, @clients_debtors, @all_people, @archive_clients]
   end
 
+  def get_records
+    respond_to do |format|
+      format.json { render json: @current_record, status: :ok }
+    end
+  end
+
+  def get_select_records_client
+    id_client = params[:idClient]
+    
+    records_client = RecordClient.where(client_id: id_client, record_id: @current_record)
+    completed_records = @current_record.where("finished_at < ?", Date.today)
+    no_completed_records = @current_record.where.not(id: completed_records)
+    no_records_client = no_completed_records.where.not(id: records_client.where(is_active: :true).select(:record_id))
+
+
+    respond_to do |format|
+      format.json { render json: no_records_client, status: :ok }
+    end
+  end
+
+  def get_records_client
+    id_client = params[:idClient]
+    records_client = RecordClient.where client_id: id_client
+
+    records = Record.where id: records_client.select(:record_id)
+
+    respond_to do |format|
+      format.json { render json: records, status: :ok }
+    end
+  end
 
   def get_clients
 

@@ -132,6 +132,11 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         <div class="search">
           <img src="/images/search.png" class="search-icon">
           <input v-on:input="sendQuery('search', $event.target.value)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
+
+          <div class="reset-search">
+            <ion-icon name="close"></ion-icon>
+          </div>
+
           <div class="search-info">
             <div class="item-search"></div>
           </div>
@@ -165,17 +170,19 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         <div>
 
         <div class="panel-content">
-          <div @click="sendQuery('clients', 'current')" class="indecator">
-            <div>32</div>
-            <span>Текущие клиенты</span>
-          </div>
-          <div @click="sendQuery('clients', 'debtors')" class="indecator">
-            <div>14</div>
-            <span>Должники</span>
-          </div>
-          <div @click="sendQuery('clients', 'total')" class="indecator">
-            <div>255</div>
-            <span>Все клиенты</span>
+          <div class="indecators">
+            <div @click="sendQuery('clients', 'current')" class="indecator">
+              <div>32</div>
+              <span>Текущие клиенты</span>
+            </div>
+            <div @click="sendQuery('clients', 'debtors')" class="indecator">
+              <div>14</div>
+              <span>Должники</span>
+            </div>
+            <div @click="sendQuery('clients', 'total')" class="indecator">
+              <div>255</div>
+              <span>Все клиенты</span>
+            </div>
           </div>
 
           <div class="panel-footer">
@@ -191,40 +198,163 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
         </div>
 
 
-        <div v-if="clientTest.length != 0" class="">
+        <div v-if="client.length != 0" class="">
           <div class="panel-content">
             <div class="panel-info">
-              <img v-if="clientTest.length != 0" class="avatar-client" src="/resources/no-image-available.png">
-              <div class="" style="display: grid; margin: 3px 0 3px 15px; float: left;">
-                <div class="name-panel">{{clientTest.last_name}} {{clientTest.first_name}}</div>
-                <div style="font-size: 13px; color: #444444;">{{clientTest.patronymic}} {{clientTest.phone_number}}</div>
+
+              <div class="basic-info">
+                <img v-if="client.length != 0" class="ava" src="/resources/no-image-available.png">
+                <div class="basic-info__container">
+                  <div class="basic-info__container__content">
+                    <div class="name-panel">{{client.last_name}} {{client.first_name}}</div>
+                    <div style="font-size: 13px; color: #444444;">{{client.patronymic}} {{client.phone_number}}</div>
+                  </div>
+                </div>
+
+                <div v-on:click="showTotalInfo = !showTotalInfo" class="click-compact" v-bind:class="{ active: showTotalInfo }"><img src="images/_ionicons_svg_ios-arrow-down.svg"></div>
               </div>
+
+              <div v-if="showTotalInfo" class="total-info">
+
+                <div v-if="client.birthday != null" class="item-info">
+                  <div class="title-item-info">Дата рождения</div>
+                  <div class="content-item-info">{{client.birthday}}</div>
+                </div>
+                <div v-if="client.sex != null" class="item-info">
+                  <div class="title-item-info">Пол</div>
+                  <div class="content-item-info">{{client.sex}}</div>
+                </div>
+
+                <div class="title-info">Информация о родителе</div>
+
+                <div v-if="client.birthday != null" class="item-info">
+                  <div class="title-item-info">Дата рождения</div>
+                  <div class="content-item-info">{{client.birthday}}</div>
+                </div>
+                <div v-if="client.sex != null" class="item-info">
+                  <div class="title-item-info">Пол</div>
+                  <div class="content-item-info">{{client.sex}}</div>
+                </div>
+
+              </div>
+
             </div>
             <div class="panel-panel">
 
-              <div class="amount">
-                <div class="amount-price">14000.0 ₽</div>
-                <div class="amount-name">Оплатил</div>
-              </div>
-
-              <div class="amount" style="color: #ff7375;">
-                <div class="amount-price">6000.0 ₽</div>
-                <div class="amount-name">Долг</div>
-              </div>
-
-              <div class="btn-show-panel btn-show-list">
-                <div class="panel-show" style="left: auto; right: 10px;">
-                  <a href="/clients/199/edit">Редактировать</a>
+              <div v-if="openPanelAdd == null">
+                <div class="amount">
+                  <div class="amount-price">14000.0 ₽</div>
+                  <div class="amount-name">Оплатил</div>
                 </div>
-                <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
+
+                <div class="amount" style="color: #ff7375;">
+                  <div class="amount-price">6000.0 ₽</div>
+                  <div class="amount-name">Долг</div>
+                </div>
+
+                <div class="btn-show-panel btn-show-list">
+                  <div class="panel-show" style="left: auto; right: 10px;">
+                    <a href="/clients/199/edit">Редактировать</a>
+                  </div>
+                  <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
+                </div>
+                <div @click="openPanelAdd = 'addRecordClient'" class="btn-add-panel">
+                    <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
+                </div>
               </div>
-              <div class="btn-add-panel">
-                  <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
+
+
+              <div v-if="openPanelAdd == 'addRecordClient'" class="panel-add">
+
+                <div @click="openPanelAdd = null" class="btn-back new-btn">
+                  <ion-icon name="arrow-back"></ion-icon>
+                </div>
+
+                <div class="panel-form">
+                  <section class="">
+                    <h2 class="panel-form__title">Запись клиента в группу</h2>
+                    <div v-if="selectRecordsClient.length != 0" >
+                      <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+                      <div v-for="record in selectRecordsClient" class="item-panel">
+                        <div class="item-panel__basic-info">
+                          <div class="left-item-panel">{{ record.name }}</div>
+                          <div class="right-item-panel">
+                            <button @click="attachRecord(record.id)" :value="record.id" class="btn-subscribe">записать</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div v-else>
+                      <div class="no-record">Нет групп для записи</div>
+                    </div>
+                    <div class="btn-add-group">+ Создать группу</div>
+                  </section>
+
+<!--                   <div class="finput focus">
+                    <label class="finput-label">Записи</label>
+                    <select class="finput-input" v-model="idAddRecordClient">
+                      <option value="" selected disabled>Выберите один из вариантов</option>
+                      <option v-for="record in selectRecordsClient" :value="record.id">{{ record.name }}</option>
+                    </select>
+                  </div>
+
+                  <div class="btns-confirm">
+                    <div @click="attachRecord" class="btn-confirm new-btn">
+                      <ion-icon name="checkmark"></ion-icon>
+                    </div>
+                    <div @click="openPanelAdd = null" class="btn-close-panel new-btn">
+                      <ion-icon name="close"></ion-icon>
+                    </div>
+                  </div> -->
+                </div>
+
               </div>
 
             </div>
           </div>
+
           <div class="panel-content">
+            <div class="panel-header">
+              <div class="title-panel">Оказываемые услуги</div>
+              <div class="show-panel">Показать все</div>
+            </div>
+            <div class="list-panel">
+              <div v-for="record in recordsClient" class="item-panel active">
+
+                <div>
+                  <div class="left-item-panel">{{ record.name }}</div>
+                  <div class="right-item-panel">нет абонемента</div>
+                </div>
+
+                <div class="item-panel__total-info">
+
+                  <div class="total-info__service">
+                    <span class="service__item">UCMAS</span>
+                  </div>
+
+                  <div class="unsubscribe" rel="nofollow" data-method="delete">Отписать</div>
+
+                  <div class="info-about-subsc">Осталось оплатить <span class="red">4000.0 ₽</span></div>
+
+                  <div class="subscriptions">
+                    <div class="subscription">
+                      <div class="data-subscriptions">
+                        от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
+                      </div> 
+                    </div>
+                    <div class="subscription">
+                      <div class="data-subscriptions">
+                        от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
+                      </div> 
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <section class='panel-content'>
             <div class="panel-header">
               <div class="title-panel">Транзакции</div>
               <div class="show-panel">Показать все</div>
@@ -232,10 +362,32 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
             <div class="list-panel">
               <div class="item-panel">
                 <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-                <div class="right-item-panel">6000.0 ₽</div>
+                <div class="right-item-panel green">6000.0 ₽</div>
+              </div>
+              <div class="item-panel">
+                <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
+                <div class="right-item-panel red">- 6000.0 ₽</div>
+              </div>
+              <div class="item-panel">
+                <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
+                <div class="right-item-panel red">- 6000.0 ₽</div>
+              </div>
+            </div>
+          </section>
+
+          <div class="panel-content">
+            <div class="panel-header">
+              <div class="title-panel">Скидки и коррекция цены</div>
+              <div class="show-panel">Показать все</div>
+            </div>
+            <div class="list-panel">
+              <div class="item-panel">
+                <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
+                <div class="right-item-panel green">6000.0 ₽</div>
               </div>
             </div>
           </div>
+
         </div>
 
 
@@ -253,8 +405,8 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
     <%yield%>
     
-  
     <div class="back-background"></div>
+
     <script src="https://unpkg.com/ionicons@4.2.4/dist/ionicons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
@@ -263,38 +415,51 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
  -->
 
     <script type="text/javascript">
-
-      // clients= total | current | debtors  если значения нет, то по умолчанию current
-      // if total elsif debtors else (current)
-
+      var authToken = document.getElementById("authenticity_token").value
       var valueInput = document.getElementById("search").value
-
-      var staticUrlHash = new URL(window.location.href);
-      var clientId = staticUrlHash.searchParams.get("client");
-
-
       var lastId = null;
 
       new Vue ({
         el: '#app',
         data: {
+          clientsCompany: [],
+          recordsCompany: [],
           titleInput: "Поиск клиентов", // будет подставляться название группы
           searchClients: [],
+          client: [],
+          selectRecordsClient: [],
+          recordsClient: [],
           loadComplete: false,
-          client: clientId,
-          clientTest: [],
-          clientsCompany: []
+          showTotalInfo: false,
+          idAddRecordClient: "",
+          openPanelAdd: null
         },
         methods: {
           openCardClient(value) {
 
-            test = _.find(this.clientsCompany, {id:value});
-            this.clientTest = test;
+            getClient = _.find(this.clientsCompany, {id:value});
+            this.client = getClient;
 
-            this.client = value;
             url = window.location.href;
             newUrl = updateURLParameter(url, 'client', value);
             history.pushState('', 'Клиент', newUrl);
+
+
+            $.get(
+              '/get_select_records_client.json', 
+              {
+                idClient: value
+              },
+              selectRecordsClient => this.selectRecordsClient = selectRecordsClient
+            );
+
+            $.get(
+              '/get_records_client.json', 
+              {
+                idClient: value
+              },
+              recordsClient => this.recordsClient = recordsClient
+            );
 
           },
           sendQuery(type, value) {
@@ -327,34 +492,58 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
                 // ,
                 // record: 29
                 },
-                searchClients => this.searchClients = searchClients
+                searchClients => {
+                  this.searchClients = searchClients;
+                  this.loadComplete = true;
+                  history.pushState('', clientQuery, url);
+                }
               );
 
-              this.loadComplete = true;
-              history.pushState('', clientQuery, url);
             }, 600);
 
           },
-          getQuery() {
+          attachRecord(id) {
+            let {idAddRecordClient, client} = this
+            getRecord = _.find(this.recordsCompany, {id:id});
 
+            $.ajax('/records_clients', {
+              method: 'POST',
+              data: {
+                authenticity_token: authToken,
+                record_client: {
+                  record_id: id,
+                  client_id: client.id,
+                }
+              },
+              error: e => console.warn('error', e)
+            }).done(newRecordClient => {
+              newRecordClient = {id: getRecord.id, name: getRecord.name};
+              this.selectRecordsClient.pop(id);
+              this.recordsClient.push(newRecordClient);
+            })
           }
         },
         created() {
           this.sendQuery('search', valueInput);
 
-          $.get(
-            '/get_clients.json',
-            clientsCompany => this.clientsCompany = clientsCompany
-          );
+          $.ajax({
+            url: '/get_clients.json',
+            success: clientsCompany => {
+              this.clientsCompany = clientsCompany
 
-        },
-        beforeUpdate() {
-          urlHash = new URL(window.location.href);
-          id = urlHash.searchParams.get("client");
-          if(id != null) {
-            id = parseInt(id, 10)
-            this.openCardClient(id);
-          }
+              urlHash = new URL(window.location.href);
+              id = urlHash.searchParams.get("client");
+              if(id != null) {
+                id = parseInt(id, 10);
+                this.openCardClient(id);
+              }
+            }
+          });
+
+          $.get(
+            '/get_records.json',
+            recordsCompany => this.recordsCompany = recordsCompany
+          );
         }
       });
     </script>

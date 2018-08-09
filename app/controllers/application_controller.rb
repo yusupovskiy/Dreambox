@@ -55,60 +55,6 @@ class ApplicationController < ActionController::Base
       # redirect_to root_path, notice: t('company.not_yours') unless @current_company.user_id == @current_user.id
       # redirect_to new_company_path, notice: t('create_a_company_first') if @current_company.nil?
     end
-    # def set_people
-    #   if signed_in?
-    #     if Client.exists? id: current_user.people_id
-    #       @current_people = Client.find_by id: current_user.people_id
-    #     else
-    #       unless request.original_url.split('/')[3] == 'persons' or request.original_url.split('/').last == 'edit' or request.original_url.split('/').last == 'new' or request.original_url.split('/').last == 'sign_out'  or request.original_url.split('/').last == 'companies' 
-    #         return redirect_to persons_profile_path, notice: "Создайте или выберите компанию"
-    #       end
-    #     end
-    #   end
-    # end
-    # def set_company
-    #   if signed_in?
-    #     if @current_people.present?
-    #       @current_company = Company.find @current_people.company_id
-    #     end
-    #   end
-    # end
-
-    # def set_access
-    #   if signed_in? and Client.exists? user_id: current_user.id and current_user.people_id.to_i != 0
-
-    #     if Work.exists? people_id: @current_people.id, position_work: 'director'
-    #       affiliates_company = Affiliate.where company_id: @current_company
-    #       @current_record = Record.where affiliate_id: affiliates_company
-
-    #     elsif Work.exists? people_id: @current_people.id, position_work: 'administrator'
-    #       client_work = Work.where people_id: @current_people.id
-    #       work_salary = WorkSalary.where work_id: client_work.select(:id)
-    #       @current_record = Record.where affiliate_id: work_salary.select(:affiliate_id)
-
-    #     elsif (@current_people.role.to_i & Client::Role::CLIENT) > 0
-    #       @current_record = Record.where(id: 0)
-    #       url = request.original_url.split('/')
-    #       unless url.last(2) == ["clients", "#{@current_people.id}"] or url[3] == 'persons' or url.last(2) == ["auth", "edit"] or url.last(2) == ["companies", "new"] or url.last == 'sign_out' or url.last == 'companies' 
-    #         return redirect_to company_client_path(1, @current_people.id)
-    #       end
-    #     end
-    #   end
-    # end
-    # def set_affiliate
-    #   if signed_in? and Client.exists? user_id: current_user.id and current_user.people_id.to_i != 0
-    #     if Work.exists? people_id: @current_people.id, position_work: 'director'
-    #       @current_affiliates = Affiliate.where company_id: @current_company
-
-    #     elsif Work.exists? people_id: @current_people.id, position_work: 'administrator'
-    #       work = Work.where people_id: @current_people.id
-    #       work_salary = WorkSalary.where work_id: work
-    #       @current_affiliates = Affiliate.where id: work_salary.select(:affiliate_id)
-    #     else
-    #       @current_affiliates = Affiliate.where id: 0
-    #     end
-    #   end
-    # end
     def confirm_actions
       unless Work.exists? people_id: @current_people.id, position_work: 'director' or Work.exists? people_id: @current_people.id, position_work: 'administrator'
         return redirect_to request.referer, notice: "Для этого действия, у вас нет нужного уровня доступа"

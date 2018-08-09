@@ -36,10 +36,9 @@
               <%="#{rc.client.last_name} #{rc.client.first_name}"%> 
               <span class="amount<%= debt >= 0 ? '': ' debt'%>" style="opacity: 0.5;"><%= debt %> ₽</span>
             </div>
-            <div class="panel-show"><!-- 
-                <%= link_to 'Открыть карту', [rc.client.company, rc.client]%> -->
-                <a href="<%= company_client_path(params[:company_id], rc.client) %>">Карта клиента</a>
-                <a href="<%= company_client_path(params[:company_id], rc.client) %>#tab-2#record-<%= @record.id %>">Все абонементы<br />клиета в записи</a>
+            <div class="panel-show">
+                <a href="<%= client_path(rc.client) %>">Карта клиента</a>
+                <a href="<%= client_path(rc.client) %>#tab-2#record-<%= @record.id %>">Все абонементы<br />клиета в записи</a>
                 <div class="btn-show-panel">Продать абонемент</div>
 <!--            <div>Автопродление</div>
                 <div>Динамическая цена</div> -->
@@ -127,7 +126,7 @@
             <%= f.select(:client_id, @potential_clients.map {|c| [client_title_in_select(c), c.id]}, {}, {class: 'finput-input'}) %>
           </div>
           <div class="btns-confirm">
-            <a class="btn icon-plus" href="<%=new_company_client_path %>"></a>
+            <a class="btn icon-plus" href="<%=new_client_path %>"></a>
             <%= f.button '', class: 'btn icon-confirm' %>
             <input class="btn btn-no btn-hide-panel" type="button">
           </div>

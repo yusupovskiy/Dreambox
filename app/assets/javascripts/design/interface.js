@@ -71,11 +71,11 @@ document.addEventListener('turbolinks:load', function() {
   
   // скрыть
   $('.click-compact').click(function() {
-    if($(this).parent('.block-information').hasClass('parent-compact')) {
-      $(this).parent('.block-information').removeClass('parent-compact');
+    if($(this).parents('.block-information').hasClass('parent-compact')) {
+      $(this).parents('.block-information').removeClass('parent-compact');
     }
     else {
-      $(this).parent().addClass('parent-compact');
+      $(this).parents().addClass('parent-compact');
     }
   });
 

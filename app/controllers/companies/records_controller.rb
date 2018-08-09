@@ -35,6 +35,7 @@ class Companies::RecordsController < ApplicationController
 
   end
 
+
   # GET /records/new
   def new
     @record = Record.new
