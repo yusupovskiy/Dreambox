@@ -93,7 +93,7 @@ header {
 }
 .search-field:focus {
     background: #fffffff5;
-    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.12);
 }
 .list {
     user-select: none;
@@ -112,6 +112,7 @@ header {
     box-sizing: border-box;
     float: left;
     cursor: pointer;
+    transition: .3s;
 }
 .avatar-listt {
     width: 40px;
@@ -154,9 +155,9 @@ div.left-content {
     z-index: 10;
 }
 img.search-icon {
-    width: 16px;
-    height: 16px;
-    margin: 22px 25px;
+    width: 23px;
+    height: 23px;
+    margin: 18px 20px;
     opacity: 0.4;
     float: left;
     position: absolute;
@@ -287,16 +288,17 @@ a.logo:hover {
 .loading {
     background-color: white;
     position: absolute;
-    top: 60px;
+    top: 30px;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 20;
+    border-radius: 4px 4px 0 0;
 }
 .loading>img {
     width: 60px;
     position: absolute;
-    top: 30px;
+    top: 90px;
     right: 0;
     /* bottom: 0; */
     left: 0;
@@ -368,6 +370,7 @@ a.logo:hover {
     border-radius: 0 0 4px 4px;
     width: 100%;
     display: grid;
+    position: relative;
 }
 .btn-add-panel {
     width: 15px;
@@ -520,12 +523,11 @@ a.logo:hover {
     margin: 0 20px;
 }
 .item-panel__total-info {
-    margin-top: 10px;
+    margin: 10px 20px 0;
 }
 .item-panel.active {
-    background-color: #f0f4f5;    
-    padding: 10px 20px;
-    margin: 0;
+    background-color: #f0f4f5;  
+    padding: 10px 0;
 }
 .left-item-panel {
     font-size: 14px;
@@ -575,36 +577,6 @@ a.logo:hover {
     margin: -1px 10px 5px 0;
     transition: .3s;
 }
-
-.btn-unsubscribe, .btn-subscribe {
-    font-size: 11px;
-    background-size: 11px 11px;
-    background-repeat: no-repeat;
-    float: left;
-    cursor: pointer;
-    opacity: .7;
-    user-select: none;
-    width: 100%;
-    transition: .3s;
-    text-transform: uppercase;
-    font-weight: 600;
-    border: 0;
-    background-color: transparent;
-    outline: none;
-}
-.btn-subscribe {
-    color: #12ce88;
-}
-.btn-unsubscribe {
-    color: #ff7375;
-}
-.btn-unsubscribe:hover, .btn-subscribe:hover {
-    -webkit-transform: translateX(2px);
-    -ms-transform: translateX(2px);
-    transform: translateX(2px);
-    opacity: 1;
-}
-
 .info-about-subsc {
     width: 100%;
     float: left;
@@ -722,4 +694,130 @@ a.logo:hover {
 }
 .reset-search:hover {
     background-image: linear-gradient(to left top,#e1e5e7 0,rgba(171, 142, 205, 0.04) 100%);
+}
+
+.item-panel__total-info {
+    display: none;
+}
+.item-panel.active>.item-panel__total-info {
+    display: block;
+}
+.item-panel.active .right-item-panel--no-hover {
+    display: none;
+}
+.btn-hide {
+    display: none;
+}
+.item-panel.active .btn-hide {
+    display: block;
+}
+.item-panel:hover {
+    background-color: whitesmoke;
+}
+.notification {
+    position: fixed;
+    right: 17px;
+    z-index: 4;
+    top: 70px;
+}
+.notification__item {
+    background-color: white;
+    font-size: 15px;
+    border-radius: 7px 0 7px 7px;
+    max-width: 190px;
+    padding: 10px 20px;
+    color: #171717;
+    overflow: hidden;
+    margin-bottom: 14px;
+    position: relative;
+}
+.btns {
+    display: table;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.btns>* {
+    margin-right: 10px;
+}
+.btn {
+    font-size: 12px;
+    background-size: 11px 11px;
+    background-repeat: no-repeat;
+    float: left;
+    cursor: pointer;
+    opacity: 0.8;
+    user-select: none;
+    transition: 0.3s;
+    text-transform: uppercase;
+    font-weight: 600;
+    border: 0px;
+    background-color: transparent;
+    outline: none;
+    text-align: left;
+    padding: 2px 0px 0px;
+    position: relative;
+}
+.gray {
+    color: #a4a4a4;
+}
+.btn-subscribe {
+    color: #12ce88;
+}
+.btn-subscribe svg {
+    fill: #12ce88;
+}
+.btn-unsubscribe {
+    color: #ff7375;
+}
+.btn-unsubscribe svg {
+    fill: #ff7375;
+}
+.btn:hover {
+    -webkit-transform: translateX(1px);
+    -ms-transform: translateX(1px);
+    transform: translateX(1px);
+    opacity: 1;
+}
+.btn.active {
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+    opacity: 1;
+}
+.btn.active .btn__text {
+    opacity: .4;
+}
+.btn__text {
+    transition: .3s;
+}
+.btn-add {
+    color: #4fa6f7;
+    margin: 10px 0 10px 20px;
+}
+
+
+@keyframes wave {
+  0% { 
+    left: -85px; 
+  }
+  100% { 
+    left: 0; 
+  }
+}
+.container {
+    width: 66px;
+    height: 10px;
+    overflow: hidden;
+    position: absolute;
+}
+svg {
+  position: relative;
+    height: 100%;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  left: -10px;
+  width: 150px;
+  animation: wave 2s linear infinite;
+    fill: #12ce88;
 }

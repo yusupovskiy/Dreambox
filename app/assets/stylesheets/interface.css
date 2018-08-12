@@ -677,34 +677,10 @@ input.card-search:hover {
 .add-avatar:hover .icon-add-avatar {
     background-color: #f3f3f3;
 }
-input.btn, button.btn {
-    width: 36px;
-    height: 36px;
-}
 .option>.amount {
     font-family: Roboto;
     font-size: 13px;
     margin-left: 4px;
-}
-.btn {
-    background-size: 10px 10px;
-    background-repeat: no-repeat;
-    width: 10px;
-    height: 10px;
-    color: transparent;
-    padding: 13px;
-    background-origin: content-box;
-    background-color: #3b89d1;
-    border-radius: 50%;
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.4);
-    cursor: pointer;
-    opacity: .5;
-    z-index: 1;
-    margin: auto;
-    user-select: none;
-    border: 0;
-    outline: none;
-    float: left;
 }
 .btns-confirm .btn {
     margin: 0 5px;
@@ -730,12 +706,6 @@ input.btn, button.btn {
     -webkit-transform: translatex(1px);
     -ms-transform: translatex(1px);
     transform: translatex(1px);
-}
-.btn:active, .btn-subs:active, .add-discount:active {
-    -webkit-transform: translateY(1px);
-    -ms-transform: translateY(1px);
-    transform: translateY(1px);
-    opacity: 1!important;
 }
 .add-discount:hover {
     opacity: .7;

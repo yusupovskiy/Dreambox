@@ -50,7 +50,7 @@ class ClientsController < ApplicationController
   end
 
   def get_select_records_client
-    id_client = params[:idClient]
+    id_client = params[:client_id]
     
     records_client = RecordClient.where(client_id: id_client, record_id: @current_record)
     completed_records = @current_record.where("finished_at < ?", Date.today)
@@ -64,10 +64,13 @@ class ClientsController < ApplicationController
   end
 
   def get_records_client
-    id_client = params[:idClient]
-    records_client = RecordClient.where client_id: id_client
-
-    records = Record.where id: records_client.select(:record_id)
+    client_id = params[:client_id]
+    records = RecordClient.joins(:record)
+                          .select(' records.id, name, abon_period, finished_at, 
+                                    records.created_at, record_type, visit_type, 
+                                    is_active, record_id, client_id')
+                          .order('is_active DESC, finished_at DESC')
+                          .where client_id: client_id
 
     respond_to do |format|
       format.json { render json: records, status: :ok }

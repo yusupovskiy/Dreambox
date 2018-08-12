@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   end
 
   root 'home#index'
+  
   get 'iairgmqqimuuoeexaspwkjykrtaocalendar' => 'home#add_subscriptions_automatically'
   get 'upewuadesutgqavgimmwvdwfizyfgwperiod' => 'home#automatically_by_period'
 
@@ -28,11 +29,13 @@ Rails.application.routes.draw do
   end
   post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
   get 'get_clients' => 'clients#get_clients'
-
   get 'get_records_client' => 'clients#get_records_client'
   get 'get_select_records_client' => 'clients#get_select_records_client'
-  
   get 'get_records' => 'clients#get_records'
+
+  delete 'records_client_unpin' => 'records_clients#destroy'
+
+  
 
   resources :companies do
     get 'add_field' => 'companies#add_field', module: :companies

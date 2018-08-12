@@ -1,6 +1,10 @@
 class HomeController < ApplicationController
   layout 'application'
 
+  def index
+    # return redirect_to clients_path
+  end
+
   def search_result
     @search_request = params[:request]
 

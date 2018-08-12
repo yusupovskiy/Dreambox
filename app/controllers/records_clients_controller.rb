@@ -27,15 +27,24 @@ class RecordsClientsController < ApplicationController
   end
 
   def destroy
-    rc = RecordClient.find(params[:id])
-    if params[:deactivate_instead_of_destroying]
+    client_id = params[:client_id]
+    record_id = params[:record_id]
+
+    if client_id.present? and record_id.present?
+      rc = RecordClient.find_by(record_id: record_id, client_id: client_id)
       rc.update_attribute(:is_active, false)
-    else
-      rc.destroy!
     end
 
+    # rc = RecordClient.find_by(record_id: params[:record_id], client_id: params[:client_id])
+    # # rc = RecordClient.find(208)
+    # if params[:deactivate_instead_of_destroying]
+    #   rc.update_attribute(:is_active, false)
+    # else
+    #   rc.destroy!
+    # end
+
     respond_to do |format|
-      format.html { redirect_to request.referer }
+      # format.html { redirect_to request.referer }
       format.json { render json: rc }
     end
   end

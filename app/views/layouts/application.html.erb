@@ -127,13 +127,22 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
     </nav>
     
     <content id="app">
-        
+      
+      <div v-if="notifications.length != 0" class='notification'>
+        <div v-for="(notification, index) in notifications" class="notification__item">
+          <hr v-bind:class="{ 'completed': notification}" class="status-complet">
+          {{ notification.note }}
+          <div v-on:click="notifications.splice(index, 1)">Закрыть</div>
+        </div>
+      </div>
+
       <div class="panel-list">
         <div class="search">
-          <img src="/images/search.png" class="search-icon">
-          <input v-on:input="sendQuery('search', $event.target.value)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
+          <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon">
 
-          <div class="reset-search">
+          <input v-model="searchValue" v-on:input="sendQuery('search', searchValue)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
+
+          <div v-if="searchValue.length > 0" class="reset-search" v-on:click="sendQuery('search', ''), searchValue = ''" >
             <ion-icon name="close"></ion-icon>
           </div>
 
@@ -142,10 +151,11 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
           </div>
         </div>
 
-        <div v-if="loadComplete == false" class="loading"><img src="images/loading.gif" /></div>
-        <div v-if="loadComplete == true" class="container-list cool-scrollbar">
+
+        <div v-if="!loadComplete" class="loading"><img src="images/loading.gif" /></div>
+        <div v-else-if="loadComplete" class="container-list cool-scrollbar">
           <ul v-if="searchClients.length > 0" class="list">
-            <li v-for="client in searchClients" @click="openCardClient(client.id)" class="item-list" :key="client.id">
+            <li v-for="client in searchClients" @click="openCardClient(client.id)" class="item-list" :key="client.id" v-bind:class="'client-' + client.id" >
               <img class="avatar-listt" src="/resources/no-image-available.png">
               <div class="left-content">
                 <div class="name-content">{{ client.last_name }} {{ client.first_name }} {{ client.patronymic }}</div>
@@ -156,7 +166,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
               </div>
             </li>
           </ul>
-          <div v-if="searchClients.length <= 0" class="loading">
+          <div v-else class="loading">
             <div>
               <img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
               <div>Ничего не найдено</div>
@@ -166,236 +176,300 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
       </div>
 
       <div class="panels-content hide-scrollbar">
-
         <div>
 
-        <div class="panel-content">
-          <div class="indecators">
-            <div @click="sendQuery('clients', 'current')" class="indecator">
-              <div>32</div>
-              <span>Текущие клиенты</span>
-            </div>
-            <div @click="sendQuery('clients', 'debtors')" class="indecator">
-              <div>14</div>
-              <span>Должники</span>
-            </div>
-            <div @click="sendQuery('clients', 'total')" class="indecator">
-              <div>255</div>
-              <span>Все клиенты</span>
+          <div v-if="client.length == 0">
+            <div class="panel-content">
+              <div class="indecators">
+                <div @click="sendQuery('clients', 'current')" class="indecator">
+                  <div>32</div>
+                  <span>Текущие клиенты</span>
+                </div>
+                <div @click="sendQuery('clients', 'debtors')" class="indecator">
+                  <div>14</div>
+                  <span>Должники</span>
+                </div>
+                <div @click="sendQuery('clients', 'total')" class="indecator">
+                  <div>255</div>
+                  <span>Все клиенты</span>
+                </div>
+              </div>
+
+              <div class="panel-footer">
+                <div>
+                  <div>{{ searchClients.length }}</div>
+                  <div>кол-во в списке</div>
+                </div>
+                <div>
+                  <div>10000</div>
+                  <div>долг</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="panel-footer">
-            <div>
-              <div>{{ searchClients.length }}</div>
-              <div>кол-во в списке</div>
-            </div>
-            <div>
-              <div>10000</div>
-              <div>долг</div>
-            </div>
-          </div>
-        </div>
 
+          <div v-if="client.length != 0" class="">
+            <div class="panel-content">
+              <div class="panel-info">
 
-        <div v-if="client.length != 0" class="">
-          <div class="panel-content">
-            <div class="panel-info">
+                <div class="basic-info">
+                  <img v-if="client.length != 0" class="ava" src="/resources/no-image-available.png">
+                  <div class="basic-info__container">
+                    <div class="basic-info__container__content">
+                      <div class="name-panel">{{client.last_name}} {{client.first_name}}</div>
+                      <div style="font-size: 13px; color: #444444;">
+                        {{client.patronymic}}{{ client.patronymic ? ',' : '' }} 
+                        8 лет, {{client.phone_number}}</div>
+                    </div>
+                  </div>
 
-              <div class="basic-info">
-                <img v-if="client.length != 0" class="ava" src="/resources/no-image-available.png">
-                <div class="basic-info__container">
-                  <div class="basic-info__container__content">
-                    <div class="name-panel">{{client.last_name}} {{client.first_name}}</div>
-                    <div style="font-size: 13px; color: #444444;">{{client.patronymic}} {{client.phone_number}}</div>
+                  <div v-on:click="showTotalInfo = !showTotalInfo" class="click-compact" v-bind:class="{ active: showTotalInfo }"><img src="images/_ionicons_svg_ios-arrow-down.svg"></div>
+                </div>
+
+                <div v-if="showTotalInfo" class="total-info">
+
+                  <div v-if="client.birthday != null" class="item-info">
+                    <div class="title-item-info">Дата рождения</div>
+                    <div class="content-item-info">{{client.birthday}}</div>
+                  </div>
+                  <div v-if="client.sex != null" class="item-info">
+                    <div class="title-item-info">Пол</div>
+                    <div class="content-item-info">{{client.sex}}</div>
+                  </div>
+
+                  <div class="title-info">Информация о родителе</div>
+
+                  <div v-if="client.birthday != null" class="item-info">
+                    <div class="title-item-info">Дата рождения</div>
+                    <div class="content-item-info">{{client.birthday}}</div>
+                  </div>
+                  <div v-if="client.sex != null" class="item-info">
+                    <div class="title-item-info">Пол</div>
+                    <div class="content-item-info">{{client.sex}}</div>
+                  </div>
+
+                </div>
+
+              </div>
+              <div class="panel-panel">
+                <div v-if="openPanelAdd == null">
+                  <div class="amount">
+                    <div class="amount-price">14000.0 ₽</div>
+                    <div class="amount-name">Оплатил</div>
+                  </div>
+
+                  <div class="amount" style="color: #ff7375;">
+                    <div class="amount-price">6000.0 ₽</div>
+                    <div class="amount-name">Долг</div>
+                  </div>
+
+                  <div class="btn-show-panel btn-show-list">
+                    <div class="panel-show" style="left: auto; right: 10px;">
+                      <a href="/clients/199/edit">Редактировать</a>
+                    </div>
+                    <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
+                  </div>
+                  <div @click="openPanelAdd = 'addRecordClient'" class="btn-add-panel">
+                      <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
                   </div>
                 </div>
 
-                <div v-on:click="showTotalInfo = !showTotalInfo" class="click-compact" v-bind:class="{ active: showTotalInfo }"><img src="images/_ionicons_svg_ios-arrow-down.svg"></div>
-              </div>
 
-              <div v-if="showTotalInfo" class="total-info">
+                <div v-if="openPanelAdd == 'addRecordClient'" class="panel-add">
 
-                <div v-if="client.birthday != null" class="item-info">
-                  <div class="title-item-info">Дата рождения</div>
-                  <div class="content-item-info">{{client.birthday}}</div>
-                </div>
-                <div v-if="client.sex != null" class="item-info">
-                  <div class="title-item-info">Пол</div>
-                  <div class="content-item-info">{{client.sex}}</div>
-                </div>
-
-                <div class="title-info">Информация о родителе</div>
-
-                <div v-if="client.birthday != null" class="item-info">
-                  <div class="title-item-info">Дата рождения</div>
-                  <div class="content-item-info">{{client.birthday}}</div>
-                </div>
-                <div v-if="client.sex != null" class="item-info">
-                  <div class="title-item-info">Пол</div>
-                  <div class="content-item-info">{{client.sex}}</div>
-                </div>
-
-              </div>
-
-            </div>
-            <div class="panel-panel">
-
-              <div v-if="openPanelAdd == null">
-                <div class="amount">
-                  <div class="amount-price">14000.0 ₽</div>
-                  <div class="amount-name">Оплатил</div>
-                </div>
-
-                <div class="amount" style="color: #ff7375;">
-                  <div class="amount-price">6000.0 ₽</div>
-                  <div class="amount-name">Долг</div>
-                </div>
-
-                <div class="btn-show-panel btn-show-list">
-                  <div class="panel-show" style="left: auto; right: 10px;">
-                    <a href="/clients/199/edit">Редактировать</a>
+                  <div @click="openPanelAdd = null" class="btn-back new-btn">
+                    <ion-icon name="arrow-back"></ion-icon>
                   </div>
-                  <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
-                </div>
-                <div @click="openPanelAdd = 'addRecordClient'" class="btn-add-panel">
-                    <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
-                </div>
-              </div>
 
-
-              <div v-if="openPanelAdd == 'addRecordClient'" class="panel-add">
-
-                <div @click="openPanelAdd = null" class="btn-back new-btn">
-                  <ion-icon name="arrow-back"></ion-icon>
-                </div>
-
-                <div class="panel-form">
-                  <section class="">
-                    <h2 class="panel-form__title">Запись клиента в группу</h2>
-                    <div v-if="selectRecordsClient.length != 0" >
-                      <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
-                      <div v-for="record in selectRecordsClient" class="item-panel">
-                        <div class="item-panel__basic-info">
-                          <div class="left-item-panel">{{ record.name }}</div>
-                          <div class="right-item-panel">
-                            <button @click="attachRecord(record.id)" :value="record.id" class="btn-subscribe">записать</button>
+                  <div class="panel-form">
+                    <section class="">
+                      <h2 class="panel-form__title">Запись клиента в группу</h2>
+                      <div v-if="selectRecordsClient.length != 0" >
+                        <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+                        <div v-for="record in selectRecordsClient" class="item-panel">
+                          <div class="item-panel__basic-info">
+                            <div class="left-item-panel">{{ record.name }}</div>
+                            <div class="right-item-panel">
+                              <button @click="attachRecord(record)" :value="record.id" v-bind:class="{ active: subscribeLoading }" class="btn-subscribe btn">
+                                <div class="btn__text">Записать</div>
+                                <div v-if="subscribeLoading" class="container">
+                                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                     viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
+                                  <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                                    c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
+                                    c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                                    c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
+                                    C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
+                                    c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
+                                    L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
+                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
+                                    C240.5,4,237.1,0.2,232.1,0z"/>
+                                  </svg>
+                                </div>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div v-else>
-                      <div class="no-record">Нет групп для записи</div>
-                    </div>
-                    <div class="btn-add-group">+ Создать группу</div>
-                  </section>
-
-<!--                   <div class="finput focus">
-                    <label class="finput-label">Записи</label>
-                    <select class="finput-input" v-model="idAddRecordClient">
-                      <option value="" selected disabled>Выберите один из вариантов</option>
-                      <option v-for="record in selectRecordsClient" :value="record.id">{{ record.name }}</option>
-                    </select>
+                      <div v-else>
+                        <div class="no-record">Нет групп для записи</div>
+                      </div>
+                      <div class="btn-add btn">+ Создать группу</div>
+                    </section>
                   </div>
-
-                  <div class="btns-confirm">
-                    <div @click="attachRecord" class="btn-confirm new-btn">
-                      <ion-icon name="checkmark"></ion-icon>
-                    </div>
-                    <div @click="openPanelAdd = null" class="btn-close-panel new-btn">
-                      <ion-icon name="close"></ion-icon>
-                    </div>
-                  </div> -->
-                </div>
-
-              </div>
-
-            </div>
-          </div>
-
-          <div class="panel-content">
-            <div class="panel-header">
-              <div class="title-panel">Оказываемые услуги</div>
-              <div class="show-panel">Показать все</div>
-            </div>
-            <div class="list-panel">
-              <div v-for="record in recordsClient" class="item-panel active">
-
-                <div>
-                  <div class="left-item-panel">{{ record.name }}</div>
-                  <div class="right-item-panel">нет абонемента</div>
-                </div>
-
-                <div class="item-panel__total-info">
-
-                  <div class="total-info__service">
-                    <span class="service__item">UCMAS</span>
-                  </div>
-
-                  <div class="unsubscribe" rel="nofollow" data-method="delete">Отписать</div>
-
-                  <div class="info-about-subsc">Осталось оплатить <span class="red">4000.0 ₽</span></div>
-
-                  <div class="subscriptions">
-                    <div class="subscription">
-                      <div class="data-subscriptions">
-                        от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
-                      </div> 
-                    </div>
-                    <div class="subscription">
-                      <div class="data-subscriptions">
-                        от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
-                      </div> 
-                    </div>
-                  </div>
-
                 </div>
               </div>
             </div>
+
+            <div class="panel-content">
+              <div class="panel-header">
+                <div class="title-panel">Оказываемые услуги</div>
+                <div class="show-panel">Показать все</div>
+              </div>
+              <div class="list-panel">
+                <div v-for="record in recordsClient" v-bind:class="'record-' + record.id" class="item-panel">
+
+                  <div @click="clickRecordClientActive(record.id)" class="item-panel__basic-info" style="cursor: pointer;">
+                    <div class="left-item-panel">{{ record.name }}</div>
+                    <div class="right-item-panel">
+                      <div class="right-item-panel--no-hover">нет абонемента</div>
+                      <div class="btn-hide btn">Скрыть</div>
+                    </div>
+                  </div>
+
+                  <div class="item-panel__total-info">
+
+                    <div class="btns">
+                      <button class="btn gray">
+                        Перейти к группе
+                      </button>
+                      <button v-if="record.is_active" @click="unpinRecord(record)" v-bind:class="{ active: unsubscribeLoading }" class="btn-unsubscribe btn">
+                        <div class="btn__text">Отписать</div>
+                        <div v-if="unsubscribeLoading" class="container">
+                          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                             viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
+                          <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
+                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
+                            C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
+                            c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
+                            L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
+                            C240.5,4,237.1,0.2,232.1,0z"/>
+                          </svg>
+                        </div>
+                      </button>
+                      <button v-else-if="!record.is_active" @click="attachRecord(record)" v-bind:class="{ active: subscribeLoading }" class="btn-subscribe btn">
+                        <div class="btn__text">Записать</div>
+                        <div v-if="subscribeLoading" class="container">
+                          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                             viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
+                          <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
+                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
+                            C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
+                            c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
+                            L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
+                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
+                            C240.5,4,237.1,0.2,232.1,0z"/>
+                          </svg>
+                        </div>
+                      </button>
+
+                    </div>
+
+                    <div class="total-info__service">
+                      <span class="service__item">UCMAS</span>
+                    </div>
+
+                    <div class="info-about-subsc">Осталось оплатить <span class="red">4000.0 ₽</span></div>
+
+                      нет абонемента
+
+                    <div class="subscriptions">
+                      <div class="subscription">
+                        <div class="data-subscriptions">
+                          от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
+                        </div> 
+                      </div>
+                      <div class="subscription">
+                        <div class="data-subscriptions">
+                          от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
+                        </div> 
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <section class='panel-content'>
+              <div class="panel-header">
+                <div class="title-panel">Транзакции</div>
+                <div class="show-panel">Показать все</div>
+              </div>
+              <div class="list-panel">
+                <div class="item-panel">
+                  <div class="item-panel__basic-info">
+                    <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
+                    <div class="right-item-panel green">6000.0 ₽</div>
+                  </div>
+                </div>
+                <div class="item-panel">
+                  <div class="item-panel__basic-info">
+                    <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
+                    <div class="right-item-panel green">6000.0 ₽</div>
+                  </div>
+                </div>
+                <div class="item-panel">
+                  <div class="item-panel__basic-info">
+                    <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
+                    <div class="right-item-panel green">6000.0 ₽</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="panel-content">
+              <div class="panel-header">
+                <div class="title-panel">Скидки и коррекция цены</div>
+                <div class="show-panel">Показать все</div>
+              </div>
+              <div class="list-panel">
+                <div class="item-panel">
+                  <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
+                  <div class="right-item-panel green">6000.0 ₽</div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <section class='panel-content'>
-            <div class="panel-header">
-              <div class="title-panel">Транзакции</div>
-              <div class="show-panel">Показать все</div>
-            </div>
-            <div class="list-panel">
-              <div class="item-panel">
-                <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-                <div class="right-item-panel green">6000.0 ₽</div>
-              </div>
-              <div class="item-panel">
-                <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-                <div class="right-item-panel red">- 6000.0 ₽</div>
-              </div>
-              <div class="item-panel">
-                <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-                <div class="right-item-panel red">- 6000.0 ₽</div>
-              </div>
-            </div>
-          </section>
 
-          <div class="panel-content">
-            <div class="panel-header">
-              <div class="title-panel">Скидки и коррекция цены</div>
-              <div class="show-panel">Показать все</div>
+          <% if params[:record].present? %>
+            <div class="panel-content">
+              Группа
             </div>
-            <div class="list-panel">
-              <div class="item-panel">
-                <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-                <div class="right-item-panel green">6000.0 ₽</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-
-        <% if params[:record].present? %>
-          <div class="panel-content">
-            Группа
-          </div>
-        <% end %>
+          <% end %>
 
         </div>
       </div>
@@ -431,8 +505,11 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
           recordsClient: [],
           loadComplete: false,
           showTotalInfo: false,
-          idAddRecordClient: "",
-          openPanelAdd: null
+          openPanelAdd: null,
+          searchValue: valueInput,
+          notifications: [],
+          unsubscribeLoading: false,
+          subscribeLoading: false
         },
         methods: {
           openCardClient(value) {
@@ -448,7 +525,7 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
             $.get(
               '/get_select_records_client.json', 
               {
-                idClient: value
+                client_id: value
               },
               selectRecordsClient => this.selectRecordsClient = selectRecordsClient
             );
@@ -456,10 +533,12 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
             $.get(
               '/get_records_client.json', 
               {
-                idClient: value
+                client_id: value
               },
               recordsClient => this.recordsClient = recordsClient
             );
+
+            console.log(this.recordsClient);
 
           },
           sendQuery(type, value) {
@@ -502,25 +581,101 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
             }, 600);
 
           },
-          attachRecord(id) {
-            let {idAddRecordClient, client} = this
-            getRecord = _.find(this.recordsCompany, {id:id});
+          attachRecord(record) {
+            let {client} = this;
 
-            $.ajax('/records_clients', {
-              method: 'POST',
-              data: {
-                authenticity_token: authToken,
-                record_client: {
-                  record_id: id,
-                  client_id: client.id,
-                }
-              },
-              error: e => console.warn('error', e)
-            }).done(newRecordClient => {
-              newRecordClient = {id: getRecord.id, name: getRecord.name};
-              this.selectRecordsClient.pop(id);
-              this.recordsClient.push(newRecordClient);
-            })
+            if(!this.subscribeLoading) {
+              this.subscribeLoading = true;
+
+              setTimeout(() => {
+                $.ajax('/records_clients', {
+                  method: 'POST',
+                  data: {
+                    authenticity_token: authToken,
+                    record_client: {
+                      record_id: record.id,
+                      client_id: client.id,
+                    }
+                  },
+                  error: e => console.warn('error', e)
+                }).done(newRecordClient => {
+                  newRecordClient = {id: record.id, name: record.name, is_active: true};
+
+                  let indexRecordsSelect = this.selectRecordsClient
+                    .findIndex(rs => rs.id == record.id);
+                  this.selectRecordsClient.splice(indexRecordsSelect, 1);
+
+                  let indexRecordsClient = this.recordsClient
+                    .findIndex(rs => rs.id == record.id);
+
+                  if(indexRecordsClient < 0 ) {
+                    this.recordsClient.unshift(newRecordClient);
+                  }
+                  else {
+                    this.recordsClient.splice(indexRecordsClient, 1, newRecordClient);
+                  }
+
+                  this.subscribeLoading = false;
+
+                  // this.clickRecordClientActive(record.id);
+
+                  newNotifications = {complited: true, note: client.last_name + ' ' + client.first_name + ' записан: ' + record.name};
+                  this.notifications.unshift(newNotifications);
+                });
+              }, 600);
+            }
+            // else if(record.is_active == false) {
+
+            // }
+          },
+          unpinRecord(record) {
+            let {client} = this;
+
+            if(!this.unsubscribeLoading) {
+              this.unsubscribeLoading = true;
+
+              setTimeout(() => {
+                $.ajax('/records_client_unpin/', {
+                  method: 'DELETE',
+                  data: {
+                    authenticity_token: authToken,
+                    record_id: record.id,
+                    client_id: client.id,
+                  },
+                  error: e => console.warn('error', e)
+                }).done(newRecordClient => {
+                  newRecordClient = {id: record.id, name: record.name, is_active: false};
+
+                  let indexRecordsClient = this.recordsClient
+                    .findIndex(rs => rs.id == record.id);
+                  this.recordsClient.splice(indexRecordsClient, 1, newRecordClient);
+
+                  let indexRecordsSelect = this.selectRecordsClient
+                    .findIndex(rs => rs.id == record.id);
+
+                  if(indexRecordsSelect < 0 ) {
+                    this.selectRecordsClient.unshift(newRecordClient);
+                  }
+                  else {
+                    this.selectRecordsClient.splice(indexRecordsSelect, 1, newRecordClient);
+                  }
+
+                  this.unsubscribeLoading = false;
+
+                  newNotifications = {complited: true, note: client.last_name + ' ' + client.first_name + ' отписан: ' + record.name};
+                  this.notifications.unshift(newNotifications);
+                });
+              }, 600);
+            }
+          },
+          clickRecordClientActive(id) {
+            if(!$('.record-'+id).hasClass('active')) {
+              $('.record-'+id).parents().children().removeClass('active');
+              $('.record-'+id).addClass('active');
+            }
+            else {
+              $('.record-'+id).parents().children().removeClass('active');
+            }
           }
         },
         created() {
