@@ -50,6 +50,8 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
     t.integer "record_limit"
     t.date "time_limit"
     t.text "note"
+    t.bigint "operation_id", null: false
+    t.index ["operation_id"], name: "index_companies_on_operation_id"
     t.index ["user_id"], name: "index_companies_on_user_id"
   end
 
@@ -175,6 +177,8 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
     t.boolean "is_active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "operation_id", null: false
+    t.index ["operation_id"], name: "index_salaries_on_operation_id"
     t.index ["work_id"], name: "index_salaries_on_work_id"
   end
 
@@ -226,8 +230,10 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
     t.integer "role", default: 0, null: false
     t.string "avatar"
     t.integer "people_id"
+    t.bigint "operation_id", null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["operation_id"], name: "index_users_on_operation_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -252,7 +258,9 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
     t.bigint "people_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "operation_id", null: false
     t.index ["affiliate_id"], name: "index_works_on_affiliate_id"
+    t.index ["operation_id"], name: "index_works_on_operation_id"
     t.index ["people_id"], name: "index_works_on_people_id"
   end
 
@@ -260,6 +268,7 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
   add_foreign_key "clients", "companies"
   add_foreign_key "clients", "operations"
   add_foreign_key "clients", "users"
+  add_foreign_key "companies", "operations"
   add_foreign_key "companies", "users"
   add_foreign_key "discounts", "records_clients", column: "record_client_id"
   add_foreign_key "field_templates", "info_blocks"
@@ -270,11 +279,14 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
   add_foreign_key "records_clients", "records"
   add_foreign_key "records_services", "records"
   add_foreign_key "records_services", "services"
+  add_foreign_key "salaries", "operations"
   add_foreign_key "services", "companies"
   add_foreign_key "subscriptions", "operations"
   add_foreign_key "subscriptions", "records_clients", column: "record_client_id"
+  add_foreign_key "users", "operations"
   add_foreign_key "work_salaries", "affiliates"
   add_foreign_key "work_salaries", "records"
   add_foreign_key "works", "affiliates"
   add_foreign_key "works", "clients", column: "people_id"
+  add_foreign_key "works", "operations"
 end
