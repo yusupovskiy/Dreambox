@@ -1,33 +1,24 @@
-<div class="title-panel">
-  <div class="btns-card" style="position: absolute;">
-    
-    <%= link_to root_path, class: "btn-card", style: "float: left;" do %>
-      <ion-icon name="arrow-back"></ion-icon>
-    <% end %>
-    
-    <div class="btn-card top-scroll"></div>
+<div class="panel-list" style="background-color: whitesmoke;">
+  <div style='position: relative;'>
+    <h2 class="panel-form__title" style="margin-top: 10px;"><%= current_user.last_name %> <%= current_user.first_name %></h2>
 
-    <div class="btn-card btn-show-list">
-      <div class="panel-show" style="left: auto; right: 10px;">
-        <%= link_to 'Редактировать', edit_user_registration_path %>
-        <%= link_to 'Выход', destroy_user_session_path, method: :delete %>
-      </div>
-    </div>
-  </div>
-  <div class="img-card">
-    <%= image_tag s3_image(current_user.avatar), class: 'people-avatar' %>
-  </div>
-  <div class="title-card"><%= current_user.last_name %> <%= current_user.first_name %><br /><%= current_user.patronymic %></div>
-  <div class="role-card">Профиль</div>
-</div>
+    <% 
+      if request.referrer == request.original_url or request.referrer == nil
+        url = clients_path
+      else
+        url = request.referrer
+      end
+    %>
 
-<div class="conten-card tabs">
-  <div class="menu-with-options">
-    <div class="option active">Основное</div>
-    <div class="option">Компании</div>
+    <a href="<%= url %>" class="btn-back new-btn">
+      <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+    </a>
   </div>
-  
-  <div class="cont-category-book">
+  <div class="container-list gray-scrollbar">
+    <%= link_to 'Редактировать', edit_user_registration_path %>
+    <%= link_to 'Выход', destroy_user_session_path, method: :delete %>
+
+
     <div class="tab-category information-section">
       <div class="block-information">
         <div class="item-information"><span class="title-input">Дата Рождения</span><span class="text-input"><%= current_user.birthday.nil? ? 'Не указана' : current_user.birthday.strftime("%d %b, %Y") %></span></div>
@@ -67,5 +58,6 @@
         <% end %>
       <% end %>
     </div>
+
   </div>
 </div>

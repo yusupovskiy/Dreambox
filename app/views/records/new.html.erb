@@ -1,0 +1,22 @@
+<div class="panel-list" style="background-color: whitesmoke;">
+  <div style='position: relative;'>
+    <h2 class="panel-form__title" style="margin-top: 10px;">Добавление групповой записи</h2>
+
+    <% 
+      if request.referrer == request.original_url or request.referrer == nil
+        url = clients_path
+      else
+        url = request.referrer
+      end
+    %>
+
+    <a href="<%= url %>" class="btn-back new-btn">
+      <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+    </a>
+  </div>
+  <div class="container-list gray-scrollbar">
+
+
+    <%= render 'form', record: @record %>
+  </div>
+</div>

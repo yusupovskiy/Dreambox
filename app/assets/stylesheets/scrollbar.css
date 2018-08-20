@@ -50,3 +50,22 @@
     background-color: white;
     display: none;
 }
+
+
+.gray-scrollbar::-webkit-scrollbar {
+    width: 14px;
+    margin: 3px;
+    background-color: whitesmoke;
+}
+.gray-scrollbar::-webkit-scrollbar-thumb {
+    background-color: whitesmoke;
+    border-radius: 10px;
+    border: 5px solid whitesmoke;
+}
+.gray-scrollbar::-webkit-scrollbar-thumb:hover {
+    border: 3px solid whitesmoke;
+    border-radius: 20px;
+}
+.gray-scrollbar:hover.gray-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cfcece;
+}

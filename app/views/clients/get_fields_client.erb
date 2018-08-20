@@ -1,0 +1,23 @@
+<% if @blocks_clients.present? %>
+
+  <% @blocks_clients.each do |b| %>
+
+    <% fields_block = @field_templates_clients.where(info_block_id: b.id) %>
+    <% fields_data = FieldDatum.where(field_id: fields_block.select('id'), client_id: @client_id).order(:created_at) %>
+
+    <% if fields_data.present? %>
+
+        <div class="title-info"><%= b.name %></div>
+
+        <% fields_data.each do |fd| %>
+          <% fields_t = fields_block.find(fd.field_id) %>
+          <% if fd.value.present? %>
+            <div class="item-info">
+              <div class="title-item-info"><%= fields_t.name %></div>
+              <div class="content-item-info"><%= fd.value %></div>
+            </div>
+          <%end%>
+        <%end%>
+    <%end%>
+  <%end%>
+<%end%>

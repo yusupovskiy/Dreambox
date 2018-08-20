@@ -1,49 +1,83 @@
-<div class="btns-card">
-  <!-- <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div> -->
-  <%= link_to root_path, class: "btn-card", style: "float: left;" do %>
-    <ion-icon name="arrow-back"></ion-icon>
-  <% end %>
-  <div class="btn-card top-scroll"></div>
-  <div class="btn-card btn-show-list">
-    <div class="panel-show" style="left: auto; right: 10px;">
-      <%= link_to "Добавить свои поля", add_field_path %>
-<!--       <a href="#">Майл рассылка</a>
-      <a href="#">СМС рассылка</a>
-      <a href="#">Вотсап рассылка</a>
-      <a href="#">Импортировать данные</a> -->
+<div id="app" class="panel-list">
+  <div class="search">
+    <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon">
+
+    <input v-model="searchValue" v-on:input="sendQuery('search', searchValue)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
+
+    <div v-if="searchValue.length > 0" class="reset-search" v-on:click="sendQuery('search', ''), searchValue = ''" >
+      <ion-icon name="close"></ion-icon>
+    </div>
+
+    <div class="search-info">
+      <div class="item-search"></div>
+    </div>
+  </div>
+
+  <div v-if="!loadComplete" class="loading"><img src="images/loading.gif" /></div>
+  <div v-else-if="loadComplete" class="container-list cool-scrollbar">
+    <ul v-if="searchClients.length > 0" class="list">
+      <li v-for="client in searchClients" @click="clickClient(client)" class="item-list" :key="client.id" v-bind:class="'client-' + client.id" >
+        <img class="avatar-listt" src="/resources/no-image-available.png">
+        <div class="left-content">
+          <div class="name-content">{{ client.last_name }} {{ client.first_name }} {{ client.patronymic }}</div>
+          <span class="desc-content">- UCMAS</span>
+        </div>
+        <div class="right-content">
+          <span class="debt">0.0 ₽</span>
+        </div>
+      </li>
+    </ul>
+    <div v-else class="loading">
+      <div>
+        <img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
+        <div>Ничего не найдено</div>
+      </div>
     </div>
   </div>
 </div>
-<!-- <div class="panel-sorting">Сортировка списка</div>
-<input class="card-search" type="text" placeholder="Поиск"> -->
 
-<div class="conten-card tabs">
-  <% if @all_people.present? %>
-    <div class="menu-with-options">
-      <% (0..@show_in_view.size - 1).each do |i| %>
-        <% if @show_in_view[i].present? %>
-          <div class="option<%= if i == 0 then ' active' end %>">
-            <dfn data-info="<%= info_tab(i) %>">
-              <%= name_tab(i) %> <%= @show_in_view[i].size %>
-            </dfn>
+<div id="client" class="panels-content hide-scrollbar">
+  <div>
+
+    <div v-if="panelShow == 'home'">
+      <section class="panel-content">
+        <div class="indecators">
+          <div @click="typeClient = 'current'" class="indecator current active">
+            <div>32</div>
+            <span>Текущие клиенты</span>
           </div>
-        <% end %>
-      <% end %>
-    </div>
-    <div class="cont-category-book">
-      <% (0..@show_in_view.size - 1).each do |i| %>
-        <% if @show_in_view[i].present? then %>
-          <div class="tab-category information-section">
-            <%= render @show_in_view[i] %>
+          <div @click="typeClient = 'debtors'" class="indecator debtors">
+            <div>14</div>
+            <span>Должники</span>
           </div>
-        <% end %>
-      <% end %>
+          <div @click="typeClient = 'total'" class="indecator total">
+            <div>255</div>
+            <span>Все клиенты</span>
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <div>
+            <div>{{ countItemsList }}</div>
+            <div>кол-во в списке</div>
+          </div>
+          <div>
+            <div>10000</div>
+            <div>долг</div>
+          </div>
+        </div>
+      </section>
     </div>
-  <% else %>
-    <div class="loading-block">
-      <div>
-        <div>Список пуст</div>
+
+    <div v-else-if="panelShow == 'client'">
+      <%= render 'clients/client' %>
+    </div>
+
+    <% if params[:record].present? %>
+      <div class="panel-content">
+        Группа
       </div>
-    </div>
-  <% end %>
+    <% end %>
+
+  </div>
 </div>

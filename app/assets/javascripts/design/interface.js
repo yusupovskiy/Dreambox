@@ -30,9 +30,18 @@ document.addEventListener('turbolinks:load', function() {
     });
   });*/
 
-
-
-
+  var menuPnlAdd = $('.pnl-add');
+  $('.btn-add-menu').click(function() {
+    menuPnlAdd.addClass('open');
+  });
+  $('.btn-close-pnl-add').click(function() {
+    menuPnlAdd.removeClass('open');
+  });
+  $(document).mouseup(function (e){
+    if (!menuPnlAdd.is(e.target) && menuPnlAdd.has(e.target).length === 0) {
+      menuPnlAdd.removeClass('open');
+    }
+  });
 
   // таб
   var $wrapper = $('.tabs'),

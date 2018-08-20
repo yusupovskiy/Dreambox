@@ -13,21 +13,21 @@
     <%end%>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <script type="text/javascript" charset="utf-8">
-Vue.config.productionTip = Vue.config.devtools = false;
-const Routes = {
-    getAllClients:    companyId => `/companies/${companyId}/clients.json`,
-    getAllServices:   (companyId) => `/companies/${companyId}/services.json`,
-    addNewClient:     companyId => `/companies/${companyId}/clients.json`,
-    addNewService:    companyId => `/companies/${companyId}/services.json`,
-    removeClient:     (companyId, clientId) => `/companies/${companyId}/clients/${clientId}.json`,
-    removeService:    (companyId, serviceId) => `/companies/${companyId}/services/${serviceId}.json`,
-    signIn:           () => '/auth/sign_in?return_url=' + encodeURIComponent(location.href),
-    clientInfoWindow: () => '/windows/client-info',
-    serviceInfoWindow:() => '/windows/service-info',
-    addClientWindow:  () => '/windows/add-client',
-    addServiceWindow: () => '/windows/add-service',
-};
-const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').content
+      Vue.config.productionTip = Vue.config.devtools = false;
+      const Routes = {
+          getAllClients:    companyId => `/companies/${companyId}/clients.json`,
+          getAllServices:   (companyId) => `/companies/${companyId}/services.json`,
+          addNewClient:     companyId => `/companies/${companyId}/clients.json`,
+          addNewService:    companyId => `/companies/${companyId}/services.json`,
+          removeClient:     (companyId, clientId) => `/companies/${companyId}/clients/${clientId}.json`,
+          removeService:    (companyId, serviceId) => `/companies/${companyId}/services/${serviceId}.json`,
+          signIn:           () => '/auth/sign_in?return_url=' + encodeURIComponent(location.href),
+          clientInfoWindow: () => '/windows/client-info',
+          serviceInfoWindow:() => '/windows/service-info',
+          addClientWindow:  () => '/windows/add-client',
+          addServiceWindow: () => '/windows/add-service',
+      };
+      const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').content
     </script>
   </head>
 
@@ -35,672 +35,490 @@ const AUTHENTICITY_TOKEN = document.querySelector('meta[name=csrf-token]').conte
 
     <header>
       <div class="panel-logo">
-        <a class="logo" href="/">
+
+        <a class="logo" href="/clients">
           <img src="/images/lflflf.png">
         </a>
+
         <div class="info-logo">
           <div class="biz-logo">БИЗНЕС</div>
           <% if signed_in? and Client.exists? id: current_user.people_id %>
             <div class="company-logo btn-show-list">
               <div class="name-company" style="float: left;"><%= @current_company.name %></div>
-
-              <div class="panel-show" style="width: 260px;">
-                <div style="background-color: #e6eaed; cursor: default;">
-                    <div style="float: left;">
-                      <div style="font-size: 15px; font-weight: 600;"><%= Company.find(@current_people.company_id).name %></div>
-                      <div class="img-input" style="width: 100%; font-size: 13px;">
-                        <%= image_tag s3_image(@current_people.avatar), style: 'width: 10px; height: 10px; margin: 0 5px;' %>
-                        <%= @current_people.last_name %> <%= @current_people.first_name %>
-                      </div>
-                      <div style="font-size: 12px; color: darkgrey; margin-top: 5px;">
-                        <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
-                        <% work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator' %>
-                        <%if work_director.present?%>
-                          - Директор
-                        <%end %>                    
-                        <%if work_administrator.present? %>
-                          - Администратор
-                        <%end %>
-                        <%if (@current_people.role.to_i & Client::Role::CLIENT) > 0 %>
-                          - Клиент
-                        <%end %>
-                      </div>
-                    </div>
-                  </div>
-                <% @people_user = Client.where(user_id: current_user.id).where.not(id: @current_people.id) %>
-                <% @people_user.each do |p| %>
-                  <% work_director = Work.where people_id: p.id, position_work: 'director' %>
-                  <% work_administrator = Work.where people_id: p.id, position_work: 'administrator' %>
-                  <%= link_to role_person_path(p.id), method: :post do %>
-                    <div style="float: left;">
-                      <div style="font-size: 15px; font-weight: 600;"><%= Company.find(p.company_id).name %></div>
-                      <div class="img-input" style="width: 100%; font-size: 13px;">
-                        <%= image_tag s3_image(p.avatar), style: 'width: 10px; height: 10px; margin: 0 5px;' %>
-                        <%= p.last_name %> <%= p.first_name %>
-                      </div>
-                      <div style="font-size: 12px; color: darkgrey; margin-top: 5px;">
-                        <%if work_director.present?%>
-                          - Директор
-                        <%end %>                    
-                        <%if work_administrator.present? %>
-                          - Администратор
-                        <%end %>
-                        <%if (p.role.to_i & Client::Role::CLIENT) > 0 %>
-                          - Клиент
-                        <%end %>
-                      </div>
-                    </div>
-                  <% end %>
-                <% end %>
-                <%= link_to '+Добавить новою компанию', new_company_path, class: "add-discount" %>
-              </div>
+              <%= render 'layouts/list_works_user' %>
             </div>
           <% end %>
         </div>
-
       </div>
 
-      <%if signed_in? %>
-        <%=link_to persons_profile_path, class: "panel-account" do %>
-          <div class="account-name">
-            <%= current_user.first_name %> <%= current_user.last_name %>
-          </div>
-          <%= image_tag s3_image(current_user.avatar), class: 'account-avatar' %>
-        <%end%>
-      <%end%>
+      <%= render 'layouts/panel_user' %>
 
     </header>
 
     <nav class="menu">
       <div class="item-menu icon-menu"></div>
-      <div style="width: 17px;
-    height: 17px;
-    padding: 10px;
-    margin: 3px 12px;
-    border-radius: 50%;
-    float: left;
-    background: white;
-    color: black;"><ion-icon style="width: 100%; height: 100%;" name="add"></ion-icon></div>
-      <a href="#" class="item-menu icon-client"></a>
+      <div class="btn-add-menu">
+        <ion-icon name="add"></ion-icon>
+      </div>
+      <div class="pnl-add">
+        <div class="header-pnl-add">
+          <div class="btn-back new-btn btn-close-pnl-add" style="margin: 0;">
+            <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+          </div>
+          <h2 class="title-pnl-add" style="margin-left: 50px;">Добавить:</h2>
+        </div>
+        <div class="body-pnl-add">
+          <%= link_to new_client_path, class: 'item-panel-add' do %>
+            <div class="sdfdsa"></div><div class="dsafdsaf">Клиента</div>
+          <% end %>
+          <%= link_to new_record_path, class: 'item-panel-add' do %>
+            <div class="sdfdsa" style="background-image: url(/images/group1.png);"></div><div class="dsafdsaf">Группу</div>
+          <% end %>
+          <%= link_to new_client_path, class: 'item-panel-add' do %>
+            <div class="sdfdsa" style="background-image: url(/images/teacher.png);"></div><div class="dsafdsaf">Сотрудника</div>
+          <% end %>
+          <%= link_to add_field_path, class: 'item-panel-add' do %>
+            <div class="sdfdsa"></div><div class="dsafdsaf">Свои поля</div>
+          <% end %>
+        </div>
+      </div>
+      <%= link_to '', clients_path, class: 'item-menu icon-client' %>
       <a href="#" class="item-menu icon-company"></a>
       <a href="#" class="item-menu icon-finance"></a>
     </nav>
-    
-    <content id="app">
-      
-      <div v-if="notifications.length != 0" class='notification'>
-        <div v-for="(notification, index) in notifications" class="notification__item">
-          <hr v-bind:class="{ 'completed': notification}" class="status-complet">
-          {{ notification.note }}
-          <div v-on:click="notifications.splice(index, 1)">Закрыть</div>
-        </div>
-      </div>
 
-      <div class="panel-list">
-        <div class="search">
-          <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon">
-
-          <input v-model="searchValue" v-on:input="sendQuery('search', searchValue)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
-
-          <div v-if="searchValue.length > 0" class="reset-search" v-on:click="sendQuery('search', ''), searchValue = ''" >
-            <ion-icon name="close"></ion-icon>
-          </div>
-
-          <div class="search-info">
-            <div class="item-search"></div>
-          </div>
-        </div>
-
-
-        <div v-if="!loadComplete" class="loading"><img src="images/loading.gif" /></div>
-        <div v-else-if="loadComplete" class="container-list cool-scrollbar">
-          <ul v-if="searchClients.length > 0" class="list">
-            <li v-for="client in searchClients" @click="openCardClient(client.id)" class="item-list" :key="client.id" v-bind:class="'client-' + client.id" >
-              <img class="avatar-listt" src="/resources/no-image-available.png">
-              <div class="left-content">
-                <div class="name-content">{{ client.last_name }} {{ client.first_name }} {{ client.patronymic }}</div>
-                <span class="desc-content">- UCMAS</span>
-              </div>
-              <div class="right-content">
-                <span class="debt">0.0 ₽</span>
-              </div>
-            </li>
-          </ul>
-          <div v-else class="loading">
-            <div>
-              <img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
-              <div>Ничего не найдено</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panels-content hide-scrollbar">
-        <div>
-
-          <div v-if="client.length == 0">
-            <div class="panel-content">
-              <div class="indecators">
-                <div @click="sendQuery('clients', 'current')" class="indecator">
-                  <div>32</div>
-                  <span>Текущие клиенты</span>
-                </div>
-                <div @click="sendQuery('clients', 'debtors')" class="indecator">
-                  <div>14</div>
-                  <span>Должники</span>
-                </div>
-                <div @click="sendQuery('clients', 'total')" class="indecator">
-                  <div>255</div>
-                  <span>Все клиенты</span>
-                </div>
-              </div>
-
-              <div class="panel-footer">
-                <div>
-                  <div>{{ searchClients.length }}</div>
-                  <div>кол-во в списке</div>
-                </div>
-                <div>
-                  <div>10000</div>
-                  <div>долг</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          <div v-if="client.length != 0" class="">
-            <div class="panel-content">
-              <div class="panel-info">
-
-                <div class="basic-info">
-                  <img v-if="client.length != 0" class="ava" src="/resources/no-image-available.png">
-                  <div class="basic-info__container">
-                    <div class="basic-info__container__content">
-                      <div class="name-panel">{{client.last_name}} {{client.first_name}}</div>
-                      <div style="font-size: 13px; color: #444444;">
-                        {{client.patronymic}}{{ client.patronymic ? ',' : '' }} 
-                        8 лет, {{client.phone_number}}</div>
-                    </div>
-                  </div>
-
-                  <div v-on:click="showTotalInfo = !showTotalInfo" class="click-compact" v-bind:class="{ active: showTotalInfo }"><img src="images/_ionicons_svg_ios-arrow-down.svg"></div>
-                </div>
-
-                <div v-if="showTotalInfo" class="total-info">
-
-                  <div v-if="client.birthday != null" class="item-info">
-                    <div class="title-item-info">Дата рождения</div>
-                    <div class="content-item-info">{{client.birthday}}</div>
-                  </div>
-                  <div v-if="client.sex != null" class="item-info">
-                    <div class="title-item-info">Пол</div>
-                    <div class="content-item-info">{{client.sex}}</div>
-                  </div>
-
-                  <div class="title-info">Информация о родителе</div>
-
-                  <div v-if="client.birthday != null" class="item-info">
-                    <div class="title-item-info">Дата рождения</div>
-                    <div class="content-item-info">{{client.birthday}}</div>
-                  </div>
-                  <div v-if="client.sex != null" class="item-info">
-                    <div class="title-item-info">Пол</div>
-                    <div class="content-item-info">{{client.sex}}</div>
-                  </div>
-
-                </div>
-
-              </div>
-              <div class="panel-panel">
-                <div v-if="openPanelAdd == null">
-                  <div class="amount">
-                    <div class="amount-price">14000.0 ₽</div>
-                    <div class="amount-name">Оплатил</div>
-                  </div>
-
-                  <div class="amount" style="color: #ff7375;">
-                    <div class="amount-price">6000.0 ₽</div>
-                    <div class="amount-name">Долг</div>
-                  </div>
-
-                  <div class="btn-show-panel btn-show-list">
-                    <div class="panel-show" style="left: auto; right: 10px;">
-                      <a href="/clients/199/edit">Редактировать</a>
-                    </div>
-                    <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
-                  </div>
-                  <div @click="openPanelAdd = 'addRecordClient'" class="btn-add-panel">
-                      <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
-                  </div>
-                </div>
-
-
-                <div v-if="openPanelAdd == 'addRecordClient'" class="panel-add">
-
-                  <div @click="openPanelAdd = null" class="btn-back new-btn">
-                    <ion-icon name="arrow-back"></ion-icon>
-                  </div>
-
-                  <div class="panel-form">
-                    <section class="">
-                      <h2 class="panel-form__title">Запись клиента в группу</h2>
-                      <div v-if="selectRecordsClient.length != 0" >
-                        <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
-                        <div v-for="record in selectRecordsClient" class="item-panel">
-                          <div class="item-panel__basic-info">
-                            <div class="left-item-panel">{{ record.name }}</div>
-                            <div class="right-item-panel">
-                              <button @click="attachRecord(record)" :value="record.id" v-bind:class="{ active: subscribeLoading }" class="btn-subscribe btn">
-                                <div class="btn__text">Записать</div>
-                                <div v-if="subscribeLoading" class="container">
-                                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                     viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
-                                  <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
-                                    c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
-                                    c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
-                                    c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
-                                    C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
-                                    c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
-                                    L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
-                                    c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
-                                    C240.5,4,237.1,0.2,232.1,0z"/>
-                                  </svg>
-                                </div>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <div class="no-record">Нет групп для записи</div>
-                      </div>
-                      <div class="btn-add btn">+ Создать группу</div>
-                    </section>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="panel-content">
-              <div class="panel-header">
-                <div class="title-panel">Оказываемые услуги</div>
-                <div class="show-panel">Показать все</div>
-              </div>
-              <div class="list-panel">
-                <div v-for="record in recordsClient" v-bind:class="'record-' + record.id" class="item-panel">
-
-                  <div @click="clickRecordClientActive(record.id)" class="item-panel__basic-info" style="cursor: pointer;">
-                    <div class="left-item-panel">{{ record.name }}</div>
-                    <div class="right-item-panel">
-                      <div class="right-item-panel--no-hover">нет абонемента</div>
-                      <div class="btn-hide btn">Скрыть</div>
-                    </div>
-                  </div>
-
-                  <div class="item-panel__total-info">
-
-                    <div class="btns">
-                      <button class="btn gray">
-                        Перейти к группе
-                      </button>
-                      <button v-if="record.is_active" @click="unpinRecord(record)" v-bind:class="{ active: unsubscribeLoading }" class="btn-unsubscribe btn">
-                        <div class="btn__text">Отписать</div>
-                        <div v-if="unsubscribeLoading" class="container">
-                          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                             viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
-                          <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
-                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
-                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
-                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
-                            C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
-                            c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
-                            L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
-                            C240.5,4,237.1,0.2,232.1,0z"/>
-                          </svg>
-                        </div>
-                      </button>
-                      <button v-else-if="!record.is_active" @click="attachRecord(record)" v-bind:class="{ active: subscribeLoading }" class="btn-subscribe btn">
-                        <div class="btn__text">Записать</div>
-                        <div v-if="subscribeLoading" class="container">
-                          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                             viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
-                          <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
-                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
-                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
-                            c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
-                            C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
-                            c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
-                            L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
-                            c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
-                            C240.5,4,237.1,0.2,232.1,0z"/>
-                          </svg>
-                        </div>
-                      </button>
-
-                    </div>
-
-                    <div class="total-info__service">
-                      <span class="service__item">UCMAS</span>
-                    </div>
-
-                    <div class="info-about-subsc">Осталось оплатить <span class="red">4000.0 ₽</span></div>
-
-                      нет абонемента
-
-                    <div class="subscriptions">
-                      <div class="subscription">
-                        <div class="data-subscriptions">
-                          от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
-                        </div> 
-                      </div>
-                      <div class="subscription">
-                        <div class="data-subscriptions">
-                          от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
-                        </div> 
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <section class='panel-content'>
-              <div class="panel-header">
-                <div class="title-panel">Транзакции</div>
-                <div class="show-panel">Показать все</div>
-              </div>
-              <div class="list-panel">
-                <div class="item-panel">
-                  <div class="item-panel__basic-info">
-                    <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-                    <div class="right-item-panel green">6000.0 ₽</div>
-                  </div>
-                </div>
-                <div class="item-panel">
-                  <div class="item-panel__basic-info">
-                    <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-                    <div class="right-item-panel green">6000.0 ₽</div>
-                  </div>
-                </div>
-                <div class="item-panel">
-                  <div class="item-panel__basic-info">
-                    <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-                    <div class="right-item-panel green">6000.0 ₽</div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div class="panel-content">
-              <div class="panel-header">
-                <div class="title-panel">Скидки и коррекция цены</div>
-                <div class="show-panel">Показать все</div>
-              </div>
-              <div class="list-panel">
-                <div class="item-panel">
-                  <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-                  <div class="right-item-panel green">6000.0 ₽</div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-
-          <% if params[:record].present? %>
-            <div class="panel-content">
-              Группа
-            </div>
-          <% end %>
-
-        </div>
-      </div>
-
+    <content>
+      <%= yield %>
     </content>
     
-
-    <%yield%>
-    
     <div class="back-background"></div>
-
+    
     <script src="https://unpkg.com/ionicons@4.2.4/dist/ionicons.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
-<!-- 
 
- -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
 
-    <script type="text/javascript">
-      var authToken = document.getElementById("authenticity_token").value
-      var valueInput = document.getElementById("search").value
-      var lastId = null;
+<script type="text/javascript">
+  var authToken = document.getElementById("authenticity_token").value
+  var valueInput = document.getElementById("search").value
+  var lastId = null;
 
-      new Vue ({
-        el: '#app',
-        data: {
-          clientsCompany: [],
-          recordsCompany: [],
-          titleInput: "Поиск клиентов", // будет подставляться название группы
-          searchClients: [],
-          client: [],
-          selectRecordsClient: [],
-          recordsClient: [],
-          loadComplete: false,
-          showTotalInfo: false,
-          openPanelAdd: null,
-          searchValue: valueInput,
-          notifications: [],
-          unsubscribeLoading: false,
-          subscribeLoading: false
-        },
-        methods: {
-          openCardClient(value) {
+  var vmClient = new Vue ({
+    el: '#client',
+    data: {
+      client: [],
+      showTotalInfo: false,
+      openPanelAdd: null,
+      selectRecordsClient: [],
+      recordsClient: [],
+      loadingPanel: false,
 
-            getClient = _.find(this.clientsCompany, {id:value});
-            this.client = getClient;
+      countItemsList: 0,
+      panelShow: 'home',
 
-            url = window.location.href;
-            newUrl = updateURLParameter(url, 'client', value);
-            history.pushState('', 'Клиент', newUrl);
+      unsubscribeLoading: false,
+      subscribeLoading: false,
 
+      subsClient: [],
 
-            $.get(
-              '/get_select_records_client.json', 
-              {
-                client_id: value
-              },
-              selectRecordsClient => this.selectRecordsClient = selectRecordsClient
-            );
+      typeClient: '',
 
-            $.get(
-              '/get_records_client.json', 
-              {
-                client_id: value
-              },
-              recordsClient => this.recordsClient = recordsClient
-            );
+      addSubsForRecordClient: '',
+      startSubs: '',
+      finishSubs: '',
+      recalculationNote: '',
+      showRecalculationAmount: false,
+      recalculationAmount: null,
+      showAmount: false,
+      amount: null,
+      subsCreateLoading: false,
+      bookingDate: ''
+    },
+    methods: {
+      attachRecord(record) {
+        let {client} = this;
+        var complited = false
 
-            console.log(this.recordsClient);
+        if(!this.subscribeLoading) {
+          this.subscribeLoading = true;
 
-          },
-          sendQuery(type, value) {
-            url = window.location.href;
-            newUrl = updateURLParameter(url, type, value);
-
-
-            this.clientsQuery(newUrl);
-          },
-          clientsQuery(url) {
-
-            urlHash = new URL(url);
-            clientQuery = urlHash.searchParams.get("search");
-            typeOfClients = urlHash.searchParams.get("clients");
-
-            arrayClientQuery = validSpaces(clientQuery).split(' ');
-
-            clearTimeout(lastId)
-            this.loadComplete = false;
-
-
-            lastId = setTimeout(() => {
-              $.get(
-                '/get_clients.json', 
-                {
-                  typeOfClients: typeOfClients,
-                  lastNameClients: arrayClientQuery[0],
-                  firstNameClients: arrayClientQuery[1],
-                  patronymicClients: arrayClientQuery[2]
-                // ,
-                // record: 29
-                },
-                searchClients => {
-                  this.searchClients = searchClients;
-                  this.loadComplete = true;
-                  history.pushState('', clientQuery, url);
+          setTimeout(() => {
+            $.ajax('/records_clients.json', {
+              method: 'POST',
+              data: {
+                authenticity_token: authToken,
+                record_client: {
+                  record_id: record.id,
+                  client_id: client.id,
                 }
-              );
+              },
+              success: messege => {
+                complited = messege.complited
+                vmNotifications.notifications.unshift(messege);
+              },
+              error: e => console.warn('error', e)
+            }).done(newRecordClient => {
+              if(complited) {
+                newRecordClient = {id: record.id, name: record.name, is_active: true};
 
-            }, 600);
+                let indexRecordsSelect = this.selectRecordsClient
+                  .findIndex(rs => rs.id == record.id);
+                this.selectRecordsClient.splice(indexRecordsSelect, 1);
 
-          },
-          attachRecord(record) {
-            let {client} = this;
+                let indexRecordsClient = this.recordsClient
+                  .findIndex(rs => rs.id == record.id);
 
-            if(!this.subscribeLoading) {
-              this.subscribeLoading = true;
-
-              setTimeout(() => {
-                $.ajax('/records_clients', {
-                  method: 'POST',
-                  data: {
-                    authenticity_token: authToken,
-                    record_client: {
-                      record_id: record.id,
-                      client_id: client.id,
-                    }
-                  },
-                  error: e => console.warn('error', e)
-                }).done(newRecordClient => {
-                  newRecordClient = {id: record.id, name: record.name, is_active: true};
-
-                  let indexRecordsSelect = this.selectRecordsClient
-                    .findIndex(rs => rs.id == record.id);
-                  this.selectRecordsClient.splice(indexRecordsSelect, 1);
-
-                  let indexRecordsClient = this.recordsClient
-                    .findIndex(rs => rs.id == record.id);
-
-                  if(indexRecordsClient < 0 ) {
-                    this.recordsClient.unshift(newRecordClient);
-                  }
-                  else {
-                    this.recordsClient.splice(indexRecordsClient, 1, newRecordClient);
-                  }
-
-                  this.subscribeLoading = false;
-
-                  // this.clickRecordClientActive(record.id);
-
-                  newNotifications = {complited: true, note: client.last_name + ' ' + client.first_name + ' записан: ' + record.name};
-                  this.notifications.unshift(newNotifications);
-                });
-              }, 600);
-            }
-            // else if(record.is_active == false) {
-
-            // }
-          },
-          unpinRecord(record) {
-            let {client} = this;
-
-            if(!this.unsubscribeLoading) {
-              this.unsubscribeLoading = true;
-
-              setTimeout(() => {
-                $.ajax('/records_client_unpin/', {
-                  method: 'DELETE',
-                  data: {
-                    authenticity_token: authToken,
-                    record_id: record.id,
-                    client_id: client.id,
-                  },
-                  error: e => console.warn('error', e)
-                }).done(newRecordClient => {
-                  newRecordClient = {id: record.id, name: record.name, is_active: false};
-
-                  let indexRecordsClient = this.recordsClient
-                    .findIndex(rs => rs.id == record.id);
+                if(indexRecordsClient < 0 ) {
+                  this.recordsClient.unshift(newRecordClient);
+                }
+                else {
                   this.recordsClient.splice(indexRecordsClient, 1, newRecordClient);
-
-                  let indexRecordsSelect = this.selectRecordsClient
-                    .findIndex(rs => rs.id == record.id);
-
-                  if(indexRecordsSelect < 0 ) {
-                    this.selectRecordsClient.unshift(newRecordClient);
-                  }
-                  else {
-                    this.selectRecordsClient.splice(indexRecordsSelect, 1, newRecordClient);
-                  }
-
-                  this.unsubscribeLoading = false;
-
-                  newNotifications = {complited: true, note: client.last_name + ' ' + client.first_name + ' отписан: ' + record.name};
-                  this.notifications.unshift(newNotifications);
-                });
-              }, 600);
-            }
-          },
-          clickRecordClientActive(id) {
-            if(!$('.record-'+id).hasClass('active')) {
-              $('.record-'+id).parents().children().removeClass('active');
-              $('.record-'+id).addClass('active');
-            }
-            else {
-              $('.record-'+id).parents().children().removeClass('active');
-            }
-          }
-        },
-        created() {
-          this.sendQuery('search', valueInput);
-
-          $.ajax({
-            url: '/get_clients.json',
-            success: clientsCompany => {
-              this.clientsCompany = clientsCompany
-
-              urlHash = new URL(window.location.href);
-              id = urlHash.searchParams.get("client");
-              if(id != null) {
-                id = parseInt(id, 10);
-                this.openCardClient(id);
+                }
               }
-            }
-          });
+              this.subscribeLoading = false;
+            });
+          }, 600);
+        }
+      },
+      unpinRecord(record) {
+        let {client} = this;
+        var complited = false
 
+        if(!this.unsubscribeLoading) {
+          this.unsubscribeLoading = true;
+
+          setTimeout(() => {
+            $.ajax('/records_client_unpin/', {
+              method: 'DELETE',
+              data: {
+                authenticity_token: authToken,
+                record_id: record.id,
+                client_id: client.id,
+              },
+              success: messege => {
+                complited = messege.complited
+                vmNotifications.notifications.unshift(messege);
+              },
+              error: e => console.warn('error', e)
+            }).done(newRecordClient => {
+              if(complited) {
+                newRecordClient = {id: record.id, name: record.name, is_active: false};
+
+                let indexRecordsClient = this.recordsClient
+                  .findIndex(rs => rs.id == record.id);
+                this.recordsClient.splice(indexRecordsClient, 1, newRecordClient);
+
+                let indexRecordsSelect = this.selectRecordsClient
+                  .findIndex(rs => rs.id == record.id);
+
+                if(indexRecordsSelect < 0 ) {
+                  this.selectRecordsClient.unshift(newRecordClient);
+                }
+                else {
+                  this.selectRecordsClient.splice(indexRecordsSelect, 1, newRecordClient);
+                }
+              }
+              this.unsubscribeLoading = false;
+            });
+          }, 600);
+        }
+      },
+      clickRecordClientActive(id) {
+        let {client} = this;
+
+        if(!$('.record-'+id).hasClass('active')) {
+          $('.record-'+id).parents().children().removeClass('active');
+          $('.record-'+id).addClass('active');
+        }
+        else {
+          $('.record-'+id).parents().children().removeClass('active');
+        }
+
+        $.get(
+          '/get_subs_client.json', 
+          {
+            record_id: id,
+            client_id: client.id,
+          },
+          subsClient => {
+            this.subsClient = subsClient;
+          }
+        );
+      },
+      createSubClient() {
+        let {client, addSubsForRecordClient} = this;
+        var complited = false
+
+        if(!this.subsCreateLoading) {
+          this.subsCreateLoading = true;
+
+          setTimeout(() => {
+            $.ajax('/subscriptions.json', {
+              method: 'POST',
+              data: {
+                authenticity_token: authToken,
+                record_id: addSubsForRecordClient,
+                client_id: client.id,
+                subscription: {
+                  start_at: this.startSubs,
+                  finish_at: this.finishSubs,
+                }
+              },
+              success: messege => {
+                complited = messege.complited
+                vmNotifications.notifications.unshift(messege);
+              },
+              error: e => console.warn('error', e)
+            }).done(newRecordClient => {
+              if(complited) {
+                // newRecordClient = {id: record.id, name: record.name, is_active: true};
+
+                // let indexRecordsSelect = this.selectRecordsClient
+                //   .findIndex(rs => rs.id == record.id);
+                // this.selectRecordsClient.splice(indexRecordsSelect, 1);
+
+                // let indexRecordsClient = this.recordsClient
+                //   .findIndex(rs => rs.id == record.id);
+
+                // if(indexRecordsClient < 0 ) {
+                //   this.recordsClient.unshift(newRecordClient);
+                // }
+                // else {
+                //   this.recordsClient.splice(indexRecordsClient, 1, newRecordClient);
+                // }
+                this.getDateSub();
+              }
+              this.subsCreateLoading = false;
+            });
+          }, 600);
+        }
+      },
+      getDateSub() {
+        let {addSubsForRecordClient} = this;
+
+        if(addSubsForRecordClient != '' && addSubsForRecordClient != 0) {
           $.get(
-            '/get_records.json',
-            recordsCompany => this.recordsCompany = recordsCompany
+            '/get_autodata_subscription.json', 
+            { client_id: this.client.id, record_id: addSubsForRecordClient },
+            dateSub => {
+              this.startSubs = dateSub.start_date;
+              this.finishSubs = dateSub.finish_date;
+              this.bookingDate = dateSub.booking_date;
+            }
           );
         }
+      }
+    },
+    computed: {
+      urlEditClient: function() {
+        return '/clients/' + this.client.id + '/edit';
+      },
+      clientBasicInformation: function() {
+        let {client} = this;
+        var clientBasicInformation = '';
+        var patronymic = client.patronymic != '' ? true : false;
+        var birthday = client.birthday != null ? true : false;
+        var phone_number = client.phone_number != '' ? true : false;
+
+        if (birthday) {
+          var birthDay = new Date(client.birthday);
+          var yearBirthDay = birthDay.getFullYear();
+
+          var today = new Date();
+          var yearToday = today.getFullYear();
+
+          var age = yearToday - yearBirthDay;
+
+          if (age == 1 || age == 21 || age == 31) {
+            age = age + ' год';
+          }
+          else if ((1 < age && age < 5) || (21 < age && age < 25) || (31 < age && age < 35)) {
+            age = age + ' года';
+          }
+          else {
+            age = age + ' лет';
+          }
+        }
+
+        if (patronymic) {
+          if (birthday && phone_number) {
+            clientBasicInformation = client.patronymic + ', ' + age + ', ' + client.phone_number;
+          }
+          else if (birthday && !phone_number) {
+            clientBasicInformation = client.patronymic + ', ' + age;
+          }
+          else if (!birthday && phone_number) {
+            clientBasicInformation = client.patronymic + ', ' + client.phone_number;
+          }
+          else if (!birthday && !phone_number) {
+            clientBasicInformation = client.patronymic;
+          }
+        }
+        else if (birthday) {
+          if (phone_number) {
+            clientBasicInformation = age + ', ' + client.phone_number;
+          }
+          else if (!phone_number) {
+            clientBasicInformation = age;
+          }
+        }
+        else if (phone_number) {
+          clientBasicInformation = client.phone_number;
+        }
+        else {
+          clientBasicInformation = '';
+        }
+
+        return clientBasicInformation;
+      }
+    },
+    watch: {
+      "client" : function() {
+        this.panelShow = 'client';
+        this.showTotalInfo = false;
+        this.addSubsForRecordClient = '';
+
+        url = window.location.href;
+        newUrl = updateURLParameter(url, 'client', this.client.id);
+        history.pushState('', 'Клиент', newUrl);
+
+        $.get(
+          '/get_select_records_client.json', 
+          { client_id: this.client.id },
+          selectRecordsClient => this.selectRecordsClient = selectRecordsClient
+        );
+        $.get(
+          '/get_records_client.json', 
+          { client_id: this.client.id },
+          recordsClient => this.recordsClient = recordsClient
+        );
+      },
+      "typeClient" : function() {
+        vmListClients.sendQuery('clients', this.typeClient);
+      },
+      "showTotalInfo" : function() {
+        if(this.showTotalInfo) {
+          setTimeout(() => {
+            $.get(
+              '/get_fields_client', 
+              { client_id: this.client.id },
+              fieldsClient => { $('#fields-client').html(fieldsClient); }
+            );
+          }, 600);
+        }
+      },
+      "addSubsForRecordClient" : function() {
+        this.getDateSub();
+      }
+    }
+  });
+  
+  var vmNotifications = new Vue ({
+    el: '#notifications',
+    data: {
+      notifications: []
+    }
+  });
+
+  var vmListClients = new Vue ({
+    el: '#app',
+    data: {
+      clientsCompany: [],
+      recordsCompany: [],
+      titleInput: "Поиск клиентов", // будет подставляться название группы
+      searchClients: [],
+      loadComplete: false,
+      searchValue: valueInput
+    },
+    methods: {
+      clickClient(client) {
+        this.activeElement('client-', client.id, 'list');
+        vmClient.client = client;
+      },
+      sendQuery(type, value) {
+        url = window.location.href;
+        newUrl = updateURLParameter(url, type, value);
+
+        this.clientsQuery(newUrl);
+      },
+      clientsQuery(url) {
+
+        urlHash = new URL(url);
+        clientQuery = urlHash.searchParams.get("search");
+        typeOfClients = urlHash.searchParams.get("clients");
+
+        arrayClientQuery = validSpaces(clientQuery).split(' ');
+
+        clearTimeout(lastId)
+        this.loadComplete = false;
+
+        if(typeOfClients == null) {
+          typeOfClients = 'current'
+          url = updateURLParameter(url, 'clients', typeOfClients);
+        }
+        this.activeElement(typeOfClients, '', 'indecators');
+
+        lastId = setTimeout(() => {
+          $.get(
+            '/get_clients.json', 
+            {
+              typeOfClients: typeOfClients,
+              lastNameClients: arrayClientQuery[0],
+              firstNameClients: arrayClientQuery[1],
+              patronymicClients: arrayClientQuery[2]
+            // ,
+            // record: 29
+            },
+            searchClients => {
+              this.searchClients = searchClients;
+              this.loadComplete = true;
+              history.pushState('', clientQuery, url);
+            }
+          )
+        }, 600);
+      },
+      activeElement(nameClass, id, parent) {
+        setTimeout(() => {
+          $('.' + nameClass + id).parents('.' + parent).children().removeClass('active');
+          $('.' + nameClass + id).addClass('active');
+        }, 0.1);
+      }
+    },
+    created() {
+      this.sendQuery('search', valueInput);
+      vmClient.panelShow = 'home';
+
+      $.ajax({
+        url: '/get_clients.json',
+        success: clientsCompany => {
+          this.clientsCompany = clientsCompany;
+
+          urlHash = new URL(window.location.href);
+          id = urlHash.searchParams.get("client");
+          if(id != null) {
+            id = parseInt(id, 10);
+            getClient = _.find(this.clientsCompany, {id:id});
+            this.clickClient(getClient);
+          }
+        }
       });
-    </script>
+
+      $.get(
+        '/get_records.json',
+        recordsCompany => this.recordsCompany = recordsCompany
+      );
+    },
+    watch: {
+      "searchClients" : function() {
+        vmClient.countItemsList = this.searchClients.length;
+
+        urlHash = new URL(window.location.href);
+        id = urlHash.searchParams.get("client");
+        this.activeElement('client-', id, 'list');
+      }
+    }
+  });
+</script>
+
   </body>
 </html>

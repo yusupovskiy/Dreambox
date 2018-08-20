@@ -1,4 +1,4 @@
-<%= form_with(url: [@current_company, record], model: record, local: true) do |form| %>
+<%= form_with(url: [record], model: record, local: true) do |form| %>
       <%=form.hidden_field :record_type, value: :grouping %>
       <%=form.hidden_field :visit_type, value: :one_time_abon %>
   <div class="conten-card">
@@ -78,7 +78,7 @@
         </dfn> -->
       </div>
     </div>
-    <%= form.submit class: "btn icon-confirm btn-fix" %>
+    <%= form.submit 'Сохранить', class: "btn", style: 'color: #12ce88;' %>
   </div>
   <% if record.errors.any? %>
     <div id="error_explanation" class="message">

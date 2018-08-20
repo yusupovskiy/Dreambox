@@ -1,0 +1,18 @@
+<%if signed_in? %>
+  <%=link_to persons_profile_path, class: "panel-account" do %>
+    <div class="account-name">
+      <%= current_user.first_name %> <%= current_user.last_name %>
+    </div>
+    <%= image_tag s3_image(current_user.avatar), class: 'account-avatar' %>
+  <%end%>
+<%end%>
+<div v-if="notifications.length != 0" id="notifications" class='notification'>
+  <div v-for="(notification, index) in notifications" class="notification__item">
+    <div v-if="notification.complited" class="complited status-complited">Выполнено</div>
+    <div v-else-if="!notification.complited" class="not-complited status-complited">Не выполнено</div>
+    <div style="font-size: 19px;">{{ notification.note }}</div>
+    <div @click="notifications.splice(index, 1)" class="notification-close">
+      <ion-icon name="close"></ion-icon>
+    </div>
+  </div>
+</div>

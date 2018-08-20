@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_07_123400) do
+ActiveRecord::Schema.define(version: 2018_08_16_235302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,7 +38,9 @@ ActiveRecord::Schema.define(version: 2018_08_07_123400) do
     t.integer "sex", null: false
     t.string "avatar"
     t.integer "role"
+    t.bigint "operation_id", null: false
     t.index ["company_id"], name: "index_clients_on_company_id"
+    t.index ["operation_id"], name: "index_clients_on_operation_id"
     t.index ["user_id"], name: "index_clients_on_user_id"
   end
 
@@ -75,11 +77,12 @@ ActiveRecord::Schema.define(version: 2018_08_07_123400) do
 
   create_table "field_templates", force: :cascade do |t|
     t.string "name"
-    t.integer "block_id", null: false
     t.string "field_type"
     t.boolean "is_active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "info_block_id", null: false
+    t.index ["info_block_id"], name: "index_field_templates_on_info_block_id"
   end
 
   create_table "fin_operations", force: :cascade do |t|
@@ -135,7 +138,9 @@ ActiveRecord::Schema.define(version: 2018_08_07_123400) do
     t.integer "visit_type", null: false
     t.string "is_automatic", default: "not", null: false
     t.string "subscription_sale", default: ""
+    t.bigint "operation_id", null: false
     t.index ["affiliate_id"], name: "index_records_on_affiliate_id"
+    t.index ["operation_id"], name: "index_records_on_operation_id"
   end
 
   create_table "records_clients", force: :cascade do |t|
@@ -192,6 +197,8 @@ ActiveRecord::Schema.define(version: 2018_08_07_123400) do
     t.bigint "record_client_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "operation_id", null: false
+    t.index ["operation_id"], name: "index_subscriptions_on_operation_id"
     t.index ["record_client_id"], name: "index_subscriptions_on_record_client_id"
   end
 
@@ -251,16 +258,20 @@ ActiveRecord::Schema.define(version: 2018_08_07_123400) do
 
   add_foreign_key "affiliates", "companies"
   add_foreign_key "clients", "companies"
+  add_foreign_key "clients", "operations"
   add_foreign_key "clients", "users"
   add_foreign_key "companies", "users"
   add_foreign_key "discounts", "records_clients", column: "record_client_id"
+  add_foreign_key "field_templates", "info_blocks"
   add_foreign_key "histories", "users"
   add_foreign_key "records", "affiliates"
+  add_foreign_key "records", "operations"
   add_foreign_key "records_clients", "clients"
   add_foreign_key "records_clients", "records"
   add_foreign_key "records_services", "records"
   add_foreign_key "records_services", "services"
   add_foreign_key "services", "companies"
+  add_foreign_key "subscriptions", "operations"
   add_foreign_key "subscriptions", "records_clients", column: "record_client_id"
   add_foreign_key "work_salaries", "affiliates"
   add_foreign_key "work_salaries", "records"

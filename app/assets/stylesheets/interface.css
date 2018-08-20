@@ -465,7 +465,7 @@ input.card-search:hover {
     padding-bottom: 10px;
     display: grid;
 }
-.block-information>h3 {
+/*.block-information>h3 {
     color: #a3a3a3;
     font-size: 11px;
     padding: 10px 0;
@@ -475,7 +475,7 @@ input.card-search:hover {
     cursor: default;
     position: relative;
     z-index: 2;
-}
+}*/
 .img-card {
     width: 137px;
     height: 137px;
@@ -584,15 +584,14 @@ input.card-search:hover {
     margin: 0 30px;
     display: grid;
 }
-.block-information {
+/*.block-information {
     background-color: white;
     border-radius: 14px;
     padding: 11px 20px;
     margin-bottom: 20px;
     position: relative;
-    /*width: 300px;*/
-    transition: 0.4s cubic-bezier(0, 0, 0, 1);
-}
+    width: 300px;
+}*/
 .records-client .parent-compact {
     opacity: 0.8;
 }
@@ -681,9 +680,6 @@ input.card-search:hover {
     font-family: Roboto;
     font-size: 13px;
     margin-left: 4px;
-}
-.btns-confirm .btn {
-    margin: 0 5px;
 }
 .conten-card>.btn, .btn-list  {
     margin: 20px auto;
@@ -993,21 +989,6 @@ a {
     padding: 10px 20px;
     overflow: hidden;
     color: #171717;
-}
-.status-complet {
-    width: 8px;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-    border: 0;
-}
-.completed {
-    background-color: #12ce88;
-}
-.not-completed {
-    background-color: #ff7375;
 }
 .card-search {
     font-size: 18px;

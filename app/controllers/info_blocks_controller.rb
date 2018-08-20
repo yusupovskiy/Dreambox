@@ -1,4 +1,4 @@
-class Companies::InfoBlocksController < ApplicationController
+class InfoBlocksController < ApplicationController
   before_action :confirm_actions, only: [:create]
 
   def create

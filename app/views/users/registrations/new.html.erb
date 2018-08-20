@@ -1,12 +1,25 @@
+<div class="panel-list" style="background-color: whitesmoke;">
+  <div style='position: relative;'>
+    <h2 class="panel-form__title" style="margin-top: 10px;">Добавление групповой записи</h2>
+
+    <% 
+      if request.referrer == request.original_url or request.referrer == nil
+        url = clients_path
+      else
+        url = request.referrer
+      end
+    %>
+
+    <a href="<%= url %>" class="btn-back new-btn">
+      <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+    </a>
+  </div>
+  <div class="container-list gray-scrollbar">
+
+
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
   <%= devise_error_messages! %>
-
-  <div class="title-panel">
-    <div class="title-card"><a href="#"><img class="logo" src="/images/logo.png" /></a></div>
-  </div>
-  
-  <div class="conten-card">
   
     <div class="menu-with-options">
       <a href="<%=new_user_session_path%>" class="option">Вход</a>
@@ -16,7 +29,7 @@
     <div class="cont-category-book">
       <div class="tab-category information-section">
         <div class="block-information authorization">
-          <div class="finput">
+          <div class="finput focus">
             <%= f.label t('.email'), class: 'finput-label' %>
             <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "finput-input" %>
           </div>
@@ -46,5 +59,10 @@
         <%= render "users/shared/links" %>
       </div>
     </div>
-  </div>
 <% end %>
+
+  </div>
+</div>
+
+
+

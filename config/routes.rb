@@ -4,48 +4,55 @@ Rails.application.routes.draw do
   end
 
   root 'home#index'
-  
+
   get 'iairgmqqimuuoeexaspwkjykrtaocalendar' => 'home#add_subscriptions_automatically'
   get 'upewuadesutgqavgimmwvdwfizyfgwperiod' => 'home#automatically_by_period'
 
   devise_for :users, path: 'auth', controllers: {confirmations: 'confirmations'}
+
   get 'auth' => 'home#auth'
-  get 'search_result' => 'home#search_result'
-  get 'add_field' => 'home#add_field'
   get 'account' => 'home#account'
+
   get 'persons/profile'
   get 'persons/new_profile'
   post 'persons/role_person/:role_person' => 'persons#role_person', as: 'role_person'
   get 'company' => 'companies#company'
-
 
   resources :clients do
     member do
       # patch 'import'
       get 'role_employee'
       get 'role_client'
-      post 'add_field'
+      # post 'add_field'
     end
   end
   post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
   get 'get_clients' => 'clients#get_clients'
-  get 'get_records_client' => 'clients#get_records_client'
-  get 'get_select_records_client' => 'clients#get_select_records_client'
-  get 'get_records' => 'clients#get_records'
+  get 'add_field' => 'clients#add_field'
+  get 'get_fields_client' => 'clients#get_fields_client'
 
   delete 'records_client_unpin' => 'records_clients#destroy'
 
+  resources :records do
+    member do
+      get 'end_recording'
+    end
+  end
+  get 'get_records' => 'records#get_records'
+  get 'get_records_client' => 'records#get_records_client'
+  get 'get_select_records_client' => 'records#get_select_records_client'
+  get 'get_subs_client' => 'records#get_subs_client'
+
+  resources :subscriptions do
+    member do
+      patch 'cancel'
+    end
+  end
+  get 'get_autodata_subscription' => 'subscriptions#get_autodata_subscription'
   
 
   resources :companies do
-    get 'add_field' => 'companies#add_field', module: :companies
-
     resources :affiliates, module: :companies
-    resources :records, module: :companies do
-      member do
-        get 'end_recording'
-      end
-    end
     resources :workers, module: :companies do
       member do
         get 'role_employee'
@@ -54,20 +61,12 @@ Rails.application.routes.draw do
     end
     post 'clients/import' => 'companies/clients#import'
     resources :services, module: :companies
-    resources :subscriptions, module: :companies do
-      member do
-        patch 'cancel'
-      end
-    end
     resources :fin_operations, module: :companies do
       member do
         get 'doc_pko'
       end
     end
     resources :histories, module: :companies
-    resources :info_blocks, module: :companies
-    resources :field_templates, module: :companies
-    resources :field_data, module: :companies
     resources :works, module: :companies
     resources :salaries, module: :companies
   end
@@ -79,4 +78,7 @@ Rails.application.routes.draw do
   resources :windows, only: :show
   resources :discounts
   resources :works_salaries
+  resources :info_blocks
+  resources :field_templates
+  resources :field_data
 end

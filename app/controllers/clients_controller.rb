@@ -3,11 +3,8 @@ class ClientsController < ApplicationController
   before_action :ensure_user_has_company
   before_action :set_s3_direct_post, only: [:new, :edit]
   before_action :confirm_actions, only: [:create, :update, :destroy, :archive, :role_employee, :role_client, :new, :edit]
-  before_action :set_record_client
   before_action :set_client, only: [:show, :edit, :update, :destroy, :archive]
 
-  # GET /clients
-  # GET /clients.json
   def index
     @people_company = Client.where(company: @current_company.id)
     @people_clients = @people_company.where("(role & #{Client::Role::CLIENT}) != 0")
@@ -43,43 +40,7 @@ class ClientsController < ApplicationController
     @show_in_view = [@current_clients, @clients_debtors, @all_people, @archive_clients]
   end
 
-  def get_records
-    respond_to do |format|
-      format.json { render json: @current_record, status: :ok }
-    end
-  end
-
-  def get_select_records_client
-    id_client = params[:client_id]
-    
-    records_client = RecordClient.where(client_id: id_client, record_id: @current_record)
-    completed_records = @current_record.where("finished_at < ?", Date.today)
-    no_completed_records = @current_record.where.not(id: completed_records)
-    no_records_client = no_completed_records.where.not(id: records_client.where(is_active: :true).select(:record_id))
-
-
-    respond_to do |format|
-      format.json { render json: no_records_client, status: :ok }
-    end
-  end
-
-  def get_records_client
-    client_id = params[:client_id]
-    records = RecordClient.joins(:record)
-                          .select(' records.id, name, abon_period, finished_at, 
-                                    records.created_at, record_type, visit_type, 
-                                    is_active, record_id, client_id')
-                          .order('is_active DESC, finished_at DESC')
-                          .where client_id: client_id
-
-    respond_to do |format|
-      format.json { render json: records, status: :ok }
-    end
-  end
-
   def get_clients
-
-    # @search_clients = params[:searchClients]
     @last_name_search = params[:lastNameClients]
     @first_name_search = params[:firstNameClients]
     @patronymic_search = params[:patronymicClients]
@@ -152,9 +113,22 @@ class ClientsController < ApplicationController
     end
   end
 
+  def add_field
+    @new_block = InfoBlock.new
+    @new_template_field = FieldTemplate.new
+    @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
+    @field_templates_clients = FieldTemplate.where(info_block_id: @blocks_clients)
+  end
 
-  # GET /clients/1
-  # GET /clients/1.json
+  def get_fields_client
+    @client_id = params[:client_id]
+
+    @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
+    @field_templates_clients = FieldTemplate.where(info_block_id: @blocks_clients).order("id")
+
+    render layout: false
+  end
+
   def show
     unless @client.present?
       return redirect_to company_clients_url, notice: "В компании нет такого человека"
@@ -217,7 +191,7 @@ class ClientsController < ApplicationController
 
 
     @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
-    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients).order("id")
+    @field_templates_clients = FieldTemplate.where(info_block_id: @blocks_clients).order("id")
 
     @works_client = Work.where people_id: @client.id
   end
@@ -228,9 +202,12 @@ class ClientsController < ApplicationController
     @new_block = InfoBlock.new
     @new_template_field = FieldTemplate.new
     @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
-    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients).order("id")
+    @field_templates_clients = FieldTemplate.where(info_block_id: @blocks_clients).order("id")
     @new_field_data = FieldDatum.new
-    1.times { @client.field_data.build }
+    # 1.times { @client.field_data.build }
+
+    @title_card = 'Добавление клиента'
+    @form_submit = 'Сохранить'
   end
 
   # GET /clients/1/edit
@@ -239,9 +216,12 @@ class ClientsController < ApplicationController
     @new_block = InfoBlock.new
     @new_template_field = FieldTemplate.new
     @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
-    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients).order("id")
+    @field_templates_clients = FieldTemplate.where(info_block_id: @blocks_clients).order("id")
     @new_field_data = FieldDatum.new 
     # 1.times { @client.field_data.build }
+
+    @title_card = 'Редактирование клиента'
+    @form_submit = 'Изменить'
   end
 
   # POST /clients
@@ -249,8 +229,10 @@ class ClientsController < ApplicationController
   def create
     prms = client_params
     @client = Client.new(prms)
-
     @client.role = (Client::Role::CLIENT).to_s(2).to_i
+    
+    operation = Operation.create
+    @client.operation_id = operation.id
 
     respond_to do |format|
       if @client.save
@@ -264,7 +246,7 @@ class ClientsController < ApplicationController
           end
         end
 
-        format.html { redirect_to [@client.company, @client], notice: t('client.created') }
+        format.html { redirect_to "/clients?client=#{@client.id}", notice: t('client.created') }
         format.json { render :show, status: :created }
       else
         format.html { ensure_current_user; set_s3_direct_post; render :new } #   redirect_to request.referer
@@ -289,7 +271,7 @@ class ClientsController < ApplicationController
           end
         end
         
-        format.html { redirect_to [@client.company, @client], notice: t('client.updated') }
+        format.html { redirect_to "/clients?client=#{@client.id}", notice: t('client.updated') }
         format.json { render :show, status: :ok, location: @client }
       else
         format.html { render :edit }
@@ -349,19 +331,6 @@ class ClientsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_record_client
-      # clients_user_company = Client.where company_id: @current_company, user_id: current_user.people_id
-      # получаем связи с записями выбранного пользователем человека
-      # if @current_record.present?
-        records_clients = RecordClient.where client_id: current_user.people_id
-
-        @current_record_client = RecordClient.where("
-          record_id IN (?) OR id IN (?)",
-          @current_record.select(:id),
-          records_clients.select(:id))
-      # end
-    end
-
     def set_client
       @client = Client.find_by(company_id: @current_company.id, id: params[:id])
     end

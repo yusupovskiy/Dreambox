@@ -1,8 +1,8 @@
-class Companies::FieldTemplatesController < ApplicationController
+class FieldTemplatesController < ApplicationController
   before_action :confirm_actions, only: [:create, :update, :destroy]
   
   def create
-    new_field_template = FieldTemplate.new(params.require(:field_template).permit(:name, :field_type, :block_id))
+    new_field_template = FieldTemplate.new(params.require(:field_template).permit(:name, :field_type, :info_block_id))
 
     respond_to do |format|
       if new_field_template.save
@@ -13,7 +13,5 @@ class Companies::FieldTemplatesController < ApplicationController
         format.json { render json: new_field_template.errors, status: :unprocessable_entity }
       end
     end
-
   end
-
 end

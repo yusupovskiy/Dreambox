@@ -1,0 +1,86 @@
+<div id="add-field" class="panel-list" style="background-color: whitesmoke;">
+  <div style='position: relative;'>
+    <h2 class="panel-form__title" style="margin-top: 10px;">Добавление полей</h2>
+
+    <% 
+      if request.referrer == request.original_url or request.referrer == nil
+        url = clients_path
+      else
+        url = request.referrer
+      end
+    %>
+
+    <a href="<%= url %>" class="btn-back new-btn">
+      <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+    </a>
+  </div>
+  <div class="container-list gray-scrollbar">
+    <div class="information-section">
+      <%= form_with(url: info_blocks_path, model: @new_block, local: true, html: {class: 'block-information'}) do |form| %>
+        <%= form.hidden_field :model_object, value: 'clients' %>
+
+        <dfn data-info="В разделе можно создать свои поля">
+          <div class="finput">
+            <%= form.label 'Название раздела*', class: 'finput-label' %>
+            <%= form.text_field :name, class: "finput-input" %>
+          </div>
+        </dfn>
+
+        <div class="btns">
+          <%= form.submit 'Сохранить', class: "btn", style: 'color: #12ce88; margin: 10px 0 0;' %>
+        </div>
+      <%end%>
+
+      <% if @blocks_clients.present? %>
+        <% @blocks_clients.each do |b| %>
+          <div class="block-information">
+            <h3>Поля раздела "<%= b.name %>"</h3>
+            <div class="container-info compact">
+              <% fields_block = @field_templates_clients.where(info_block_id: b.id) %>
+              <% fields_block.each do |ft| %>
+                <div class="item-information">
+                  <span class="title-input"><%= ft.name %></span>
+                  <span class="text-input"><%= t('field_type.' + ft.field_type) %> </span>
+                </div>
+              <% end %>
+            </div>
+
+            <div @click="show_add_field = true" v-if="!show_add_field" class="btn-add btn" style="margin: 10px 0 0;">+ Добавить</div>
+            <div v-show="show_add_field">
+              <%= form_with(url: field_templates_path, model: @new_template_field, local: true, html: {class: ''}) do |form| %>
+                <%= form.hidden_field :info_block_id, value: b.id %>
+
+                <div class="finput">
+                  <%= form.label 'Название поля*', class: 'finput-label' %>
+                  <%= form.text_field :name, class: "finput-input" %>
+                </div>
+
+                <dfn data-info="Выбор формата поля">
+                  <div class="finput focus">
+                    <%= form.label 'Тип поля*', class: 'finput-label' %>
+                    <%= form.select :field_type, options_for(FieldTemplate.field_types, 'field_type'), {selected: @new_template_field.field_type}, {class: "finput-input"} %>
+                  </div>
+                </dfn>
+
+                <div class="btns">
+                  <%= form.submit 'Создать', class: "btn", style: 'color: #12ce88;' %>
+                  <button @click="show_add_field = false" class="btn-hide btn" style="display: block; color: #a4a4a4;" type="button">Отмена</button>
+                </div>
+              <%end%>
+            </div>
+
+          </div>
+        <%end%>
+      <%end%>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var vmAddField = new Vue ({
+    el: '#add-field',
+    data: {
+      show_add_field: false
+    }
+  });
+</script>

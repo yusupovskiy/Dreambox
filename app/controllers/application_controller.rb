@@ -7,13 +7,6 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   before_action :access_levels
 
-
-  # before_action :set_people
-  # before_action :set_company
-  # before_action :set_access
-  # before_action :set_affiliate
-  layout 'card'
-
   private
     # def current_user
     #   @current_user ||= User.eager_load(:@current_company).find

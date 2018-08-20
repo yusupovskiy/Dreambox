@@ -1,3 +1,3 @@
-class Companies::FieldDataController < ApplicationController
+class FieldDataController < ApplicationController
   before_action :confirm_actions, only: [:create, :update, :destroy]
 end

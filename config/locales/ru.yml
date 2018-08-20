@@ -73,113 +73,58 @@ ru:
     created: Услуга успешно создана
     updated: Услуга успешно сохранёна
     destroyed: Услуга успешно удалёна
-  companies: 
-    records: 
-      show: 
-        completed_ecords: Завершена!
-        desc_completed_ecords: Указанный срок подошел к концу
-        record_type: Запись
-        visit_type: Визит
-        abon_period: Период абонемента (в днях)*
-        record_type:
-          grouping: Групповая запись
-          personal: Индивидуальная запись
-      form:
-        record_type: Запись*
-        visit_type: Визит*
-        abon_period: Период абонемента (в днях)*
-        name: Название*
-        total_clients: Лимит в группе
-        created_at: Дата начала*
-        finished_at: Дата завершения
-        affiliate_id: Филиал*
-        total_visits: Посещений за абонемент
-      edit:
-        name: Название*
-        total_clients: Лимит в группе
-        finished_at: Дата завершения*
-        total_visits: Посещений за абонемент
-        
-    clients:
-      form:
-        last_name: 'Фамилия*'
-        first_name: 'Имя*'
-        patronymic: 'Отчество'
-        birthday: 'Дата рождения'
-        sex: 'Пол'
-        phone_number: 'Телефон'
-      edit:
-        last_name: 'Фамилия*'
-        first_name: 'Имя*'
-        patronymic: 'Отчество'
-        birthday: 'Дата рождения'
-        sex: 'Пол'
-        phone_number: 'Телефон'
-      show:
-        amount: Сумма оплаты*
-        operation_date: Дата оплаты*
-        description: Примечение к оплате*
-        affiliate_id: Филиал*
+  records: 
+    show: 
+      completed_ecords: Завершена!
+      desc_completed_ecords: Указанный срок подошел к концу
+      record_type: Запись
+      visit_type: Визит
+      abon_period: Период абонемента (в днях)*
+      record_type:
+        grouping: Групповая запись
+        personal: Индивидуальная запись
+    form:
+      record_type: Запись*
+      visit_type: Визит*
+      abon_period: Период абонемента (в днях)*
+      name: Название*
+      total_clients: Лимит в группе
+      created_at: Дата начала*
+      finished_at: Дата завершения
+      affiliate_id: Филиал*
+      total_visits: Посещений за абонемент
+    edit:
+      name: Название*
+      total_clients: Лимит в группе
+      finished_at: Дата завершения*
+      total_visits: Посещений за абонемент
+      
+  clients:
+    form:
+      last_name: 'Фамилия*'
+      first_name: 'Имя*'
+      patronymic: 'Отчество'
+      birthday: 'Дата рождения'
+      sex: 'Пол'
+      phone_number: 'Телефон'
+    edit:
+      last_name: 'Фамилия*'
+      first_name: 'Имя*'
+      patronymic: 'Отчество'
+      birthday: 'Дата рождения'
+      sex: 'Пол'
+      phone_number: 'Телефон'
+    show:
+      amount: Сумма оплаты*
+      operation_date: Дата оплаты*
+      description: Примечение к оплате*
+      affiliate_id: Филиал*
 
-    fin_operations:
-      form:
-        operation_type: Тип операции
-        operation_object_id: Ссылка на операцию
-        amount: Сумма операции
-        operation_date: Дата операции
-        description: Примечение
-        affiliate_id: Филиал*
-
-  date:
-    abbr_day_names:
-    - Вс
-    - Пн
-    - Вт
-    - Ср
-    - Чт
-    - Пт
-    - Сб
-    abbr_month_names:
-    -
-    - янв.
-    - февр.
-    - марта
-    - апр.
-    - мая
-    - июня
-    - июля
-    - авг.
-    - сент.
-    - окт.
-    - нояб.
-    - дек.
-    day_names:
-    - воскресенье
-    - понедельник
-    - вторник
-    - среда
-    - четверг
-    - пятница
-    - суббота
-    formats:
-      default: "%d.%m.%Y"
-      long: "%-d %B %Y"
-      short: "%-d %b"
-    month_names:
-    -
-    - января
-    - февраля
-    - марта
-    - апреля
-    - мая
-    - июня
-    - июля
-    - августа
-    - сентября
-    - октября
-    - ноября
-    - декабря
-    order:
-    - :day
-    - :month
-    - :year
+  fin_operations:
+    form:
+      operation_type: Тип операции
+      operation_object_id: Ссылка на операцию
+      amount: Сумма операции
+      operation_date: Дата операции
+      description: Примечение
+      affiliate_id: Филиал*

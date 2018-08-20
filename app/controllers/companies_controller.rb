@@ -14,13 +14,6 @@ class CompaniesController < ApplicationController
     @affiliates_company = Affiliate.where company_id: @current_company
     @services_company = Service.where company_id: @current_company
   end
-
-  def add_field
-    @new_block = InfoBlock.new
-    @new_template_field = FieldTemplate.new
-    @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
-    @field_templates_clients = FieldTemplate.where(block_id: @blocks_clients)
-  end
   
   # GET /companies
   # GET /companies.json
@@ -59,10 +52,12 @@ class CompaniesController < ApplicationController
 
       affiliate = Affiliate.create(address: params[:company][:address], company_id: @company.id)
 
+      operation = Operation.create
       people = Client.create(
         first_name: user.first_name, last_name: user.last_name, 
         company_id: @company.id, sex: 0, 
-        user_id: user.id, role: (Client::Role::STUFF).to_s(2).to_i)
+        user_id: user.id, role: (Client::Role::STUFF).to_s(2).to_i,
+        operation_id: operation.id)
 
       user.update_attribute(:people_id, people.id)
 
