@@ -6,6 +6,9 @@ class Companies::WorksController < ApplicationController
       :fixed_rate, :affiliate_id)
     work = Work.new(prms)
 
+    operation = Operation.create
+    work.operation_id = operation.id
+
     affiliates_company = Affiliate.where company_id: @current_company.id
 
     director_work = Work.where position_work: 'director', affiliate_id: affiliates_company.select('id')

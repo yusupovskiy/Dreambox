@@ -237,6 +237,7 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client.save
         email = params[:client][:email]
+        operation.update_attribute(:client_id, @client.id)
 
         account = User.find_by(email: email)
         if account.present?

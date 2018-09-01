@@ -29,7 +29,12 @@ class SubscriptionsController < ApplicationController
     end
 
     s = Subscription.order('finish_at DESC').find_by(record_client_id: record_client.id)
-    booking_date = "Забронировано до #{s.finish_at.strftime("%d %B %Y")}"
+
+    if s.present?
+      booking_date = "Бронь до #{s.finish_at.strftime("%d %B %Y")}"
+    else 
+      booking_date = "Сейчас свободное время"
+    end
 
     date = {
       start_date: start_date, 
@@ -41,6 +46,49 @@ class SubscriptionsController < ApplicationController
 
     respond_to do |format|
       format.json { render json: date, status: :ok }
+    end
+  end
+
+
+  def get_unpaid_subscriptions_client
+    client_id = params[:client_id]
+    operation_id = params[:operation_id].to_i
+    operation = operation_id > 0 ? "AND subscriptions.operation_id = #{operation_id}" : ''
+
+    if Client.exists? id: client_id, company_id: @current_company
+
+      records_client = RecordClient.where(client_id: client_id, record_id: @current_record)
+
+      if Subscription.exists? record_client_id: records_client
+        records_client = records_client.ids.join(", ")
+
+        unpaid_subscriptions = Subscription.find_by_sql("
+          SELECT subscriptions.*, SUM(t.amount) as total_amount, records.name
+          FROM subscriptions
+            LEFT JOIN records_clients 
+            ON subscriptions.record_client_id = records_clients.id
+            
+            LEFT JOIN records 
+            ON records_clients.record_id = records.id
+            
+            LEFT JOIN company_transactions 
+            ON subscriptions.operation_id = company_transactions.operation_id
+            
+            LEFT JOIN (
+            SELECT SUM(transactions.amount) as amount, transactions.company_transaction_id 
+            FROM transactions
+            GROUP BY transactions.company_transaction_id
+            ) t 
+            ON company_transactions.id = t.company_transaction_id
+          WHERE subscriptions.is_active = true AND record_client_id IN (#{records_client}) #{operation}
+          GROUP BY subscriptions.id, records.name
+        ")
+
+      end
+    end
+
+    respond_to do |format|
+      format.json { render json: unpaid_subscriptions, status: :ok }
     end
   end
 
@@ -74,11 +122,12 @@ class SubscriptionsController < ApplicationController
 
     rc = RecordClient.eager_load(:record).find_by record_id: params[:record_id], client_id: params[:client_id]
     r = @current_record.find rc.record_id
+    
     amount = params[:amount].to_f
 
     @subscription.record_client_id = rc.id
 
-    operation = Operation.create
+    operation = Operation.create(client_id: rc.client_id)
     @subscription.operation_id = operation.id
 
     # conversion_amount = params[:subscription][:conversion_amount].to_f

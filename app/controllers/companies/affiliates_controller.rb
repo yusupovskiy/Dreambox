@@ -3,6 +3,12 @@ class Companies::AffiliatesController < ApplicationController
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
   before_action :set_affiliate, only: [:show, :new, :edit]
 
+  def get_affiliates
+    respond_to do |format|
+      format.json { render json: @current_affiliates }
+    end
+  end
+
   # GET /affiliates
   # GET /affiliates.json
   def index

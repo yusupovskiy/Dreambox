@@ -1,0 +1,74 @@
+
+<div v-if="panelShow == 'home'" class="panels-test">
+  <div class="btn-back new-btn btn-close-pnl-add" style="bottom: 0;
+margin: auto 5px;">
+    <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+  </div>
+  <div class="btn-back new-btn btn-close-pnl-add" style="bottom: 0; right: 0; left: auto;
+margin: auto 5px;">
+    <ion-icon name="arrow-forward" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+  </div>
+  <div style="    padding: 10px 50px;
+display: table;
+width: 100%;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;">
+    <div class="sdfdsfd">
+      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
+      Группа английский
+    </div>
+    <div class="sdfdsfd">
+      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
+      Английский для начинающих
+    </div>
+    <div class="sdfdsfd">
+      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
+      Юсупова А.Т.
+    </div>
+    <div class="sdfdsfd">
+      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
+      Юсупова А.Т.
+    </div>
+    <div class="sdfdsfd">
+      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
+      Группа английский
+    </div>
+    <div class="sdfdsfd">
+      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
+      Юсупова А.Т.
+    </div>
+  </div>
+</div>
+
+<section v-if="panelShow == 'home'" class="panel-content">
+  <div class="indecators">
+    <div @click="typeClient = 'current'" class="indecator current active">
+      <div>32</div>
+      <span>Текущие клиенты</span>
+    </div>
+    <div @click="typeClient = 'debtors'" class="indecator debtors">
+      <div>14</div>
+      <span>Должники</span>
+    </div>
+    <div @click="typeClient = 'total'" class="indecator total">
+      <div>255</div>
+      <span>Все клиенты</span>
+    </div>
+  </div>
+
+  <div class="panel-footer">
+    <div>
+      <div>{{ countItemsList }}</div>
+      <div>кол-во в списке</div>
+    </div>
+    <div>
+      <div>10000</div>
+      <div>долг</div>
+    </div>
+  </div>
+</section>
+
+<section-home-records :records="recordsCompany" :show="panelShow"></section-home-records>
+
+<section-home-records :records="recordsCompany" :show="panelShow"></section-home-records>

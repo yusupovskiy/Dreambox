@@ -1,0 +1,65 @@
+<script type="text/javascript">
+  Vue.component('section-client-transactions', {
+    data: function () {
+      return {
+        loading: false,
+        showAll: false,
+      }
+    },
+    props: {
+      transactions: Array,
+      show: String,
+    },
+    methods: {
+      clickRecordClientActive(id) {
+        let {client} = vmClient;
+
+        if(!$('.record-'+id).hasClass('active')) {
+          $('.record-'+id).parents().children().removeClass('active');
+          $('.record-'+id).addClass('active');
+        }
+        else {
+          $('.record-'+id).parents().children().removeClass('active');
+        }
+      },
+    },
+    template: `
+      <section v-if="show == 'client'" id="client-transactions" class="panel-content" :class="{ 'show-all': showAll}">
+        <div class="panel-header">
+          <div class="title-panel">Транзакции</div>
+          <div v-if="transactions.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Показать все</div>
+            <div v-else-if="showAll == true">Скрыть список</div>
+          </div>
+        </div>
+        <div v-if="transactions.length > 0" class="list-panel">
+
+          <div v-for="transaction in transactions" v-bind:class="'transaction-' + transaction.id" class="item-panel">
+            
+            <div @click="clickRecordClientActive(transaction.id)" class="item-panel__basic-info" style="cursor: pointer;">
+              <div class="left-item-panel">{{ transaction.note }}</div>
+              <div class="right-item-panel">
+                <div class="right-item-panel--no-hover" :class="[transaction.budget == 'income' ? 'income' : 'expense']">
+                  {{ transaction.budget == 'income' ? '+ ' : '- ' }}
+                  {{ transaction.amount }} ₽
+                </div>
+                <div class="btn-hide btn">Скрыть</div>
+              </div>
+            </div>
+
+            <div class="item-panel__total-info">
+
+            </div>
+          </div>
+        </div>
+        <div v-else-if="transactions.length <= 0" class="list-panel">
+          <div class="no-record">Нет записи</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+
+      </section>
+    `
+  });
+</script>

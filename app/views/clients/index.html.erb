@@ -1,83 +1,166 @@
-<div id="app" class="panel-list">
-  <div class="search">
-    <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon">
+<div id="clients">
+  <div class="panel-list">
 
-    <input v-model="searchValue" v-on:input="sendQuery('search', searchValue)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
+    <%= render 'clients/index_search' %>
 
-    <div v-if="searchValue.length > 0" class="reset-search" v-on:click="sendQuery('search', ''), searchValue = ''" >
-      <ion-icon name="close"></ion-icon>
-    </div>
+    <%= render 'clients/index_list' %>
 
-    <div class="search-info">
-      <div class="item-search"></div>
-    </div>
   </div>
 
-  <div v-if="!loadComplete" class="loading"><img src="images/loading.gif" /></div>
-  <div v-else-if="loadComplete" class="container-list cool-scrollbar">
-    <ul v-if="searchClients.length > 0" class="list">
-      <li v-for="client in searchClients" @click="clickClient(client)" class="item-list" :key="client.id" v-bind:class="'client-' + client.id" >
-        <img class="avatar-listt" src="/resources/no-image-available.png">
-        <div class="left-content">
-          <div class="name-content">{{ client.last_name }} {{ client.first_name }} {{ client.patronymic }}</div>
-          <span class="desc-content">- UCMAS</span>
-        </div>
-        <div class="right-content">
-          <span class="debt">0.0 ₽</span>
-        </div>
-      </li>
-    </ul>
-    <div v-else class="loading">
-      <div>
-        <img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
-        <div>Ничего не найдено</div>
-      </div>
-    </div>
+  <div class="panels-content hide-scrollbar">
+    <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+    <%= render 'clients/home' %>
+    <%= render 'clients/client' %>
+    <%= render 'clients/record' %>
   </div>
 </div>
 
-<div id="client" class="panels-content hide-scrollbar">
-  <div>
+<%= render 'clients/client_records_vue' %>
+<%= render 'clients/home_records' %>
+<%= render 'clients/client_panel_info' %>
+<%= render 'clients/client_panel_info_add_sub' %>
+<%= render 'clients/client_panel_info_add_transaction' %>
+<%= render 'clients/client_records' %>
+<%= render 'clients/client/client_transactions' %>
 
-    <div v-if="panelShow == 'home'">
-      <section class="panel-content">
-        <div class="indecators">
-          <div @click="typeClient = 'current'" class="indecator current active">
-            <div>32</div>
-            <span>Текущие клиенты</span>
-          </div>
-          <div @click="typeClient = 'debtors'" class="indecator debtors">
-            <div>14</div>
-            <span>Должники</span>
-          </div>
-          <div @click="typeClient = 'total'" class="indecator total">
-            <div>255</div>
-            <span>Все клиенты</span>
-          </div>
-        </div>
+<script type="text/javascript">
+  var authToken = document.getElementById("authenticity_token").value;
+  var valueInput = document.getElementById("search").value
+  var lastId = null;
 
-        <div class="panel-footer">
-          <div>
-            <div>{{ countItemsList }}</div>
-            <div>кол-во в списке</div>
-          </div>
-          <div>
-            <div>10000</div>
-            <div>долг</div>
-          </div>
-        </div>
-      </section>
-    </div>
+  var vmClient = new Vue ({
+    el: '#clients',
+    data: {
+      clientsCompany: [],
+      recordsCompany: [],
+      titleInput: "Поиск клиентов", // будет подставляться название группы
+      searchClients: [],
+      loadComplete: false,
+      searchValue: valueInput,
 
-    <div v-else-if="panelShow == 'client'">
-      <%= render 'clients/client' %>
-    </div>
 
-    <% if params[:record].present? %>
-      <div class="panel-content">
-        Группа
-      </div>
-    <% end %>
+      client: [],
+      selectRecordsClient: [],
+      recordsClient: [],
+      clientTransactions: [],
 
-  </div>
-</div>
+      countItemsList: 0,
+      panelShow: 'home',
+
+      typeClient: '',
+    },
+    methods: {
+      clickClient(client) {
+        this.client = client;
+        this.activeElement('client-', client.id, 'list');
+        this.panelShow = 'client';
+
+        url = window.location.href;
+        newUrl = updateURLParameter(url, 'client', this.client.id);
+        history.pushState('', 'Клиент', newUrl);
+
+        $.get(
+          '/get_select_records_client.json', 
+          { client_id: this.client.id },
+          selectRecordsClient => this.selectRecordsClient = selectRecordsClient
+        );
+        $.get(
+          '/get_records_client.json', 
+          { client_id: this.client.id },
+          recordsClient => this.recordsClient = recordsClient
+        );
+        $.get(
+          '/get_client_transactions.json', 
+          { client_id: this.client.id },
+          clientTransactions => this.clientTransactions = clientTransactions
+        );
+
+
+      },
+      sendQuery(type, value) {
+        url = window.location.href;
+        newUrl = updateURLParameter(url, type, value);
+
+        this.clientsQuery(newUrl);
+      },
+      clientsQuery(url) {
+
+        urlHash = new URL(url);
+        clientQuery = urlHash.searchParams.get("search");
+        typeOfClients = urlHash.searchParams.get("clients");
+
+        arrayClientQuery = validSpaces(clientQuery).split(' ');
+
+        clearTimeout(lastId)
+        this.loadComplete = false;
+
+        if(typeOfClients == null) {
+          typeOfClients = 'current'
+          url = updateURLParameter(url, 'clients', typeOfClients);
+        }
+        this.activeElement(typeOfClients, '', 'indecators');
+
+        lastId = setTimeout(() => {
+          $.get(
+            '/get_clients.json', 
+            {
+              typeOfClients: typeOfClients,
+              lastNameClients: arrayClientQuery[0],
+              firstNameClients: arrayClientQuery[1],
+              patronymicClients: arrayClientQuery[2]
+            // ,
+            // record: 29
+            },
+            searchClients => {
+              this.searchClients = searchClients;
+              this.loadComplete = true;
+              history.pushState('', clientQuery, url);
+            }
+          )
+        }, 600);
+      },
+      activeElement(nameClass, id, parent) {
+        setTimeout(() => {
+          $('.' + nameClass + id).parents('.' + parent).children().removeClass('active');
+          $('.' + nameClass + id).addClass('active');
+        }, 0.1);
+      }
+    },
+    created() {
+      this.sendQuery('search', valueInput);
+      // this.panelShow = 'home';
+
+      $.ajax({
+        url: '/get_clients.json',
+        success: clientsCompany => {
+          this.clientsCompany = clientsCompany;
+
+          urlHash = new URL(window.location.href);
+          id = urlHash.searchParams.get("client");
+          if(id != null) {
+            id = parseInt(id, 10);
+            getClient = _.find(this.clientsCompany, {id:id});
+            this.clickClient(getClient);
+          }
+        }
+      });
+
+      $.get(
+        '/get_records.json',
+        recordsCompany => this.recordsCompany = recordsCompany
+      );
+    },
+    watch: {
+      "searchClients" : function() {
+        this.countItemsList = this.searchClients.length;
+
+        urlHash = new URL(window.location.href);
+        id = urlHash.searchParams.get("client");
+        this.activeElement('client-', id, 'list');
+      },
+      "typeClient" : function() {
+        this.sendQuery('clients', this.typeClient);
+      },
+    }
+  });
+</script>

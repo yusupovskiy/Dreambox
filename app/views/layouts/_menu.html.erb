@@ -1,0 +1,34 @@
+
+<div class="item-menu icon-menu"></div>
+<div class="btn-add-menu">
+  <ion-icon name="add"></ion-icon>
+</div>
+<div class="pnl-add">
+  <div class="header-pnl-add">
+    <div class="btn-back new-btn btn-close-pnl-add" style="margin: 0;">
+      <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+    </div>
+    <h2 class="title-pnl-add" style="margin-left: 50px;">Добавить</h2>
+  </div>
+  <div class="body-pnl-add">
+    <%= link_to new_client_path, class: 'item-panel-add' do %>
+      <div class="sdfdsa"></div><div class="dsafdsaf">Клиента</div>
+    <% end %>
+    <%= link_to new_record_path, class: 'item-panel-add' do %>
+      <div class="sdfdsa" style="background-image: url(/images/group1.png);"></div><div class="dsafdsaf">Группу</div>
+    <% end %>
+    <%= link_to new_client_path, class: 'item-panel-add' do %>
+      <div class="sdfdsa" style="background-image: url(/images/teacher.png);"></div><div class="dsafdsaf">Сотрудника</div>
+    <% end %>
+    <%= link_to new_transaction_path, class: 'item-panel-add' do %>
+      <div class="sdfdsa" style="background-image: url(/images/teacher.png);"></div><div class="dsafdsaf">Транзакцию</div>
+    <% end %>
+
+    <%= link_to add_field_path, class: 'item-panel-add' do %>
+      <div class="sdfdsa"></div><div class="dsafdsaf">Свои поля</div>
+    <% end %>
+  </div>
+</div>
+<%= link_to '', clients_path, class: 'item-menu icon-client' %>
+<a href="#" class="item-menu icon-company"></a>
+<%= link_to '', transactions_path, class: 'item-menu icon-finance' %>

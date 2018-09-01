@@ -1,0 +1,113 @@
+<script type="text/javascript">
+  Vue.component('section-client-records', {
+    data: function () {
+      return {
+        loading: false,
+        showAll: false,
+        subsClient: [],
+      }
+    },
+    props: {
+      records: Array,
+      show: String,
+    },
+    methods: {
+      clickRecordClientActive(id) {
+        let {client} = vmClient;
+
+        if(!$('.record-'+id).hasClass('active')) {
+          $('.record-'+id).parents().children().removeClass('active');
+          $('.record-'+id).addClass('active');
+        }
+        else {
+          $('.record-'+id).parents().children().removeClass('active');
+        }
+
+        $.get(
+          '/get_subs_client.json', 
+          {
+            record_id: id,
+            client_id: client.id,
+          },
+          subsClient => {
+            this.subsClient = subsClient;
+          }
+        );
+      },
+    },
+    watch: {
+    },
+    template: `
+
+      <section v-if="show == 'client'" id="client-records" class="panel-content" :class="{ 'show-all': showAll}">
+        <div class="panel-header">
+          <div class="title-panel">Записи</div>
+          <div v-if="records.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Показать все</div>
+            <div v-else-if="showAll == true">Скрыть список</div>
+          </div>
+        </div>
+        <div v-if="records.length > 0" class="list-panel">
+
+          <div v-for="record in records" v-bind:class="'record-' + record.id" class="item-panel">
+            
+            <div @click="clickRecordClientActive(record.id)" class="item-panel__basic-info" style="cursor: pointer;">
+              <div class="left-item-panel">{{ record.name }}</div>
+              <div class="right-item-panel">
+                <div class="right-item-panel--no-hover">нет абонемента</div>
+                <div class="btn-hide btn">Скрыть</div>
+              </div>
+            </div>
+
+            <div class="item-panel__total-info">
+
+              <div class="btns">
+                <button class="btn gray"> Перейти к группе</button>
+                <button-subscribe v-bind:record="record"></button-subscribe>
+              </div>
+
+              <div class="total-info__service">
+                <span class="service__item">UCMAS</span>
+                <span class="service__item">Английский язык</span>
+              </div>
+
+              <div>
+                <div>Нет абонемента</div>
+              </div>
+
+
+              <ul class="subscriptions1">
+                <li class="subscription1"><div></div><span>абонемент</span></li>
+                <li class="subscription1"><div></div><span>абонемент</span></li>
+                <li class="subscription1"><div></div><span>абонемент</span></li>
+                <li class="subscription1"><div></div><span>абонемент</span></li>
+              </ul>
+
+              <div class="info-about-subsc">Нет абонемента. Долг <span class="red">4000.0 ₽</span></div>
+
+                
+
+              <div class="subscriptions">
+                <div v-for="subs in subsClient" class="subscription">
+                  <div class="data-subscriptions">
+                    от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
+                  </div> 
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        <div v-else-if="records.length <= 0" class="list-panel">
+          <div class="no-record">Нет записи</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+
+      </section>
+
+    `
+  });
+</script>

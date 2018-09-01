@@ -1,0 +1,13 @@
+<div class="search">
+  <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon">
+
+  <input v-model="searchValue" v-on:input="sendQuery('search', searchValue)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
+
+  <div v-if="searchValue.length > 0" class="reset-search" v-on:click="sendQuery('search', ''), searchValue = ''" >
+    <ion-icon name="close"></ion-icon>
+  </div>
+
+  <div class="search-info">
+    <div class="item-search"></div>
+  </div>
+</div>

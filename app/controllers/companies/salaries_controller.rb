@@ -6,6 +6,9 @@ class Companies::SalariesController < ApplicationController
       :work_id)
     salary = Salary.new(prms)
 
+    operation = Operation.create
+    salary.operation_id = operation.id
+    
     # salary.pay
 
   end

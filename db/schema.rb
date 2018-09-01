@@ -10,18 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_16_235302) do
+ActiveRecord::Schema.define(version: 2018_08_31_224658) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "affiliates", force: :cascade do |t|
-    t.string "name"
     t.string "address", null: false
-    t.string "phone_number"
-    t.string "email"
     t.bigint "company_id", null: false
     t.index ["company_id"], name: "index_affiliates_on_company_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "budget", null: false
+    t.string "subject", null: false
+    t.integer "level", null: false
+    t.string "color"
+    t.string "icon"
+    t.bigint "user_id"
+    t.bigint "company_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_categories_on_company_id"
+    t.index ["user_id"], name: "index_categories_on_user_id"
   end
 
   create_table "clients", force: :cascade do |t|
@@ -50,9 +62,19 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
     t.integer "record_limit"
     t.date "time_limit"
     t.text "note"
-    t.bigint "operation_id", null: false
-    t.index ["operation_id"], name: "index_companies_on_operation_id"
     t.index ["user_id"], name: "index_companies_on_user_id"
+  end
+
+  create_table "company_transactions", force: :cascade do |t|
+    t.integer "number_document", null: false
+    t.bigint "affiliate_id", null: false
+    t.bigint "operation_id"
+    t.bigint "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["affiliate_id"], name: "index_company_transactions_on_affiliate_id"
+    t.index ["category_id"], name: "index_company_transactions_on_category_id"
+    t.index ["operation_id"], name: "index_company_transactions_on_operation_id"
   end
 
   create_table "discounts", force: :cascade do |t|
@@ -125,6 +147,8 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
   create_table "operations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "client_id"
+    t.index ["client_id"], name: "index_operations_on_client_id"
   end
 
   create_table "records", force: :cascade do |t|
@@ -206,6 +230,28 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
     t.index ["record_client_id"], name: "index_subscriptions_on_record_client_id"
   end
 
+  create_table "transactions", force: :cascade do |t|
+    t.float "amount", null: false
+    t.date "date", null: false
+    t.text "note"
+    t.boolean "is_active", default: true, null: false
+    t.bigint "company_transaction_id"
+    t.bigint "user_transaction_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_transaction_id"], name: "index_transactions_on_company_transaction_id"
+    t.index ["user_transaction_id"], name: "index_transactions_on_user_transaction_id"
+  end
+
+  create_table "user_transactions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_user_transactions_on_category_id"
+    t.index ["user_id"], name: "index_user_transactions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -230,10 +276,8 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
     t.integer "role", default: 0, null: false
     t.string "avatar"
     t.integer "people_id"
-    t.bigint "operation_id", null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["operation_id"], name: "index_users_on_operation_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -265,14 +309,19 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
   end
 
   add_foreign_key "affiliates", "companies"
+  add_foreign_key "categories", "companies"
+  add_foreign_key "categories", "users"
   add_foreign_key "clients", "companies"
   add_foreign_key "clients", "operations"
   add_foreign_key "clients", "users"
-  add_foreign_key "companies", "operations"
   add_foreign_key "companies", "users"
+  add_foreign_key "company_transactions", "affiliates"
+  add_foreign_key "company_transactions", "categories"
+  add_foreign_key "company_transactions", "operations"
   add_foreign_key "discounts", "records_clients", column: "record_client_id"
   add_foreign_key "field_templates", "info_blocks"
   add_foreign_key "histories", "users"
+  add_foreign_key "operations", "clients"
   add_foreign_key "records", "affiliates"
   add_foreign_key "records", "operations"
   add_foreign_key "records_clients", "clients"
@@ -283,7 +332,10 @@ ActiveRecord::Schema.define(version: 2018_08_16_235302) do
   add_foreign_key "services", "companies"
   add_foreign_key "subscriptions", "operations"
   add_foreign_key "subscriptions", "records_clients", column: "record_client_id"
-  add_foreign_key "users", "operations"
+  add_foreign_key "transactions", "company_transactions"
+  add_foreign_key "transactions", "user_transactions"
+  add_foreign_key "user_transactions", "categories"
+  add_foreign_key "user_transactions", "users"
   add_foreign_key "work_salaries", "affiliates"
   add_foreign_key "work_salaries", "records"
   add_foreign_key "works", "affiliates"

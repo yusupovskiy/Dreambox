@@ -1,0 +1,28 @@
+<div id="transaction">
+  <div class="panel-list">
+    <%= render 'transactions/index_search' %>
+
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  var authToken = document.getElementById("authenticity_token").value;
+  var valueInput = document.getElementById("search").value
+  var lastId = null;
+
+  var vmTransaction = new Vue ({
+    el: '#transaction',
+    data: {
+      transactions: [],
+      income: [],
+      expense: [],
+    },
+    created() {
+      $.get(
+        '/get_records.json',
+        recordsCompany => this.recordsCompany = recordsCompany
+      );
+    }
+  });
+</script>

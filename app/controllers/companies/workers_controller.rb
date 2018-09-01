@@ -29,6 +29,8 @@ class Companies::WorkersController < ApplicationController
 
     @worker.role = (Client::Role::STUFF).to_s(2).to_i
 
+    operation = Operation.create
+    @worker.operation_id = operation.id
 
     respond_to do |format|
       if @worker.save

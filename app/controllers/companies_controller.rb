@@ -37,8 +37,6 @@ class CompaniesController < ApplicationController
   def edit
   end
 
-  # POST /companies
-  # POST /companies.json
   def create
     @company = Company.new(company_params)
 
@@ -61,7 +59,9 @@ class CompaniesController < ApplicationController
 
       user.update_attribute(:people_id, people.id)
 
-      Work.create(position_work: :director, people_id: people.id, affiliate_id: affiliate.id)
+      operation_work = Operation.create
+      Work.create(position_work: :director, people_id: people.id, affiliate_id: affiliate.id,
+                  operation_id: operation_work.id)
 
       # user.role |= User::Role::COMPANY_OWNER
       user.save!
