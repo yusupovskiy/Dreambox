@@ -53,37 +53,40 @@ class SubscriptionsController < ApplicationController
   def get_subscriptions_client
     client_id = params[:client_id]
     operation_id = params[:operation_id].to_i
-    operation = operation_id > 0 ? "AND subscriptions.operation_id = #{operation_id}" : ''
+    operation = operation_id > 0 ? "AND s.operation_id = #{operation_id}" : ''
 
     if Client.exists? id: client_id, company_id: @current_company
 
       records_client = RecordClient.where(client_id: client_id, record_id: @current_record)
 
       if Subscription.exists? record_client_id: records_client
+        affiliates_id = @current_affiliates.ids.join(", ")
         records_client = records_client.ids.join(", ")
 
         unpaid_subscriptions = Subscription.find_by_sql("
-          SELECT subscriptions.*, SUM(t.amount) as total_amount, records.name
-          FROM subscriptions
-            LEFT JOIN records_clients 
-            ON subscriptions.record_client_id = records_clients.id
-            
-            LEFT JOIN records 
-            ON records_clients.record_id = records.id
-            
-            LEFT JOIN company_transactions 
-            ON subscriptions.operation_id = company_transactions.operation_id
-            
-            LEFT JOIN (
-            SELECT SUM(transactions.amount) as amount, transactions.company_transaction_id 
-            FROM transactions
-            GROUP BY transactions.company_transaction_id
-            ) t 
-            ON company_transactions.id = t.company_transaction_id
-          WHERE subscriptions.is_active = true AND record_client_id IN (#{records_client}) #{operation}
-          GROUP BY subscriptions.id, records.name
+          SELECT s.*, coalesce(SUM(t.amount), 0) AS total_amount, r.name
+          FROM subscriptions AS s
+            LEFT JOIN records_clients AS rc
+              ON s.record_client_id = rc.id
+            LEFT JOIN records AS r
+              ON rc.record_id = r.id
+            LEFT JOIN ( SELECT company_transactions.*
+                        FROM company_transactions
+                        WHERE company_transactions.affiliate_id IN (#{affiliates_id})
+              ) AS ct
+              ON s.operation_id = ct.operation_id
+            LEFT JOIN ( SELECT SUM(t1.amount) AS amount, t1.company_transaction_id
+                        FROM transactions AS t1
+                        WHERE (t1.is_active IS NULL or t1.is_active = true)
+                        GROUP BY t1.company_transaction_id
+              ) AS t 
+              ON ct.id = t.company_transaction_id
+                      
+          WHERE (s.is_active IS NULL OR s.is_active = true)
+            AND r.affiliate_id IN (#{affiliates_id})
+            AND record_client_id IN (#{records_client}) #{operation}
+          GROUP BY s.id, r.name
         ")
-
       end
     end
 

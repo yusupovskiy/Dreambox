@@ -73,7 +73,10 @@
                     .findIndex(s => s.operation_id == addTransForSubs);
                   total_amount = parseInt(subscriptions_client[indexSub].total_amount, 10);
                   subscriptions_client[indexSub].total_amount = total_amount + parseInt(amount, 10);
+
+                  client.total_amount_subs = client.total_amount_subs + parseInt(amount, 10);
                 }
+                client.total_amount = client.total_amount + parseInt(amount, 10);
 
                 this.addTransForSubs = '';
               }
@@ -138,7 +141,6 @@
         }
       },
       "client" : function() {
-        console.log('dsf');
         this.getSubClient();
       },
       "show" : function() {
@@ -192,7 +194,7 @@
               <select v-model="addTransForSubs">
                 <option disabled value="">Выберите вариант транзакции</option>
                 <option v-for="unpaidSubscription in unpaidSubscriptionsClient" :value="unpaidSubscription.operation_id">
-                  {{ unpaidSubscription.total_amount == null ? 0 : unpaidSubscription.total_amount }} из 
+                  {{ unpaidSubscription.total_amount }} из 
                   {{ unpaidSubscription.price }} ₽ | {{ unpaidSubscription.name }} от 
                   {{ unpaidSubscription.start_at }} до {{ unpaidSubscription.finish_at }}
                 </option>

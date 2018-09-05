@@ -367,11 +367,17 @@ a.logo:hover {
     color: #444444;
     font-size: 22px;
     font-weight: 500;
-    margin: 0;
+    margin: 2px 0;
     float: left;
     padding: 0;
-    margin-bottom: 4px;
     width: 100%;
+}
+.additional-info {
+    font-size: 13px;
+    color: rgb(68, 68, 68);
+    float: left;
+    width: 100%;
+    margin: 2px 0;
 }
 .panel-panel {
     min-height: 73px;

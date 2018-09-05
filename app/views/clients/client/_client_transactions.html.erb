@@ -28,7 +28,7 @@
           this.note = '';
         }
       },
-      cancelTransactionClient(id) {
+      cancelTransactionClient(transaction) {
         let {client, clientTransactions} = vmClient;
         let {note} = this;
         var complited = false;
@@ -41,7 +41,7 @@
               method: 'DELETE',
               data: {
                 authenticity_token: authToken,
-                id: id,
+                id: transaction.id,
                 note: note,
               },
               success: messege => {
@@ -53,11 +53,17 @@
               if(complited) {
 
                 let indexTransactions = clientTransactions
-                  .findIndex(t => t.id == id);
+                  .findIndex(t => t.id == transaction.id);
                 clientTransactions.splice(indexTransactions, 1);
                 this.note = '';
 
                 this.showNoteCancel = false;
+
+
+                if(transaction.operation_id != client.operation_id) {
+                  client.total_amount_subs = client.total_amount_subs - transaction.amount;
+                }
+                client.total_amount = client.total_amount - transaction.amount;
 
               }
               this.transactionCreateLoading = false;
@@ -109,7 +115,7 @@
               <div class="btns" style="margin: 0;">
                 <button 
                   v-if="note != ''"
-                  @click="cancelTransactionClient(transaction.id)" 
+                  @click="cancelTransactionClient(transaction)" 
                   v-bind:class="{ active: transactionCreateLoading }" 
                   class="btn-subscribe btn">
 

@@ -149,6 +149,11 @@
       });
 
       $.get(
+        '/get_clients1.json',
+        clients => this.clients = clients
+      );
+
+      $.get(
         '/get_records.json',
         recordsCompany => this.recordsCompany = recordsCompany
       );

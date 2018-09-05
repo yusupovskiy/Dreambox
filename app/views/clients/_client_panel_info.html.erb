@@ -103,7 +103,7 @@
             <div class="basic-info__container">
               <div class="basic-info__container__content">
                 <div class="name-panel">{{client.last_name}} {{client.first_name}}</div>
-                <div style="font-size: 13px; color: #444444;">{{ clientBasicInformation }}</div>
+                <div v-if="clientBasicInformation != ''" class="additional-info">{{ clientBasicInformation }}</div>
               </div>
             </div>
 
@@ -133,12 +133,12 @@
         <div class="panel-panel">
           <div v-if="openPanelAdd == null">
             <div class="amount">
-              <div class="amount-price">14000.0 ₽</div>
+              <div class="amount-price">{{ client.total_amount }} ₽</div>
               <div class="amount-name">Оплатил</div>
             </div>
 
             <div class="amount" style="color: #ff7375;">
-              <div class="amount-price">6000.0 ₽</div>
+              <div class="amount-price">{{ (client.debt_subs - client.total_amount_subs) }} ₽</div>
               <div class="amount-name">Долг</div>
             </div>
 

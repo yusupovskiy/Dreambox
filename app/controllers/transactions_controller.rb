@@ -32,7 +32,7 @@ FROM company_transactions
   INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
   INNER JOIN categories ON company_transactions.category_id = categories.id
 WHERE is_active = true AND affiliate_id IN (#{affiliates_id})
-       AND budget = 'expense'
+       AND budget = 'income'
     ")
 
     respond_to do |format|

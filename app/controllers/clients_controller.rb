@@ -40,6 +40,70 @@ class ClientsController < ApplicationController
     @show_in_view = [@current_clients, @clients_debtors, @all_people, @archive_clients]
   end
 
+  def get_clients1
+    affiliates_id = @current_affiliates.ids.join(", ")
+    records_id = @current_record.ids.join(", ")
+
+    clients = Subscription.find_by_sql("
+      SELECT  c.id, c.first_name, c.last_name, c.patronymic,
+        c.birthday, c.phone_number, c.company_id, c.user_id,
+        c.archive, c.sex, c.avatar, c.role, c.operation_id, 
+        coalesce(o.total_amount,0) AS total_amount,
+        coalesce(SUM(s.price),0) AS debt_subs, 
+        coalesce(SUM(s.subs_amount),0) AS total_amount_subs,
+        coalesce((SUM(s.price) - SUM(s.subs_amount)),0) AS unpaid_debt_subs,
+        array_agg(DISTINCT rc.record_id ORDER BY rc.record_id) AS records_id
+
+      FROM clients AS c
+        LEFT JOIN ( SELECT rc.*
+                    FROM records_clients AS rc
+                    WHERE (rc.record_id IN (#{records_id}) OR rc.record_id IS NULL)
+                      AND (rc.is_active IS NULL OR rc.is_active = true)
+        ) AS rc
+          ON c.id = rc.client_id
+        LEFT JOIN ( SELECT s.*, coalesce(SUM(ct1.amount),0) as subs_amount 
+                    FROM subscriptions AS s
+                      LEFT JOIN ( SELECT company_transactions.*, t.*
+                                  FROM company_transactions
+          LEFT JOIN transactions as t 
+            ON company_transactions.id = t.company_transaction_id
+          WHERE (t.is_active IS NULL OR t.is_active = true)
+          AND company_transactions.affiliate_id IN (#{affiliates_id})
+                        ) AS ct1
+                        ON s.operation_id = ct1.operation_id
+                    WHERE (s.is_active IS NULL OR s.is_active = true)
+                    GROUP BY s.id
+        ) AS s
+          ON rc.id = s.record_client_id
+          
+        LEFT JOIN ( SELECT o.client_id, SUM(t.amount) AS total_amount
+                    FROM operations AS o 
+                      LEFT JOIN ( SELECT ct.*
+                                  FROM company_transactions AS ct
+                                    LEFT JOIN categories AS ca
+                                      ON ct.category_id = ca.id
+                                  WHERE affiliate_id IN (#{affiliates_id}) AND budget = 'income'
+                      ) AS ct 
+                        ON o.id = ct.operation_id
+                      LEFT JOIN transactions AS t 
+                        ON ct.id = t.company_transaction_id
+                    WHERE t.is_active = true
+                    GROUP BY o.client_id
+        ) AS o
+        ON c.id = o.client_id
+      WHERE (role & #{Client::Role::CLIENT}) != 0
+      GROUP BY c.id, o.total_amount
+      ORDER BY c.first_name, c.last_name, c.patronymic
+
+
+    ")
+
+    respond_to do |format|
+      format.json { render json: clients, status: :ok }
+    end
+  end
+
+
   def get_clients
     @last_name_search = params[:lastNameClients]
     @first_name_search = params[:firstNameClients]
