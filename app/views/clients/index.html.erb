@@ -48,6 +48,8 @@
       panelShow: 'home',
 
       typeClient: '',
+
+      clients: []
     },
     methods: {
       clickClient(client) {
@@ -56,27 +58,27 @@
         this.panelShow = 'client';
 
         url = window.location.href;
-        newUrl = updateURLParameter(url, 'client', this.client.id);
+        newUrl = updateURLParameter(url, 'client', client.id);
         history.pushState('', 'Клиент', newUrl);
 
         $.get(
           '/get_select_records_client.json', 
-          { client_id: this.client.id },
+          { client_id: client.id },
           selectRecordsClient => this.selectRecordsClient = selectRecordsClient
         );
         $.get(
           '/get_records_client.json', 
-          { client_id: this.client.id },
+          { client_id: client.id },
           recordsClient => this.recordsClient = recordsClient
         );
         $.get(
           '/get_client_transactions.json', 
-          { client_id: this.client.id },
+          { client_id: client.id },
           clientTransactions => this.clientTransactions = clientTransactions
         );
 
-
       },
+
       sendQuery(type, value) {
         url = window.location.href;
         newUrl = updateURLParameter(url, type, value);
@@ -128,7 +130,6 @@
     },
     created() {
       this.sendQuery('search', valueInput);
-      // this.panelShow = 'home';
 
       $.ajax({
         url: '/get_clients.json',
@@ -138,8 +139,10 @@
           urlHash = new URL(window.location.href);
           id = urlHash.searchParams.get("client");
           if(id != null) {
-            id = parseInt(id, 10);
-            getClient = _.find(this.clientsCompany, {id:id});
+            let indexCurrentClient = clientsCompany
+              .findIndex(client => client.id == id);
+            getClient = this.clientsCompany[indexCurrentClient];
+
             this.clickClient(getClient);
           }
         }

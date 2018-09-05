@@ -49,7 +49,7 @@ Rails.application.routes.draw do
     end
   end
   get 'get_autodata_subscription' => 'subscriptions#get_autodata_subscription'
-  get 'get_unpaid_subscriptions_client' => 'subscriptions#get_unpaid_subscriptions_client'
+  get 'get_subscriptions_client' => 'subscriptions#get_subscriptions_client'
   
 
   resources :companies do
@@ -87,9 +87,13 @@ Rails.application.routes.draw do
   get 'get_income' => 'transactions#get_income'
   post 'create_transaction' => 'transactions#create_transaction'
   get 'get_client_transactions' => 'transactions#get_client_transactions'
+  delete 'cancel_transaction' => 'transactions#cancel_transaction'
   
   get 'get_affiliates' => 'companies/affiliates#get_affiliates'
   
   resources :company_transactions
+  
   resources :categories
+  get 'get_categories_income' => 'categories#get_categories_income'
+  get 'get_categories_expense' => 'categories#get_categories_expense'
 end

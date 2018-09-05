@@ -12,9 +12,9 @@ class TransactionsController < ApplicationController
           INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
           INNER JOIN categories ON company_transactions.category_id = categories.id
           INNER JOIN operations ON company_transactions.operation_id = operations.id
-        WHERE is_active = true
-               AND budget = 'income' AND operations.client_id = #{client_id}
+        WHERE transactions.is_active = true AND operations.client_id = #{client_id}
                AND affiliate_id IN (#{affiliates_id})
+        ORDER BY transactions.created_at DESC
       ")
 
       respond_to do |format|
@@ -62,8 +62,9 @@ WHERE is_active = true AND affiliate_id IN (#{affiliates_id})
     amount = params[:amount].to_f
     date = params[:date].nil? ? Date.today : params[:date]
     note_transaction = params[:note]
-    category_id = params[:category_id] # поулчаем категорию которую выбираем при добвалении прочего
+    category_id = params[:category_id].to_i # поулчаем категорию которую выбираем при добвалении прочего
     affiliate_id = params[:affiliate_id].to_i
+    client_transactions = []
 
     if amount <= 0
         complited = false
@@ -115,8 +116,12 @@ WHERE is_active = true AND affiliate_id IN (#{affiliates_id})
       if !(affiliate_id > 0)
         complited = false
         note = 'Не указан филиал'
+
+      elsif !(category_id > 0)
+        complited = false
+        note = 'Не указанна статья дохода или расхода'
+
       else
-        category_id = category_id.to_i > 0 ? category_id : 4
         complited = true
         note = 'Транзакция за клиента произведена'
       end
@@ -145,7 +150,7 @@ WHERE is_active = true AND affiliate_id IN (#{affiliates_id})
         FROM company_transactions 
           INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
           INNER JOIN categories ON company_transactions.category_id = categories.id
-        WHERE budget = 'income' AND company_transactions.id = #{@company_transaction.id} 
+        WHERE company_transactions.id = #{@company_transaction.id} 
       ")
     end
 
@@ -185,7 +190,43 @@ WHERE is_active = true AND affiliate_id IN (#{affiliates_id})
         format.json { render json: @company_transaction.errors, status: :unprocessable_entity }
       end
     end
+  end
 
+  def cancel_transaction 
+    company_transaction_id = params[:id]
+    note = params[:note]
+    affiliates_id = @current_affiliates.ids.join(", ")
+
+    transaction = CompanyTransaction.find_by_sql("
+      SELECT company_transactions.id
+      FROM company_transactions 
+        INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
+        INNER JOIN categories ON company_transactions.category_id = categories.id
+        INNER JOIN operations ON company_transactions.operation_id = operations.id
+      WHERE is_active = true AND transactions.id = #{company_transaction_id}
+             AND affiliate_id IN (#{affiliates_id})
+    ")
+
+    if note == ''
+      complited = false
+      note = 'Нужно указать причину отмены в поле'
+
+    elsif !transaction.present?
+      complited = false
+      note = 'Отменяемой транзакции не существует'
+
+    else
+      t = Transaction.find_by company_transaction_id: transaction
+      t.update_attribute(:is_active, false)
+      complited = true
+      note = 'Отмена произведена'
+    end
+
+    messege = {complited: complited, note: note}
+
+    respond_to do |format|
+      format.json { render json: messege }
+    end
   end
 
   private

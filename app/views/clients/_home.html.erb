@@ -1,17 +1,41 @@
 
+
+<!-- 
+
+
+будет переменная в экземплере, туду будут отправляться нажатые элементы (для них будет функция для этого, которая будет отправлять их id, название и категорию, например группа или услуга), после, по всем объектам в этой переменной будет происходить сортировка по списку клиентов.
+
+Сделать компонент, там будут отображаться все элементы из переменной, при нажатии они будут удаляться
+
+Сделать кноки назад и вперед
+
+Если открыта карта группы, то ссорировка не работает, только про группе 
+
+
+
+при продаже абонемента, для оплаты можно использовать функцию оплаты
+тоже самое и перерасчет, который должен быть в группе
+
+
+при создании списка должинков, сделать там загрузку, пока идет ретюрн
+
+Сделать создание скидки или коррекции цены для клиента, два поля, где вводиться фактическая цена и поле с процентом, при вводе фактической, считается на сколько цена увеличена или уменьшина и на оборот, при вводе процентов подставляется цена относительно текущей цены указанной в записи
+
+Вывод скидок клиента
+
+долгая загрузка абонементов в селекторе, исправить
+
+-->
+
 <div v-if="panelShow == 'home'" class="panels-test">
-  <div class="btn-back new-btn btn-close-pnl-add" style="bottom: 0;
-margin: auto 5px;">
+  <div class="btn-back new-btn btn-close-pnl-add" style="bottom: 0; margin: auto 5px;">
     <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
   </div>
   <div class="btn-back new-btn btn-close-pnl-add" style="bottom: 0; right: 0; left: auto;
 margin: auto 5px;">
     <ion-icon name="arrow-forward" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
   </div>
-  <div style="    padding: 10px 50px;
-display: table;
-width: 100%;
--webkit-box-sizing: border-box;
+  <div style="padding: 10px 50px; display: table; width: 100%; -webkit-box-sizing: border-box;
 -moz-box-sizing: border-box;
 box-sizing: border-box;">
     <div class="sdfdsfd">
@@ -20,15 +44,11 @@ box-sizing: border-box;">
     </div>
     <div class="sdfdsfd">
       <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      Английский для начинающих
+      Группа
     </div>
     <div class="sdfdsfd">
       <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      Юсупова А.Т.
-    </div>
-    <div class="sdfdsfd">
-      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      Юсупова А.Т.
+      английский
     </div>
     <div class="sdfdsfd">
       <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
@@ -36,7 +56,11 @@ box-sizing: border-box;">
     </div>
     <div class="sdfdsfd">
       <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      Юсупова А.Т.
+      Группа английский
+    </div>
+    <div class="sdfdsfd">
+      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
+      Группа
     </div>
   </div>
 </div>

@@ -94,7 +94,7 @@ class RecordsController < ApplicationController
 
     respond_to do |format|
       if @record.save
-        format.html { redirect_to "/clients?record=#{@record.id}", notice: "<hr class=\"status-complet completed\" />Запись была успешно создана" }
+        format.html { redirect_to "/clients?record=#{@record.id}", notice: "Запись была успешно создана" }
         format.json { render :show, status: :created, location: @record }
       else
         format.html { render :new }
@@ -108,7 +108,7 @@ class RecordsController < ApplicationController
   def update
     respond_to do |format|
       if @record.update(record_params)
-        format.html { redirect_to "/clients?record=#{@record.id}", notice: "<hr class=\"status-complet completed\" />Запись была успешно обновлена" }
+        format.html { redirect_to "/clients?record=#{@record.id}", notice: "Запись была успешно обновлена" }
         format.json { render :show, status: :ok, location: @record }
       else
         format.html { render :edit }

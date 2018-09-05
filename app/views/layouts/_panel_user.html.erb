@@ -6,9 +6,9 @@
     <%= image_tag s3_image(current_user.avatar), class: 'account-avatar' %>
   <%end%>
 <%end%>
-<div v-if="notifications.length != 0" id="notifications" class='notification'>
+<div id="notifications" class='notification'>
 
-  <%if flash.present?%>
+  <%if flash[:notice].present?%>
     <div class="notification__item">
       <div style="font-size: 19px;"><%=flash[:notice]%></div>
     </div>

@@ -50,7 +50,7 @@ class SubscriptionsController < ApplicationController
   end
 
 
-  def get_unpaid_subscriptions_client
+  def get_subscriptions_client
     client_id = params[:client_id]
     operation_id = params[:operation_id].to_i
     operation = operation_id > 0 ? "AND subscriptions.operation_id = #{operation_id}" : ''
@@ -216,9 +216,9 @@ class SubscriptionsController < ApplicationController
       complited = false
       note = 'Невозможно продать абонемент, так как клиент отписан от данной записи'
       
-    elsif price_services.count.zero? or price_services.sum(:money_for_abon) <= 0
-      complited = false
-      note = 'Перед продажей абонемента необходимо в записи добавить услугу, либо указать стоимость услуги больше нуля'
+    # elsif price_services.count.zero? or price_services.sum(:money_for_abon) <= 0
+    #   complited = false
+    #   note = 'Перед продажей абонемента необходимо в записи добавить услугу, либо указать стоимость услуги больше нуля'
 
     elsif @subscription.price.to_i < 0
       complited = false

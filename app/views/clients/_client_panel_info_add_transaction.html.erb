@@ -6,10 +6,11 @@
         fix_amount: null,
         note: '',
         addTransForSubs: '',
-        unpaid_subscriptions_client: [],
+        subscriptions_client: [],
         transactionCreateLoading: false,
         category_id: '',
         categories_income: [],
+        categories_expense: [],
         dateTransaction: '',
 
         affiliates: [],
@@ -26,11 +27,20 @@
     methods: {
       createTransactionClient() {
         let {client, clientTransactions} = vmClient;
-        let {amount, note, addTransForSubs, category_id, dateTransaction, unpaid_subscriptions_client, affiliate_id, newTransactionClient} = this;
+        let {amount, note, addTransForSubs, category_id, dateTransaction, subscriptions_client, affiliate_id, newTransactionClient} = this;
         var complited = false;
 
         if(!this.transactionCreateLoading) {
           this.transactionCreateLoading = true;
+
+          if(addTransForSubs == 'income') {
+            budget = 'income';
+            addTransForSubs = client.operation_id;
+          }
+          else if(addTransForSubs == 'expense') {
+            budget = 'expense';
+            addTransForSubs = client.operation_id;
+          }
 
           setTimeout(() => {
             $.ajax('/create_transaction.json', {
@@ -52,16 +62,20 @@
               error: e => console.warn('error', e)
             }).done(e => {
               if(complited) {
+
                 clientTransactions.unshift(newTransactionClient);
 
-                this.addTransForSubs = '';
+                if(addTransForSubs != client.operation_id && 
+                  addTransForSubs != 'expense' &&
+                  addTransForSubs != 'income') {
 
-                if(this.addTransForSubs != client.operation_id) {
-                  let indexSub = unpaid_subscriptions_client
+                  let indexSub = subscriptions_client
                     .findIndex(s => s.operation_id == addTransForSubs);
-                  total_amount = parseInt(unpaid_subscriptions_client[indexSub].total_amount, 10)
-                  unpaid_subscriptions_client[indexSub].total_amount = total_amount + parseInt(amount, 10);
+                  total_amount = parseInt(subscriptions_client[indexSub].total_amount, 10);
+                  subscriptions_client[indexSub].total_amount = total_amount + parseInt(amount, 10);
                 }
+
+                this.addTransForSubs = '';
               }
               this.transactionCreateLoading = false;
             });
@@ -71,15 +85,15 @@
       getSubClient() {
         let {client} = vmClient;
         this.addTransForSubs = '';
-        this.unpaid_subscriptions_client = [];
+        this.subscriptions_client = [];
 
         $.get(
-          '/get_unpaid_subscriptions_client.json', 
+          '/get_subscriptions_client.json', 
           {
             client_id: client.id,
           },
-          unpaid_subscriptions_client => {
-            this.unpaid_subscriptions_client = unpaid_subscriptions_client;
+          subscriptions_client => {
+            this.subscriptions_client = subscriptions_client;
           }
         );
       },
@@ -87,15 +101,25 @@
     watch: {
       "addTransForSubs" : function() {
         let {client} = vmClient;
+        let {addTransForSubs} = this;
 
         var date = new Date();
         m = (date.getMonth() + '').length == 1 ? '0' + date.getMonth() : date.getMonth()
         d = (date.getDate() + '').length == 1 ? '0' + date.getDate() : date.getDate()
         this.dateTransaction = date.getFullYear() + '-' + m + '-' + d;
 
-        if(this.addTransForSubs != client.operation_id) {
+        if(addTransForSubs == client.operation_id || 
+          addTransForSubs == 'expense' ||
+          addTransForSubs == 'income') {
+
+          this.fix_amount = null;
+          this.amount = null;
+          this.note = '';
+          this.category_id = '';
+        }
+        else {
           $.get(
-            '/get_unpaid_subscriptions_client.json', 
+            '/get_subscriptions_client.json', 
             {
               client_id: client.id,
               operation_id: this.addTransForSubs,
@@ -107,11 +131,6 @@
             }
           );
         }
-        else {
-          this.fix_amount = null;
-          this.amount = null;
-          this.note = '';
-        }
       },
       "amount" : function() {
         if(this.fix_amount != null && this.amount > this.fix_amount) {
@@ -119,15 +138,22 @@
         }
       },
       "client" : function() {
+        console.log('dsf');
         this.getSubClient();
       },
       "show" : function() {
         this.getSubClient();
 
         $.get(
-          '/categories.json',
+          '/get_categories_income.json',
           categories_income => {
             this.categories_income = categories_income;
+          }
+        );
+        $.get(
+          '/get_categories_expense.json',
+          categories_expense => {
+            this.categories_expense = categories_expense;
           }
         );
         $.get(
@@ -139,6 +165,15 @@
               this.affiliate_id = affiliates[0].id;
           }
         );
+      }
+    },
+    computed: {
+      unpaidSubscriptionsClient: function () {
+        return this.subscriptions_client.filter(function (subs) {
+          if ((subs.price - subs.total_amount) > 0) {
+            return subs;
+          }
+        });
       }
     },
     template: `
@@ -156,18 +191,26 @@
 
               <select v-model="addTransForSubs">
                 <option disabled value="">Выберите вариант транзакции</option>
-                <option :value="client.operation_id">Прочая оплата</option>
-                <option v-if="(unpaid_subscription.price - unpaid_subscription.total_amount) > 0" v-for="unpaid_subscription in unpaid_subscriptions_client" :value="unpaid_subscription.operation_id">
-                  {{ unpaid_subscription.total_amount == null ? 0 : unpaid_subscription.total_amount }} из 
-                  {{ unpaid_subscription.price }} ₽ | {{ unpaid_subscription.name }} от 
-                  {{ unpaid_subscription.start_at }} до {{ unpaid_subscription.finish_at }}
+                <option v-for="unpaidSubscription in unpaidSubscriptionsClient" :value="unpaidSubscription.operation_id">
+                  {{ unpaidSubscription.total_amount == null ? 0 : unpaidSubscription.total_amount }} из 
+                  {{ unpaidSubscription.price }} ₽ | {{ unpaidSubscription.name }} от 
+                  {{ unpaidSubscription.start_at }} до {{ unpaidSubscription.finish_at }}
                 </option>
+                <option value="income">Доход</option>
+                <option value="expense">Расход</option>
               </select>
 
               <div v-if="addTransForSubs != ''">
-                <select v-if="addTransForSubs == client.operation_id" v-model="category_id">
+                <select v-if="addTransForSubs == 'income'" v-model="category_id">
                   <option disabled value="">Выберите одну из статей дохода</option>
                   <option v-for="category in categories_income" :value="category.id">
+                    {{ category.name }}
+                  </option>
+                </select>
+
+                <select v-else-if="addTransForSubs == 'expense'" v-model="category_id">
+                  <option disabled value="">Выберите одну из статей расхода</option>
+                  <option v-for="category in categories_expense" :value="category.id">
                     {{ category.name }}
                   </option>
                 </select>
@@ -185,9 +228,13 @@
                 <textarea v-model="note" placeholder="Комментарий" class="textarea"></textarea> 
               </div>
 
-              <div v-if="amount != null && amount != 0 && note != '' && dateTransaction != ''" class="btns" style="margin: 14px 0 0;">
+              <div v-if="amount != null && amount != 0 && note != '' && dateTransaction != ''" class="btns" style="margin: 0;">
                 <button 
-                  @click="createTransactionClient()" v-bind:class="{ active: transactionCreateLoading }" class="btn-subscribe btn" style="position: absolute; right: 10px; top: 0; padding: 15px; margin: 0;">
+                  @click="createTransactionClient()" 
+                  v-bind:class="{ active: transactionCreateLoading }" 
+                  class="btn-subscribe btn" 
+                  style="position: absolute; right: 10px; top: 0; padding: 15px; margin: 0;">
+
                   <div class="btn__text">Произвести</div>
                   <div v-if="transactionCreateLoading" class="container" style="width: 58px;">
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
