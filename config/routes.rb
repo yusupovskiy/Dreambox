@@ -28,7 +28,6 @@ Rails.application.routes.draw do
   end
   post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
   get 'get_clients' => 'clients#get_clients'
-  get 'get_clients1' => 'clients#get_clients1'
   get 'add_field' => 'clients#add_field'
   get 'get_fields_client' => 'clients#get_fields_client'
 

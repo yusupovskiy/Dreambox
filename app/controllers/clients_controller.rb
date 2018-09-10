@@ -6,59 +6,28 @@ class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy, :archive]
 
   def index
-    @people_company = Client.where(company: @current_company.id)
-    @people_clients = @people_company.where("(role & #{Client::Role::CLIENT}) != 0")
-    @no_archive_clients = @people_clients.where(archive: false)
-    @archive_clients = @people_clients.where(archive: true)
-    @current_clients = @no_archive_clients.where(id: 
-      RecordClient.where(is_active: :true, record_id: 
-        @current_record.select('id')).select('client_id'))
-
-    unpaid_subscriptions = Subscription.find_by_sql("
-      SELECT subscriptions.id
-      FROM subscriptions
-      WHERE subscriptions.id NOT IN (
-        SELECT operation_object_id
-        FROM (
-          SELECT operation_object_id, sum(amount) as total_amount
-          FROM fin_operations
-          WHERE operation_type = 1 AND is_active = true
-          GROUP BY operation_object_id, operation_type)
-          AS results
-        WHERE total_amount >= price)
-      AND subscriptions.is_active = true
-      AND NOT price = 0
-    ")
-    
-    @clients_debtors = @people_clients.where(id: 
-      RecordClient.where(id: 
-        Subscription.where(id: 
-          unpaid_subscriptions).select('record_client_id')).
-      select('client_id'))
-
-    @all_people = @people_clients
-    @show_in_view = [@current_clients, @clients_debtors, @all_people, @archive_clients]
   end
 
-  def get_clients1
+  def get_clients
     affiliates_id = @current_affiliates.ids.join(", ")
     records_id = @current_record.ids.join(", ")
 
     clients = Subscription.find_by_sql("
-      SELECT  c.id, c.first_name, c.last_name, c.patronymic,
-        c.birthday, c.phone_number, c.company_id, c.user_id,
+      SELECT  c.id,
+        c.last_name || ' ' || c.first_name || ' ' || c.patronymic AS full_name, 
+        c.last_name, c.first_name, c.patronymic,
+        c.birthday, c.phone_number, 
         c.archive, c.sex, c.avatar, c.role, c.operation_id, 
         coalesce(o.total_amount,0) AS total_amount,
         coalesce(SUM(s.price),0) AS debt_subs, 
         coalesce(SUM(s.subs_amount),0) AS total_amount_subs,
         coalesce((SUM(s.price) - SUM(s.subs_amount)),0) AS unpaid_debt_subs,
-        array_agg(DISTINCT rc.record_id ORDER BY rc.record_id) AS records_id
+        array_agg(DISTINCT rc1.record_id ORDER BY rc1.record_id) AS records_id
 
       FROM clients AS c
         LEFT JOIN ( SELECT rc.*
                     FROM records_clients AS rc
                     WHERE (rc.record_id IN (#{records_id}) OR rc.record_id IS NULL)
-                      AND (rc.is_active IS NULL OR rc.is_active = true)
         ) AS rc
           ON c.id = rc.client_id
         LEFT JOIN ( SELECT s.*, coalesce(SUM(ct1.amount),0) as subs_amount 
@@ -91,87 +60,18 @@ class ClientsController < ApplicationController
                     GROUP BY o.client_id
         ) AS o
         ON c.id = o.client_id
+        
+        LEFT JOIN ( SELECT rc.*
+                    FROM records_clients AS rc
+                    WHERE (rc.record_id IN (#{records_id}) OR rc.record_id IS NULL)
+                      AND(rc.is_active IS NULL OR rc.is_active = true)
+        ) AS rc1
+        ON c.id = rc1.client_id
+
       WHERE (role & #{Client::Role::CLIENT}) != 0
       GROUP BY c.id, o.total_amount
       ORDER BY c.first_name, c.last_name, c.patronymic
-
-
     ")
-
-    respond_to do |format|
-      format.json { render json: clients, status: :ok }
-    end
-  end
-
-
-  def get_clients
-    @last_name_search = params[:lastNameClients]
-    @first_name_search = params[:firstNameClients]
-    @patronymic_search = params[:patronymicClients]
-
-    if params[:record].present?
-      record_id = params[:record]
-      record = Record.find record_id
-      record_clients = RecordClient.where record_id: record
-      query_record = "AND id IN (#{record_clients.select(:client_id)})"
-    # else
-    #   query_record = ''
-    end
-
-    # if @last_name_search.present? and @first_name_search.present?
-    #   if @last_name_search.size > 0
-    #     last_name = "LOWER(last_name) LIKE LOWER('#{@last_name_search}%')"
-    #   end
-
-    #   if @first_name_search.size > 0
-    #     first_name = "LOWER(first_name) LIKE LOWER('#{@first_name_search}%')"
-    #   end
-    # end
-
-    # clients = Client.where("LOWER(last_name) LIKE LOWER('#{@search_clients[0]}%') 
-    #     AND id IN (?)", record_clients.select(:client_id))
-
-    # clients = Client.where("#{last_name} and #{first_name}")
-
-    @people_company = Client.where(company: @current_company.id)
-    @clients_company = @people_company.where("(role & #{Client::Role::CLIENT}) != 0")
-
-    if params[:typeOfClients] == 'debtors'
-      unpaid_subscriptions = Subscription.find_by_sql("
-        SELECT subscriptions.id
-        FROM subscriptions
-        WHERE subscriptions.id NOT IN (
-          SELECT operation_object_id
-          FROM (
-            SELECT operation_object_id, sum(amount) as total_amount
-            FROM fin_operations
-            WHERE operation_type = 1 AND is_active = true
-            GROUP BY operation_object_id, operation_type)
-            AS results
-          WHERE total_amount >= price)
-        AND subscriptions.is_active = true
-        AND NOT price = 0
-      ")
-      
-      @clients_company = @clients_company.where(id: 
-        RecordClient.where(id: 
-          Subscription.where(id: 
-            unpaid_subscriptions).select('record_client_id')).
-        select('client_id'))
-    elsif params[:typeOfClients] == 'total'
-      @clients_company = @people_company
-    else
-      @clients_company = @people_company
-    end
-
-
-    clients = @clients_company.where("
-      LOWER(last_name) LIKE LOWER('#{@last_name_search}%') 
-      and LOWER(first_name) LIKE LOWER('#{@first_name_search}%') 
-      and LOWER(patronymic) LIKE LOWER('#{@patronymic_search}%') 
-    ").order(:last_name, :first_name, :patronymic)
-
-
     respond_to do |format|
       format.json { render json: clients, status: :ok }
     end
@@ -185,82 +85,31 @@ class ClientsController < ApplicationController
   end
 
   def get_fields_client
-    @client_id = params[:client_id]
+    client_id = params[:client_id]
 
-    @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
-    @field_templates_clients = FieldTemplate.where(info_block_id: @blocks_clients).order("id")
-
-    render layout: false
-  end
-
-  def show
-    unless @client.present?
-      return redirect_to company_clients_url, notice: "В компании нет такого человека"
+    if Client.exists? company_id: @current_company.id, id: client_id
+      field_data = InfoBlock.find_by_sql("
+        SELECT ib.*, ft.client_id, json_agg(ft.*) AS values
+        FROM info_blocks AS ib
+          LEFT JOIN ( SELECT  fd.id AS fd_id, fd.value, fd.field_id, fd.client_id,
+                              ft.id AS ft_id, ft.name AS title, ft.is_active, ft.info_block_id
+                      FROM field_data AS fd
+                        LEFT JOIN field_templates AS ft
+                          ON fd.field_id = ft.id
+                      WHERE fd.client_id = #{client_id}
+                      ORDER BY fd.id
+            ) AS ft 
+            ON ib.id = ft.info_block_id
+        WHERE ib.company_id = #{@current_company.id} 
+              AND ib.model_object = 'clients'
+        GROUP BY ib.id, ft.client_id
+      ")
+      respond_to do |format|
+        format.json { render json: field_data, status: :ok }
+      end
     end
-    @discount = Discount.new
-    @subscription = Subscription.new
-    @fin_operation = FinOperation.new
-    @work = Work.new
-    @salary = Work.new
-    @work_salary = WorkSalary.new
-    @new_record_client = RecordClient.new
-
-    @records_client = RecordClient.where(client_id: params[:id], id: @current_record_client)
-    
-    completed_records = @current_record.where("finished_at < ?", Date.today)
-
-    current_record = @current_record.where.not(id: completed_records)
-
-    @no_records_client = current_record.where.not(id: @records_client.where(client_id: @client.id, is_active: :true).select('record_id'))
-
-    @unpaid_subscriptions = Subscription.find_by_sql("
-      SELECT subscriptions.*
-      FROM subscriptions
-      WHERE subscriptions.id NOT IN (
-        SELECT operation_object_id
-        FROM (
-         SELECT operation_object_id, sum(amount) as total_amount
-         FROM fin_operations
-         WHERE operation_type = 1 AND is_active = true
-         GROUP BY operation_object_id, operation_type
-        ) AS results
-        WHERE total_amount >= price) 
-      AND subscriptions.is_active = true 
-      AND subscriptions.record_client_id IN (
-        SELECT  records_clients.id
-        FROM records_clients 
-        WHERE records_clients.client_id = #{params[:id]})
-    ")
-
-    @discounts = Discount.where(record_client: @records_client)
-
-    @clients = Client.where(archive: false, company_id: @current_company.id)
-
-    subscriptions_client = Subscription.where(record_client: @records_client)
-    @fin_operations_client = FinOperation.where("(
-      (operation_type = 1 AND operation_object_id IN (?)) 
-      OR (operation_type = 0 AND operation_object_id = (?))
-      AND affiliate_id IN (?)
-      )", 
-      subscriptions_client.all.select('id'), 
-      @client.id,
-      @current_affiliates.select(:id)
-    ).order("operation_date DESC")
-
-    @payments_subscriptions = FinOperation.where(" is_active = true AND
-                operation_type = 1 AND operation_object_id IN (?)", 
-                subscriptions_client.where(is_active: true).select('id'),
-                ).order("operation_date DESC")
-    @debt_for_services =  subscriptions_client.where(is_active: true).sum(:price) - @payments_subscriptions.sum(:amount)
-
-
-    @blocks_clients = InfoBlock.where(company_id: @current_company.id, model_object: 'clients')
-    @field_templates_clients = FieldTemplate.where(info_block_id: @blocks_clients).order("id")
-
-    @works_client = Work.where people_id: @client.id
   end
 
-  # GET /clients/new
   def new
     @client = Client.new company_id: @current_company.id, role: (Client::Role::CLIENT).to_s(2).to_i
     @new_block = InfoBlock.new
@@ -274,7 +123,6 @@ class ClientsController < ApplicationController
     @form_submit = 'Сохранить'
   end
 
-  # GET /clients/1/edit
   def edit
     @client_new = Client.new company_id: @current_company.id
     @new_block = InfoBlock.new
@@ -288,8 +136,6 @@ class ClientsController < ApplicationController
     @form_submit = 'Изменить'
   end
 
-  # POST /clients
-  # POST /clients.json
   def create
     prms = client_params
     @client = Client.new(prms)
@@ -320,8 +166,6 @@ class ClientsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /clients/1
-  # PATCH/PUT /clients/1.json
   def update
 
     respond_to do |format|
@@ -345,8 +189,6 @@ class ClientsController < ApplicationController
     end
   end
 
-  # DELETE /clients/1
-  # DELETE /clients/1.json
   def destroy 
     @client.destroy
     respond_to do |format|

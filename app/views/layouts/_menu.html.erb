@@ -1,8 +1,11 @@
+<% url = @url[3].split('?') %>
 
 <div class="item-menu icon-menu"></div>
-<div class="btn-add-menu">
-  <ion-icon name="add"></ion-icon>
-</div>
+<dfn data-info="Добавление">
+  <div class="btn-add-menu">
+    <ion-icon name="add"></ion-icon>
+  </div>
+</dfn>
 <div class="pnl-add">
   <div class="header-pnl-add">
     <div class="btn-back new-btn btn-close-pnl-add" style="margin: 0;">
@@ -29,6 +32,13 @@
     <% end %>
   </div>
 </div>
-<%= link_to '', clients_path, class: 'item-menu icon-client' %>
-<a href="#" class="item-menu icon-company"></a>
-<%= link_to '', transactions_path, class: 'item-menu icon-finance' %>
+
+<dfn data-info="Клиенты">
+  <a href="<%= clients_path %>" class="<%= url[0] == 'clients' ? 'active ' : '' %>item-menu icon-client"></a>
+</dfn>
+<dfn data-info="Структура">
+  <a href="#" class="item-menu icon-company"></a>
+</dfn>
+<dfn data-info="Транзакции">
+  <a href="<%= transactions_path %>" class="<%= url[0] == 'transactions' ? 'active ' : '' %>item-menu icon-finance"></a>
+</dfn>

@@ -8,9 +8,27 @@
         subsClient: [],
         showTotalInfo: false,
         openPanelAdd: null,
+        fieldsClient: [],
       }
     },
+    // props: {
+    //   client: Array,
+    //   records: Array,
+    //   no_records: Array,
+    //   show: String,
+    // },
     props: ['client', 'records', 'no_records', 'show'],
+    methods: {
+      closeCartClient() {
+        let {client} = vmClient
+
+        url = window.location.href;
+        newUrl = deleteURLParameter(url, 'client');
+        history.pushState('', 'Home', newUrl);
+        vmClient.client = [];
+        vmClient.panelShow = 'home';
+      }
+    },
     computed: {
       urlEditClient: function() {
         let {client} = vmClient
@@ -78,17 +96,22 @@
     watch: {
       "client" : function() {
         this.showTotalInfo = false;
+        this.fieldsClient = [];
       },
       "showTotalInfo" : function() {
-        let {client} = vmClient
+        let {client} = vmClient;
+        this.loading = false;
 
         if(this.showTotalInfo) {
           setTimeout(() => {
             $.get(
-              '/get_fields_client', 
+              '/get_fields_client.json', 
               { client_id: client.id },
-              fieldsClient => { $('#fields-client').html(fieldsClient); }
+              fieldsClient => {
+                this.fieldsClient = fieldsClient;
+              }
             );
+            this.loading = true;
           }, 600);
         }
       }
@@ -99,6 +122,13 @@
  
         <div class="panel-info">
           <div class="basic-info">
+
+            <div @click="closeCartClient()" class="btn-back new-btn btn-close-pnl-add" style="    bottom: 0px;
+              margin: 5px 5px;
+              position: relative;">
+              <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+            </div>
+
             <img v-if="client.length != 0" class="ava" src="/resources/no-image-available.png">
             <div class="basic-info__container">
               <div class="basic-info__container__content">
@@ -112,21 +142,34 @@
 
           <div v-if="showTotalInfo" class="total-info">
 
-            <div v-if="client.birthday != null" class="item-info">
-              <div class="title-item-info">Дата рождения</div>
-              <div class="content-item-info">{{client.birthday}}</div>
-            </div>
-            <div v-if="client.sex != null" class="item-info">
-              <div class="title-item-info">Пол</div>
-              <div class="content-item-info">{{client.sex}}</div>
+            <div v-if="loading" style="display: grid;">
+              <div v-if="client.birthday != null" class="item-info">
+                <div class="title-item-info">Дата рождения</div>
+                <div class="content-item-info">{{client.birthday}}</div>
+              </div>
+              <div v-if="client.sex != null" class="item-info">
+                <div class="title-item-info">Пол</div>
+                <div class="content-item-info">{{client.sex}}</div>
+              </div>
+
+              <div v-for="block in fieldsClient">
+                <div v-if="block.name != ''">
+                  <div class="title-info">{{ block.name }}</div>
+
+                  <div v-if="field.title != '' && field.value != ''" v-for="field in block.values" class="item-info">
+                    <div class="title-item-info">{{ field.title }}</div>
+                    <div class="content-item-info">{{ field.value }}</div>
+                  </div>
+
+                </div>
+              </div>
             </div>
 
-            <div id="fields-client">
+            <div v-else-if="!loading" style="width: 100%; height: 70px;">
               <div style="position: absolute; top: 0; width: 100%; height: 100%; background-color: white;">
                 <img src="images/loading.gif" style="width: 60px; height: 60px; margin: auto; display: table; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" />
               </div>
             </div>
-
           </div>
 
         </div>
@@ -138,7 +181,7 @@
             </div>
 
             <div class="amount" style="color: #ff7375;">
-              <div class="amount-price">{{ (client.debt_subs - client.total_amount_subs) }} ₽</div>
+              <div class="amount-price">{{ client.unpaid_debt_subs }} ₽</div>
               <div class="amount-name">Долг</div>
             </div>
 

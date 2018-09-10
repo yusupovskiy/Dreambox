@@ -66,7 +66,9 @@ class SubscriptionsController < ApplicationController
         unpaid_subscriptions = Subscription.find_by_sql("
           SELECT s.*, coalesce(SUM(t.amount), 0) AS total_amount, r.name
           FROM subscriptions AS s
-            LEFT JOIN records_clients AS rc
+            LEFT JOIN ( SELECT records_clients.*
+                        FROM records_clients
+              ) AS rc
               ON s.record_client_id = rc.id
             LEFT JOIN records AS r
               ON rc.record_id = r.id

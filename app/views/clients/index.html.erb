@@ -1,10 +1,7 @@
 <div id="clients">
   <div class="panel-list">
-
     <%= render 'clients/index_search' %>
-
     <%= render 'clients/index_list' %>
-
   </div>
 
   <div class="panels-content hide-scrollbar">
@@ -25,18 +22,16 @@
 
 <script type="text/javascript">
   var authToken = document.getElementById("authenticity_token").value;
-  var valueInput = document.getElementById("search").value
+  // var valueInput = document.getElementById("search").value
   var lastId = null;
 
   var vmClient = new Vue ({
     el: '#clients',
     data: {
-      clientsCompany: [],
       recordsCompany: [],
       titleInput: "Поиск клиентов", // будет подставляться название группы
-      searchClients: [],
       loadComplete: false,
-      searchValue: valueInput,
+      search: '',
 
 
       client: [],
@@ -44,22 +39,62 @@
       recordsClient: [],
       clientTransactions: [],
 
-      countItemsList: 0,
       panelShow: 'home',
 
-      typeClient: '',
+      typeClients: '',
 
-      clients: []
+      clients: [],
+
+
+      search: '',
+      showSort: false,
+      columns: [
+        {
+          name: 'По ФИО',
+          column: 'full_name'
+        }, 
+        {
+          name: 'По дате рождения',
+          column: 'birthday'
+        }, 
+        {
+          name: 'По долгу',
+          column: 'unpaid_debt_subs'
+        },
+      ],
+      sortKey: 'full_name',
+      reverse: false,
+
+      filtrationElements: [],
     },
     methods: {
+      addElementFiltration(id, object, name) {
+        let indexElement = this.filtrationElements
+          .findIndex(element => element.id == id);
+
+        if(!(indexElement > -1)) {
+          var urlHash = new URL(window.location.href);
+          var currentParamsFilters = urlHash.searchParams.get("filters");
+          var currentParamsFilters = currentParamsFilters == null ? '' : currentParamsFilters + ',';
+          var newParamsFilters = currentParamsFilters + object + '-' + id;
+          this.sendQuery(newParamsFilters, 'filters', '');
+
+          var newElementFiltration = {id: id, object: object, name: name};
+          this.filtrationElements.push(newElementFiltration);
+        }
+
+      },
+      sortBy(sortKey) {
+        this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
+        this.sortKey = sortKey;
+      },
       clickClient(client) {
         this.client = client;
-        this.activeElement('client-', client.id, 'list');
         this.panelShow = 'client';
 
         url = window.location.href;
         newUrl = updateURLParameter(url, 'client', client.id);
-        history.pushState('', 'Клиент', newUrl);
+        history.pushState('Клиент', 'Клиент', newUrl);
 
         $.get(
           '/get_select_records_client.json', 
@@ -76,99 +111,114 @@
           { client_id: client.id },
           clientTransactions => this.clientTransactions = clientTransactions
         );
-
       },
+      sendQuery(query, type, byDefault) {
+        var url = window.location.href;
 
-      sendQuery(type, value) {
-        url = window.location.href;
-        newUrl = updateURLParameter(url, type, value);
+        if(query == '') {
+          var urlHash = new URL(url);
+          var params = urlHash.searchParams.get(type);
+          query = (params == null ? byDefault : params);
 
-        this.clientsQuery(newUrl);
-      },
-      clientsQuery(url) {
-
-        urlHash = new URL(url);
-        clientQuery = urlHash.searchParams.get("search");
-        typeOfClients = urlHash.searchParams.get("clients");
-
-        arrayClientQuery = validSpaces(clientQuery).split(' ');
-
-        clearTimeout(lastId)
-        this.loadComplete = false;
-
-        if(typeOfClients == null) {
-          typeOfClients = 'current'
-          url = updateURLParameter(url, 'clients', typeOfClients);
+          return query;
         }
-        this.activeElement(typeOfClients, '', 'indecators');
 
-        lastId = setTimeout(() => {
-          $.get(
-            '/get_clients.json', 
-            {
-              typeOfClients: typeOfClients,
-              lastNameClients: arrayClientQuery[0],
-              firstNameClients: arrayClientQuery[1],
-              patronymicClients: arrayClientQuery[2]
-            // ,
-            // record: 29
-            },
-            searchClients => {
-              this.searchClients = searchClients;
-              this.loadComplete = true;
-              history.pushState('', clientQuery, url);
-            }
-          )
-        }, 600);
+        var newUrl = updateURLParameter(url, type, query);
+        history.pushState(query, query, newUrl);
       },
-      activeElement(nameClass, id, parent) {
-        setTimeout(() => {
-          $('.' + nameClass + id).parents('.' + parent).children().removeClass('active');
-          $('.' + nameClass + id).addClass('active');
-        }, 0.1);
-      }
     },
     created() {
-      this.sendQuery('search', valueInput);
+      this.search = this.sendQuery('', 'search', '');
+      this.typeClients = this.sendQuery('', 'clients', 'current');
 
-      $.ajax({
-        url: '/get_clients.json',
-        success: clientsCompany => {
-          this.clientsCompany = clientsCompany;
+      setTimeout(() => {
+        $.get(
+          '/get_clients.json',
+          clients => {
+            this.clients = clients;
 
-          urlHash = new URL(window.location.href);
-          id = urlHash.searchParams.get("client");
-          if(id != null) {
-            let indexCurrentClient = clientsCompany
-              .findIndex(client => client.id == id);
-            getClient = this.clientsCompany[indexCurrentClient];
+            urlHash = new URL(window.location.href);
+            id = urlHash.searchParams.get("client");
+            if(id != null) {
+              let indexCurrentClient = clients
+                .findIndex(client => client.id == id);
 
-            this.clickClient(getClient);
+              if(indexCurrentClient > -1) {
+                getClient = this.clients[indexCurrentClient];
+                this.clickClient(getClient);
+              }
+            }
+            this.loadComplete = true;
           }
-        }
-      });
+        );
 
-      $.get(
-        '/get_clients1.json',
-        clients => this.clients = clients
-      );
+        $.get(
+          '/get_records.json',
+          recordsCompany => this.recordsCompany = recordsCompany
+        );
 
-      $.get(
-        '/get_records.json',
-        recordsCompany => this.recordsCompany = recordsCompany
-      );
+      }, 600);
     },
     watch: {
-      "searchClients" : function() {
-        this.countItemsList = this.searchClients.length;
+      search() {
+        clearTimeout(lastId);
 
-        urlHash = new URL(window.location.href);
-        id = urlHash.searchParams.get("client");
-        this.activeElement('client-', id, 'list');
+        lastId = setTimeout(() => {
+          var url = window.location.href;
+          var newUrl = updateURLParameter(url, 'search', this.search);
+          history.pushState(this.search, this.search, newUrl);
+
+          if(this.search == '') {
+            var newUrl = deleteURLParameter(url, 'search');
+            history.pushState(this.search, this.search, newUrl);
+          }
+        }, 600);
       },
-      "typeClient" : function() {
-        this.sendQuery('clients', this.typeClient);
+    },
+    computed: {
+      sortedClients() {
+        const k = this.sortKey;
+        return this.clients.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
       },
+      searchClients() {
+        const s = validSpaces(this.search.toLowerCase());
+        return this.sortedClients.filter(n => Object.values(n.full_name.split()).some(m => m.toString().toLowerCase().includes(s)));
+      },
+      clientsDebtors() {
+        return this.searchClients.filter(function (client) {
+          if (client.unpaid_debt_subs > 0) {
+            return client;
+          }
+        });
+      },
+      clientsCurrent() {
+        return this.searchClients.filter(function (client) {
+          if(!((client.records_id.length == 1 && client.records_id[0] == null) || client.records_id.length <= 0)) {
+            return client;
+          }
+        });
+      },
+      clientsTotal() {
+        return this.searchClients;
+      },
+      clientsFilter() {
+        this.sendQuery(this.typeClients, 'clients',  '')
+
+        if(this.typeClients == 'debtors') {
+          return this.clientsDebtors;
+        }
+        else if(this.typeClients == 'current') {
+          return this.clientsCurrent;
+        }
+        else if(this.typeClients == 'total') {
+          return this.clientsTotal;
+        }
+      },
+      amountTotalDebtors() {
+        return this.clientsFilter.reduce(function(sum, client) {
+          return sum + (client.debt_subs - client.total_amount_subs);
+        }, 0);
+      }
     }
   });
 </script>

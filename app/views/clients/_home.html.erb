@@ -1,102 +1,75 @@
-
-
 <!-- 
-  
-- при отписке или записи нужно к клиенту добавлять айди записи
 
-- при отмене оплаты, нужно отнимать отмененную сумму у оплаты за абонемент
-- При продаже абонемента, нужно присваивать долг, для начала, надо сделать карту группы с прикреплением услуги, и брать цену этой услуги для абонемента
-
-
-нужно получать список клиентов, и в withc получать уже отфильтрованнный списко
-вместе с со всеми фильтрациями и индикаторами, а также поиск
+- при загрузке страницы, нужно получать параметр и оттуда присваивать значения для фильтра, надо только узнавать названия
 
 будет переменная в экземплере, туду будут отправляться нажатые элементы (для них будет функция для этого, которая будет отправлять их id, название и категорию, например группа или услуга), после, по всем объектам в этой переменной будет происходить сортировка по списку клиентов.
 
-Сделать компонент, там будут отображаться все элементы из переменной, при нажатии они будут удаляться
+Сделать компонент, там будут отображаться все элементы из переменной, при нажатии они будут удалятьсям
 
-Сделать кноки назад и вперед
+- При выделении элемента фильтрации, оно подсвечивается синим цветом, и все свазанное с ней черным, а остальное полупрозрачным и не влияет на фильтрацию, можно нажатть на любой элемент, и ссорировка будет по нему
 
 Если открыта карта группы, то ссорировка не работает, только про группе 
 
-
-
-при продаже абонемента, для оплаты можно использовать функцию оплаты
+---------------------
+- при отмене оплаты, нужно отнимать отмененную сумму у оплаты за абонемент
+- При продаже абонемента, нужно присваивать долг, для начала, надо сделать карту группы с прикреплением услуги, и брать цену этой услуги для абонемента
+- при продаже абонемента, для оплаты можно использовать функцию оплаты
 тоже самое и перерасчет, который должен быть в группе
 
 
-при создании списка должинков, сделать там загрузку, пока идет ретюрн
+
 
 Сделать создание скидки или коррекции цены для клиента, два поля, где вводиться фактическая цена и поле с процентом, при вводе фактической, считается на сколько цена увеличена или уменьшина и на оборот, при вводе процентов подставляется цена относительно текущей цены указанной в записи
 
 Вывод скидок клиента
 
 
-
-
 -->
 
 <div v-if="panelShow == 'home'" class="panels-test">
-  <div class="btn-back new-btn btn-close-pnl-add" style="bottom: 0; margin: auto 5px;">
-    <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
-  </div>
-  <div class="btn-back new-btn btn-close-pnl-add" style="bottom: 0; right: 0; left: auto;
-margin: auto 5px;">
-    <ion-icon name="arrow-forward" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
-  </div>
-  <div style="padding: 10px 50px; display: table; width: 100%; -webkit-box-sizing: border-box;
+  <div class="panel-header"><div class="title-panel">Фильтрация</div></div>
+  <div 
+       style="padding: 0 10px 10px 10px; display: table; width: 100%; -webkit-box-sizing: border-box;
 -moz-box-sizing: border-box;
 box-sizing: border-box;">
-    <div class="sdfdsfd">
+
+    <div v-for="element in filtrationElements" :key="element.id" class="sdfdsfd">
       <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      Группа английский
+      <span>{{ element.name }}</span>
     </div>
-    <div class="sdfdsfd">
-      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      Группа
-    </div>
-    <div class="sdfdsfd">
-      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      английский
-    </div>
-    <div class="sdfdsfd">
-      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      Группа английский
-    </div>
-    <div class="sdfdsfd">
-      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      Группа английский
-    </div>
-    <div class="sdfdsfd">
-      <div class="dsfsdfasfew"><ion-icon name="add-circle-outline"></ion-icon></div>
-      Группа
-    </div>
+
   </div>
 </div>
 
 <section v-if="panelShow == 'home'" class="panel-content">
   <div class="indecators">
-    <div @click="typeClient = 'current'" class="indecator current active">
-      <div>32</div>
+    <div  @click="typeClients = 'current'" 
+          class="indecator current"
+          :class="[ typeClients == 'current' ? 'active' : '' ]">
+      <div>{{ clientsCurrent.length }}</div>
       <span>Текущие клиенты</span>
     </div>
-    <div @click="typeClient = 'debtors'" class="indecator debtors">
-      <div>14</div>
+    <div  @click="typeClients = 'debtors'" 
+          class="indecator debtors"
+          :class="[ typeClients == 'debtors' ? 'active' : '' ]">
+      <div>{{ clientsDebtors.length }}</div>
       <span>Должники</span>
     </div>
-    <div @click="typeClient = 'total'" class="indecator total">
-      <div>255</div>
+    <div  @click="typeClients = 'total'" 
+          class="indecator total"
+          :class="[ typeClients == 'total' ? 'active' : '' ]">
+      <div>{{ clientsTotal.length }}</div>
       <span>Все клиенты</span>
     </div>
   </div>
 
   <div class="panel-footer">
     <div>
-      <div>{{ countItemsList }}</div>
+      <div>{{ clientsFilter.length }}</div>
       <div>кол-во в списке</div>
     </div>
     <div>
-      <div>10000</div>
+      <div>{{ amountTotalDebtors }}</div>
       <div>долг</div>
     </div>
   </div>

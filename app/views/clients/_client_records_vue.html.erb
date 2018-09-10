@@ -46,7 +46,10 @@
                 else {
                   recordsClient.splice(indexRecordsClient, 1, newRecordClient);
                 }
+
+                client.records_id.push(record.id);
               }
+
               this.loading = false;
             });
           }, 600);
@@ -89,7 +92,11 @@
                 else {
                   selectRecordsClient.splice(indexRecordsSelect, 1, newRecordClient);
                 }
+
+                var indexCurrentRecord = client.records_id.indexOf(record.id);
+                client.records_id.splice(indexCurrentRecord, 1);
               }
+              
               this.loading = false;
             });
           }, 600);

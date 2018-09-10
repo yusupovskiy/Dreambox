@@ -8,6 +8,9 @@
     },
     props: ['records', 'show'],
     methods: {
+      addRecordFiltration(record) {
+        vmClient.addElementFiltration(record.id, 'record', record.name);
+      },
     },
     watch: {
     },
@@ -25,7 +28,7 @@
 
           <div v-for="record in records" v-bind:class="'record-' + record.id" class="item-panel">
             
-            <div @click="clickRecordClientActive(record.id)" class="item-panel__basic-info" style="cursor: pointer;">
+            <div @click="addRecordFiltration(record)" class="item-panel__basic-info" style="cursor: pointer;">
               <div class="left-item-panel">{{ record.name }}</div>
               <div class="right-item-panel"></div>
             </div>

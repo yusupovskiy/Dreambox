@@ -2,6 +2,7 @@
   Vue.component('section-transaction-add', {
     data: function () {
       return {
+        loading: false,
         amount: null,
         fix_amount: null,
         note: '',
@@ -74,7 +75,7 @@
                   total_amount = parseInt(subscriptions_client[indexSub].total_amount, 10);
                   subscriptions_client[indexSub].total_amount = total_amount + parseInt(amount, 10);
 
-                  client.total_amount_subs = client.total_amount_subs + parseInt(amount, 10);
+                  client.unpaid_debt_subs = client.unpaid_debt_subs - parseInt(amount, 10);
                 }
                 client.total_amount = client.total_amount + parseInt(amount, 10);
 
@@ -87,6 +88,7 @@
       },
       getSubClient() {
         let {client} = vmClient;
+        let {loading} = this;
         this.addTransForSubs = '';
         this.subscriptions_client = [];
 
@@ -99,6 +101,7 @@
             this.subscriptions_client = subscriptions_client;
           }
         );
+
       },
     },
     watch: {
@@ -171,11 +174,16 @@
     },
     computed: {
       unpaidSubscriptionsClient: function () {
-        return this.subscriptions_client.filter(function (subs) {
-          if ((subs.price - subs.total_amount) > 0) {
-            return subs;
-          }
-        });
+        if(this.subscriptions_client == null) {
+          return [];
+        }
+        else {
+          return this.subscriptions_client.filter(function (subs) {
+            if ((subs.price - subs.total_amount) > 0) {
+              return subs;
+            }
+          });
+        }
       }
     },
     template: `

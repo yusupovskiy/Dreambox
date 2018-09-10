@@ -5,6 +5,7 @@
         loading: false,
         showAll: false,
         subsClient: [],
+        recordClientId: null,
       }
     },
     props: {
@@ -15,13 +16,15 @@
       clickRecordClientActive(id) {
         let {client} = vmClient;
 
-        if(!$('.record-'+id).hasClass('active')) {
-          $('.record-'+id).parents().children().removeClass('active');
-          $('.record-'+id).addClass('active');
-        }
-        else {
-          $('.record-'+id).parents().children().removeClass('active');
-        }
+        if(this.recordClientId != id)
+          this.recordClientId = id;
+
+        else if(this.recordClientId != null)
+          this.recordClientId = null;
+
+        else 
+          this.recordClientId = id;
+
 
         $.get(
           '/get_subs_client.json', 
@@ -38,18 +41,22 @@
     watch: {
     },
     template: `
-
       <section v-if="show == 'client'" id="client-records" class="panel-content" :class="{ 'show-all': showAll}">
-        <div class="panel-header">
-          <div class="title-panel">Записи</div>
-          <div v-if="records.length > 3" @click="showAll = !showAll" class="btn show-panel">
-            <div v-if="showAll == false">Показать все</div>
-            <div v-else-if="showAll == true">Скрыть список</div>
+        <dfn data-info="Все записи клиента">
+          <div class="panel-header">
+            <div class="title-panel">Записи</div>
+            <div v-if="records.length > 3" @click="showAll = !showAll" class="btn show-panel">
+              <div v-if="showAll == false">Показать все</div>
+              <div v-else-if="showAll == true">Скрыть список</div>
+            </div>
           </div>
-        </div>
+        </dfn>
         <div v-if="records.length > 0" class="list-panel">
 
-          <div v-for="record in records" v-bind:class="'record-' + record.id" class="item-panel">
+          <div 
+            v-for="record in records" 
+            v-bind:class="['record-' + record.id, recordClientId == record.id ? 'active' : '' ]" 
+            class="item-panel">
             
             <div @click="clickRecordClientActive(record.id)" class="item-panel__basic-info" style="cursor: pointer;">
               <div class="left-item-panel">{{ record.name }}</div>
@@ -107,7 +114,6 @@
         </div>
 
       </section>
-
     `
   });
 </script>

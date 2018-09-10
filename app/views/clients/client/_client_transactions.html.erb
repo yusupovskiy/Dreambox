@@ -61,7 +61,7 @@
 
 
                 if(transaction.operation_id != client.operation_id) {
-                  client.total_amount_subs = client.total_amount_subs - transaction.amount;
+                  client.unpaid_debt_subs = client.unpaid_debt_subs + transaction.amount;
                 }
                 client.total_amount = client.total_amount - transaction.amount;
 

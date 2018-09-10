@@ -17,6 +17,19 @@ function updateURLParameter(url, param, paramVal){
   var rows_txt = temp + "" + param + "=" + paramVal;
   return baseURL + "?" + newAdditionalURL + rows_txt;
 }
+
+function deleteURLParameter(Url, Prm) {
+  var a = Url.split('?');
+  var re = new RegExp('(\\?|&)' + Prm + '=[^&]+', 'g');
+
+  Url = ('?' + a[1]).replace(re,'');
+  Url = Url.replace(/^&|\?/,'');
+
+  var dlm  = (Url == '' ) ? '' : '?';
+
+  return a[0] + dlm + Url;
+};
+
 function validSpaces(text) {
   text = text.trim();
   text = text.replace(/ {1,}/g," ");
