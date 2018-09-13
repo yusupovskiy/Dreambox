@@ -13,13 +13,18 @@
         amount: null,
         subsCreateLoading: false,
         bookingDate: '',
+        newSubscriptionClient: [],
       }
     },
-    props: ['records', 'show'],
+    // props: ['records', 'show'],
+    props: {
+      records: Array,
+      show: String,
+    },
     methods: {
       createSubClient() {
-        let {client} = vmClient;
-        let {addSubsForRecordClient, startSubs, finishSubs, amount} = this;
+        let {client, clientSubscriptions} = vmClient;
+        let {addSubsForRecordClient, startSubs, finishSubs, amount, newSubscriptionClient} = this;
         var complited = false
 
         if(!this.subsCreateLoading) {
@@ -39,27 +44,18 @@
                 }
               },
               success: messege => {
-                complited = messege.complited
+                complited = messege.complited;
+                newSubscriptionClient = messege.result;
                 vmNotifications.notifications.unshift(messege);
               },
               error: e => console.warn('error', e)
             }).done(newRecordClient => {
               if(complited) {
-                // newRecordClient = {id: record.id, name: record.name, is_active: true};
 
-                // let indexRecordsSelect = this.selectRecordsClient
-                //   .findIndex(rs => rs.id == record.id);
-                // this.selectRecordsClient.splice(indexRecordsSelect, 1);
+                clientSubscriptions.unshift(newSubscriptionClient);
 
-                // let indexRecordsClient = this.recordsClient
-                //   .findIndex(rs => rs.id == record.id);
-
-                // if(indexRecordsClient < 0 ) {
-                //   this.recordsClient.unshift(newRecordClient);
-                // }
-                // else {
-                //   this.recordsClient.splice(indexRecordsClient, 1, newRecordClient);
-                // }
+                client.unpaid_debt_subs = client.unpaid_debt_subs + newSubscriptionClient.price;
+                
                 this.getDateSub();
               }
               this.subsCreateLoading = false;

@@ -13,14 +13,12 @@ class ClientsController < ApplicationController
     records_id = @current_record.ids.join(", ")
 
     clients = Subscription.find_by_sql("
-      SELECT  c.id,
+      SELECT c.id,
         c.last_name || ' ' || c.first_name || ' ' || c.patronymic AS full_name, 
         c.last_name, c.first_name, c.patronymic,
-        c.birthday, c.phone_number, 
-        c.archive, c.sex, c.avatar, c.role, c.operation_id, 
+        c.birthday, c.phone_number, c.archive, c.sex, 
+        c.avatar, c.role, c.operation_id, 
         coalesce(o.total_amount,0) AS total_amount,
-        coalesce(SUM(s.price),0) AS debt_subs, 
-        coalesce(SUM(s.subs_amount),0) AS total_amount_subs,
         coalesce((SUM(s.price) - SUM(s.subs_amount)),0) AS unpaid_debt_subs,
         array_agg(DISTINCT rc1.record_id ORDER BY rc1.record_id) AS records_id
 
@@ -69,6 +67,7 @@ class ClientsController < ApplicationController
         ON c.id = rc1.client_id
 
       WHERE (role & #{Client::Role::CLIENT}) != 0
+        AND c.company_id = #{@current_company.id}
       GROUP BY c.id, o.total_amount
       ORDER BY c.first_name, c.last_name, c.patronymic
     ")

@@ -351,6 +351,7 @@ a.logo:hover {
     height: 50px;
     border-radius: 50%;
     float: left;
+    margin-right: 10px;
 }
 .item-list:hover {
     -webkit-transform: translateX(2px);
@@ -567,8 +568,7 @@ div.show-panel {
     height: 50px;
     position: relative;
     width: 250px;
-    overflow: hidden;
-    margin-left: 15px;
+    margin-left: 5px;
 }
 .basic-info__container__content {
     display: table;
@@ -676,7 +676,7 @@ div.show-panel {
     margin: 0 60px 10px;
     padding: 11px 0;
     font-size: 16px;
-    color: #4f4f4f;
+    color: #444444;
     border-left: 1px;
     user-select: none;
     cursor: default;
@@ -708,6 +708,7 @@ div.show-panel {
     border-radius: 50%;
     float: right;
     position: relative;
+    user-select: none;
 }
 .reset-search:hover, .reset-search.active {
     background-image: linear-gradient(to left top,#e1e5e7 0,rgba(171, 142, 205, 0.04) 100%);
@@ -728,8 +729,9 @@ div.show-panel {
 .item-panel.active .btn-hide {
     display: block;
 }
-.item-panel:hover {
+.panel-content>.list-panel>.item-panel:hover {
     background-color: whitesmoke;
+    /*padding: 10px 0;*/
 }
 .notification {
     position: fixed;
@@ -752,7 +754,8 @@ div.show-panel {
 .btns {
     display: table;
     width: 100%;
-    margin-bottom: 20px;
+    *margin-bottom: 20px;
+    margin-bottom: 4px;
 }
 .btns>* {
     margin-right: 10px;
@@ -1117,4 +1120,34 @@ header:hover {
 .search.active {
     box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.12);
     background-color: white;
+}
+
+.btn-delete {
+    width: 16px;
+    height: 16px;
+    float: left;
+    cursor: pointer;
+    user-select: none;
+    margin-right: 10px;
+}
+.item__btns {
+    display: none;
+}
+.btn-delete:hover {
+    color: #444444;
+}
+
+.item-panel:hover .item__btns {
+    display: block;
+}
+.item-panel:hover .price-record {
+    display: none;
+}
+.price-record>div {
+    float: right;
+    margin-left: 10px;
+}
+
+.active-item {
+    color: #3880ff;
 }

@@ -10,14 +10,7 @@
     right: 0px;
     padding-right: 5px;">
     <div @click="showSort = !showSort" class="reset-search" :class="[showSort ? 'active' : '']">
-      <img style="    width: 16px;
-    height: 16px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;" src="/images/setting.png" />
+      <ion-icon name="options"></ion-icon>
     </div>
     <div v-if="search.length > 0" class="reset-search" @click="search = ''" >
       <ion-icon name="close"></ion-icon>

@@ -1,20 +1,18 @@
 <script type="text/javascript">
-  Vue.component('section-home-records', {
+  Vue.component('section-home-services', {
     data: function () {
       return {
+        loading: false,
         showAll: false,
       }
     },
     props: {
-      records: Array,
+      services: Array,
       show: String,
     },
     methods: {
-      addRecordFiltration(record) {
-        vmClient.addElementFiltration(record.id, 'r');
-      },
-      clickRecord(record) {
-        vmClient.clickRecord(record);
+      addFiltration(service) {
+        vmClient.addElementFiltration(service.id, 's');
       },
     },
     watch: {
@@ -22,31 +20,28 @@
     template: `
       <section v-if="show == 'home'" class='panel-content' :class="{ 'show-all': showAll}">
         <div class="panel-header">
-          <div class="title-panel">Записи</div>
-          <div v-if="records.length > 3" @click="showAll = !showAll" class="btn show-panel">
+          <div class="title-panel">Услуги</div>
+          <div v-if="services.length > 3" @click="showAll = !showAll" class="btn show-panel">
             <div v-if="showAll == false">Показать все</div>
             <div v-else-if="showAll == true">Скрыть список</div>
           </div>
         </div>
-        <div v-if="records.length > 0" class="list-panel cool-scrollbar">
+        <div v-if="services.length > 0" class="list-panel cool-scrollbar">
 
-          <div  v-for="record in records" 
-                :class="['record-' + record.id, record.status == 'active' ? 'active-item' : 'current-item']" 
+          <div  v-for="service in services" 
+                :class="['service-' + service.id, service.status == 'active' ? 'active-item' : 'current-item']" 
                 class="item-panel">
             
             <div class="item-panel__basic-info" style="cursor: pointer;">
               <div class="left-item-panel" style="white-space: nowrap;">
 
                   <div class="item__btns">
-                    <div @click="addRecordFiltration(record)" class='btn-delete'>
+                    <div @click="addFiltration(service)" class='btn-delete'>
                       <ion-icon name="checkbox-outline"></ion-icon>
-                    </div>
-                    <div @click="clickRecord(record)" class='btn-delete'>
-                      <ion-icon name="open"></ion-icon>
                     </div>
                   </div>
 
-                  {{ record.name }}</div>
+                  {{ service.name }}</div>
               <div class="right-item-panel"></div>
             </div>
 
@@ -54,7 +49,7 @@
           </div>
 
         </div>
-        <div v-else-if="records.length <= 0" class="list-panel">
+        <div v-else-if="services.length <= 0" class="list-panel">
           <div class="no-record">Нет записи</div>
         </div>
         <div v-else-if="loadingPanel" class="list-panel">

@@ -14,11 +14,17 @@
 
 <%= render 'clients/client_records_vue' %>
 <%= render 'clients/home_records' %>
+<%= render 'clients/home_services' %>
+<%= render 'clients/home_affiliates' %>
 <%= render 'clients/client_panel_info' %>
 <%= render 'clients/client_panel_info_add_sub' %>
 <%= render 'clients/client_panel_info_add_transaction' %>
 <%= render 'clients/client_records' %>
 <%= render 'clients/client/client_transactions' %>
+
+<%= render 'clients/record_panel_info' %>
+<%= render 'clients/record_panel_info_add_service' %>
+<%= render 'clients/record_service' %>
 
 <script type="text/javascript">
   var authToken = document.getElementById("authenticity_token").value;
@@ -28,23 +34,24 @@
   var vmClient = new Vue ({
     el: '#clients',
     data: {
+      clients: [],
+      affiliatesCompany: [],
       recordsCompany: [],
-      titleInput: "Поиск клиентов", // будет подставляться название группы
+      servicesCompany: [],
+      titleInput: 'Поиск клиентов',
       loadComplete: false,
-      search: '',
 
-
-      client: [],
-      selectRecordsClient: [],
-      recordsClient: [],
-      clientTransactions: [],
+      subscriptions: [],
 
       panelShow: 'home',
 
-      typeClients: '',
+      client: [],
+      selectRecordsClient: [], // можно убрать эту переменную и заменить recordsCompany, и получать переменную минус текущие записи клиента
+      recordsClient: [],
+      clientTransactions: [],
 
-      clients: [],
-
+      record: [],
+      servicesRecord: [],
 
       search: '',
       showSort: false,
@@ -66,11 +73,12 @@
       reverse: false,
 
       filtrationElements: [],
+      typeClients: '',
     },
     methods: {
-      addElementFiltration(id, object, name) {
+      addElementFiltration(id, object) {
         let indexElement = this.filtrationElements
-          .findIndex(element => element.id == id);
+          .findIndex(element => element.id == id && element.object == object);
 
         if(!(indexElement > -1)) {
           var urlHash = new URL(window.location.href);
@@ -79,14 +87,27 @@
           var newParamsFilters = currentParamsFilters + object + '-' + id;
           this.sendQuery(newParamsFilters, 'filters', '');
 
-          var newElementFiltration = {id: id, object: object, name: name};
-          this.filtrationElements.push(newElementFiltration);
+          var newElementFiltration = {id: id, object: object};
+          this.filtrationElements.unshift(newElementFiltration);
         }
 
       },
       sortBy(sortKey) {
         this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
         this.sortKey = sortKey;
+      },
+      clickRecord(record) {
+        this.record = record;
+        this.panelShow = 'record';
+        this.titleInput = record.name;
+        this.typeClients = 'current';
+
+        url = window.location.href;
+        newUrl = updateURLParameter(url, 'record', record.id);
+        history.pushState(record.name, record.name, newUrl);
+
+        $.get('/records_services.json?record_id='+record.id,
+          servicesRecord => this.servicesRecord = servicesRecord);
       },
       clickClient(client) {
         this.client = client;
@@ -96,18 +117,15 @@
         newUrl = updateURLParameter(url, 'client', client.id);
         history.pushState('Клиент', 'Клиент', newUrl);
 
-        $.get(
-          '/get_select_records_client.json', 
+        $.get('/get_select_records_client.json', 
           { client_id: client.id },
           selectRecordsClient => this.selectRecordsClient = selectRecordsClient
         );
-        $.get(
-          '/get_records_client.json', 
+        $.get('/get_records_client.json', 
           { client_id: client.id },
           recordsClient => this.recordsClient = recordsClient
         );
-        $.get(
-          '/get_client_transactions.json', 
+        $.get('/get_client_transactions.json', 
           { client_id: client.id },
           clientTransactions => this.clientTransactions = clientTransactions
         );
@@ -131,32 +149,70 @@
       this.search = this.sendQuery('', 'search', '');
       this.typeClients = this.sendQuery('', 'clients', 'current');
 
+      var urlHash = new URL(window.location.href);
+      var client_id = urlHash.searchParams.get("client");
+      var record_id = urlHash.searchParams.get("record");
+      var filters = urlHash.searchParams.get("filters");
+
       setTimeout(() => {
-        $.get(
-          '/get_clients.json',
-          clients => {
-            this.clients = clients;
+        $.get('/get_affiliates.json',
+          affiliatesCompany => this.affiliatesCompany = affiliatesCompany );
 
-            urlHash = new URL(window.location.href);
-            id = urlHash.searchParams.get("client");
-            if(id != null) {
-              let indexCurrentClient = clients
-                .findIndex(client => client.id == id);
+        $.get('/companies/1/services.json',
+          servicesCompany => this.servicesCompany = servicesCompany );
 
-              if(indexCurrentClient > -1) {
-                getClient = this.clients[indexCurrentClient];
-                this.clickClient(getClient);
+        $.get('/get_subscriptions.json',
+          subscriptions => this.subscriptions = subscriptions
+        );
+
+        $.get('/get_records.json',
+          recordsCompany => {
+            this.recordsCompany = recordsCompany;
+
+            if(record_id != null) {
+              let indexCurrentRecord = recordsCompany
+                .findIndex(record => record.id == record_id);
+
+              if(indexCurrentRecord > -1) {
+                getRecord = this.recordsCompany[indexCurrentRecord];
+                this.clickRecord(getRecord);
               }
             }
-            this.loadComplete = true;
           }
         );
 
-        $.get(
-          '/get_records.json',
-          recordsCompany => this.recordsCompany = recordsCompany
-        );
+        $.get('/get_clients.json', clients => {
+          this.clients = clients;
 
+          if(client_id != null) {
+            let indexCurrentClient = clients
+              .findIndex(client => client.id == client_id);
+
+            if(indexCurrentClient > -1) {
+              getClient = this.clients[indexCurrentClient];
+              this.clickClient(getClient);
+            }
+          }
+          
+          if(filters != null) {
+            var filtersArray = filters.split(',');
+            var newFiltersArray = ']';
+            for (var i = 0; i < filtersArray.length; i++) {
+              var array = filtersArray[i].split('-');
+  
+              if(i != 0) {
+                newFiltersArray = ',' + newFiltersArray;
+              }
+  
+              newFiltersArray = '{ "id": ' + array[1] + ', "object": "' + array[0] + '" }' + newFiltersArray;
+            }
+            newFiltersArray = '[' + newFiltersArray;
+            var jsonFiltersArray = JSON.parse(newFiltersArray);
+            this.filtrationElements = jsonFiltersArray;
+          }
+
+          this.loadComplete = true;
+        });
       }, 600);
     },
     watch: {
@@ -176,30 +232,133 @@
       },
     },
     computed: {
-      sortedClients() {
-        const k = this.sortKey;
-        return this.clients.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
+      filtrationElementsName() {
+        let {filtrationElements, recordsCompany, servicesCompany, affiliatesCompany} = this;
+
+        return filtrationElements.filter(function (element) {
+          let indexRecord = recordsCompany
+            .findIndex(r => r.id == element.id);
+          record = recordsCompany[indexRecord];
+
+          let indexService = servicesCompany
+            .findIndex(s => s.id == element.id);
+          service = servicesCompany[indexService];
+
+          let indexAffiliate = affiliatesCompany
+            .findIndex(a => a.id == element.id);
+          affiliate = affiliatesCompany[indexAffiliate];
+
+          if (record != null && element.object == 'r') {
+            return Object.assign(element, {name: record.name});
+          }
+          else if (service != null && element.object == 's') {
+            return Object.assign(element, {name: service.name});
+          }
+          else if (affiliate != null && element.object == 'a') {
+            return Object.assign(element, {name: affiliate.address});
+          }
+        });
+
       },
-      searchClients() {
+
+      activeRecords() {
+        let {filtrationElementsName} = this;
+
+        return filtrationElementsName.filter(function (element) {
+          if (element.object == 'r') {
+            return element;
+          }
+        });
+      },
+      activeService() {
+        let {filtrationElementsName} = this;
+
+        return filtrationElementsName.filter(function (element) {
+          if (element.object == 's') {
+            return element;
+          }
+        });
+      },
+
+      recordsFilter() {
+        let {recordsCompany, activeRecords} = this;
+
+        return recordsCompany.filter(function (record) {
+          if(activeRecords.find( currentValue => currentValue.id == record.id ) != undefined) {
+            return Object.assign(record, {status: 'active'});
+          }
+          else {
+            return Object.assign(record, {status: 'default'});
+          }
+        });
+      },
+      servicesFilter() {
+        let {servicesCompany, activeService} = this;
+
+        return servicesCompany.filter(function (service) {
+          if(activeService.find( currentValue => currentValue.id == service.id ) != undefined) {
+            return Object.assign(service, {status: 'active'});
+          }
+          else {
+            return Object.assign(service, {status: 'default'});
+          }
+        });
+      },
+
+      clientSubscriptions: function () {
+        let {subscriptions, client} = vmClient;
+        return subscriptions.filter(function (subs) {
+          if (subs.client_id == client.id) {
+            return subs;
+          }
+        });
+      },
+
+      clientsFiltRecord() {
+        let {record, activeRecords} = this;
+
+        return this.clients.filter(function (client) {
+          if(Object.keys(record).length > 0) {
+            if(client.records_id.find( currentValue => currentValue == record.id ) == record.id)
+              return client;
+          }
+          else if(Object.keys(activeRecords).length > 0) {
+            var count = activeRecords.filter(n => client.records_id.indexOf(n.id) > -1 )
+
+            if(count.length > 0) {
+              return client;
+            }
+          }
+          else
+            return client;
+        });
+      },
+      clientsSorted() {
+        const k = this.sortKey;
+        return this.clientsFiltRecord.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
+      },
+      clientsSearch() {
         const s = validSpaces(this.search.toLowerCase());
-        return this.sortedClients.filter(n => Object.values(n.full_name.split()).some(m => m.toString().toLowerCase().includes(s)));
+        return this.clientsSorted.filter(n => Object.values(n.full_name.split()).some(m => m.toString().toLowerCase().includes(s)));
+
+        // нужно ссоритировать по выбранной группе, также по фильтрам
       },
       clientsDebtors() {
-        return this.searchClients.filter(function (client) {
+        return this.clientsSearch.filter(function (client) {
           if (client.unpaid_debt_subs > 0) {
             return client;
           }
         });
       },
       clientsCurrent() {
-        return this.searchClients.filter(function (client) {
+        return this.clientsSearch.filter(function (client) {
           if(!((client.records_id.length == 1 && client.records_id[0] == null) || client.records_id.length <= 0)) {
             return client;
           }
         });
       },
       clientsTotal() {
-        return this.searchClients;
+        return this.clientsSearch;
       },
       clientsFilter() {
         this.sendQuery(this.typeClients, 'clients',  '')
@@ -216,7 +375,7 @@
       },
       amountTotalDebtors() {
         return this.clientsFilter.reduce(function(sum, client) {
-          return sum + (client.debt_subs - client.total_amount_subs);
+          return sum + (client.unpaid_debt_subs);
         }, 0);
       }
     }

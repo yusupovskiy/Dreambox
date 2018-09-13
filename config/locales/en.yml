@@ -48,7 +48,8 @@ en:
   visit_type:
     one_time_visit: One-time visit
     reusable_visit: Reusable visit
-    one_time_abon: One-time abonnement
+    subscriptions: One-time abonnement
+    # one_time_abon: One-time abonnement
     automatic_abon: Automatic abonnement
     dynamic_abon: Dynamic abonnement
   client:

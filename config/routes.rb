@@ -50,7 +50,7 @@ Rails.application.routes.draw do
   end
   get 'get_autodata_subscription' => 'subscriptions#get_autodata_subscription'
   get 'get_subscriptions_client' => 'subscriptions#get_subscriptions_client'
-  
+  get 'get_subscriptions' => 'subscriptions#get_subscriptions'
 
   resources :companies do
     resources :affiliates, module: :companies
@@ -61,7 +61,6 @@ Rails.application.routes.draw do
       end
     end
     post 'clients/import' => 'companies/clients#import'
-    resources :services, module: :companies
     resources :fin_operations, module: :companies do
       member do
         get 'doc_pko'
@@ -70,7 +69,9 @@ Rails.application.routes.draw do
     resources :histories, module: :companies
     resources :works, module: :companies
     resources :salaries, module: :companies
+    resources :services, module: :companies
   end
+  
   # two primary keys
   delete 'records_services' => 'records_services#destroy'
   patch 'records_services' => 'records_services#update'
@@ -96,4 +97,5 @@ Rails.application.routes.draw do
   resources :categories
   get 'get_categories_income' => 'categories#get_categories_income'
   get 'get_categories_expense' => 'categories#get_categories_expense'
+
 end

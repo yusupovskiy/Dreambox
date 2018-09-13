@@ -37,6 +37,9 @@
           }
         );
       },
+      clickRecord(record) {
+        vmClient.clickRecord(record);
+      },
     },
     watch: {
     },
@@ -55,11 +58,26 @@
 
           <div 
             v-for="record in records" 
-            v-bind:class="['record-' + record.id, recordClientId == record.id ? 'active' : '' ]" 
+            :class="['record-' + record.id, recordClientId == record.id ? 'active' : '' ]" 
             class="item-panel">
             
             <div @click="clickRecordClientActive(record.id)" class="item-panel__basic-info" style="cursor: pointer;">
-              <div class="left-item-panel">{{ record.name }}</div>
+              <div class="left-item-panel">
+
+                <div class="item__btns">
+                  <div class='btn-delete'>
+                    <ion-icon name="add"></ion-icon>
+                  </div>
+                  <div class='btn-delete'>
+                    <ion-icon name="close"></ion-icon>
+                  </div>
+                  <div class='btn-delete'>
+                    <ion-icon name="arrow-dropdown"></ion-icon>
+                  </div>
+                </div>
+
+                {{ record.name }}
+              </div>
               <div class="right-item-panel">
                 <div class="right-item-panel--no-hover">нет абонемента</div>
                 <div class="btn-hide btn">Скрыть</div>
@@ -69,7 +87,7 @@
             <div class="item-panel__total-info">
 
               <div class="btns">
-                <button class="btn gray"> Перейти к группе</button>
+                <button @click="clickRecord(record)" class="btn gray"> Перейти к карте</button>
                 <button-subscribe v-bind:record="record"></button-subscribe>
               </div>
 

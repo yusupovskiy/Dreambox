@@ -14,12 +14,13 @@ class RecordsController < ApplicationController
     respond_to do |format|
       format.json { render json: s, status: :ok }
     end
-    
   end
 
   def get_records
+    records = @current_record.order('finished_at DESC')
+
     respond_to do |format|
-      format.json { render json: @current_record, status: :ok }
+      format.json { render json: records, status: :ok }
     end
   end
 

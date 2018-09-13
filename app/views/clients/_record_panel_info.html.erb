@@ -1,0 +1,190 @@
+<script type="text/javascript">
+
+  Vue.component('section-record-panel-info', {
+    data: function () {
+      return {
+        loading: false,
+        showAll: false,
+        subsClient: [],
+        showTotalInfo: false,
+        openPanelAdd: null,
+        fieldsClient: [],
+      }
+    },
+    props: {
+      record: Object,
+      servicesCompany: Array,
+    },
+    methods: {
+      closeCartRecord() {
+        let {record, clients} = vmClient;
+
+        url = window.location.href;
+        newUrl = deleteURLParameter(url, 'record');
+        history.pushState('', 'Home', newUrl);
+        vmClient.record = [];
+        vmClient.panelShow = 'home';
+        vmClient.titleInput = 'Поиск клиентов';
+
+        var urlHash = new URL(window.location.href);
+        var client_id = urlHash.searchParams.get("client");
+        if(client_id != null) {
+          let indexCurrentClient = clients
+            .findIndex(client => client.id == client_id);
+
+          if(indexCurrentClient > -1) {
+            getClient = clients[indexCurrentClient];
+            vmClient.clickClient(getClient);
+          }
+        }
+      },
+    },
+    computed: {
+      urlEditRecord: function() {
+        let {record} = vmClient
+        return '/records/' + record.id + '/edit';
+      },
+    },
+    watch: {
+      "record" : function() {
+        this.showTotalInfo = false;
+        this.fieldsClient = [];
+      },
+      "showTotalInfo" : function() {
+        this.loading = false;
+
+        if(this.showTotalInfo) {
+          setTimeout(() => {
+            this.loading = true;
+          }, 600);
+        }
+      }
+    },
+    template: `
+
+      <section id="record-panel-info" class="panel-content">
+ 
+        <div class="panel-info">
+          <div class="basic-info">
+
+            <div @click="closeCartRecord()" class="btn-back new-btn btn-close-pnl-add" style="    bottom: 0px;
+              margin: 5px 5px;
+              position: relative;">
+              <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+            </div>
+
+            <div class="basic-info__container">
+              <div class="basic-info__container__content">
+                <div class="name-panel">{{record.name}}</div>
+                <div class="additional-info">Групповая запись, по абонементу</div>
+              </div>
+            </div>
+
+            <div v-on:click="showTotalInfo = !showTotalInfo" class="click-compact" v-bind:class="{ active: showTotalInfo }"><img src="images/_ionicons_svg_ios-arrow-down.svg"></div>
+          </div>
+
+          <div v-if="showTotalInfo" class="total-info">
+
+            <div v-if="loading" style="display: grid;"> 
+              <div v-if="record.record_type != null" class="item-info">
+                <div class="title-item-info">Запись</div>
+                <div class="content-item-info">{{ record.record_type == 'grouping' ? 'Групповая' : '' }}</div>
+              </div>
+              <div v-if="record.visit_type != null" class="item-info">
+                <div class="title-item-info">Визит</div>
+                <div class="content-item-info">{{ record.visit_type == 'subscriptions' ? 'По абонементу' : '' }}</div>
+              </div>
+              <div v-if="record.total_clients != null" class="item-info">
+                <div class="title-item-info">Лимит записи</div>
+                <div class="content-item-info">{{ record.total_clients }} клиентов</div>
+              </div>
+              <div v-if="record.created_at != null" class="item-info">
+                <div class="title-item-info">Дата начала</div>
+                <div class="content-item-info">{{ record.created_at }}</div>
+              </div>
+              <div v-if="record.finished_at != null" class="item-info">
+                <div class="title-item-info">Дата завершения</div>
+                <div class="content-item-info">{{ record.finished_at }}</div>
+              </div>
+              <div v-if="record.affiliate_id != null" class="item-info">
+                <div class="title-item-info">Филиал</div>
+                <div class="content-item-info">{{ record.affiliate_id }}</div>
+              </div>
+
+
+              <div class="title-info">Настройки для абонементов</div>
+              <div v-if="record.abon_period != null" class="item-info">
+                <div class="title-item-info">Период абонемента</div>
+                <div class="content-item-info">{{ record.abon_period }}</div>
+              </div>
+              <div v-if="record.total_visits != null" class="item-info">
+                <div class="title-item-info">Посещений за абонемент</div>
+                <div class="content-item-info">{{ record.total_visits }}</div>
+              </div>
+              <div v-if="record.subscription_sale != null" class="item-info">
+                <div class="title-item-info">Продажа абонемента</div>
+                <div class="content-item-info">{{ record.subscription_sale }}</div>
+              </div>
+              <div class="item-info">
+                <div class="title-item-info">Формирование цены</div>
+                <div class="content-item-info">за абонемент</div>
+              </div>
+
+            </div>
+
+            <div v-else-if="!loading" style="width: 100%; height: 70px;">
+              <div style="position: absolute; top: 0; width: 100%; height: 100%; background-color: white;">
+                <img src="images/loading.gif" style="width: 60px; height: 60px; margin: auto; display: table; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="panel-panel">
+          <div v-if="openPanelAdd == null">
+            <div class="amount">
+              <div class="amount-price">111 ₽</div>
+              <div class="amount-name">Оплатил</div>
+            </div>
+
+            <div class="amount" style="color: #ff7375;">
+              <div class="amount-price">1111 ₽</div>
+              <div class="amount-name">Долг</div>
+            </div>
+
+            <div class="btn-show-panel btn-show-list">
+              <div class="panel-show" style="left: auto; right: 10px;">
+                <a :href="urlEditRecord">Редактировать</a>
+              </div>
+              <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
+            </div>
+            <div @click="openPanelAdd = 'addListForClient'" class="btn-add-panel">
+                <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
+            </div>
+          </div>
+
+          <section v-if="openPanelAdd == 'addListForClient'" class="panel-add">
+            <h2 class="panel-form__title">
+              <div @click="openPanelAdd = null" class="btn-back new-btn">
+                <ion-icon name="arrow-back"></ion-icon>
+              </div>
+              <span>Добавление</span>
+            </h2>
+
+            <div>
+              <div @click="openPanelAdd = 'addRecordService'" class="item-panel" style="cursor: pointer;">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel">Добавление оказываемой услуги</div>
+                  <div class="right-item-panel"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section-add-service v-if="openPanelAdd == 'addRecordService'" v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :services-company="servicesCompany"></section-add-service>
+
+        </div>
+      </section>
+    `
+  });
+</script>

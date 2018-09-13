@@ -9,7 +9,8 @@ class Record < ApplicationRecord
   #                   one_time_abon: 2, automatic_abon: 3, dynamic_abon: 4}
 
   enum record_type: {grouping: 0}
-  enum visit_type: {one_time_abon: 0}
+  # enum visit_type: {one_time_abon: 0}
+  enum visit_type: {subscriptions: 0}
   enum subscription_sale: { by_period: 'by_period', by_calendar: 'by_calendar', 
                             automatically_by_period: 'automatically_by_period', 
                             automatically_by_calendar: 'automatically_by_calendar'}

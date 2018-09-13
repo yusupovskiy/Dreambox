@@ -38,7 +38,8 @@ ru:
   visit_type:
     one_time_visit: Одноразовое посещение
     reusable_visit: Многоразовое посещение
-    one_time_abon: по абонементу
+    subscriptions: по абонементу
+    # one_time_abon: по абонементу
     automatic_abon: Автоматический абонемент
     dynamic_abon: Динамический абонемент
   client:

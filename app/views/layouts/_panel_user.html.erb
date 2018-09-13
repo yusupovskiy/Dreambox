@@ -8,12 +8,6 @@
 <%end%>
 <div id="notifications" class='notification'>
 
-  <%if flash[:notice].present?%>
-    <div class="notification__item">
-      <div style="font-size: 19px;"><%=flash[:notice]%></div>
-    </div>
-  <%end%>
-
   <div v-for="(notification, index) in notifications" class="notification__item">
     <div v-if="notification.complited" class="complited status-complited">Выполнено</div>
     <div v-else-if="!notification.complited" class="not-complited status-complited">Не выполнено</div>
@@ -22,4 +16,11 @@
       <ion-icon name="close"></ion-icon>
     </div>
   </div>
+  
+  <%if flash[:notice].present?%>
+    <div class="notification__item">
+      <div style="font-size: 19px;"><%=flash[:notice]%></div>
+    </div>
+  <%end%>
+
 </div>

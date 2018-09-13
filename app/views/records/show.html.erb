@@ -41,12 +41,12 @@
         <div class="container-information compact">
           <div v-for="(recordService, index) in recordsServices" class="item-element">
             <div class="left-side-elem">
-                <div>{{recordService.service.name}}</div>
-                <div class="panel-show">
-                  <a :href="`/companies/<%=params[:company_id]%>/services/${recordService.service_id}`">Открыть карточку</a>
-                  <div @click="editingRS = {...recordsServices[index]}">Редактировать пункт</div>
-                  <div @click="deleteRecordService(index)" class="remove_this_item">Удалить пункт</div>
-                </div>
+              <div>{{recordService.service.name}}</div>
+              <div class="panel-show">
+                <a :href="`/companies/<%=params[:company_id]%>/services/${recordService.service_id}`">Открыть карточку</a>
+                <div @click="editingRS = {...recordsServices[index]}">Редактировать пункт</div>
+                <div @click="deleteRecordService(index)" class="remove_this_item">Удалить пункт</div>
+              </div>
             </div>
             <div class="rigth-side-elem">{{recordService.money_for_abon}} ₽ ({{recordService.money_for_visit}} ₽)</div>
           </div>
@@ -86,9 +86,6 @@
             <input class="btn icon-confirm" type="button" @click="editRS">
             <input class="btn btn-no btn-hide-panel" type="button" @click="cancelEditing">
           </div>
-        </div>
-        <div>
-          <%#console%>
         </div>
         <div class="testt click-compact">Раскрыть</div>
         <div class="testt click-compact compact">Скрыть</div>

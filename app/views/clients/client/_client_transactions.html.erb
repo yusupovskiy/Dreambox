@@ -29,7 +29,7 @@
         }
       },
       cancelTransactionClient(transaction) {
-        let {client, clientTransactions} = vmClient;
+        let {client, clientTransactions, clientSubscriptions} = vmClient;
         let {note} = this;
         var complited = false;
 
@@ -62,6 +62,11 @@
 
                 if(transaction.operation_id != client.operation_id) {
                   client.unpaid_debt_subs = client.unpaid_debt_subs + transaction.amount;
+
+                  let indexSub = clientSubscriptions
+                    .findIndex(s => s.operation_id == transaction.operation_id);
+                  total_amount = clientSubscriptions[indexSub].total_amount;
+                  clientSubscriptions[indexSub].total_amount = total_amount - transaction.amount;
                 }
                 client.total_amount = client.total_amount - transaction.amount;
 
@@ -76,6 +81,8 @@
       "showNoteCancel" : function() {
         this.note = '';
       }
+    },
+    computed: {
     },
     template: `
       <section v-if="show == 'client'" id="client-transactions" class="panel-content" :class="{ 'show-all': showAll}">
@@ -109,7 +116,6 @@
             <div class="item-panel__total-info">
               <div v-if="showNoteCancel">
                 <textarea v-model="note" placeholder="Комментарий к отмене" class="textarea"></textarea>
-
               </div>
 
               <div class="btns" style="margin: 0;">

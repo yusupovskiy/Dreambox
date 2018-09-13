@@ -7,7 +7,6 @@
         fix_amount: null,
         note: '',
         addTransForSubs: '',
-        subscriptions_client: [],
         transactionCreateLoading: false,
         category_id: '',
         categories_income: [],
@@ -27,8 +26,8 @@
     },
     methods: {
       createTransactionClient() {
-        let {client, clientTransactions} = vmClient;
-        let {amount, note, addTransForSubs, category_id, dateTransaction, subscriptions_client, affiliate_id, newTransactionClient} = this;
+        let {client, clientTransactions, clientSubscriptions} = vmClient;
+        let {amount, note, addTransForSubs, category_id, dateTransaction, affiliate_id, newTransactionClient} = this;
         var complited = false;
 
         if(!this.transactionCreateLoading) {
@@ -70,10 +69,10 @@
                   addTransForSubs != 'expense' &&
                   addTransForSubs != 'income') {
 
-                  let indexSub = subscriptions_client
+                  let indexSub = clientSubscriptions
                     .findIndex(s => s.operation_id == addTransForSubs);
-                  total_amount = parseInt(subscriptions_client[indexSub].total_amount, 10);
-                  subscriptions_client[indexSub].total_amount = total_amount + parseInt(amount, 10);
+                  total_amount = parseInt(clientSubscriptions[indexSub].total_amount, 10);
+                  clientSubscriptions[indexSub].total_amount = total_amount + parseInt(amount, 10);
 
                   client.unpaid_debt_subs = client.unpaid_debt_subs - parseInt(amount, 10);
                 }
@@ -86,27 +85,10 @@
           }, 600);
         }
       },
-      getSubClient() {
-        let {client} = vmClient;
-        let {loading} = this;
-        this.addTransForSubs = '';
-        this.subscriptions_client = [];
-
-        $.get(
-          '/get_subscriptions_client.json', 
-          {
-            client_id: client.id,
-          },
-          subscriptions_client => {
-            this.subscriptions_client = subscriptions_client;
-          }
-        );
-
-      },
     },
     watch: {
       "addTransForSubs" : function() {
-        let {client} = vmClient;
+        let {client, clientSubscriptions} = vmClient;
         let {addTransForSubs} = this;
 
         var date = new Date();
@@ -124,18 +106,16 @@
           this.category_id = '';
         }
         else {
-          $.get(
-            '/get_subscriptions_client.json', 
-            {
-              client_id: client.id,
-              operation_id: this.addTransForSubs,
-            },
-            e => {
-              this.amount = e[0].price - e[0].total_amount;
-              this.fix_amount = e[0].price - e[0].total_amount;
-              this.note = 'За абонемент от ' + totalDate(e[0].start_at, true, true, true) + ' до ' + totalDate(e[0].finish_at, true, true, true);
-            }
-          );
+          let indexSub = clientSubscriptions
+            .findIndex(s => s.operation_id == addTransForSubs);
+          price = clientSubscriptions[indexSub].price;
+          total_amount = clientSubscriptions[indexSub].total_amount;
+          start_at = clientSubscriptions[indexSub].start_at;
+          finish_at = clientSubscriptions[indexSub].finish_at;
+
+          this.amount = price - total_amount;
+          this.fix_amount = price - total_amount;
+          this.note = 'За абонемент от ' + totalDate(start_at, true, true, true) + ' до ' + totalDate(finish_at, true, true, true);
         }
       },
       "amount" : function() {
@@ -143,12 +123,7 @@
           this.amount = this.fix_amount;
         }
       },
-      "client" : function() {
-        this.getSubClient();
-      },
       "show" : function() {
-        this.getSubClient();
-
         $.get(
           '/get_categories_income.json',
           categories_income => {
@@ -174,16 +149,13 @@
     },
     computed: {
       unpaidSubscriptionsClient: function () {
-        if(this.subscriptions_client == null) {
-          return [];
-        }
-        else {
-          return this.subscriptions_client.filter(function (subs) {
-            if ((subs.price - subs.total_amount) > 0) {
-              return subs;
-            }
-          });
-        }
+        let {clientSubscriptions} = vmClient;
+
+        return clientSubscriptions.filter(function (subs) {
+          if ((subs.price - subs.total_amount) > 0) {
+            return subs;
+          }
+        });
       }
     },
     template: `

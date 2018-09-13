@@ -20,13 +20,26 @@
     props: ['client', 'records', 'no_records', 'show'],
     methods: {
       closeCartClient() {
-        let {client} = vmClient
+        let {client, record, recordsCompany} = vmClient;
 
         url = window.location.href;
         newUrl = deleteURLParameter(url, 'client');
         history.pushState('', 'Home', newUrl);
         vmClient.client = [];
         vmClient.panelShow = 'home';
+
+        var urlHash = new URL(window.location.href);
+        var record_id = urlHash.searchParams.get("record");
+
+        if(record_id != null) {
+          let indexCurrentRecord = recordsCompany
+            .findIndex(record => record.id == record_id);
+
+          if(indexCurrentRecord > -1) {
+            getRecord = recordsCompany[indexCurrentRecord];
+            vmClient.clickRecord(getRecord);
+          }
+        }
       }
     },
     computed: {

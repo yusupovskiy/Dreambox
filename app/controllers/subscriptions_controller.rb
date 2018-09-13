@@ -50,52 +50,90 @@ class SubscriptionsController < ApplicationController
   end
 
 
-  def get_subscriptions_client
-    client_id = params[:client_id]
-    operation_id = params[:operation_id].to_i
-    operation = operation_id > 0 ? "AND s.operation_id = #{operation_id}" : ''
+  def get_subscriptions
+    affiliates_id = @current_affiliates.ids.join(", ")
+    records_client = RecordClient.where(record_id: @current_record).ids.join(", ")
 
-    if Client.exists? id: client_id, company_id: @current_company
-
-      records_client = RecordClient.where(client_id: client_id, record_id: @current_record)
-
-      if Subscription.exists? record_client_id: records_client
-        affiliates_id = @current_affiliates.ids.join(", ")
-        records_client = records_client.ids.join(", ")
-
-        unpaid_subscriptions = Subscription.find_by_sql("
-          SELECT s.*, coalesce(SUM(t.amount), 0) AS total_amount, r.name
-          FROM subscriptions AS s
-            LEFT JOIN ( SELECT records_clients.*
-                        FROM records_clients
-              ) AS rc
-              ON s.record_client_id = rc.id
-            LEFT JOIN records AS r
-              ON rc.record_id = r.id
-            LEFT JOIN ( SELECT company_transactions.*
-                        FROM company_transactions
-                        WHERE company_transactions.affiliate_id IN (#{affiliates_id})
-              ) AS ct
-              ON s.operation_id = ct.operation_id
-            LEFT JOIN ( SELECT SUM(t1.amount) AS amount, t1.company_transaction_id
-                        FROM transactions AS t1
-                        WHERE (t1.is_active IS NULL or t1.is_active = true)
-                        GROUP BY t1.company_transaction_id
-              ) AS t 
-              ON ct.id = t.company_transaction_id
-                      
-          WHERE (s.is_active IS NULL OR s.is_active = true)
-            AND r.affiliate_id IN (#{affiliates_id})
-            AND record_client_id IN (#{records_client}) #{operation}
-          GROUP BY s.id, r.name
-        ")
-      end
-    end
+    subscriptions = Subscription.find_by_sql("
+      SELECT s.*, coalesce(SUM(t.amount), 0) AS total_amount, r.name, rc.record_id, rc.client_id
+      FROM subscriptions AS s
+        LEFT JOIN ( SELECT records_clients.*
+                    FROM records_clients
+          ) AS rc
+          ON s.record_client_id = rc.id
+        LEFT JOIN records AS r
+          ON rc.record_id = r.id
+        LEFT JOIN ( SELECT company_transactions.*
+                    FROM company_transactions
+                    WHERE company_transactions.affiliate_id IN (#{affiliates_id})
+          ) AS ct
+          ON s.operation_id = ct.operation_id
+        LEFT JOIN ( SELECT SUM(t1.amount) AS amount, t1.company_transaction_id
+                    FROM transactions AS t1
+                    WHERE (t1.is_active IS NULL or t1.is_active = true)
+                    GROUP BY t1.company_transaction_id
+          ) AS t 
+          ON ct.id = t.company_transaction_id
+                  
+      WHERE (s.is_active IS NULL OR s.is_active = true)
+        AND r.affiliate_id IN (#{affiliates_id})
+        AND record_client_id IN (#{records_client})
+      GROUP BY s.id, r.name, rc.record_id, rc.client_id
+      ORDER BY s.start_at
+    ")
 
     respond_to do |format|
-      format.json { render json: unpaid_subscriptions, status: :ok }
+      format.json { render json: subscriptions, status: :ok }
     end
   end
+
+  # def get_subscriptions_client
+  #   client_id = params[:client_id]
+  #   operation_id = params[:operation_id].to_i
+  #   operation = operation_id > 0 ? "AND s.operation_id = #{operation_id}" : ''
+
+  #   if Client.exists? id: client_id, company_id: @current_company
+
+  #     records_client = RecordClient.where(client_id: client_id, record_id: @current_record)
+
+  #     if Subscription.exists? record_client_id: records_client
+  #       affiliates_id = @current_affiliates.ids.join(", ")
+  #       records_client = records_client.ids.join(", ")
+
+  #       unpaid_subscriptions = Subscription.find_by_sql("
+  #         SELECT s.*, coalesce(SUM(t.amount), 0) AS total_amount, r.name, rc.record_id, rc.client_id
+  #         FROM subscriptions AS s
+  #           LEFT JOIN ( SELECT records_clients.*
+  #                       FROM records_clients
+  #             ) AS rc
+  #             ON s.record_client_id = rc.id
+  #           LEFT JOIN records AS r
+  #             ON rc.record_id = r.id
+  #           LEFT JOIN ( SELECT company_transactions.*
+  #                       FROM company_transactions
+  #                       WHERE company_transactions.affiliate_id IN (#{affiliates_id})
+  #             ) AS ct
+  #             ON s.operation_id = ct.operation_id
+  #           LEFT JOIN ( SELECT SUM(t1.amount) AS amount, t1.company_transaction_id
+  #                       FROM transactions AS t1
+  #                       WHERE (t1.is_active IS NULL or t1.is_active = true)
+  #                       GROUP BY t1.company_transaction_id
+  #             ) AS t 
+  #             ON ct.id = t.company_transaction_id
+                      
+  #         WHERE (s.is_active IS NULL OR s.is_active = true)
+  #           AND r.affiliate_id IN (#{affiliates_id})
+  #           AND record_client_id IN (#{records_client}) #{operation}
+  #         GROUP BY s.id, r.name, rc.record_id, rc.client_id
+  #         ORDER BY s.start_at
+  #       ")
+  #     end
+  #   end
+
+  #   respond_to do |format|
+  #     format.json { render json: unpaid_subscriptions, status: :ok }
+  #   end
+  # end
 
   def index
     affiliates = Affiliate.where(company_id: @current_company.id)
@@ -124,6 +162,7 @@ class SubscriptionsController < ApplicationController
 
   def create
     @subscription = Subscription.new(subscription_params)
+    result = []
 
     rc = RecordClient.eager_load(:record).find_by record_id: params[:record_id], client_id: params[:client_id]
     r = @current_record.find rc.record_id
@@ -221,9 +260,9 @@ class SubscriptionsController < ApplicationController
       complited = false
       note = 'Невозможно продать абонемент, так как клиент отписан от данной записи'
       
-    # elsif price_services.count.zero? or price_services.sum(:money_for_abon) <= 0
-    #   complited = false
-    #   note = 'Перед продажей абонемента необходимо в записи добавить услугу, либо указать стоимость услуги больше нуля'
+    elsif price_services.count.zero? or price_services.sum(:money_for_abon) <= 0
+      complited = false
+      note = 'Перед продажей абонемента необходимо в записи добавить услугу, либо указать стоимость услуги больше нуля'
 
     elsif @subscription.price.to_i < 0
       complited = false
@@ -237,13 +276,14 @@ class SubscriptionsController < ApplicationController
       complited = true
       note = "Продан абонемент на период от #{@subscription.start_at.strftime("%d %b %Y")} 
                 до #{@subscription.finish_at.strftime("%d %b %Y")}"
+      result = @subscription
 
     else
       complited = false
       note = "Абонемент не продан"
     end
 
-    messege = {complited: complited, note: note}
+    messege = {complited: complited, note: note, result: result}
 
     respond_to do |format|
       format.json { render json: messege }

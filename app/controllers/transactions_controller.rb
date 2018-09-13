@@ -27,12 +27,12 @@ class TransactionsController < ApplicationController
     affiliates_id = @current_affiliates.ids.join(", ")
 
     income = CompanyTransaction.find_by_sql("
-SELECT company_transactions.*, transactions.*, categories.name, categories.budget
-FROM company_transactions 
-  INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
-  INNER JOIN categories ON company_transactions.category_id = categories.id
-WHERE is_active = true AND affiliate_id IN (#{affiliates_id})
-       AND budget = 'income'
+      SELECT company_transactions.*, transactions.*, categories.name, categories.budget
+      FROM company_transactions 
+        INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
+        INNER JOIN categories ON company_transactions.category_id = categories.id
+      WHERE is_active = true AND affiliate_id IN (#{affiliates_id})
+             AND budget = 'income'
     ")
 
     respond_to do |format|
