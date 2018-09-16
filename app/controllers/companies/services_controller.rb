@@ -3,8 +3,18 @@ class Companies::ServicesController < ApplicationController
   before_action :set_companies_service, only: [:show, :edit, :update, :destroy]
 
   def index
-    services = Service.where(company_id: @current_company.id)
-    total_services = services.count
+    # services = Service.find_by_sql("
+    #   SELECT s.* , array_agg(DISTINCT rs.record_id ORDER BY rs.record_id) AS records_id
+    #   FROM services AS s
+    #     LEFT JOIN records_services AS rs
+    #       ON s.id = rs.service_id
+          
+    #   WHERE s.company_id = #{@current_company.id}
+    #   GROUP BY s.id
+    #   ORDER BY created_at DESC 
+    # ")
+
+    services = Service.where(company_id: @current_company.id).order('created_at DESC')
 
     respond_to do |format|
       format.json { render json: services, status: :ok }

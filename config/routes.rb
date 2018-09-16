@@ -39,7 +39,8 @@ Rails.application.routes.draw do
     end
   end
   get 'get_records' => 'records#get_records'
-  get 'get_records_client' => 'records#get_records_client'
+  get 'get_records_client' => 'records_clients#get_records_client'
+  get 'get_records_clients' => 'records_clients#get_records_clients'
   get 'get_select_records_client' => 'records#get_select_records_client'
   get 'get_subs_client' => 'records#get_subs_client'
 

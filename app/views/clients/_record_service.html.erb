@@ -2,7 +2,6 @@
   Vue.component('section-record-records', {
     data: function () {
       return {
-        loading: false,
         showAll: false,
         subsClient: [],
         recordClientId: null,
@@ -11,48 +10,20 @@
     props: {
       records: Array,
     },
-    methods: {
-      clickRecordClientActive(id) {
-        // let {client} = vmClient;
-
-        // if(this.recordClientId != id)
-        //   this.recordClientId = id;
-
-        // else if(this.recordClientId != null)
-        //   this.recordClientId = null;
-
-        // else 
-        //   this.recordClientId = id;
-
-        // $.get('/get_subs_client.json', 
-        //   {
-        //     record_id: id,
-        //     client_id: client.id,
-        //   },
-        //   subsClient => {
-        //     this.subsClient = subsClient;
-        //   }
-        // );
-        console.log(this.services[0]);
-      },
-      clickRecord(record) {
-        // vmClient.clickRecord(record); 
-      },
-    },
-    watch: {
-    },
     computed: {
       services() {
-        let {servicesCompany, servicesRecord} = vmClient;
+        let {servicesCompany, servicesRecord, record} = vmClient;
 
         return servicesRecord.filter(function (record_service) {
-          var service = servicesCompany.filter(function (service) {
-            if(record_service.service_id == service.id) {
-               return service;
-            }
-          });
+          if(record_service.record_id == record.id) {
+            var service = servicesCompany.filter(function (service) {
+              if(record_service.service_id == service.id) {
+                 return service;
+              }
+            });
 
-          return Object.assign(record_service, service[0]);
+            return Object.assign(record_service, service[0]);
+          }
         });
       },
     },
@@ -74,7 +45,7 @@
             :class="[ 'service-' + service.id ]" 
             class="item-panel">
             
-            <div @click="clickRecordClientActive(service.id)" class="item-panel__basic-info">
+            <div class="item-panel__basic-info">
               <div class="left-item-panel">
                 <div class='item__btns'>
                   <div class='btn-delete'>
@@ -102,7 +73,7 @@
 
         </div>
         <div v-else-if="services.length <= 0" class="list-panel">
-          <div class="no-record">Нет услуг</div>
+          <div class="no-record">Перед записью клиентов добавьте услугу</div>
         </div>
         <div v-else-if="loadingPanel" class="list-panel">
           <img class="loading-panel" src="images/loading.gif" />

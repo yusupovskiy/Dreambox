@@ -31,7 +31,10 @@
         <div v-if="affiliates.length > 0" class="list-panel cool-scrollbar">
 
           <div  v-for="affiliate in affiliates" 
-                :class="['affiliate-' + affiliate.id]" 
+                :class="['affiliate-' + affiliate.id, 
+                  affiliate.status == 'active' ? 'active-item' : '', 
+                  affiliate.status == 'current' ? 'current-item' : '', 
+                  affiliate.status == 'default' ? 'default-item' : '']" 
                 class="item-panel">
             
             <div class="item-panel__basic-info" style="cursor: pointer;">

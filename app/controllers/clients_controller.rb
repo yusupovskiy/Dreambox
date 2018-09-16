@@ -12,6 +12,8 @@ class ClientsController < ApplicationController
     affiliates_id = @current_affiliates.ids.join(", ")
     records_id = @current_record.ids.join(", ")
 
+    # array_agg(DISTINCT rc1.record_id ORDER BY rc1.record_id) AS records_id
+
     clients = Subscription.find_by_sql("
       SELECT c.id,
         c.last_name || ' ' || c.first_name || ' ' || c.patronymic AS full_name, 
@@ -19,8 +21,7 @@ class ClientsController < ApplicationController
         c.birthday, c.phone_number, c.archive, c.sex, 
         c.avatar, c.role, c.operation_id, 
         coalesce(o.total_amount,0) AS total_amount,
-        coalesce((SUM(s.price) - SUM(s.subs_amount)),0) AS unpaid_debt_subs,
-        array_agg(DISTINCT rc1.record_id ORDER BY rc1.record_id) AS records_id
+        coalesce((SUM(s.price) - SUM(s.subs_amount)),0) AS unpaid_debt_subs
 
       FROM clients AS c
         LEFT JOIN ( SELECT rc.*
@@ -58,13 +59,6 @@ class ClientsController < ApplicationController
                     GROUP BY o.client_id
         ) AS o
         ON c.id = o.client_id
-        
-        LEFT JOIN ( SELECT rc.*
-                    FROM records_clients AS rc
-                    WHERE (rc.record_id IN (#{records_id}) OR rc.record_id IS NULL)
-                      AND(rc.is_active IS NULL OR rc.is_active = true)
-        ) AS rc1
-        ON c.id = rc1.client_id
 
       WHERE (role & #{Client::Role::CLIENT}) != 0
         AND c.company_id = #{@current_company.id}

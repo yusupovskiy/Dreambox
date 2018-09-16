@@ -29,7 +29,10 @@
         <div v-if="services.length > 0" class="list-panel cool-scrollbar">
 
           <div  v-for="service in services" 
-                :class="['service-' + service.id, service.status == 'active' ? 'active-item' : 'current-item']" 
+                :class="['service-' + service.id,
+                  service.status == 'active' ? 'active-item' : '', 
+                  service.status == 'current' ? 'current-item' : '', 
+                  service.status == 'default' ? 'default-item' : '']" 
                 class="item-panel">
             
             <div class="item-panel__basic-info" style="cursor: pointer;">

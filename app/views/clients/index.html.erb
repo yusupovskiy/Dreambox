@@ -37,6 +37,7 @@
       clients: [],
       affiliatesCompany: [],
       recordsCompany: [],
+      recordsClients: [],
       servicesCompany: [],
       titleInput: 'Поиск клиентов',
       loadComplete: false,
@@ -90,8 +91,23 @@
           var newElementFiltration = {id: id, object: object};
           this.filtrationElements.unshift(newElementFiltration);
         }
-
       },
+      remoteElementFiltration(id, object) {
+        let {filtrationElements} = this;
+
+        let indexElement = filtrationElements
+          .findIndex(f => f.id == id && f.object == object);
+        filtrationElements.splice(indexElement, 1);
+
+        var newParamsFilter = '';
+
+        filtrationElements.filter(function(element) {
+          newParamsFilter = newParamsFilter + element.object + '-' + element.id + ','
+        });
+
+        this.sendQuery(newParamsFilter, 'filters', '');
+      },
+
       sortBy(sortKey) {
         this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
         this.sortKey = sortKey;
@@ -105,9 +121,6 @@
         url = window.location.href;
         newUrl = updateURLParameter(url, 'record', record.id);
         history.pushState(record.name, record.name, newUrl);
-
-        $.get('/records_services.json?record_id='+record.id,
-          servicesRecord => this.servicesRecord = servicesRecord);
       },
       clickClient(client) {
         this.client = client;
@@ -161,8 +174,15 @@
         $.get('/companies/1/services.json',
           servicesCompany => this.servicesCompany = servicesCompany );
 
+        $.get('/records_services.json',
+          servicesRecord => this.servicesRecord = servicesRecord);
+
         $.get('/get_subscriptions.json',
           subscriptions => this.subscriptions = subscriptions
+        );
+
+        $.get('/get_records_clients.json',
+          recordsClients => this.recordsClients = recordsClients
         );
 
         $.get('/get_records.json',
@@ -260,7 +280,7 @@
         });
 
       },
-
+      // получение всех выделенных записей
       activeRecords() {
         let {filtrationElementsName} = this;
 
@@ -270,7 +290,7 @@
           }
         });
       },
-      activeService() {
+      activeServices() {
         let {filtrationElementsName} = this;
 
         return filtrationElementsName.filter(function (element) {
@@ -279,30 +299,141 @@
           }
         });
       },
+      activeAffiliates() {
+        let {filtrationElementsName} = this;
 
-      recordsFilter() {
-        let {recordsCompany, activeRecords} = this;
-
-        return recordsCompany.filter(function (record) {
-          if(activeRecords.find( currentValue => currentValue.id == record.id ) != undefined) {
-            return Object.assign(record, {status: 'active'});
-          }
-          else {
-            return Object.assign(record, {status: 'default'});
+        return filtrationElementsName.filter(function (element) {
+          if (element.object == 'a') {
+            return element;
           }
         });
       },
-      servicesFilter() {
-        let {servicesCompany, activeService} = this;
+      // получение записей активных услуг и филиалов
+      currentRecords() {
+        let {activeRecords, activeServices, servicesCompany, recordsCompany, activeAffiliates, servicesRecord} = this;
+        var arrayIdActiveRecord = [];
 
-        return servicesCompany.filter(function (service) {
-          if(activeService.find( currentValue => currentValue.id == service.id ) != undefined) {
-            return Object.assign(service, {status: 'active'});
-          }
-          else {
-            return Object.assign(service, {status: 'default'});
+        servicesRecord.filter(function (service_record) {
+          if(activeServices.find( value => value.id == service_record.service_id) != undefined) {
+            arrayIdActiveRecord = arrayIdActiveRecord.concat(service_record.record_id);
           }
         });
+        // добавление записей активных филиалов
+        recordsCompany.map(function (record) {
+          if(activeAffiliates.find( currentValue => currentValue.id == record.affiliate_id ) != undefined) {
+
+            arrayIdActiveRecord = arrayIdActiveRecord.concat(record.id);
+          }
+        });
+
+        return arrayIdActiveRecord.filter(function(item, pos) {
+            return arrayIdActiveRecord.indexOf(item) == pos;
+        });
+      },
+      // добавления статуса для каждого элемента для списка записей по данным, полученым  выше
+      recordsFilter() {
+        let {recordsCompany, activeRecords, currentRecords} = this;
+        var presentActiveRecords = Object.keys(activeRecords).length > 0;
+        var presentCurrentRecords = Object.keys(currentRecords).length > 0;
+
+        if(presentActiveRecords || presentCurrentRecords) {
+          return recordsCompany.filter(function (record) {
+            if(activeRecords.find( currentValue => currentValue.id == record.id ) != undefined) {
+              return Object.assign(record, {status: 'active'});
+            }
+            else if(currentRecords.find( currentValue => currentValue == record.id ) != undefined) {
+              return Object.assign(record, {status: 'current'});
+            }
+            else {
+              return Object.assign(record, {status: 'default'});
+            }
+          });
+        }
+        else {
+          return recordsCompany;
+        }
+      },
+
+      // содержаться все услуги, записи которых являются активными
+      currentServices() {
+        let {servicesRecord, activeRecords} = this;
+
+        var arrayIdRecord = [];
+        var have = Object.keys(activeRecords).length > 0;
+
+        if(have) {
+          servicesRecord.filter(function (service_record) {
+            if(activeRecords.find( value => value.id == service_record.record_id) != undefined) {
+              arrayIdRecord = arrayIdRecord.concat(service_record.service_id);
+            }
+          });
+        }
+
+        return arrayIdRecord.filter(function(item, pos) {
+            return arrayIdRecord.indexOf(item) == pos;
+        });
+      },
+      // содержаться все филиалы, записи которых являются активными
+      currentAffiliates() {
+        let {recordsFilter, activeRecords} = this;
+
+        var arrayIdRecord = [];
+        var have = Object.keys(activeRecords).length > 0;
+
+        if(have) {
+          recordsFilter.filter(function(record) {
+            if(record.status == 'active') {
+              arrayIdRecord.push(record.affiliate_id);
+            }
+          });
+        }
+
+        return arrayIdRecord.filter(function(item, pos) {
+            return arrayIdRecord.indexOf(item) == pos;
+        });
+      },
+
+      servicesFilter() {
+        let {servicesCompany, currentServices, activeServices, activeRecords} = this;
+        var have = Object.keys(activeServices).length > 0 || Object.keys(activeRecords).length > 0;
+
+        if(have) {
+          return servicesCompany.filter(function (service) {
+            if(activeServices.find( currentValue => currentValue.id == service.id ) != undefined) {
+              return Object.assign(service, {status: 'active'});
+            }
+            else if(currentServices.find( currentValue => currentValue == service.id ) != undefined) {
+              return Object.assign(service, {status: 'current'});
+            }
+            else {
+              return Object.assign(service, {status: 'default'});
+            }
+          });
+        }
+        else {
+          return servicesCompany;
+        }
+      },
+      affiliatesFilter() {
+        let {affiliatesCompany, activeAffiliates, currentAffiliates, activeRecords} = this;
+        var sortAffiliates = Object.keys(activeAffiliates).length > 0 || Object.keys(activeRecords).length > 0;
+
+        if(sortAffiliates) {
+          return affiliatesCompany.filter(function (affiliate) {
+            if(activeAffiliates.find( currentValue => currentValue.id == affiliate.id ) != undefined) {
+              return Object.assign(affiliate, {status: 'active'});
+            }
+            else if(currentAffiliates.find( currentValue => currentValue == affiliate.id ) != undefined) {
+              return Object.assign(affiliate, {status: 'current'});
+            }
+            else {
+              return Object.assign(affiliate, {status: 'default'});
+            }
+          });
+        }
+        else {
+          return affiliatesCompany;
+        }
       },
 
       clientSubscriptions: function () {
@@ -314,18 +445,64 @@
         });
       },
 
-      clientsFiltRecord() {
-        let {record, activeRecords} = this;
+      clientsRecords() {
+        let {clients, recordsClients} = this;
 
-        return this.clients.filter(function (client) {
+        return clients.filter(function (client) {
+          var arraySubscribedRecordsId = [];
+          var arrayUnsubscribedRecordsId = [];
+
+          recordsClients.filter(function (record_client) {
+            if(client.id == record_client.client_id) {
+              if(record_client.is_active == true) {
+                arraySubscribedRecordsId.push(record_client.id);
+              }
+              else if(record_client.is_active == false) {
+                arrayUnsubscribedRecordsId.push(record_client.id);
+              }
+            }
+          });
+
+          arraySubscribedRecordsId = arraySubscribedRecordsId.filter(function(item, pos) {
+              return arraySubscribedRecordsId.indexOf(item) == pos;
+          });
+          arrayUnsubscribedRecordsId = arrayUnsubscribedRecordsId.filter(function(item, pos) {
+              return arrayUnsubscribedRecordsId.indexOf(item) == pos;
+          });
+
+          Object.assign(client, {subscribed_records_id: arraySubscribedRecordsId});
+          Object.assign(client, {unsubscribed_records_id: arrayUnsubscribedRecordsId});
+
+          return client;
+        });
+      },
+
+      clientsSorted() {
+        const k = this.sortKey;
+        return this.clientsRecords.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
+      },
+      clientsSearch() {
+        const s = validSpaces(this.search.toLowerCase());
+        return this.clientsSorted.filter(n => Object.values(n.full_name.split()).some(m => m.toString().toLowerCase().includes(s)));
+      },
+      clientsFiltRecord() {
+        let {record, recordsFilter, activeRecords, currentRecords} = this;
+
+        var arrayIdRecord = [];
+        var sortClientRecords = Object.keys(activeRecords).length > 0 || Object.keys(currentRecords).length > 0;
+        recordsFilter.filter(function(record) {
+          if(record.status == 'active' || record.status == 'current') {
+            arrayIdRecord.push(record.id);
+          }
+        });
+
+        return this.clientsSearch.filter(function (client) {
           if(Object.keys(record).length > 0) {
-            if(client.records_id.find( currentValue => currentValue == record.id ) == record.id)
+            if(client.subscribed_records_id.find( currentValue => currentValue == record.id ) == record.id)
               return client;
           }
-          else if(Object.keys(activeRecords).length > 0) {
-            var count = activeRecords.filter(n => client.records_id.indexOf(n.id) > -1 )
-
-            if(count.length > 0) {
+          else if(sortClientRecords) {
+            if(arrayIdRecord.some(e => client.subscribed_records_id.indexOf(e) >= 0)) {
               return client;
             }
           }
@@ -333,26 +510,16 @@
             return client;
         });
       },
-      clientsSorted() {
-        const k = this.sortKey;
-        return this.clientsFiltRecord.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
-      },
-      clientsSearch() {
-        const s = validSpaces(this.search.toLowerCase());
-        return this.clientsSorted.filter(n => Object.values(n.full_name.split()).some(m => m.toString().toLowerCase().includes(s)));
-
-        // нужно ссоритировать по выбранной группе, также по фильтрам
-      },
       clientsDebtors() {
-        return this.clientsSearch.filter(function (client) {
+        return this.clientsFiltRecord.filter(function (client) {
           if (client.unpaid_debt_subs > 0) {
             return client;
           }
         });
       },
       clientsCurrent() {
-        return this.clientsSearch.filter(function (client) {
-          if(!((client.records_id.length == 1 && client.records_id[0] == null) || client.records_id.length <= 0)) {
+        return this.clientsFiltRecord.filter(function (client) {
+          if(client.subscribed_records_id.length > 0) {
             return client;
           }
         });
@@ -372,6 +539,9 @@
         else if(this.typeClients == 'total') {
           return this.clientsTotal;
         }
+      },
+      currentRecordsClient() {
+
       },
       amountTotalDebtors() {
         return this.clientsFilter.reduce(function(sum, client) {

@@ -24,6 +24,14 @@ class Companies::AffiliatesController < ApplicationController
   # GET /affiliates/new
   def new
     @affiliate = Affiliate.new company_id: @current_company.id
+    @title_card = 'Добавление филиала'
+    @form_submit = 'Сохранить'
+
+    if request.referrer == request.original_url or request.referrer == nil
+      @url_back = clients_path
+    else
+      @url_back = request.referrer
+    end
   end
 
   # GET /affiliates/1/edit
@@ -37,7 +45,7 @@ class Companies::AffiliatesController < ApplicationController
 
     respond_to do |format|
       if @affiliate.save
-        format.html { redirect_to request.referer, notice: t('affiliate.created') }
+        format.html { redirect_to clients_path, notice: t('affiliate.created') }
         format.json { render :show, status: :created, location: @affiliate }
       else
         # format.html { render :new, notice: "Действие не произведено"  }

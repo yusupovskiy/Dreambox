@@ -96,18 +96,10 @@
         d = (date.getDate() + '').length == 1 ? '0' + date.getDate() : date.getDate()
         this.dateTransaction = date.getFullYear() + '-' + m + '-' + d;
 
-        if(addTransForSubs == client.operation_id || 
-          addTransForSubs == 'expense' ||
-          addTransForSubs == 'income') {
+        let indexSub = clientSubscriptions
+          .findIndex(s => s.operation_id == addTransForSubs);
 
-          this.fix_amount = null;
-          this.amount = null;
-          this.note = '';
-          this.category_id = '';
-        }
-        else {
-          let indexSub = clientSubscriptions
-            .findIndex(s => s.operation_id == addTransForSubs);
+        if(indexSub >= 0) {
           price = clientSubscriptions[indexSub].price;
           total_amount = clientSubscriptions[indexSub].total_amount;
           start_at = clientSubscriptions[indexSub].start_at;
@@ -116,6 +108,15 @@
           this.amount = price - total_amount;
           this.fix_amount = price - total_amount;
           this.note = 'За абонемент от ' + totalDate(start_at, true, true, true) + ' до ' + totalDate(finish_at, true, true, true);
+        }
+        else if(addTransForSubs == client.operation_id || 
+          addTransForSubs == 'expense' ||
+          addTransForSubs == 'income') {
+
+          this.fix_amount = null;
+          this.amount = null;
+          this.note = '';
+          this.category_id = '';
         }
       },
       "amount" : function() {
@@ -197,13 +198,15 @@
                   </option>
                 </select>
 
-                <select v-if="affiliates.length > 1 && addTransForSubs == client.operation_id" v-model="affiliate_id">
+<!--  v-if="affiliates.length > 1 && addTransForSubs == client.operation_id" -->
+
+                <select v-model="affiliate_id">
                   <option disabled value="">Выберите филиал</option>
                   <option v-for="affiliate in affiliates" :value="affiliate.id">
                     {{ affiliate.address }}
                   </option>
                 </select>
-                <input v-else-if="affiliates.length == 1" v-model="affiliate_id" type="hidden">
+                <input v-if="affiliates.length == 1" v-model="affiliate_id" type="hidden">
 
                 <input v-model="amount" type="number" placeholder="Сумма" />
                 <input v-model="dateTransaction" id="date" type="date" placeholder="Дата транзакции" />

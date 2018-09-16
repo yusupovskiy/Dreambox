@@ -1151,3 +1151,7 @@ header:hover {
 .active-item {
     color: #3880ff;
 }
+
+.default-item {
+    opacity: .3;
+}

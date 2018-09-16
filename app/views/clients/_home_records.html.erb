@@ -19,6 +19,11 @@
     },
     watch: {
     },
+    computed: {
+      statusItem() {
+
+      }
+    },
     template: `
       <section v-if="show == 'home'" class='panel-content' :class="{ 'show-all': showAll}">
         <div class="panel-header">
@@ -31,7 +36,10 @@
         <div v-if="records.length > 0" class="list-panel cool-scrollbar">
 
           <div  v-for="record in records" 
-                :class="['record-' + record.id, record.status == 'active' ? 'active-item' : 'current-item']" 
+                :class="['record-' + record.id, 
+                  record.status == 'active' ? 'active-item' : '', 
+                  record.status == 'current' ? 'current-item' : '', 
+                  record.status == 'default' ? 'default-item' : '']" 
                 class="item-panel">
             
             <div class="item-panel__basic-info" style="cursor: pointer;">

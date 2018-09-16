@@ -8,7 +8,7 @@
     props: ['record'],
     methods: {
       attachRecord(record) {
-        let {client, recordsClient, selectRecordsClient} = vmClient;
+        let {client, recordsClient, selectRecordsClient, recordsClients} = vmClient;
         var complited = false
 
         if(!this.loading) {
@@ -31,7 +31,7 @@
               error: e => console.warn('error', e)
             }).done(newRecordClient => {
               if(complited) {
-                newRecordClient = {id: record.id, name: record.name, is_active: true};
+                newRecordClient = Object.assign(record, {is_active: true, client_id: client.id});
 
                 let indexRecordsSelect = selectRecordsClient
                   .findIndex(rs => rs.id == record.id);
@@ -47,7 +47,15 @@
                   recordsClient.splice(indexRecordsClient, 1, newRecordClient);
                 }
 
-                client.records_id.push(record.id);
+                let indexCurrentRecord = recordsClients
+                  .findIndex(rs => rs.id == record.id && rs.client_id == client.id);
+                if(indexCurrentRecord < 0) {
+                  recordsClients.unshift(newRecordClient);
+                  console.log(newRecordClient);
+                }
+                else {
+                  recordsClients[indexCurrentRecord].is_active = true;
+                }
               }
 
               this.loading = false;
@@ -56,7 +64,7 @@
         }
       },
       unpinRecord(record) {
-        let {client, recordsClient, selectRecordsClient} = vmClient;
+        let {client, recordsClient, selectRecordsClient, recordsClients} = vmClient;
         var complited = false
 
         if(!this.loading) {
@@ -77,7 +85,7 @@
               error: e => console.warn('error', e)
             }).done(newRecordClient => {
               if(complited) {
-                newRecordClient = {id: record.id, name: record.name, is_active: false};
+                newRecordClient = Object.assign(record, {is_active: false, client_id: client.id});
 
                 let indexRecordsClient = recordsClient
                   .findIndex(rs => rs.id == record.id);
@@ -93,8 +101,9 @@
                   selectRecordsClient.splice(indexRecordsSelect, 1, newRecordClient);
                 }
 
-                var indexCurrentRecord = client.records_id.indexOf(record.id);
-                client.records_id.splice(indexCurrentRecord, 1);
+                let indexCurrentRecord = recordsClients
+                  .findIndex(rs => rs.id == record.id);
+                recordsClients[indexCurrentRecord].is_active = false;
               }
               
               this.loading = false;

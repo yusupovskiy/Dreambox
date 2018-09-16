@@ -2,6 +2,14 @@
   <div style="background-color: #e6eaed; cursor: default;">
       <div style="float: left;">
         <div style="font-size: 15px; font-weight: 600;"><%= Company.find(@current_people.company_id).name %></div>
+
+        <% if @user_director or @user_administrator %>
+          <div style="    font-size: 13px;
+    width: 100%;
+    margin: 0 0 5px;
+    color: darkgrey;">Срок подписки: <%= time_limit(@current_company.time_limit) %> дн.</div>
+        <% end %>
+
         <div class="img-input" style="width: 100%; font-size: 13px;">
           <%= image_tag s3_image(@current_people.avatar), style: 'width: 10px; height: 10px; margin: 0 5px;' %>
           <%= @current_people.last_name %> <%= @current_people.first_name %>

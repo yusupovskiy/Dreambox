@@ -24,21 +24,6 @@ class RecordsController < ApplicationController
     end
   end
 
-  def get_records_client
-    client_id = params[:client_id]
-    records = RecordClient.joins(:record)
-                          .select(' records.id, name, abon_period, finished_at, 
-                                    records_clients.created_at as create_records_client, 
-                                    record_type, visit_type, 
-                                    is_active, record_id, client_id')
-                          .order('is_active DESC, create_records_client DESC, finished_at DESC')
-                          .where client_id: client_id
-
-    respond_to do |format|
-      format.json { render json: records, status: :ok }
-    end
-  end
-
   def get_select_records_client
     id_client = params[:client_id]
     
@@ -63,7 +48,14 @@ class RecordsController < ApplicationController
 
   def new
     @record = Record.new
-    @services = Service.where(company_id: @current_company.id)
+    @title_card = 'Добавление записи'
+    @form_submit = 'Сохранить'
+
+    if request.referrer == request.original_url or request.referrer == nil
+      @url_back = clients_path
+    else
+      @url_back = request.referrer
+    end
   end
 
   # GET /records/1/edit
@@ -72,9 +64,9 @@ class RecordsController < ApplicationController
     @form_submit = 'Изменить'
 
     if request.referrer == request.original_url or request.referrer == nil
-      @url = clients_path
+      @url_back = clients_path
     else
-      @url = request.referrer
+      @url_back = request.referrer
     end
   end
 
