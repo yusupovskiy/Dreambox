@@ -188,12 +188,12 @@
         </div>
         <div class="panel-panel">
           <div v-if="openPanelAdd == null">
-            <div class="amount">
+            <div class="amount" style="cursor: default; opacity: 1;">
               <div class="amount-price">{{ client.total_amount }} ₽</div>
               <div class="amount-name">Оплатил</div>
             </div>
 
-            <div class="amount" style="color: #ff7375;">
+            <div class="amount" style="color: #ff7375; cursor: default; opacity: 1;">
               <div class="amount-price">{{ client.unpaid_debt_subs }} ₽</div>
               <div class="amount-name">Долг</div>
             </div>

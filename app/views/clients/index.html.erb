@@ -116,7 +116,9 @@
         this.record = record;
         this.panelShow = 'record';
         this.titleInput = record.name;
-        this.typeClients = 'current';
+
+        if(this.typeClients == 'total')
+          this.typeClients = 'current';
 
         url = window.location.href;
         newUrl = updateURLParameter(url, 'record', record.id);

@@ -14,8 +14,15 @@
     props: {
       record: Object,
       servicesCompany: Array,
+      clientsCurrent: Array,
+      clientsDebtors: Array,
+      clientsTotal: Array,
+      amountTotalDebtors: Number,
     },
     methods: {
+      typeClients(type) {
+        vmClient.typeClients = type;
+      },
       closeCartRecord() {
         let {record, clients} = vmClient;
 
@@ -43,6 +50,9 @@
       urlEditRecord: function() {
         let {record} = vmClient
         return '/records/' + record.id + '/edit';
+      },
+      getTypeClients() {
+        return vmClient.typeClients;
       },
     },
     watch: {
@@ -142,18 +152,18 @@
         </div>
         <div class="panel-panel">
           <div v-if="openPanelAdd == null">
-            <div class="amount">
-              <div class="amount-price">18</div>
-              <div class="amount-name">Клиентов</div>
+            <div @click="typeClients('current')" class="amount" style="color: #3880ff;" :class="[ getTypeClients == 'current' ? 'active' : '' ]">
+              <div class="amount-price">{{ clientsCurrent.length }}</div>
+              <div class="amount-name">Клиенты</div>
             </div>
 
-            <div class="amount" style="color: #ff7375;">
-              <div class="amount-price">10</div>
+            <div @click="typeClients('debtors')" class="amount" style="color: #3880ff;" :class="[ getTypeClients == 'debtors' ? 'active' : '' ]">
+              <div class="amount-price">{{ clientsDebtors.length }}</div>
               <div class="amount-name">Должники</div>
             </div>
 
-            <div class="amount" style="color: #ff7375;">
-              <div class="amount-price">1111₽</div>
+            <div class="amount" style="color: #ff7375; cursor: default; opacity: 1;">
+              <div class="amount-price">{{ amountTotalDebtors }} ₽</div>
               <div class="amount-name">Долг</div>
             </div>
 
