@@ -1,9 +1,13 @@
-<section-client-panel-info :client="client" :records="recordsClient" :no_records="selectRecordsClient" :show="panelShow"></section-client-panel-info>
+<div v-if="panelShow == 'client'" id="client-card">
 
-<section-client-records :records="recordsClient" :show="panelShow"></section-client-records>
+  <section-client-panel-info :client="client" :records="recordsCompany">
+  </section-client-panel-info>
 
-<section-client-transactions :transactions="clientTransactions" :show="panelShow"></section-client-transactions>
+  <section-client-records :client="client"></section-client-records>
 
-<section v-if="panelShow == 'client'" id="client-discounts" class='panel-content'>
-  <%= render 'clients/client_discounts' %>
-</section>
+  <section-client-transactions :transactions="clientTransactions"></section-client-transactions>
+
+  <section id="client-discounts" class='panel-content'>
+    <%= render 'clients/client_discounts' %>
+  </section>
+</div>

@@ -3,7 +3,7 @@
 
   <input v-model="search" name="search" class="search-field" type="text" :placeholder="titleInput" id="search" autocomplete="off" />
 
-  <div style="    height: 60px;
+  <div style="
     position: absolute;
     z-index: 999;
     top: 0;
@@ -12,6 +12,9 @@
     <div @click="showSort = !showSort" class="reset-search" :class="[showSort ? 'active' : '']">
       <ion-icon name="options"></ion-icon>
     </div>
+<!--     <div class="reset-search" >
+      <ion-icon name="person-add"></ion-icon>
+    </div> -->
     <div v-if="search.length > 0" class="reset-search" @click="search = ''" >
       <ion-icon name="close"></ion-icon>
     </div>

@@ -16,6 +16,11 @@
       clickRecord(record) {
         vmClient.clickRecord(record);
       },
+      deleteParamsFiltration(id) {
+        let index = vmClient.filtrationElements.findIndex(e => e.id == id);
+
+        vmClient.deleteParamsFiltration(index, id, 'r');
+      },
     },
     watch: {
     },
@@ -46,7 +51,10 @@
               <div class="left-item-panel" style="white-space: nowrap;">
 
                   <div class="item__btns">
-                    <div @click="addRecordFiltration(record)" class='btn-delete'>
+                    <div v-if="record.status == 'active'" @click="deleteParamsFiltration(record.id)" class='btn-delete'>
+                      <ion-icon name="checkbox"></ion-icon>
+                    </div>
+                    <div v-else @click="addRecordFiltration(record)" class='btn-delete'>
                       <ion-icon name="checkbox-outline"></ion-icon>
                     </div>
                     <div @click="clickRecord(record)" class='btn-delete'>

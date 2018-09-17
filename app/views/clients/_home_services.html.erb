@@ -14,6 +14,11 @@
       addFiltration(service) {
         vmClient.addElementFiltration(service.id, 's');
       },
+      deleteParamsFiltration(id, object) {
+        let index = vmClient.filtrationElements.findIndex(e => e.id == id);
+
+        vmClient.deleteParamsFiltration(index, id, 's');
+      },
     },
     watch: {
     },
@@ -39,7 +44,10 @@
               <div class="left-item-panel" style="white-space: nowrap;">
 
                   <div class="item__btns">
-                    <div @click="addFiltration(service)" class='btn-delete'>
+                    <div v-if="service.status == 'active'" @click="deleteParamsFiltration(service.id)" class='btn-delete'>
+                      <ion-icon name="checkbox"></ion-icon>
+                    </div>
+                    <div v-else @click="addFiltration(service)" class='btn-delete'>
                       <ion-icon name="checkbox-outline"></ion-icon>
                     </div>
                   </div>

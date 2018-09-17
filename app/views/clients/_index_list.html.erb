@@ -10,9 +10,17 @@
       <img class="avatar-listt" src="/resources/no-image-available.png">
       <div class="left-content">
         <div class="name-content">{{ clientItem.full_name }}</div>
-        <span class="desc-content">- UCMAS</span>
+        <span class="desc-content">
+
+          <span v-if="record.length == 0">- Английский язык</span>
+          <span v-else>нет абонемента</span>
+
+        </span>
       </div>
       <div class="right-content">
+
+        <button-subscribe v-if="record.length != 0" :record="record" :client="client"></button-subscribe>
+
         <span class="debt">
           {{ clientItem.unpaid_debt_subs > 0 ? '- ' + clientItem.unpaid_debt_subs + ' ₽' : ''}}
         </span>

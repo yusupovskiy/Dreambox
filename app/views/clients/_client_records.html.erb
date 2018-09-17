@@ -9,8 +9,7 @@
       }
     },
     props: {
-      records: Array,
-      show: String,
+      client: Object,
     },
     methods: {
       clickRecordClientActive(id) {
@@ -43,21 +42,33 @@
     },
     watch: {
     },
+    computed: {
+      recordsClient() {
+        let {recordsClients} = vmClient;
+        let {client} = this;
+
+        return recordsClients.filter(function (rc) {
+          if(rc.client_id == client.id) {
+           return rc;
+          }
+        });
+      },
+    },
     template: `
-      <section v-if="show == 'client'" id="client-records" class="panel-content" :class="{ 'show-all': showAll}">
+      <section id="client-records" class="panel-content" :class="{ 'show-all': showAll}">
         <dfn data-info="Все записи клиента">
           <div class="panel-header">
             <div class="title-panel">Записи</div>
-            <div v-if="records.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="recordsClient.length > 3" @click="showAll = !showAll" class="btn show-panel">
               <div v-if="showAll == false">Показать все</div>
               <div v-else-if="showAll == true">Скрыть список</div>
             </div>
           </div>
         </dfn>
-        <div v-if="records.length > 0" class="list-panel">
+        <div v-if="recordsClient.length > 0" class="list-panel">
 
           <div 
-            v-for="record in records" 
+            v-for="record in recordsClient" 
             :class="['record-' + record.id, recordClientId == record.id ? 'active' : '' ]" 
             class="item-panel">
             
@@ -88,7 +99,7 @@
 
               <div class="btns">
                 <button @click="clickRecord(record)" class="btn gray"> Перейти к карте</button>
-                <button-subscribe v-bind:record="record"></button-subscribe>
+                <button-subscribe v-bind:record="record" :client="client"></button-subscribe>
               </div>
 
               <div class="total-info__service">
@@ -124,7 +135,7 @@
           </div>
 
         </div>
-        <div v-else-if="records.length <= 0" class="list-panel">
+        <div v-else-if="recordsClient.length <= 0" class="list-panel">
           <div class="no-record">Нет записи</div>
         </div>
         <div v-else-if="loadingPanel" class="list-panel">

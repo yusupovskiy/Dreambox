@@ -95,15 +95,7 @@
 
           <div v-if="showTotalInfo" class="total-info">
 
-            <div v-if="loading" style="display: grid;"> 
-              <div v-if="record.record_type != null" class="item-info">
-                <div class="title-item-info">Запись</div>
-                <div class="content-item-info">{{ record.record_type == 'grouping' ? 'Групповая' : '' }}</div>
-              </div>
-              <div v-if="record.visit_type != null" class="item-info">
-                <div class="title-item-info">Визит</div>
-                <div class="content-item-info">{{ record.visit_type == 'subscriptions' ? 'По абонементу' : '' }}</div>
-              </div>
+            <div v-if="loading" style="display: grid;">
               <div v-if="record.total_clients != null" class="item-info">
                 <div class="title-item-info">Лимит записи</div>
                 <div class="content-item-info">{{ record.total_clients }} клиентов</div>
@@ -150,21 +142,22 @@
           </div>
 
         </div>
-        <div class="panel-panel">
-          <div v-if="openPanelAdd == null">
-            <div @click="typeClients('current')" class="amount" style="color: #3880ff;" :class="[ getTypeClients == 'current' ? 'active' : '' ]">
-              <div class="amount-price">{{ clientsCurrent.length }}</div>
-              <div class="amount-name">Клиенты</div>
+        <div class="panel-footer">
+          <div v-if="openPanelAdd == null" class="indecators">
+
+            <div @click="typeClients('current')" class="indecator interact blue-color current" :class="[typeClients == 'current' ? 'active' : '']">
+              <div class="index-indecator">{{ clientsCurrent.length }}</div>
+              <div class="name-indecator">Клиенты</div>
             </div>
 
-            <div @click="typeClients('debtors')" class="amount" style="color: #3880ff;" :class="[ getTypeClients == 'debtors' ? 'active' : '' ]">
-              <div class="amount-price">{{ clientsDebtors.length }}</div>
-              <div class="amount-name">Должники</div>
+            <div @click="typeClients('debtors')" class="indecator interact blue-color debtors" :class="[typeClients == 'debtors' ? 'active' : '']">
+              <div class="index-indecator">{{ clientsDebtors.length }}</div>
+              <div class="name-indecator">Должники</div>
             </div>
 
-            <div class="amount" style="color: #ff7375; cursor: default; opacity: 1;">
-              <div class="amount-price">{{ amountTotalDebtors }} ₽</div>
-              <div class="amount-name">Долг</div>
+            <div class="indecator red-color">
+              <div class="index-indecator">{{ amountTotalDebtors }} ₽</div>
+              <div class="name-indecator">Долг</div>
             </div>
 
             <div class="btn-show-panel btn-show-list">

@@ -52,7 +52,7 @@
       clientTransactions: [],
 
       record: [],
-      servicesRecord: [],
+      recordsServices: [],
 
       search: '',
       showSort: false,
@@ -92,20 +92,33 @@
           this.filtrationElements.unshift(newElementFiltration);
         }
       },
-      remoteElementFiltration(id, object) {
+      deleteParamsFiltration(index, id, object) {
         let {filtrationElements} = this;
 
-        let indexElement = filtrationElements
-          .findIndex(f => f.id == id && f.object == object);
-        filtrationElements.splice(indexElement, 1);
+        var urlHash = new URL(window.location.href);
+        var filters_params = urlHash.searchParams.get("filters");
+        filters_params = filters_params.replace(',' + object + '-' + id, '');
+        filters_params = filters_params.replace(object + '-' + id + ',', '');
+        filters_params = filters_params.replace(object + '-' + id, '');
 
-        var newParamsFilter = '';
+        console.log(filters_params);
 
-        filtrationElements.filter(function(element) {
-          newParamsFilter = newParamsFilter + element.object + '-' + element.id + ','
-        });
+        filtrationElements.splice(index, 1);
 
-        this.sendQuery(newParamsFilter, 'filters', '');
+        if(filters_params.length > 0) {
+          this.sendQuery(filters_params, 'filters', '');
+        }
+        else {
+          url = window.location.href;
+          newUrl = deleteURLParameter(url, 'filters');
+          history.pushState('', '', newUrl);
+        }
+      },
+      deleteAllParamsFiltration() {
+        this.filtrationElements = [];
+        url = window.location.href;
+        newUrl = deleteURLParameter(url, 'filters');
+        history.pushState('', '', newUrl);
       },
 
       sortBy(sortKey) {
@@ -177,7 +190,7 @@
           servicesCompany => this.servicesCompany = servicesCompany );
 
         $.get('/records_services.json',
-          servicesRecord => this.servicesRecord = servicesRecord);
+          recordsServices => this.recordsServices = recordsServices);
 
         $.get('/get_subscriptions.json',
           subscriptions => this.subscriptions = subscriptions
@@ -312,10 +325,10 @@
       },
       // получение записей активных услуг и филиалов
       currentRecords() {
-        let {activeRecords, activeServices, servicesCompany, recordsCompany, activeAffiliates, servicesRecord} = this;
+        let {activeRecords, activeServices, servicesCompany, recordsCompany, activeAffiliates, recordsServices} = this;
         var arrayIdActiveRecord = [];
 
-        servicesRecord.filter(function (service_record) {
+        recordsServices.filter(function (service_record) {
           if(activeServices.find( value => value.id == service_record.service_id) != undefined) {
             arrayIdActiveRecord = arrayIdActiveRecord.concat(service_record.record_id);
           }
@@ -334,11 +347,10 @@
       },
       // добавления статуса для каждого элемента для списка записей по данным, полученым  выше
       recordsFilter() {
-        let {recordsCompany, activeRecords, currentRecords} = this;
-        var presentActiveRecords = Object.keys(activeRecords).length > 0;
-        var presentCurrentRecords = Object.keys(currentRecords).length > 0;
+        let {recordsCompany, activeRecords, currentRecords, activeServices, activeAffiliates} = this;
+        var have = Object.keys(activeRecords).length > 0 || Object.keys(activeServices).length > 0 || Object.keys(activeAffiliates).length > 0;
 
-        if(presentActiveRecords || presentCurrentRecords) {
+        if(have) {
           return recordsCompany.filter(function (record) {
             if(activeRecords.find( currentValue => currentValue.id == record.id ) != undefined) {
               return Object.assign(record, {status: 'active'});
@@ -352,19 +364,21 @@
           });
         }
         else {
-          return recordsCompany;
+          return recordsCompany.filter(function (record) {
+            return Object.assign(record, {status: 'current'});
+          });
         }
       },
 
       // содержаться все услуги, записи которых являются активными
       currentServices() {
-        let {servicesRecord, activeRecords} = this;
+        let {recordsServices, activeRecords} = this;
 
         var arrayIdRecord = [];
         var have = Object.keys(activeRecords).length > 0;
 
         if(have) {
-          servicesRecord.filter(function (service_record) {
+          recordsServices.filter(function (service_record) {
             if(activeRecords.find( value => value.id == service_record.record_id) != undefined) {
               arrayIdRecord = arrayIdRecord.concat(service_record.service_id);
             }
@@ -413,7 +427,9 @@
           });
         }
         else {
-          return servicesCompany;
+          return servicesCompany.filter(function (service) {
+            return Object.assign(service, {status: 'current'});
+          });
         }
       },
       affiliatesFilter() {
@@ -434,7 +450,9 @@
           });
         }
         else {
-          return affiliatesCompany;
+          return affiliatesCompany.filter(function (affiliate) {
+            return Object.assign(affiliate, {status: 'current'});
+          });
         }
       },
 
@@ -488,10 +506,10 @@
         return this.clientsSorted.filter(n => Object.values(n.full_name.split()).some(m => m.toString().toLowerCase().includes(s)));
       },
       clientsFiltRecord() {
-        let {record, recordsFilter, activeRecords, currentRecords} = this;
+        let {record, recordsFilter, activeRecords, currentRecords, activeServices, activeAffiliates} = this;
 
         var arrayIdRecord = [];
-        var sortClientRecords = Object.keys(activeRecords).length > 0 || Object.keys(currentRecords).length > 0;
+        var sortClientRecords = Object.keys(activeRecords).length > 0  || Object.keys(activeServices).length > 0 || Object.keys(activeAffiliates).length > 0;
         recordsFilter.filter(function(record) {
           if(record.status == 'active' || record.status == 'current') {
             arrayIdRecord.push(record.id);

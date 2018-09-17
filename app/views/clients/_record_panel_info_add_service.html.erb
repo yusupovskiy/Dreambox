@@ -15,7 +15,7 @@
     },
     methods: {
       createServiceRecord() {
-        let {record, servicesRecord} = vmClient;
+        let {record, recordsServices} = vmClient;
         let {addServicesRecord, amountServiceSub, amountServiceVisit, newServicesRecord} = this;
         var complited = false;
 
@@ -43,7 +43,7 @@
             }).done(e => {
               if(complited) {
 
-                servicesRecord.unshift(newServicesRecord);
+                recordsServices.unshift(newServicesRecord);
 
                 this.addServicesRecord = '';
                 this.amountServiceSub = '';
@@ -59,12 +59,12 @@
     },
     computed: {
       no_services() {
-        let {servicesCompany, servicesRecord} = vmClient;
+        let {servicesCompany, recordsServices} = vmClient;
 
         return servicesCompany.filter(function (service) {
           var record_service = false;
 
-          record_service = servicesRecord.filter(function (record_service) {
+          record_service = recordsServices.filter(function (record_service) {
             if(record_service.service_id == service.id) {
                return true;
             }
@@ -83,7 +83,7 @@
           </div>
           <span>Прикрепление услуги</span>
         </h2>
-        <div>
+        <div v-if="no_services.length > 0">
           <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
           <div class="item-panel">
             <div class="item-panel__basic-info">
@@ -131,6 +131,10 @@
             </div>
           </div>
         </div>
+        <div v-else class="no-record">
+          Нет услуг
+        </div>
+        <a href="/companies/1/services/new" class="btn-add btn">+ Добавить услугу</a>
       </section>
     `
   });

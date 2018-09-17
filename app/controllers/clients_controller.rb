@@ -89,7 +89,7 @@ class ClientsController < ApplicationController
                       FROM field_data AS fd
                         LEFT JOIN field_templates AS ft
                           ON fd.field_id = ft.id
-                      WHERE fd.client_id = #{client_id}
+                      WHERE fd.client_id = #{client_id} AND fd.value != ''
                       ORDER BY fd.id
             ) AS ft 
             ON ib.id = ft.info_block_id

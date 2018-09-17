@@ -78,6 +78,7 @@ header {
     left: 425px;
     position: absolute;
     overflow-y: overlay;
+    border-radius: 4px 4px 0 0;
 }
 .search-field {
     width: 100%;
@@ -134,7 +135,7 @@ div.left-content {
     margin-bottom: 2px;
 }
 .left-content>span {
-    font-size: 11px;
+    font-size: 12px;
     color: #545454;
 }
 .right-content {
@@ -268,31 +269,26 @@ a.logo:hover {
     font-size: 14px;
 }
 .indecators {
-    margin: 20px;
-    display: table;
+    margin: 17px 20px;
     user-select: none;
 }
 .indecator {
     float: left;
-    color: #3880ff;
-    font-weight: bold;
     margin-right: 30px;
-    cursor: pointer;
-    opacity: .5;
 }
-.indecator:hover {
+.interact:hover {
     opacity: .8;
 }
-.indecator.active {
+.interact.active {
     opacity: 1;
     cursor: default;
 }
-.indecator>div {
-    font-size: 36px;
+.blue-color {
+    color: #3880ff;
 }
-.indecator>span {
-    font-size: 10px;
-    text-transform: uppercase;
+.interact {
+    cursor: pointer;
+    opacity: .5;
 }
 .loading {
     background-color: white;
@@ -325,10 +321,8 @@ a.logo:hover {
     color: #464646;
     user-select: none;
     cursor: default;
-}
-.panel-footer>div {
-    float: left;
-    margin-right: 20px;
+    display: grid;
+    min-height: 73px;
 }
 .loading>div {
     position: absolute;
@@ -401,7 +395,6 @@ a.logo:hover {
     opacity: .5;
     cursor: pointer;
     transition: .3s;
-    margin: 17px 0;
     float: right;
 }
 .btn-add-panel:hover {
@@ -463,11 +456,11 @@ div.show-panel {
     color: black;
     cursor: pointer;
     transition: .3s;
-    margin: 17px 7px 17px 7px;
+    margin: 0 0 0 7px;
     float: right;
 }
 .total-info {
-    margin: 20px 20px 0 40px;
+    margin: 20px 20px 0 55px;
     float: left;
     display: grid;
     position: relative;
@@ -1039,7 +1032,7 @@ header:hover {
     border-radius: 4px;
     position: relative;
 }
-.sdfdsfd {
+.params-filter {
     float: left;
     font-size: 12px;
     border: 1px solid;
@@ -1050,16 +1043,16 @@ header:hover {
     user-select: none;
     color: #3880ff;
 }
-.dsfsdfasfew {
+.params-filter:hover {
+    background-color: #ff7375;
+    border-color: #ff7375;
+    color: white;
+}
+.params-filter__img {
     float: left;
     width: 15px;
     height: 15px;
     margin-right: 4px;
-}
-.sdfdsfd:hover {
-    background-color: #ff7375;
-    border-color: #ff7375;
-    color: white;
 }
 .income {
     color: #12ce88;
@@ -1161,4 +1154,40 @@ header:hover {
 .amount.active {
     cursor: default;
     opacity: 1;
+}
+
+.index-indecator {
+    font-size: 24px;
+}
+.name-indecator {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.red-color {
+    color: rgb(255, 115, 117);
+}
+.empty-list {
+    font-size: 14px;
+    color: #ababab;
+    user-select: none;
+    cursor: default;
+    padding: 12px 0 12px 20px;
+}
+.list-params {
+    width: 84%;
+    margin: -1.5px;
+    float: left;
+    padding: 12px 0 12px 20px;
+}
+
+.params-filter__img>.hydrated:nth-last-child(1) {
+    display: none;
+}
+
+.params-filter:hover .params-filter__img>.hydrated:nth-last-child(1) {
+    display: block;
+}
+.params-filter:hover .params-filter__img>div {
+    display: none;
 }

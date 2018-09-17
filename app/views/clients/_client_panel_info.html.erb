@@ -17,7 +17,7 @@
     //   no_records: Array,
     //   show: String,
     // },
-    props: ['client', 'records', 'no_records', 'show'],
+    props: ['client', 'records'],
     methods: {
       closeCartClient() {
         let {client, record, recordsCompany} = vmClient;
@@ -43,6 +43,20 @@
       }
     },
     computed: {
+      no_records() {
+        let {recordsClients} = vmClient;
+        let {client, records} = this;
+        
+        return records.filter(function (r) {
+          var rc = recordsClients.filter(function (rc) {
+            if(r.id == rc.id && rc.is_active == true && rc.client_id == client.id) {
+              return rc;
+            }
+          });
+          if(rc.length <= 0)
+            return r;
+        });
+      },
       urlEditClient: function() {
         let {client} = vmClient
         return '/clients/' + client.id + '/edit';
@@ -131,8 +145,7 @@
     },
     template: `
 
-      <section v-if="show == 'client'" id="client-panel-info" class="panel-content">
- 
+      <section id="client-panel-info" class="panel-content">
         <div class="panel-info">
           <div class="basic-info">
 
@@ -165,7 +178,7 @@
                 <div class="content-item-info">{{client.sex}}</div>
               </div>
 
-              <div v-for="block in fieldsClient">
+              <div v-if="block.values[0] != null" v-for="block in fieldsClient">
                 <div v-if="block.name != ''">
                   <div class="title-info">{{ block.name }}</div>
 
@@ -173,7 +186,7 @@
                     <div class="title-item-info">{{ field.title }}</div>
                     <div class="content-item-info">{{ field.value }}</div>
                   </div>
-
+                  
                 </div>
               </div>
             </div>
@@ -253,7 +266,7 @@
                 <div class="item-panel__basic-info">
                   <div class="left-item-panel">{{ record.name }}</div>
                   <div class="right-item-panel">
-                    <button-subscribe v-bind:record="record"></button-subscribe>
+                    <button-subscribe :record="record" :client="client"></button-subscribe>
                   </div>
                 </div>
               </div>

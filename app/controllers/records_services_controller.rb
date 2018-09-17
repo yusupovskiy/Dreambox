@@ -81,14 +81,24 @@ class RecordsServicesController < ApplicationController
     record = RecordService.eager_load(:service)
       .find_by(record_id: pms[:record_id], service_id: pms[:service_id])
 
-    unless record.service.company.user_id == current_user.id
-      return render plain: 'The company of this record does not belong to you', status: 400
+    if record.service.company.user_id != current_user.id
+      complited = false
+      note = 'В компании нет такой услуги'
+
+    elsif !(@current_record.exists? id: pms[:record_id])
+      complited = false
+      note = 'Нет такой записи'
+
+    else
+      complited = true
+      note = 'Услуга откреплена'
+      RecordService.where(record_id: pms[:record_id], service_id: pms[:service_id]).delete_all
     end
-    
-    # we cannot "record.delete" because of double primary key
-    RecordService.where(record_id: pms[:record_id], service_id: pms[:service_id]).delete_all
+  
+    messege = {complited: complited, note: note}
+
     respond_to do |format|
-      format.json { render plain: 'ok', status: 204 }
+      format.json { render json: messege, method: :delete }
     end
   end
 

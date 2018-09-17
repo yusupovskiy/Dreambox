@@ -2,6 +2,7 @@
   Vue.component('section-record-records', {
     data: function () {
       return {
+        loadingDelete: false,
         showAll: false,
         subsClient: [],
         recordClientId: null,
@@ -10,11 +11,49 @@
     props: {
       records: Array,
     },
+    methods: {
+      deleteRecordServise(index) {
+        let {recordsServices} = vmClient;
+        let rs = recordsServices[index];
+        var complited = false
+
+        if(!this.loadingDelete) {
+          this.loadingDelete = true;
+
+          setTimeout(() => {
+            $.ajax('/records_services.json',{
+              method: 'DELETE',
+              data: {
+                authenticity_token: authToken,
+                record_service: {
+                  record_id: rs.record_id,
+                  service_id: rs.service_id
+                }
+              },
+              success: messege => {
+                complited = messege.complited;
+                vmNotifications.notifications.unshift(messege);
+                // recordsServices.splice(index, 1);
+              },
+              error: e => console.warn('error', e)
+            }).done(newRecordClient => {
+              if(complited) {
+                recordsServices.splice(index, 1);
+              }
+              this.loadingDelete = false;
+            });
+          }, 600);
+        }
+
+
+
+      },
+    },
     computed: {
       services() {
-        let {servicesCompany, servicesRecord, record} = vmClient;
+        let {servicesCompany, recordsServices, record} = vmClient;
 
-        return servicesRecord.filter(function (record_service) {
+        return recordsServices.filter(function (record_service) {
           if(record_service.record_id == record.id) {
             var service = servicesCompany.filter(function (service) {
               if(record_service.service_id == service.id) {
@@ -41,7 +80,7 @@
         <div v-if="services.length > 0" class="list-panel">
 
           <div 
-            v-for="service in services" 
+            v-for="(service, index) in services" 
             :class="[ 'service-' + service.id ]" 
             class="item-panel">
             
@@ -51,7 +90,7 @@
                   <div class='btn-delete'>
                     <ion-icon name="options"></ion-icon>
                   </div>
-                  <div class='btn-delete'>
+                  <div @click="deleteRecordServise(index)" class='btn-delete'>
                     <ion-icon name="trash"></ion-icon>
                   </div>
                 </div>
@@ -63,7 +102,6 @@
                   <div v-if="service.money_for_abon > 0">{{ service.money_for_abon }} ₽</div>
                   <div v-if="service.money_for_visit > 0">{{ service.money_for_visit }} ₽</div>
                 </div>
-
 
               </div>
             </div>
