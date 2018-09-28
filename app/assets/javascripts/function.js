@@ -73,3 +73,34 @@ function totalDate(date, d, m, y) {
 
   return newDate;
 }
+
+function setDate(day, month, year) {
+  var day = day;
+  var month = month + 1;
+  var year = year;
+
+  if (month < 10) month = "0" + month;
+  if (day < 10) day = "0" + day;
+
+  var today = year + "-" + month + "-" + day;
+
+  return today;
+}
+
+function getLastDayOfMonth(year, month) {
+  var date = new Date(year, month + 1, 0);
+  return date;
+}
+
+function nameMonth(month, ending) {
+  var arrayNameMonth = ['январь','февраль','март','апрель','май',
+    'июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+
+  var arrayNameMonth2 = ['января','февраля','марта','апреля','мая',
+    'июня','июля','августа','сентября','октября','ноября','декабря'];
+
+  if(ending == 1)
+    return arrayNameMonth[month];
+  else if(ending == 2)
+    return arrayNameMonth2[month];
+}

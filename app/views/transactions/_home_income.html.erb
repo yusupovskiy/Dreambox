@@ -1,0 +1,74 @@
+<script type="text/javascript">
+  Vue.component('section-home-income', {
+    data: function () {
+      return {
+        showAll: false,
+      }
+    },
+    props: {
+      categories_income: Array,
+    },
+    methods: {
+      amount(amount) {
+        return amount.toLocaleString();
+      },
+      addFiltration(category) {
+        vmTransaction.addElementFiltration(category.id, 'i');
+      },
+      deleteParamsFiltration(id, object) {
+        let index = vmTransaction.filtrationElements.findIndex(e => e.id == id);
+
+        vmTransaction.deleteParamsFiltration(index, id, 'i');
+      },
+    },
+    template: `
+      <section class='panel-content' :class="{ 'show-all': showAll}">
+        <div class="panel-header">
+          <div class="title-panel">Категории доходов</div>
+          <div v-if="categories_income.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Показать все</div>
+            <div v-else-if="showAll == true">Скрыть список</div>
+          </div>
+        </div>
+        <div v-if="categories_income.length > 0" class="list-panel cool-scrollbar">
+
+          <div  v-for="category in categories_income" 
+                :class="['category-' + category.id, 
+                  category.status == 'active' ? 'active-item' : '', 
+                  category.status == 'current' ? 'current-item' : '', 
+                  category.status == 'default' ? 'default-item' : '']" 
+                class="item-panel">
+            
+            <div class="item-panel__basic-info">
+              <div class="left-item-panel" style="white-space: nowrap;">
+
+                  <div class="item__btns">
+                    <div v-if="category.status == 'active'" @click="deleteParamsFiltration(category.id)" class='btn-delete'>
+                      <ion-icon name="checkbox"></ion-icon>
+                    </div>
+                    <div v-else @click="addFiltration(category)" class='btn-delete'>
+                      <ion-icon name="checkbox-outline"></ion-icon>
+                    </div>
+                  </div>
+
+                  {{ category.name }}</div>
+              <div class="right-item-panel">
+                <div class="green-color">+{{ amount(category.amount) }} ₽</div>
+              </div>
+            </div>
+
+            <div class="item-panel__total-info"></div>
+          </div>
+
+        </div>
+        <div v-else-if="categories_income.length <= 0" class="list-panel">
+          <div class="no-record">Нет записи</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+
+      </section>
+    `
+  });
+</script>

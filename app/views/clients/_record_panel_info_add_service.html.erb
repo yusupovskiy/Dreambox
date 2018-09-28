@@ -15,7 +15,7 @@
     },
     methods: {
       createServiceRecord() {
-        let {record, recordsServices} = vmClient;
+        let {record, recordsServices, recordsCompany} = vmClient;
         let {addServicesRecord, amountServiceSub, amountServiceVisit, newServicesRecord} = this;
         var complited = false;
 
@@ -42,8 +42,15 @@
               error: e => console.warn('error', e)
             }).done(e => {
               if(complited) {
-
                 recordsServices.unshift(newServicesRecord);
+
+                let indexRecord = recordsCompany.findIndex(r => r.id == newServicesRecord.record_id);
+
+                console.log(vmClient.recordsCompany[indexRecord].total_price_abon);
+                
+                vmClient.recordsCompany[indexRecord].total_price_abon = recordsCompany[indexRecord].total_price_abon + newServicesRecord.money_for_abon;
+
+                console.log(vmClient.recordsCompany[indexRecord].total_price_abon);
 
                 this.addServicesRecord = '';
                 this.amountServiceSub = '';
@@ -59,18 +66,15 @@
     },
     computed: {
       no_services() {
-        let {servicesCompany, recordsServices} = vmClient;
+        let {servicesCompany, recordsServices, record} = vmClient;
 
         return servicesCompany.filter(function (service) {
-          var record_service = false;
-
-          record_service = recordsServices.filter(function (record_service) {
-            if(record_service.service_id == service.id) {
-               return true;
+          var record_service = recordsServices.filter(function (record_service) {
+            if(record_service.record_id == record.id && record_service.service_id == service.id) {
+              return record_service;
             }
           });
-
-          if(record_service == false)
+          if(record_service.length <= 0)
             return service;
         });
       },
@@ -134,7 +138,7 @@
         <div v-else class="no-record">
           Нет услуг
         </div>
-        <a href="/companies/1/services/new" class="btn-add btn">+ Добавить услугу</a>
+        <a href="/companies/1/services/new" class="btn-add btn">+ Добавить новую услугу</a>
       </section>
     `
   });

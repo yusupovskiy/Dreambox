@@ -7,18 +7,19 @@
   <%end%>
 <%end%>
 <div id="notifications" class='notification'>
-
-  <% if time_limit(@current_company.time_limit) <= 5 %>
-    <div class="notification__item">
-      <div class="not-complited status-complited">Внимание!</div>
-      Осталось <%= time_limit(@current_company.time_limit) %> дней до завершения подписки: "<%= @current_company.note %>". Обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
-    </div>
-  <% end %>
-  <% if (@current_company.record_limit - @current_clients_company.count) <= 5 %>
-    <div class="notification__item">
-      <div class="not-complited status-complited">Внимание!</div>
-      Лимит по текущим клиентам скоро будет привышен, осталось <%= @current_company.record_limit - @current_clients_company.count %> мест, обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
-    </div>
+  <% if signed_in? %>
+    <% if time_limit(@current_company.time_limit) <= 5 %>
+      <div class="notification__item">
+        <div class="not-complited status-complited">Внимание!</div>
+        Осталось <%= time_limit(@current_company.time_limit) %> дн. до завершения подписки: "<%= @current_company.note %>". Обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
+      </div>
+    <% end %>
+    <% if (@current_company.record_limit - @current_clients_company.count) <= 5 %>
+      <div class="notification__item">
+        <div class="not-complited status-complited">Внимание!</div>
+        Лимит по текущим клиентам скоро будет привышен, осталось <%= @current_company.record_limit - @current_clients_company.count %> мест, обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
+      </div>
+    <% end %>
   <% end %>
 
   <div v-for="(notification, index) in notifications" class="notification__item">
@@ -32,8 +33,7 @@
   
   <%if flash[:notice].present?%>
     <div class="notification__item">
-      <div style="font-size: 19px;"><%=flash[:notice]%></div>
+      <div><%=flash[:notice]%></div>
     </div>
   <%end%>
-
 </div>

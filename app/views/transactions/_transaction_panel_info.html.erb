@@ -1,0 +1,80 @@
+<script type="text/javascript">
+
+  Vue.component('section-transaction-panel-info', {
+    data: function () {
+      return {
+        loading: false,
+        showAll: false,
+        subsClient: [],
+        showTotalInfo: false,
+        openPanelAdd: null,
+        fieldsClient: [],
+      }
+    },
+    props: {
+      transaction: Object,
+    },
+    // props: ['transaction'],
+    methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      date(date) {
+        return totalDate(date, true, true, true);
+      },
+      closeCart() {
+        url = window.location.href;
+        newUrl = deleteURLParameter(url, 'transaction');
+        history.pushState('', 'Home', newUrl);
+        vmTransaction.transaction = [];
+        vmTransaction.panelShow = 'home';
+      }
+    },
+    template: `
+      <section id="transaction-panel-info" class="panel-content">
+        <div class="panel-info">
+          <div class="basic-info">
+
+            <div @click="closeCart()" class="btn-back new-btn btn-close-pnl-add" style="bottom: 0px; margin: 5px 5px; position: relative;">
+              <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+            </div>
+
+            <div class="basic-info__container">
+              <div class="basic-info__container__content">
+                <div class="name-panel">Транзакция</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="total-info">
+
+            <div style="display: grid;">
+              <div v-if="transaction.number_document != ''" class="item-info">
+                <div class="title-item-info">Номер документа</div>
+                <div class="content-item-info">{{ indentAmount(transaction.number_document) }}</div>
+              </div>
+              <div v-if="transaction.amount != ''" class="item-info">
+                <div class="title-item-info">Сумма</div>
+                <div class="content-item-info">{{ indentAmount(transaction.amount) }}</div>
+              </div>
+              <div v-if="transaction.category_name != ''" class="item-info">
+                <div class="title-item-info">Категория</div>
+                <div class="content-item-info">{{ transaction.category_name }}</div>
+              </div>
+              <div v-if="transaction.date != ''" class="item-info">
+                <div class="title-item-info">Дата создания</div>
+                <div class="content-item-info">{{ date(transaction.date) }}</div>
+              </div>
+              <div v-if="transaction.note != ''" class="item-info">
+                <div class="title-item-info">Комментарий</div>
+                <div class="content-item-info">{{ transaction.note }}</div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+    `
+  });
+</script>

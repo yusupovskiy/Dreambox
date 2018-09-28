@@ -2,19 +2,91 @@
   Vue.component('section-client-records', {
     data: function () {
       return {
-        loading: false,
+        loadingCancel: false,
         showAll: false,
-        subsClient: [],
         recordClientId: null,
+        note: '',
+        subClientId: null,
+
+        showNoteCancel: false,
       }
     },
     props: {
       client: Object,
     },
     methods: {
-      clickRecordClientActive(id) {
-        let {client} = vmClient;
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      cancelSubscriptionClient(sub) {
+        let {subscriptions, client, clientTransactions} = vmClient;
+        let {note} = this;
+        var complited = false;
 
+        if(!this.loadingCancel) {
+          this.loadingCancel = true;
+
+          setTimeout(() => {
+            $.ajax('/subscriptions/' + sub.id +'/cancel.json', {
+              method: 'DELETE',
+              data: {
+                authenticity_token: authToken,
+                note: note,
+              },
+              success: messege => {
+                complited = messege.complited;
+                vmNotifications.notifications.unshift(messege);
+              },
+              error: e => console.warn('error', e)
+            }).done(e => {
+              if(complited) {
+                let index = subscriptions.findIndex(s => s.id == sub.id);
+                subscriptions[index].is_active = false;
+                
+                client.unpaid_debt_subs = client.unpaid_debt_subs - sub.price;
+
+                vmClient.clientTransactions = clientTransactions.filter(function(t) {
+                  if(t.operation_id == sub.operation_id) {
+                    client.total_amount = client.total_amount - t.amount;
+                  }
+                  else {
+                    return t;
+                  }
+                });
+                this.note = '';
+                this.showNoteCancel = false;
+                // отменять все транзакции у которых такой оператион
+              }
+              this.loadingCancel = false;
+            });
+          }, 600);
+        }
+      },
+      getSubscription(record_client) {
+        var currentDate = new Date();
+
+        var subs = this.clientSubscriptions.filter(function(sub) {
+          if(sub.record_client_id == record_client.record_client_id) {
+            var start_date = new Date(sub.start_at);
+            var finish_date = new Date(sub.finish_at);
+
+            if(start_date <= currentDate && currentDate <= finish_date) {
+              return sub;
+            }
+          }
+        });
+
+        if(subs.length > 0) {
+          var day = Math.ceil((new Date(subs[0].finish_at) - new Date())/ (1000 * 3600 * 24));
+          if(day < 0)
+            day = 0;
+          return 'осталось ' + day + ' дн.';
+        }
+        else {
+          return 'нет абонемента';
+        }
+      },
+      clickRecordClientActive(id) {
         if(this.recordClientId != id)
           this.recordClientId = id;
 
@@ -23,26 +95,57 @@
 
         else 
           this.recordClientId = id;
-
-
-        $.get(
-          '/get_subs_client.json', 
-          {
-            record_id: id,
-            client_id: client.id,
-          },
-          subsClient => {
-            this.subsClient = subsClient;
-          }
-        );
       },
       clickRecord(record) {
         vmClient.clickRecord(record);
       },
+      date(date) {
+        return totalDate(date, true, true, true);
+      },
+      statusSubsctiption(start, finish) {
+        var currentDate = new Date();
+        var start_date = new Date(start);
+        var finish_date = new Date(finish);
+
+        if(start_date <= currentDate && currentDate <= finish_date) {
+          return 'Текущий абонемент';
+        }
+        else if(start_date > currentDate && currentDate < finish_date) {
+          return 'Предстоящий абонемент';
+        }
+        else if(start_date > currentDate && currentDate < finish_date) {
+          return 'Завершенный абонемент';
+        }
+      },
+      currentSubsctiption(start, finish) {
+        var currentDate = new Date();
+        var start_date = new Date(start);
+        var finish_date = new Date(finish);
+
+        if(start_date <= currentDate && currentDate <= finish_date) {
+          return 'current';
+        }
+      },
+      clickSubActive(id) {
+        if(this.subClientId != id)
+          this.subClientId = id;
+
+        else if(this.subClientId != null)
+          this.subClientId = null;
+
+        else 
+          this.subClientId = id;
+      },
     },
     watch: {
+      showNoteCancel() {
+        this.note = '';
+      },
     },
     computed: {
+      clientSubscriptions: function () {
+        return vmClient.clientSubscriptions;
+      },
       recordsClient() {
         let {recordsClients} = vmClient;
         let {client} = this;
@@ -51,6 +154,19 @@
           if(rc.client_id == client.id) {
            return rc;
           }
+        });
+      },
+      services() {
+        let {servicesCompany, recordsServices, client} = vmClient;
+
+        return recordsServices.filter(function (record_service) {
+          var service = servicesCompany.filter(function (service) {
+            if(record_service.service_id == service.id) {
+               return service;
+            }
+          });
+
+          return Object.assign(record_service, service[0]);
         });
       },
     },
@@ -76,11 +192,8 @@
               <div class="left-item-panel">
 
                 <div class="item__btns">
-                  <div class='btn-delete'>
-                    <ion-icon name="add"></ion-icon>
-                  </div>
-                  <div class='btn-delete'>
-                    <ion-icon name="close"></ion-icon>
+                  <div @click="clickRecord(record)" class='btn-delete'>
+                    <ion-icon name="open"></ion-icon>
                   </div>
                   <div class='btn-delete'>
                     <ion-icon name="arrow-dropdown"></ion-icon>
@@ -90,7 +203,7 @@
                 {{ record.name }}
               </div>
               <div class="right-item-panel">
-                <div class="right-item-panel--no-hover">нет абонемента</div>
+                <div class="right-item-panel--no-hover">{{ getSubscription(record) }}</div>
                 <div class="btn-hide btn">Скрыть</div>
               </div>
             </div>
@@ -98,35 +211,68 @@
             <div class="item-panel__total-info">
 
               <div class="btns">
-                <button @click="clickRecord(record)" class="btn gray"> Перейти к карте</button>
                 <button-subscribe v-bind:record="record" :client="client"></button-subscribe>
               </div>
 
               <div class="total-info__service">
-                <span class="service__item">UCMAS</span>
-                <span class="service__item">Английский язык</span>
+                <span v-if="service.record_id == record.id" v-for="service in services" class="service__item">{{ service.name }}</span>
               </div>
-
-              <div>
-                <div>Нет абонемента</div>
-              </div>
-
-
-              <ul class="subscriptions1">
-                <li class="subscription1"><div></div><span>абонемент</span></li>
-                <li class="subscription1"><div></div><span>абонемент</span></li>
-                <li class="subscription1"><div></div><span>абонемент</span></li>
-                <li class="subscription1"><div></div><span>абонемент</span></li>
-              </ul>
-
-              <div class="info-about-subsc">Нет абонемента. Долг <span class="red">4000.0 ₽</span></div>
-
-                
 
               <div class="subscriptions">
-                <div v-for="subs in subsClient" class="subscription">
-                  <div class="data-subscriptions">
-                    от 01 <span>августа</span> 2018 до 31 <span>августа</span> 2018
+                <div v-if="record.id == subs.record_id" v-for="subs in clientSubscriptions" class="subscription" :class="[ 'subscription-' + subs.id, subClientId == subs.id ? 'active' : '' ]">
+                  <div class="data-subscriptions" :class="[ currentSubsctiption(subs.start_at, subs.finish_at) ]">
+
+                    <div @click="clickSubActive(subs.id)">
+                      <div>{{ statusSubsctiption(subs.start_at, subs.finish_at) }}</div>
+                      <div>{{ date(subs.start_at) }} / {{ date(subs.finish_at) }}</div>
+                    </div>
+
+                    <div class="sub-desc">
+                      <div :class="[ subs.total_amount == subs.price ? 'green-color' : 'red-color']">{{ indentAmount(subs.total_amount) }} из {{ indentAmount(subs.price) }} ₽</div>
+
+                      <div v-if="showNoteCancel">
+                        <textarea v-model="note" placeholder="Комментарий к отмене" class="textarea"></textarea>
+                      </div>
+
+                      <div class="btns" style="margin: 0;">
+                        <button 
+                          v-if="note != '' && showNoteCancel"
+                          @click="cancelSubscriptionClient(subs)" 
+                          v-bind:class="{ active: loadingCancel }" 
+                          class="btn-subscribe btn">
+
+                          <div class="btn__text">Отменить</div>
+                          <div v-if="loadingCancel" class="container" style="width: 58px;">
+                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                               viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
+                            <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                              c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
+                              c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                              c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
+                              C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
+                              c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
+                              L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                              c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                              c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                              c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                              c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                              c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
+                              c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
+                              C240.5,4,237.1,0.2,232.1,0z"/>
+                            </svg>
+                          </div>
+                        </button>
+
+                        <button 
+                          @click="showNoteCancel = !showNoteCancel" 
+                          class="btn gray">
+                          
+                          <div v-if="showNoteCancel == false">Отмена</div>
+                          <div v-if="showNoteCancel == true" class='btn-unsubscribe'>Не отменять</div>
+                        </button>
+                      </div>
+                    </div>
+
                   </div> 
                 </div>
               </div>
@@ -141,7 +287,6 @@
         <div v-else-if="loadingPanel" class="list-panel">
           <img class="loading-panel" src="images/loading.gif" />
         </div>
-
       </section>
     `
   });

@@ -3,38 +3,21 @@ class RecordsController < ApplicationController
   before_action :ensure_user_has_company
   before_action :set_record, only: [:show, :edit, :update]
 
-  def get_subs_client
-    record_id = params[:record_id]
-    client_id = params[:client_id]
-
-    rc = RecordClient.find_by record_id: record_id, client_id: client_id
-
-    s = Subscription.where(record_client_id: rc.id, is_active: true).order('start_at DESC')
-
-    respond_to do |format|
-      format.json { render json: s, status: :ok }
-    end
-  end
-
   def get_records
-    records = @current_record.order('finished_at DESC')
+    records_id = @current_record.ids.join(", ")
+
+    records = Record.find_by_sql("
+      SELECT  r.*, coalesce(SUM(rs.money_for_abon),0) AS total_price_abon
+      FROM records AS r
+        LEFT JOIN records_services AS rs
+          ON r.id = rs.record_id
+      WHERE r.id IN (#{records_id})
+      GROUP BY r.id
+      ORDER BY r.finished_at DESC
+    ")
 
     respond_to do |format|
       format.json { render json: records, status: :ok }
-    end
-  end
-
-  def get_select_records_client
-    id_client = params[:client_id]
-    
-    records_client = RecordClient.where(client_id: id_client, record_id: @current_record)
-    completed_records = @current_record.where("finished_at < ?", Date.today)
-    no_completed_records = @current_record.where.not(id: completed_records)
-    no_records_client = no_completed_records.where.not(id: records_client.where(is_active: :true).select(:record_id))
-
-
-    respond_to do |format|
-      format.json { render json: no_records_client, status: :ok }
     end
   end
   

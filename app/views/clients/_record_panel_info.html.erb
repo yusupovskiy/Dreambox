@@ -145,12 +145,12 @@
         <div class="panel-footer">
           <div v-if="openPanelAdd == null" class="indecators">
 
-            <div @click="typeClients('current')" class="indecator interact blue-color current" :class="[typeClients == 'current' ? 'active' : '']">
+            <div @click="typeClients('current')" class="indecator interact blue-color current" :class="[getTypeClients == 'current' ? 'active' : '']">
               <div class="index-indecator">{{ clientsCurrent.length }}</div>
               <div class="name-indecator">Клиенты</div>
             </div>
 
-            <div @click="typeClients('debtors')" class="indecator interact blue-color debtors" :class="[typeClients == 'debtors' ? 'active' : '']">
+            <div @click="typeClients('debtors')" class="indecator interact blue-color debtors" :class="[getTypeClients == 'debtors' ? 'active' : '']">
               <div class="index-indecator">{{ clientsDebtors.length }}</div>
               <div class="name-indecator">Должники</div>
             </div>

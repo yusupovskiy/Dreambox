@@ -19,6 +19,9 @@
     // },
     props: ['client', 'records'],
     methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
       closeCartClient() {
         let {client, record, recordsCompany} = vmClient;
 
@@ -144,7 +147,6 @@
       }
     },
     template: `
-
       <section id="client-panel-info" class="panel-content">
         <div class="panel-info">
           <div class="basic-info">
@@ -199,16 +201,17 @@
           </div>
 
         </div>
-        <div class="panel-panel">
-          <div v-if="openPanelAdd == null">
-            <div class="amount" style="cursor: default; opacity: 1;">
-              <div class="amount-price">{{ client.total_amount }} ₽</div>
-              <div class="amount-name">Оплатил</div>
+        <div class="panel-footer">
+          <div v-if="openPanelAdd == null" class="indecators">
+
+            <div class="indecator green-color">
+              <div class="index-indecator">{{ indentAmount(client.total_amount) }} ₽</div>
+              <div class="name-indecator">Оплатил</div>
             </div>
 
-            <div class="amount" style="color: #ff7375; cursor: default; opacity: 1;">
-              <div class="amount-price">{{ client.unpaid_debt_subs }} ₽</div>
-              <div class="amount-name">Долг</div>
+            <div class="indecator red-color">
+              <div class="index-indecator">{{ indentAmount(client.unpaid_debt_subs) }} ₽</div>
+              <div class="name-indecator">Долг</div>
             </div>
 
             <div class="btn-show-panel btn-show-list">
@@ -222,7 +225,7 @@
             </div>
           </div>
 
-          <section v-if="openPanelAdd == 'addListForClient'" class="panel-add">
+          <section v-if="openPanelAdd == 'addListForClient'" class="panel-add show-all">
             <h2 class="panel-form__title">
               <div @click="openPanelAdd = null" class="btn-back new-btn">
                 <ion-icon name="arrow-back"></ion-icon>
@@ -233,19 +236,25 @@
             <div>
               <div @click="openPanelAdd = 'addRecordClient'" class="item-panel" style="cursor: pointer;">
                 <div class="item-panel__basic-info">
-                  <div class="left-item-panel">Записать в группу</div>
+                  <div class="left-item-panel" style="width: 100%;">Записать в группу</div>
                   <div class="right-item-panel"></div>
                 </div>
               </div>
               <div @click="openPanelAdd = 'addSubscriptionClient'" class="item-panel" style="cursor: pointer;">
                 <div class="item-panel__basic-info">
-                  <div class="left-item-panel">Продать абонемент</div>
+                  <div class="left-item-panel" style="width: 100%;">Продать абонемент</div>
                   <div class="right-item-panel"></div>
                 </div>
               </div>
               <div @click="openPanelAdd = 'addTransactionClient'" class="item-panel" style="cursor: pointer;">
                 <div class="item-panel__basic-info">
-                  <div class="left-item-panel">Прозвести транзакцию</div>
+                  <div class="left-item-panel" style="width: 100%;">Прозвести транзакцию</div>
+                  <div class="right-item-panel"></div>
+                </div>
+              </div>
+              <div @click="openPanelAdd = 'addDiscountClient'" class="item-panel" style="cursor: pointer;">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel" style="width: 100%;">Добавить скидку или скорректировать цену</div>
                   <div class="right-item-panel"></div>
                 </div>
               </div>
@@ -281,10 +290,9 @@
 
           <section-transaction-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd" :client="client"></section-transaction-add>
 
+          <section-add-discount v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd"></section-add-discount>
         </div>
       </section>
-
-
     `
   });
 </script>

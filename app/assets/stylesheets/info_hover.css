@@ -42,6 +42,7 @@ dfn::after {
   color: #fff;
   pointer-events: none;
   transition: opacity 250ms, top 250ms;
+  z-index: 10;
 }
 dfn::before {
   content: '';
@@ -55,6 +56,7 @@ dfn::before {
   border: solid transparent 5px;
   border-bottom-color: rgba(0,0,0,0.7);
   transition: opacity 250ms, top 250ms;
+  z-index: 10;
 }
 dfn {z-index: 2;} /* Keeps the info boxes on top of other elements */
 dfn:hover {z-index: 9999;} /* Keeps the info boxes on top of other elements */

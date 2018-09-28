@@ -4,10 +4,8 @@
         <div style="font-size: 15px; font-weight: 600;"><%= Company.find(@current_people.company_id).name %></div>
 
         <% if @user_director or @user_administrator %>
-          <div style="    font-size: 13px;
-    width: 100%;
-    margin: 0 0 5px;
-    color: darkgrey;">Срок подписки: <%= time_limit(@current_company.time_limit) %> дн.</div>
+          <div style="font-size: 13px; width: 100%; margin: 0 0 5px; color: darkgrey;">Подписка: <%= time_limit(@current_company.time_limit) %> дн.<br />Лимит клиентов: <%= @current_clients_company.count %> из 
+              <%= @current_company.record_limit %></div>
         <% end %>
 
         <div class="img-input" style="width: 100%; font-size: 13px;">

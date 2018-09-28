@@ -1,13 +1,26 @@
-<div class="search">
-  <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon">
+<div class="search" :class="[showSort ? 'active' : '']">
+  <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon" />
 
-  <input v-model="searchValue" v-on:input="sendQuery('search', searchValue)" name="search" class="search-field" type="text" :placeholder="titleInput" value="<%= params[:search] %>" id="search" autocomplete="off" />
+  <input v-model="search" name="search" class="search-field" type="text" :placeholder="titleInput" id="search" autocomplete="off" />
 
-  <div v-if="searchValue.length > 0" class="reset-search" v-on:click="sendQuery('search', ''), searchValue = ''" >
-    <ion-icon name="close"></ion-icon>
+  <div style="position: absolute; z-index: 999; top: 0; right: 0px; padding-right: 5px;">
+    <div @click="showSort = !showSort" class="reset-search" :class="[showSort ? 'active' : '']">
+      <ion-icon name="options"></ion-icon>
+    </div>
+    <div v-if="search.length > 0" class="reset-search" @click="search = ''" >
+      <ion-icon name="close"></ion-icon>
+    </div>
   </div>
 
-  <div class="search-info">
-    <div class="item-search"></div>
+  <div v-if="showSort" class="search-info">
+    <div v-for="column in columns" class="item-search" :class="[ sortKey == column.column ? 'active' : '' ]">
+      <div @click="sortBy(column.column)" style="float: left;">
+        {{ column.name }}
+      </div>
+      <div v-if="sortKey == column.column" style="width: 16px; height: 16px; float: right;">
+        <ion-icon v-if="!reverse" name="arrow-dropdown"></ion-icon>
+        <ion-icon v-else-if="reverse" name="arrow-dropup"></ion-icon>
+      </div>
+    </div>
   </div>
 </div>

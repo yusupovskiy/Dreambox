@@ -15,6 +15,12 @@
       transactions: Array,
     },
     methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      date(date) {
+        return totalDate(date, true, true, true);
+      },
       clickTransactionClientActive(id) {
         let {client} = vmClient;
 
@@ -73,7 +79,7 @@
               this.transactionCreateLoading = false;
             });
           }, 600);
-        }        
+        }
       },
     },
     watch: {
@@ -94,19 +100,19 @@
         </div>
         <div v-if="transactions.length > 0" class="list-panel">
 
-          <div v-for="transaction in transactions" v-bind:class="'transaction-' + transaction.id" class="item-panel">
+          <div v-for="transaction in transactions" v-bind:class="'transaction-' + transaction.id" class="item-panel" :title='transaction.note'>
             
             <div @click="clickTransactionClientActive(transaction.id)" class="item-panel__basic-info" style="cursor: pointer;">
               <div class="left-item-panel">
                 {{ transaction.note }}
                 <div style=" font-size: 12px; color: #b3b3b3; margin-top: 3px;">
-                  {{ transaction.date }}
+                  {{ date(transaction.date) }}
                 </div>
               </div>
               <div class="right-item-panel">
                 <div class="right-item-panel--no-hover" :class="[transaction.budget == 'income' ? 'income' : 'expense']">
                   {{ transaction.budget == 'income' ? '+ ' : '- ' }}
-                  {{ transaction.amount }} ₽
+                  {{ indentAmount(transaction.amount) }} ₽
                 </div>
                 <div class="btn-hide btn">Скрыть</div>
               </div>
@@ -159,12 +165,11 @@
           </div>
         </div>
         <div v-else-if="transactions.length <= 0" class="list-panel">
-          <div class="no-record">Нет записи</div>
+          <div class="no-record">Список пуст</div>
         </div>
         <div v-else-if="loadingPanel" class="list-panel">
           <img class="loading-panel" src="images/loading.gif" />
         </div>
-
       </section>
     `
   });

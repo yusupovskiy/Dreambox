@@ -39,19 +39,14 @@ Rails.application.routes.draw do
     end
   end
   get 'get_records' => 'records#get_records'
-  get 'get_records_client' => 'records_clients#get_records_client'
   get 'get_records_clients' => 'records_clients#get_records_clients'
-  get 'get_select_records_client' => 'records#get_select_records_client'
-  get 'get_subs_client' => 'records#get_subs_client'
 
   resources :subscriptions do
     member do
-      patch 'cancel'
+      delete 'cancel'
     end
   end
   get 'get_autodata_subscription' => 'subscriptions#get_autodata_subscription'
-  get 'get_subscriptions_client' => 'subscriptions#get_subscriptions_client'
-  get 'get_subscriptions' => 'subscriptions#get_subscriptions'
 
   resources :companies do
     resources :affiliates, module: :companies
@@ -89,6 +84,7 @@ Rails.application.routes.draw do
   get 'get_income' => 'transactions#get_income'
   post 'create_transaction' => 'transactions#create_transaction'
   get 'get_client_transactions' => 'transactions#get_client_transactions'
+  get 'get_transactions' => 'transactions#get_transactions'
   delete 'cancel_transaction' => 'transactions#cancel_transaction'
   
   get 'get_affiliates' => 'companies/affiliates#get_affiliates'

@@ -127,16 +127,23 @@ header {
 }
 div.left-content {
     float: left;
-    margin: 13px 20px 0px 0;
+    margin: 13px 0 0px 0;
 }
 .name-content {
     font-size: 14px;
-    color: #252525;
+    color: #020202;
     margin-bottom: 2px;
+
+    width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .left-content>span {
     font-size: 12px;
-    color: #545454;
+    *color: #545454;
+    color: #929292;
 }
 .right-content {
     float: right;
@@ -144,9 +151,6 @@ div.left-content {
 .debt {
     margin: 22px 0 22px 0;
     display: table;
-}
-.debt {
-    color: #ff7375;
 }
 .container-list {
     box-sizing: border-box;
@@ -269,12 +273,12 @@ a.logo:hover {
     font-size: 14px;
 }
 .indecators {
-    margin: 17px 20px;
+    margin: 17px 10px;
     user-select: none;
 }
 .indecator {
     float: left;
-    margin-right: 30px;
+    margin: 0 10px;
 }
 .interact:hover {
     opacity: .8;
@@ -400,24 +404,6 @@ a.logo:hover {
 .btn-add-panel:hover {
     opacity: 1;
 }
-.amount {
-    color: #12ce88;
-    float: left;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin: 17px 0 17px 20px;
-    cursor: pointer;
-    user-select: none;
-    opacity: .5;
-    /*font-weight: 600;*/
-}
-.amount-price {
-    font-size: 24px;
-}
-.amount-name {
-    font-size: 10px;
-    font-weight: bold;
-}
 .panel-header {
     padding: 20px 20px 16px 20px;
     user-select: none;
@@ -472,14 +458,14 @@ div.show-panel {
 }
 .title-item-info {
     font-size: 13px;
-    color: #c0c0c0;
+    color: #adadad;
     margin-bottom: 3px;
     user-select: none;
     cursor: default;
 }
 .content-item-info {
     font-size: 15px;
-    color: #444444;
+    color: #252525;
 }
 .title-info {
     color: #a3a3a3;
@@ -528,6 +514,7 @@ div.show-panel {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     cursor: default;
+    color: black;
 }
 .item-panel__basic-info {
     border-bottom: 1px solid #f0f4f5;
@@ -544,7 +531,11 @@ div.show-panel {
 .left-item-panel {
     font-size: 14px;
     float: left;
-    width: 70%;
+    width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .right-item-panel {
     font-size: 14px;
@@ -576,12 +567,12 @@ div.show-panel {
 .total-info__service {
     color: #585858;
     font-size: 13px;
-    background-size: 11px 11px;
+    background-size: 13px 13px;
     background-repeat: no-repeat;
     float: left;
-    padding-left: 17px;
-    background-image: url(/images/list.png);
-    margin: 0 0 12px 0;
+    padding-left: 20px;
+    background-image: url(/images/service1.png);
+    margin-top: 10px;
     position: relative;
     z-index: 8;
     width: 100%;
@@ -605,7 +596,7 @@ div.show-panel {
     background-size: 11px 11px;
     background-repeat: no-repeat;
     float: left;
-    margin: 0 6px 12px 6px;
+    margin: 3px 6px 4px 8px;
     border: 1px solid #e2e2e2;
     border-width: 0 0 0 1px;
 }
@@ -617,14 +608,14 @@ div.show-panel {
     padding-left: 30px;
 }
 .data-subscriptions {
-    background-size: 22px 22px;
+    background-size: 18px 18px;
     background-repeat: no-repeat;
     background-image: url(/images/subs.png);
     background-color: #f5f5f5;
     background-position-y: center;
-    padding: 10px 0 10px 40px;
+    padding: 5px 0 5px 30px;
     display: table;
-    margin-left: -40px;
+    margin-left: -38px;
     color: #a7a7a7;
 }
 .panel-add {
@@ -669,7 +660,7 @@ div.show-panel {
     left: 0;
 }
 .panel-form__title {
-    margin: 0 60px 10px;
+    margin: 0 20px 10px 60px;
     padding: 11px 0;
     font-size: 16px;
     color: #444444;
@@ -1121,10 +1112,12 @@ header:hover {
 .btn-delete {
     width: 16px;
     height: 16px;
+    padding: 4px;
+    margin: -4px;
     float: left;
     cursor: pointer;
     user-select: none;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 .item__btns {
     display: none;
@@ -1149,7 +1142,10 @@ header:hover {
 }
 
 .default-item {
-    opacity: .3;
+    opacity: .45;
+}
+.default-item:hover {
+    opacity: 1;
 }
 .amount.active {
     cursor: default;
@@ -1172,7 +1168,7 @@ header:hover {
     color: #ababab;
     user-select: none;
     cursor: default;
-    padding: 12px 0 12px 20px;
+    padding: 15px 0 14px 20px;
 }
 .list-params {
     width: 84%;
@@ -1190,4 +1186,100 @@ header:hover {
 }
 .params-filter:hover .params-filter__img>div {
     display: none;
+}
+.green-color {
+    color: #12ce88;
+}
+.item-panel.active {
+    opacity: 1;
+}
+.link-to {
+    color: #4285f4;
+    font-size: 14px;
+}
+.title-btn {
+    float: right;
+    position: absolute;
+    right: 10px;
+    top: 0;
+    padding: 15px;
+    color: #12ce88;
+}
+.data-subscriptions.current {
+    color: #2a2a2a;
+}
+
+.sub-desc {
+    display: none;
+}
+.subscription.active .sub-desc {
+    display: block;
+}
+.date-display {
+    display: table;
+    margin: 0 auto;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 14px;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+.date-display:hover {
+    background-color: #e3e3e3;
+}
+.date-filter {
+    position: relative;
+}
+.btn-date {
+    width: 16px;
+    height: 16px;
+    padding: 6px;
+    position: absolute;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.btn-date:hover {
+    background-color: #e3e3e3;
+}
+.btn-date>img {
+    width: 100%;
+}
+.dark-color {
+    *color: #464646;
+    color: #303030;
+}
+
+.pnl-date-filter {
+    position: absolute;
+    background-color: white;
+    padding: 6px 0;
+    z-index: 999;
+    border-radius: 4px;
+    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.12);
+    width: 170px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 28px;
+    display: none;
+    text-align: left;
+    transition-delay: 0.5s;
+}
+.date-display:hover>.pnl-date-filter {
+    display: block;
+}
+.item-date {
+    padding: 10px 14px 10px 14px;
+    transition: .3s;
+    color: #3d3c3c;
+    font-size: 13px;
+}
+.item-date:hover {
+    background-color: whitesmoke;
+}
+.item-date.active {
+    color: #3880ff;
 }

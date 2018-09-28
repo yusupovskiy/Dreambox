@@ -529,9 +529,6 @@ input.card-search:hover {
     margin-top: 8px;
     user-select: none;
 }
-.debt {
-    color: #ff7375!important;
-}
 .amount {
     *color: #a5df9e;
     *color: #7bcd71;
@@ -1341,11 +1338,6 @@ input.input-attachment {
 }
 .show-and-hide-panel {
     display: none;
-}
-.link-to {
-    color: #4285f4;
-    font-size: 14px;
-    text-align: center;
 }
 .btn-fix {
     position: fixed;

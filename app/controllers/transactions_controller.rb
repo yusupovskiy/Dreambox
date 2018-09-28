@@ -7,7 +7,7 @@ class TransactionsController < ApplicationController
       affiliates_id = @current_affiliates.ids.join(", ")
 
       client_transactions = CompanyTransaction.find_by_sql("
-        SELECT company_transactions.*, transactions.*, categories.name, categories.budget
+        SELECT company_transactions.*, transactions.*, categories.name AS category_name, categories.budget
         FROM company_transactions 
           INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
           INNER JOIN categories ON company_transactions.category_id = categories.id
@@ -20,6 +20,23 @@ class TransactionsController < ApplicationController
       respond_to do |format|
         format.json { render json: client_transactions, status: :ok }
       end
+    end
+  end
+  def get_transactions
+    affiliates_id = @current_affiliates.ids.join(", ")
+
+    transactions = CompanyTransaction.find_by_sql("
+      SELECT company_transactions.*, transactions.*, categories.name AS category_name, categories.budget
+      FROM company_transactions 
+        INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
+        INNER JOIN categories ON company_transactions.category_id = categories.id
+        INNER JOIN operations ON company_transactions.operation_id = operations.id
+      WHERE affiliate_id IN (#{affiliates_id})
+      ORDER BY transactions.created_at DESC
+    ")
+
+    respond_to do |format|
+      format.json { render json: transactions, status: :ok }
     end
   end
 

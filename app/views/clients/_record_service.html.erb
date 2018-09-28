@@ -13,7 +13,7 @@
     },
     methods: {
       deleteRecordServise(index) {
-        let {recordsServices} = vmClient;
+        let {recordsServices, recordsCompany} = vmClient;
         let rs = recordsServices[index];
         var complited = false
 
@@ -36,9 +36,12 @@
                 // recordsServices.splice(index, 1);
               },
               error: e => console.warn('error', e)
-            }).done(newRecordClient => {
+            }).done(e => {
               if(complited) {
                 recordsServices.splice(index, 1);
+                
+                let indexRecord = recordsCompany.findIndex(r => r.id == rs.record_id);
+                vmClient.recordsCompany[indexRecord].total_price_abon = recordsCompany[indexRecord].total_price_abon - rs.money_for_abon;
               }
               this.loadingDelete = false;
             });

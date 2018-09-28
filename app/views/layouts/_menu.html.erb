@@ -1,52 +1,54 @@
-<% url = @url[3].split('?') %>
+<%if signed_in? %>
+  <% url = @url[3].split('?') %>
 
-<div class="item-menu icon-menu"></div>
-<dfn data-info="Добавление">
-  <div class="btn-add-menu">
-    <ion-icon name="add"></ion-icon>
-  </div>
-</dfn>
-<div class="pnl-add">
-  <div class="header-pnl-add">
-    <div class="btn-back new-btn btn-close-pnl-add" style="margin: 0;">
-      <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+  <div class="item-menu icon-menu"></div>
+  <dfn data-info="Добавление">
+    <div class="btn-add-menu">
+      <ion-icon name="add"></ion-icon>
     </div>
-    <h2 class="title-pnl-add" style="margin-left: 50px;">Добавить</h2>
+  </dfn>
+  <div class="pnl-add">
+    <div class="header-pnl-add">
+      <div class="btn-back new-btn btn-close-pnl-add" style="margin: 0;">
+        <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+      </div>
+      <h2 class="title-pnl-add" style="margin-left: 50px;">Добавить</h2>
+    </div>
+    <div class="body-pnl-add">
+      <%= link_to new_client_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa"></div><div class="dsafdsaf">Клиента</div>
+      <% end %>
+      <%= link_to new_record_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/group1.png);"></div><div class="dsafdsaf">Группу</div>
+      <% end %>
+      <%= link_to new_client_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/teacher.png);"></div><div class="dsafdsaf">Сотрудника</div>
+      <% end %>
+      <%= link_to new_transaction_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/teacher.png);"></div><div class="dsafdsaf">Транзакцию</div>
+      <% end %>
+
+      <%= link_to new_company_service_path(@current_company), class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/list.png);"></div><div class="dsafdsaf">Услугу</div>
+      <% end %>
+
+      <%= link_to new_company_affiliate_path(@current_company), class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/office3.png);"></div><div class="dsafdsaf">Филиал</div>
+      <% end %>
+
+      <%= link_to add_field_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa"></div><div class="dsafdsaf">Свои поля</div>
+      <% end %>
+    </div>
   </div>
-  <div class="body-pnl-add">
-    <%= link_to new_client_path, class: 'item-panel-add' do %>
-      <div class="sdfdsa"></div><div class="dsafdsaf">Клиента</div>
-    <% end %>
-    <%= link_to new_record_path, class: 'item-panel-add' do %>
-      <div class="sdfdsa" style="background-image: url(/images/group1.png);"></div><div class="dsafdsaf">Группу</div>
-    <% end %>
-    <%= link_to new_client_path, class: 'item-panel-add' do %>
-      <div class="sdfdsa" style="background-image: url(/images/teacher.png);"></div><div class="dsafdsaf">Сотрудника</div>
-    <% end %>
-    <%= link_to new_transaction_path, class: 'item-panel-add' do %>
-      <div class="sdfdsa" style="background-image: url(/images/teacher.png);"></div><div class="dsafdsaf">Транзакцию</div>
-    <% end %>
 
-    <%= link_to new_company_service_path(@current_company), class: 'item-panel-add' do %>
-      <div class="sdfdsa" style="background-image: url(/images/list.png);"></div><div class="dsafdsaf">Услугу</div>
-    <% end %>
-
-    <%= link_to new_company_affiliate_path(@current_company), class: 'item-panel-add' do %>
-      <div class="sdfdsa" style="background-image: url(/images/office3.png);"></div><div class="dsafdsaf">Филиал</div>
-    <% end %>
-
-    <%= link_to add_field_path, class: 'item-panel-add' do %>
-      <div class="sdfdsa"></div><div class="dsafdsaf">Свои поля</div>
-    <% end %>
-  </div>
-</div>
-
-<dfn data-info="Клиенты">
-  <a href="<%= clients_path %>" class="<%= url[0] == 'clients' ? 'active ' : '' %>item-menu icon-client"></a>
-</dfn>
-<dfn data-info="Структура">
-  <a href="#" class="item-menu icon-company"></a>
-</dfn>
-<dfn data-info="Транзакции">
-  <a href="<%= transactions_path %>" class="<%= url[0] == 'transactions' ? 'active ' : '' %>item-menu icon-finance"></a>
-</dfn>
+  <dfn data-info="Клиенты">
+    <a href="<%= clients_path %>" class="<%= url[0] == 'clients' ? 'active ' : '' %>item-menu icon-client"></a>
+  </dfn>
+  <dfn data-info="Структура">
+    <a href="#" class="item-menu icon-company"></a>
+  </dfn>
+  <dfn data-info="Транзакции">
+    <a href="<%= transactions_path %>" class="<%= url[0] == 'transactions' ? 'active ' : '' %>item-menu icon-finance"></a>
+  </dfn>
+<%end%>

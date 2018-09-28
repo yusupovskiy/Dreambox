@@ -18,11 +18,8 @@
         </span>
       </div>
       <div class="right-content">
-
-        <button-subscribe v-if="record.length != 0" :record="record" :client="client"></button-subscribe>
-
-        <span class="debt">
-          {{ clientItem.unpaid_debt_subs > 0 ? '- ' + clientItem.unpaid_debt_subs + ' ₽' : ''}}
+        <span class="debt red-color">
+          {{ clientItem.unpaid_debt_subs > 0 ? '- ' + indentAmount(clientItem.unpaid_debt_subs) + ' ₽' : ''}}
         </span>
       </div>
     </li>

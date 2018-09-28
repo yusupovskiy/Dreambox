@@ -1,27 +1,12 @@
 class RecordsClientsController < ApplicationController
   before_action :confirm_actions, only: [:create, :update, :destroy]
 
-  def get_records_client
-    client_id = params[:client_id]
-    records = RecordClient.joins(:record)
-                          .select(' records.id, name, abon_period, finished_at, 
-                                    records_clients.created_at as create_records_client, 
-                                    record_type, visit_type, 
-                                    is_active, record_id, client_id')
-                          .order('is_active DESC, create_records_client DESC, finished_at DESC')
-                          .where client_id: client_id
-
-    respond_to do |format|
-      format.json { render json: records, status: :ok }
-    end
-  end
-
   def get_records_clients
     records = RecordClient.joins(:record)
                           .select(' records.id, name, abon_period, finished_at, 
                                     records_clients.created_at as create_records_client, 
                                     record_type, visit_type, 
-                                    is_active, client_id')
+                                    is_active, client_id, records_clients.id as record_client_id')
                           .order('is_active DESC, create_records_client DESC, finished_at DESC')
                           .where record_id: @current_record
 

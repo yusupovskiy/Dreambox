@@ -24,7 +24,7 @@ select rc.*, c.archive, r.total_visits, r.finished_at from (
 ) s inner join records_clients rc on s.record_client_id = rc.id
     inner join records r on rc.record_id = r.id
     inner join clients c on rc.client_id = c.id
-where rn = 1 and finish_at = '2018-06-30' and rc.is_active = true
+where rn = 1 and finish_at = '#{date_of_last_day_of_previous_month}' and rc.is_active = true
              and c.archive = false AND r.subscription_sale = 'automatically_by_calendar'
              AND (r.finished_at > '#{today}' or r.finished_at IS NULL)
 SQL
@@ -34,19 +34,18 @@ SQL
     rows = ActiveRecord::Base.connection.select_all(sql).to_hash
 
     rows.each do |rc|
-
       price_service = RecordService.where(record_id: rc['record_id']).sum(:money_for_abon).to_f
-
       price_correction = Discount.where('
                    (? between start_at and finish_at) and 
                    is_active = true and 
                    record_client_id = ?', 
-                   Date.today, rc['id']).sum(:value)
-
+                   Date.today, rc['id']).order('created_at DESC').first
 
       if price_correction.present?
-        price_service = price_correction
+        price_service = price_correction.value
       end
+
+      operation = Operation.create
 
       subs = Subscription.new({
         start_at: start_at,
@@ -54,6 +53,7 @@ SQL
         visits: rc['total_visits'],
         record_client_id: rc['id'],
         price: price_service,
+        operation_id: operation.id,
       })
       subs.save
       History.create({
@@ -68,8 +68,8 @@ SQL
   end
 
   def automatically_by_period
-    yesterday = Date.today - 1
     today = Date.today
+    yesterday = today - 1
 
     sql = <<SQL
 select rc.*, c.archive, r.total_visits, r.finished_at from (
@@ -79,7 +79,7 @@ select rc.*, c.archive, r.total_visits, r.finished_at from (
 ) s inner join records_clients rc on s.record_client_id = rc.id
     inner join records r on rc.record_id = r.id
     inner join clients c on rc.client_id = c.id
-where rn = 1 and finish_at = '2018-07-10' and rc.is_active = true
+where rn = 1 and finish_at = '#{yesterday}' and rc.is_active = true
              and c.archive = false AND r.subscription_sale = 'automatically_by_period'
              AND (r.finished_at >= '2018-07-11' or r.finished_at IS NULL)
 SQL
@@ -87,19 +87,28 @@ SQL
     rows = ActiveRecord::Base.connection.select_all(sql).to_hash
 
     rows.each do |rc|
-
       price_service = RecordService.where(record_id: rc['record_id']).sum(:money_for_abon).to_f
-      price_correction = Discount.where(record_client_id: rc['id']).sum(:value)
-      price = price_service + price_correction
+      price_correction = Discount.where('
+                   (? between start_at and finish_at) and 
+                   is_active = true and 
+                   record_client_id = ?', 
+                   Date.today, rc['id']).order('created_at DESC').first
+
+      if price_correction.present?
+        price_service = price_correction.value
+      end
 
       abon_period = Record.find(rc['record_id']).abon_period
+
+      operation = Operation.create
 
       subs = Subscription.new({
         start_at: today,
         finish_at: today + abon_period,
         visits: rc['total_visits'],
         record_client_id: rc['id'],
-        price: price,
+        price: price_service,
+        operation_id: operation.id,
       })
       subs.save
       History.create({

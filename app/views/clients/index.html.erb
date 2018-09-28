@@ -19,8 +19,10 @@
 <%= render 'clients/client_panel_info' %>
 <%= render 'clients/client_panel_info_add_sub' %>
 <%= render 'clients/client_panel_info_add_transaction' %>
+<%= render 'clients/client_panel_info_add_discount' %>
 <%= render 'clients/client_records' %>
 <%= render 'clients/client/client_transactions' %>
+<%= render 'clients/client_discounts' %>
 
 <%= render 'clients/record_panel_info' %>
 <%= render 'clients/record_panel_info_add_service' %>
@@ -39,6 +41,7 @@
       recordsCompany: [],
       recordsClients: [],
       servicesCompany: [],
+      discountCompany: [],
       titleInput: 'Поиск клиентов',
       loadComplete: false,
 
@@ -47,8 +50,6 @@
       panelShow: 'home',
 
       client: [],
-      selectRecordsClient: [], // можно убрать эту переменную и заменить recordsCompany, и получать переменную минус текущие записи клиента
-      recordsClient: [],
       clientTransactions: [],
 
       record: [],
@@ -77,6 +78,9 @@
       typeClients: '',
     },
     methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
       addElementFiltration(id, object) {
         let indexElement = this.filtrationElements
           .findIndex(element => element.id == id && element.object == object);
@@ -145,14 +149,6 @@
         newUrl = updateURLParameter(url, 'client', client.id);
         history.pushState('Клиент', 'Клиент', newUrl);
 
-        $.get('/get_select_records_client.json', 
-          { client_id: client.id },
-          selectRecordsClient => this.selectRecordsClient = selectRecordsClient
-        );
-        $.get('/get_records_client.json', 
-          { client_id: client.id },
-          recordsClient => this.recordsClient = recordsClient
-        );
         $.get('/get_client_transactions.json', 
           { client_id: client.id },
           clientTransactions => this.clientTransactions = clientTransactions
@@ -183,23 +179,6 @@
       var filters = urlHash.searchParams.get("filters");
 
       setTimeout(() => {
-        $.get('/get_affiliates.json',
-          affiliatesCompany => this.affiliatesCompany = affiliatesCompany );
-
-        $.get('/companies/1/services.json',
-          servicesCompany => this.servicesCompany = servicesCompany );
-
-        $.get('/records_services.json',
-          recordsServices => this.recordsServices = recordsServices);
-
-        $.get('/get_subscriptions.json',
-          subscriptions => this.subscriptions = subscriptions
-        );
-
-        $.get('/get_records_clients.json',
-          recordsClients => this.recordsClients = recordsClients
-        );
-
         $.get('/get_records.json',
           recordsCompany => {
             this.recordsCompany = recordsCompany;
@@ -248,6 +227,24 @@
 
           this.loadComplete = true;
         });
+
+        $.get('/get_affiliates.json',
+          affiliatesCompany => this.affiliatesCompany = affiliatesCompany );
+
+        $.get('/companies/1/services.json',
+          servicesCompany => this.servicesCompany = servicesCompany );
+
+        $.get('/records_services.json',
+          recordsServices => this.recordsServices = recordsServices);
+
+        $.get('/subscriptions.json',
+          subscriptions => this.subscriptions = subscriptions);
+
+        $.get('/get_records_clients.json',
+          recordsClients => this.recordsClients = recordsClients);
+
+        $.get('/discounts.json', 
+          discountCompany => this.discountCompany = discountCompany);
       }, 600);
     },
     watch: {
@@ -264,6 +261,17 @@
             history.pushState(this.search, this.search, newUrl);
           }
         }, 600);
+        
+        // если в указанном списке нет клиентов, проверка, есть ли в других, и переключение, где клиенты есть
+        if(this.clientsCurrent.length > 0) {
+          this.typeClients = 'current';
+        }
+        else if(this.clientsDebtors.length > 0) {
+          this.typeClients = 'debtors';
+        }
+        else if(this.clientsTotal.length > 0) {
+          this.typeClients = 'total';
+        }
       },
     },
     computed: {
@@ -457,9 +465,9 @@
       },
 
       clientSubscriptions: function () {
-        let {subscriptions, client} = vmClient;
+        let {subscriptions, client} = this;
         return subscriptions.filter(function (subs) {
-          if (subs.client_id == client.id) {
+          if (subs.client_id == client.id && subs.is_active == true) {
             return subs;
           }
         });

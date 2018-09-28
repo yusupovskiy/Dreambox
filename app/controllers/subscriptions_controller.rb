@@ -49,8 +49,7 @@ class SubscriptionsController < ApplicationController
     end
   end
 
-
-  def get_subscriptions
+  def index
     affiliates_id = @current_affiliates.ids.join(", ")
     records_client = RecordClient.where(record_id: @current_record).ids.join(", ")
 
@@ -79,7 +78,7 @@ class SubscriptionsController < ApplicationController
         AND r.affiliate_id IN (#{affiliates_id})
         AND record_client_id IN (#{records_client})
       GROUP BY s.id, r.name, rc.record_id, rc.client_id
-      ORDER BY s.start_at
+      ORDER BY s.start_at DESC
     ")
 
     respond_to do |format|
@@ -87,77 +86,7 @@ class SubscriptionsController < ApplicationController
     end
   end
 
-  # def get_subscriptions_client
-  #   client_id = params[:client_id]
-  #   operation_id = params[:operation_id].to_i
-  #   operation = operation_id > 0 ? "AND s.operation_id = #{operation_id}" : ''
-
-  #   if Client.exists? id: client_id, company_id: @current_company
-
-  #     records_client = RecordClient.where(client_id: client_id, record_id: @current_record)
-
-  #     if Subscription.exists? record_client_id: records_client
-  #       affiliates_id = @current_affiliates.ids.join(", ")
-  #       records_client = records_client.ids.join(", ")
-
-  #       unpaid_subscriptions = Subscription.find_by_sql("
-  #         SELECT s.*, coalesce(SUM(t.amount), 0) AS total_amount, r.name, rc.record_id, rc.client_id
-  #         FROM subscriptions AS s
-  #           LEFT JOIN ( SELECT records_clients.*
-  #                       FROM records_clients
-  #             ) AS rc
-  #             ON s.record_client_id = rc.id
-  #           LEFT JOIN records AS r
-  #             ON rc.record_id = r.id
-  #           LEFT JOIN ( SELECT company_transactions.*
-  #                       FROM company_transactions
-  #                       WHERE company_transactions.affiliate_id IN (#{affiliates_id})
-  #             ) AS ct
-  #             ON s.operation_id = ct.operation_id
-  #           LEFT JOIN ( SELECT SUM(t1.amount) AS amount, t1.company_transaction_id
-  #                       FROM transactions AS t1
-  #                       WHERE (t1.is_active IS NULL or t1.is_active = true)
-  #                       GROUP BY t1.company_transaction_id
-  #             ) AS t 
-  #             ON ct.id = t.company_transaction_id
-                      
-  #         WHERE (s.is_active IS NULL OR s.is_active = true)
-  #           AND r.affiliate_id IN (#{affiliates_id})
-  #           AND record_client_id IN (#{records_client}) #{operation}
-  #         GROUP BY s.id, r.name, rc.record_id, rc.client_id
-  #         ORDER BY s.start_at
-  #       ")
-  #     end
-  #   end
-
-  #   respond_to do |format|
-  #     format.json { render json: unpaid_subscriptions, status: :ok }
-  #   end
-  # end
-
-  def index
-    affiliates = Affiliate.where(company_id: @current_company.id)
-    records = Record.where(affiliate: affiliates)
-    rc = RecordClient.where(record: records)
-    @subscriptions = Subscription.where(record_client: rc)
-  end
-
   def show
-    @fin_operation = FinOperation.new
-    @history = History.new
-    record_client_subscription = RecordClient.find(@subscription.record_client_id)
-    @client_subscription = Client.find(record_client_subscription.client_id)
-    @record_client = Record.find(record_client_subscription.record_id)
-
-    @fin_operations_subscription = FinOperation.where("
-      operation_type = 1 AND operation_object_id IN (?)", 
-      @subscription.id,
-      ).order("operation_date DESC")
-
-    @history_subscription = History.where("
-      object_log = 'subscription' AND object_id IN (?)", 
-      @subscription.id,
-      ).order("created_at DESC")
   end
 
   def create
@@ -194,10 +123,10 @@ class SubscriptionsController < ApplicationController
                  (? between start_at and finish_at) and 
                  is_active = true and 
                  record_client_id = ?', 
-                 Date.today, @subscription.record_client_id)
+                 Date.today, @subscription.record_client_id).order('created_at DESC').first
 
     if discounts_record_client.present?
-      @subscription.price = discounts_record_client.sum(:value)
+      @subscription.price = discounts_record_client.value
     end
     
     no_subscriptions_in_that_range = rc.subscriptions
@@ -260,9 +189,9 @@ class SubscriptionsController < ApplicationController
       complited = false
       note = 'Невозможно продать абонемент, так как клиент отписан от данной записи'
       
-    elsif price_services.count.zero? or price_services.sum(:money_for_abon) <= 0
-      complited = false
-      note = 'Перед продажей абонемента необходимо в записи добавить услугу, либо указать стоимость услуги больше нуля'
+    # elsif price_services.count.zero? or price_services.sum(:money_for_abon) <= 0
+    #   complited = false
+    #   note = 'Перед продажей абонемента необходимо в записи добавить услугу, либо указать стоимость услуги больше нуля'
 
     elsif @subscription.price.to_i < 0
       complited = false
@@ -316,19 +245,41 @@ class SubscriptionsController < ApplicationController
   end
 
   def cancel
-    @params_note = Subscription.new(params.require(:subscription).permit(:note))
+    subscription_id = params[:id]
+    subscription_cancel_note = params[:note]
+    current_record_client = RecordClient.where record_id: @current_record
 
-    respond_to do |format|    
-      if @params_note.note != '' and @subscription.is_active == true
-        @subscription.note = @params_note.note + ' | ' + Date.today.strftime("%d %b %Y")
-        @subscription.is_active = @subscription.is_active == true ? false : true 
-        @subscription.save!
-        format.html { redirect_to request.referer, notice: 'Отмена произведена' }
-        format.json { render :show, status: :ok, location: @subscription }
-      else
-        format.html { redirect_to request.referer, notice: 'Отмена не удалась' }
+    if !(Subscription.exists? id: subscription_id, record_client_id: current_record_client)
+      complited = false
+      note = 'Нет такого абонемента'
+
+    elsif subscription_cancel_note == ''
+      complited = false
+      note = 'Нужно указать причину отмены в поле'
+
+    else
+      s = Subscription.find subscription_id
+      s.update_attribute(:is_active, false)
+      complited = true
+      note = 'Отмена произведена'
+
+      company_transactions = CompanyTransaction.where operation_id: s.operation_id, affiliate_id: @current_affiliates
+      transactions = Transaction.where company_transaction_id: company_transactions
+
+      transactions.each do |t|
+        t.update_attribute(:is_active, false)
       end
     end
+
+    messege = {complited: complited, note: note}
+
+    respond_to do |format|
+      format.json { render json: messege }
+    end
+  end
+
+  def recalculation
+    
   end
 
   private

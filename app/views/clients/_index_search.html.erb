@@ -1,14 +1,9 @@
 <div class="search" :class="[showSort ? 'active' : '']">
-  <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon">
+  <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon" />
 
   <input v-model="search" name="search" class="search-field" type="text" :placeholder="titleInput" id="search" autocomplete="off" />
 
-  <div style="
-    position: absolute;
-    z-index: 999;
-    top: 0;
-    right: 0px;
-    padding-right: 5px;">
+  <div style="position: absolute; z-index: 999; top: 0; right: 0px; padding-right: 5px;">
     <div @click="showSort = !showSort" class="reset-search" :class="[showSort ? 'active' : '']">
       <ion-icon name="options"></ion-icon>
     </div>

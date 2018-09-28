@@ -1,0 +1,35 @@
+<div v-if="!loadComplete" class="loading">
+  <img src="images/loading.gif" />
+</div>
+
+<div v-else-if="loadComplete && transactions.length > 0" class="container-list cool-scrollbar">
+  <ul v-if="transactionsSearch.length > 0" class="list">
+    <li @click="clickTransaction(transaction)" v-for="transaction in transactionsSearch" class="item-list" :key="transaction.id" :class="['transaction-' + transaction.id, !transaction.is_active ? 'default-item' : '' ]" :title="!transaction.is_active ? 'Транзакция отменена | ' + transaction.note : transaction.note">
+
+      <div class="left-content">
+        <div class="name-content">{{  }}{{ transaction.note }}</div>
+        <span class="desc-content">{{ date(transaction.date) }} / {{ transaction.category_name }}</span>
+      </div>
+      <div class="right-content">
+        <span class="debt" :class="[ transaction.budget == 'income' ? 'green-color' : '', transaction.budget == 'expense' ? 'dark-color' : '' ]">
+          {{ transaction.budget == 'income' ? '+' : '' }}{{ amount(transaction.amount) }} ₽
+        </span>
+      </div>
+    </li>
+  </ul>
+  <div v-else class="loading">
+    <div>
+      <img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
+      <div>Ничего не найдено</div>
+    </div>
+  </div>
+
+</div>
+<div v-else-if="loadComplete && (transactions.length == 0)" class="loading" style="z-index: 10;">
+  <div style="top: 85px;">
+    <div>В компании пока нет клиентов</div>
+    <a href="/clients/new" style="    color: #3880ff;
+    margin: 20px auto;
+    float: unset;    display: table;" class="btn show-panel"><div>+Добавить клиента</div></a>
+  </div>
+</div>

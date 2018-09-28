@@ -22,8 +22,11 @@
       show: String,
     },
     methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
       createSubClient() {
-        let {client, clientSubscriptions} = vmClient;
+        let {client, subscriptions, recordsClients} = vmClient;
         let {addSubsForRecordClient, startSubs, finishSubs, amount, newSubscriptionClient} = this;
         var complited = false
 
@@ -49,10 +52,16 @@
                 vmNotifications.notifications.unshift(messege);
               },
               error: e => console.warn('error', e)
-            }).done(newRecordClient => {
+            }).done(e => {
               if(complited) {
+                var indexRecordClient = recordsClients
+                  .findIndex(rc => rc.record_client_id == newSubscriptionClient.record_client_id);
+                var nameRecord = recordsClients[indexRecordClient].name;
+                var recordId = recordsClients[indexRecordClient].id;
 
-                clientSubscriptions.unshift(newSubscriptionClient);
+                newSubscriptionClient = Object.assign(newSubscriptionClient, {total_amount: 0, name: nameRecord, record_id: recordId, client_id: client.id})
+
+                subscriptions.unshift(newSubscriptionClient);
 
                 client.unpaid_debt_subs = client.unpaid_debt_subs + newSubscriptionClient.price;
                 
@@ -86,7 +95,39 @@
     watch: {
       "addSubsForRecordClient" : function() {
         this.getDateSub();
-      }
+      },
+      recordsClient() {
+        this.addSubsForRecordClient = '';
+      },
+    },
+    computed: {
+      recordsClient() {
+        let {recordsClients, client, recordsCompany, discountCompany} = vmClient;
+
+        return recordsClients.filter(function (rc) {
+          if(rc.client_id == client.id && rc.is_active == true) {
+            var discounts = discountCompany.filter(function(d) {
+              var currentDate = new Date();
+              var start_date = new Date(d.start_at);
+              var finish_date = new Date(d.finish_at);
+
+              if(d.record_client_id == rc.record_client_id && d.is_active == true && start_date <= currentDate && currentDate <= finish_date) {
+                return d;
+              }
+            });
+
+            if(discounts.length > 0) {
+              var total_price_abon = discounts[0].value;
+            }
+            else {
+              let indexRecord = recordsCompany.findIndex(r => r.id == rc.id);
+              var total_price_abon = recordsCompany[indexRecord].total_price_abon;
+            }
+
+            return Object.assign(rc, {total_price_abon: total_price_abon});
+          }
+        });
+      },
     },
     template: `
       <section v-if="show == 'addSubscriptionClient'" class="panel-add">
@@ -102,7 +143,9 @@
             <div class="item-panel__basic-info">
               <select v-model="addSubsForRecordClient">
                 <option disabled value="">Выберите одну из записей</option>
-                <option v-for="record in records" :value="record.id">{{ record.name }}</option>
+                <option v-for="record in recordsClient" :value="record.id">
+                  {{ indentAmount(record.total_price_abon) }} ₽ | {{ record.name }}
+                </option>
               </select>
 
               <div v-if="addSubsForRecordClient != ''">

@@ -25,6 +25,9 @@
       client: Object,
     },
     methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
       createTransactionClient() {
         let {client, clientTransactions, clientSubscriptions} = vmClient;
         let {amount, note, addTransForSubs, category_id, dateTransaction, affiliate_id, newTransactionClient} = this;
@@ -91,10 +94,8 @@
         let {client, clientSubscriptions} = vmClient;
         let {addTransForSubs} = this;
 
-        var date = new Date();
-        m = (date.getMonth() + '').length == 1 ? '0' + date.getMonth() : date.getMonth()
-        d = (date.getDate() + '').length == 1 ? '0' + date.getDate() : date.getDate()
-        this.dateTransaction = date.getFullYear() + '-' + m + '-' + d;
+        var currentDate = new Date();
+        this.dateTransaction = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());;
 
         let indexSub = clientSubscriptions
           .findIndex(s => s.operation_id == addTransForSubs);
@@ -104,10 +105,11 @@
           total_amount = clientSubscriptions[indexSub].total_amount;
           start_at = clientSubscriptions[indexSub].start_at;
           finish_at = clientSubscriptions[indexSub].finish_at;
+          name = clientSubscriptions[indexSub].name;
 
           this.amount = price - total_amount;
           this.fix_amount = price - total_amount;
-          this.note = 'За абонемент от ' + totalDate(start_at, true, true, true) + ' до ' + totalDate(finish_at, true, true, true);
+          this.note = 'За абонемент от ' + totalDate(start_at, true, true, true) + ' до ' + totalDate(finish_at, true, true, true) + ', на посещение "' + name + '"';
         }
         else if(addTransForSubs == client.operation_id || 
           addTransForSubs == 'expense' ||
@@ -117,6 +119,13 @@
           this.amount = null;
           this.note = '';
           this.category_id = '';
+        }
+
+        if(this.addTransForSubs == 'income') {
+          this.category_id = this.categories_income[0].id;
+        }
+        else if(this.addTransForSubs == 'expense') {
+          this.category_id = this.categories_expense[0].id;
         }
       },
       "amount" : function() {
@@ -142,11 +151,18 @@
           affiliates => {
             this.affiliates = affiliates;
 
-            if(affiliates.length == 1)
+            if(affiliates.length > 0)
               this.affiliate_id = affiliates[0].id;
           }
         );
-      }
+      },
+      unpaidSubscriptionsClient() {
+        this.addTransForSubs = '';
+        this.fix_amount = null;
+        this.amount = null;
+        this.note = '';
+        this.category_id = '';
+      },
     },
     computed: {
       unpaidSubscriptionsClient: function () {
@@ -175,8 +191,8 @@
               <select v-model="addTransForSubs">
                 <option disabled value="">Выберите вариант транзакции</option>
                 <option v-for="unpaidSubscription in unpaidSubscriptionsClient" :value="unpaidSubscription.operation_id">
-                  {{ unpaidSubscription.total_amount }} из 
-                  {{ unpaidSubscription.price }} ₽ | {{ unpaidSubscription.name }} от 
+                  {{ indentAmount(unpaidSubscription.total_amount) }} из 
+                  {{ indentAmount(unpaidSubscription.price) }} ₽ | {{ unpaidSubscription.name }} от 
                   {{ unpaidSubscription.start_at }} до {{ unpaidSubscription.finish_at }}
                 </option>
                 <option value="income">Доход</option>
@@ -198,22 +214,20 @@
                   </option>
                 </select>
 
-<!--  v-if="affiliates.length > 1 && addTransForSubs == client.operation_id" -->
-
-                <select v-model="affiliate_id">
+                <select v-if="affiliates.length > 1 && (addTransForSubs == 'income' || addTransForSubs == 'expense')" v-model="affiliate_id">
                   <option disabled value="">Выберите филиал</option>
                   <option v-for="affiliate in affiliates" :value="affiliate.id">
                     {{ affiliate.address }}
                   </option>
                 </select>
-                <input v-if="affiliates.length == 1" v-model="affiliate_id" type="hidden">
+                <input v-else v-model="affiliate_id" type="hidden">
 
                 <input v-model="amount" type="number" placeholder="Сумма" />
                 <input v-model="dateTransaction" id="date" type="date" placeholder="Дата транзакции" />
                 <textarea v-model="note" placeholder="Комментарий" class="textarea"></textarea> 
               </div>
 
-              <div v-if="amount != null && amount != 0 && note != '' && dateTransaction != ''" class="btns" style="margin: 0;">
+              <div v-if="addTransForSubs != '' && amount != null && amount != 0 && note != '' && dateTransaction != ''" class="btns" style="margin: 0;">
                 <button 
                   @click="createTransactionClient()" 
                   v-bind:class="{ active: transactionCreateLoading }" 
