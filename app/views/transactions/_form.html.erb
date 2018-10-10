@@ -26,19 +26,14 @@
         <div class="information-section">
           <div class="block-information">
 
-<div class="btns">
-  <button type="button" class="btn-hide btn" style="display: block; color: rgb(164, 164, 164);">Доход</button>
-  <button type="button" class="btn-hide btn" style="display: block; color: rgb(164, 164, 164);">Расход</button>
-</div>
-
               <div class="finput">
               <%= form.label 'Дата транзакции', class: 'finput-label' %>
               <%= form.date_field :date, class: 'finput-input', required: 'required', value: Date.today %>
             </div>
 
-            <dfn data-info="Филиал, к которому относится операция">
+            <dfn data-info="Категория транзакции">
               <div class="finput">
-                <%= form.label 'Статья расхода', class: 'finput-label' %>
+                <%= form.label 'Категория', class: 'finput-label' %>
                 <%= form.select :category_id, @categories.map{|c| [c.name, c.id]}, {}, {class: "finput-input"} %>
               </div>
             </dfn>

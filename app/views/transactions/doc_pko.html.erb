@@ -1,5 +1,17 @@
-<style>
+<% if @transaction.present? %>
 
+<style type="text/css">
+.panel-document {
+    position: fixed;
+    background-color: white;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999999;
+    overflow: overlay;
+    font-family: serif;
+}
 /*.right-panel {
   position: fixed;
   width: 900px;
@@ -106,7 +118,7 @@
   font-size: 11px;
 }
 
-.field>input {
+.field>input, .field-div {
   width: 100%;
   text-align: center;
   background-color: #f1f4ff;
@@ -114,7 +126,9 @@
   padding: 0;
   font-size: 11px!important;
 }
-
+div.field-div {
+  text-align: left;
+}
 .field {
     position: relative;
 }
@@ -185,6 +199,7 @@ ion-icon.hydrated:hover {
     color: #4995dc;
 }
 @page { size: auto;  margin: 0mm; }
+
 </style>
 
 
@@ -198,6 +213,14 @@ ion-icon.hydrated:hover {
 </div>
 
 <div class="word">
+
+
+<p>Введите число</p>
+<input type="number" onchange="start(this.value, 'rub', 'kop')">
+<p id="rub"></p>
+<p id="kop"></p>
+
+
   <div class="doc">
     <div class="left">
       <div class="column">
@@ -262,8 +285,8 @@ ion-icon.hydrated:hover {
       <tr>
         <td colspan="2" style="text-align: center; font-size: 13px; font-weight: bold;">ПРИХОДНЫЙ КАССОВЫЙ ОРДЕР</td>
 
-        <td style="width: 90px; border: 2px solid black; text-align: center; border-width: 2px 1px 2px 2px;"><%= @transactions.number_document %></td>
-        <td style="width: 90px; border: 2px solid black; text-align: center; border-width: 2px 2px 2px 1px;"><%= @transactions.date %></td>
+        <td style="width: 90px; border: 2px solid black; text-align: center; border-width: 2px 1px 2px 2px; max-width: 90px; max-height: 18px; overflow: hidden;"><%= @company_transaction.number_document %></td>
+        <td style="width: 90px; border: 2px solid black; text-align: center; border-width: 2px 2px 2px 1px; max-width: 90px; max-height: 18px; overflow: hidden;"><%= @transaction.date.strftime("%d") + ' ' + nameMonth(@transaction.date.strftime("%m"), 2) + ' ' + @transaction.date.strftime("%Y") %></td>
       </tr>
     </table>
 
@@ -284,7 +307,7 @@ ion-icon.hydrated:hover {
       <tr>
         <td style="padding: 1px 3px; border: 2px solid black; text-align: center; border-width: 1px 1px 2px 2px; width: 30px;">
           <div class="field">
-            <input type="text" value="<%= debt(@fin_operation.operation_object_id, @fin_operation.amount, @fin_operation.operation_type) %>" style="font-size: 10px!important">
+            <input type="text" value="debt(@fin_operation.operation_object_id, @fin_operation.amount, @fin_operation.operation_type)" style="font-size: 10px!important">
           </div>
         </td>
         <td style="padding: 1px 3px; border: 2px solid black; text-align: center; border-width: 1px 1px 2px 1px; width: 15px;"></td>
@@ -303,7 +326,11 @@ ion-icon.hydrated:hover {
             <input type="text" value="" style="font-size: 10px;">
           </div>
         </td>
-        <td style="padding: 1px 3px; border: 2px solid black; text-align: center; border-width: 1px 1px 2px 1px;"><%= @transactions.amount %></td>
+        <td style="padding: 1px 3px; border: 2px solid black; text-align: center; border-width: 1px 1px 2px 1px;">
+          <div class="field-div" contenteditable="true" style="max-width: 65px; max-height: 12px; overflow: hidden; text-align: center;" onchange="start(this.value, 'rub', 'kop')">
+            <%= @transaction.amount %>
+          </div>
+        </td>
         <td style="padding: 1px 3px; border: 2px solid black; text-align: center; border-width: 1px 1px 2px 1px;">
           <div class="field">
             <input type="text" value="" style="font-size: 10px;">
@@ -313,15 +340,19 @@ ion-icon.hydrated:hover {
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 10px 3px 1px 3px;">Принято от</td>
-        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">@client_subscription.first_name @client_subscription.last_name @client_subscription.patronymic</td>
+        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
+          <div class="field-div" contenteditable="true" style="width: 361px;"></div>
+        </td>
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 10px 3px 1px 3px;">Основание:</td>
-        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">@fin_operation.description</td>
+        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
+          <div class="field-div" contenteditable="true" style="width: 361px;"><%= @transaction.note %></div>
+        </td>
       </tr>
-      <tr style="font-size: 12px;">
+<!--       <tr style="font-size: 12px;">
         <td colspan="8" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; height: 22px;"></td>
-      </tr>
+      </tr> -->
       <tr style="font-size: 12px;">
         <td colspan="1" style="padding: 3px 3px 1px 3px;">Сумма</td>
         <td colspan="7" style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; text-align: center;">
@@ -376,14 +407,14 @@ ion-icon.hydrated:hover {
         </td>
       </tr>
       <tr style="font-size: 12px;">
-        <td colspan="3" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
+        <td colspan="3" style="padding: 21px 3px 1px 3px;">Получил кассир</td>
         <td colspan="4" style="padding: 13px 3px 1px 3px;">
           <div class="field" style="float: left; margin-right: 20px;">
             <div style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 84px; height: 15px;"></div>
             <span style="bottom: -50%;">(подпись)</span>
           </div>
           <div class="field" style="float: left;">
-            <input type="text" value="" style="padding: 3px 3px 4px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px;">
+            <input type="text" value="<%= format_name(@current_people) %>" style="padding: 3px 3px 4px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px;">
             <span style="bottom: -50%;">(расшифровка подписи)</span>
           </div>
         </td>
@@ -405,22 +436,22 @@ ion-icon.hydrated:hover {
         <h2 class="title_1">Квитанция</h2>
         <div class="field_2">
           <span>к приходному кассовому ордеру №</span>
-          <div><%= @transactions.number_document %></div>
+          <div><%= @company_transaction.number_document %></div>
         </div>
         <div class="field_3">
           <div>от</div> 
-          <div>"<span style="padding: 0 8px; border: 1px solid black; border-width: 0 0 2px 0; padding-bottom: 1px; text-align: center;"><%= @transactions.date.strftime("%d") %></span>"</div> 
+          <div>"<span style="padding: 0 8px; border: 1px solid black; border-width: 0 0 2px 0; padding-bottom: 1px; text-align: center;"><%= @transaction.date.strftime("%d") %></span>"</div> 
           <div style="    padding: 0 18px;
       border: 1px solid black;
       border-width: 0 0 2px 0;
       padding-bottom: 1px;
       text-align: center;
-      min-width: 40px;"><%= @transactions.date.strftime("%B") %></div> 
+      min-width: 40px;"><%= nameMonth(@transaction.date.strftime("%m"), 2) %></div> 
           <div style="    padding: 0 13px;
       border: 1px solid black;
       border-width: 0 0 2px 0;
       padding-bottom: 1px;
-      text-align: center;"><%= @transactions.date.strftime("%Y") %></div> г.
+      text-align: center;"><%= @transaction.date.strftime("%Y") %></div> г.
         </div>
 
 
@@ -428,11 +459,11 @@ ion-icon.hydrated:hover {
     <table style="width: 100%; font-size: 10px; padding-top: 15px;" cellspacing="0">
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 10px 3px 1px 3px;">Принято от</td>
-        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">@client_subscription.first_name @client_subscription.last_name @client_subscription.patronymic</td>
+        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">@client_subscription.first_name    @client_subscription.last_name    @client_subscription.patronymic</td>
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 10px 3px 1px 3px;">Основание:</td>
-        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;"><%= @transactions.note %></td>
+        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">{{ transaction.note }}</td>
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="8" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; height: 22px;"></td>
@@ -491,14 +522,14 @@ ion-icon.hydrated:hover {
         </td>
       </tr>
       <tr style="font-size: 12px;">
-        <td colspan="3" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
+        <td colspan="3" style="padding: 21px 3px 1px 3px;">Кассир</td>
         <td colspan="4" style="padding: 13px 3px 1px 3px;">
           <div class="field" style="float: left; margin-right: 20px;">
             <div style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 84px; height: 15px;"></div>
             <span style="bottom: -50%;">(подпись)</span>
           </div>
           <div class="field" style="float: left;">
-            <input type="text" value="" style="padding: 3px 3px 4px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px;">
+            <input type="text" value="<%= format_name(@current_people) %>" style="padding: 3px 3px 4px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px;">
             <span style="bottom: -50%;">(расшифровка подписи)</span>
           </div>
         </td>
@@ -507,9 +538,6 @@ ion-icon.hydrated:hover {
     </table>
   </div>
 
-
-
-<!--       <span style="position: absolute; bottom: 0; left: 10px; font-size: 9px; color: #c6c6c6;"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Полную информацию можно получить в сервисе Dreambox</span> -->
       <span style="position: absolute; bottom: 0; left: 10px; font-size: 9px; color: #a1a1a1;"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Получайте полную информацию в сервисе Dreambox</span>
     </div>
 
@@ -517,6 +545,112 @@ ion-icon.hydrated:hover {
 
   <!-- <div class="test">1 из 2</div> -->
 </div>
-
-
 <script src="https://unpkg.com/ionicons@4.2.4/dist/ionicons.js"></script>
+
+<% else %>
+  Нет такого документа
+<% end %>
+
+<script>
+  function start(value, rub, kop){
+    // document.getElementsByTagName('p')[1].innerHTML = getSumInWords(value);
+    getSumInWords(value, rub, kop);
+  }
+  /////////////////////////////////////////////////////////////////////////////////////
+  function getSumInWords(sum, rub, kop){
+    var res='';
+    
+    if (sum<=0) return 'нуль гривень 00 копiйок';
+    
+    var sumSymbols = String( Math.round(sum*100) );  
+    
+    var digits = sumSymbols.length;
+    if (digits>11) return 'Обрабатываются только суммы менее 1 миллиарда!'
+    
+    // гривны
+    if (sum<1) res = 'нуль гривень ';
+      else res = getNameToNumber( sumSymbols.slice(0, digits-2), 0);  
+    
+    // копейки
+    var kopeikiStr = sumSymbols.slice(-2);
+
+    document.getElementById(rub).innerHTML = res;
+    document.getElementById(kop).innerHTML = kopeikiStr;
+    // res = res + kopeikiStr
+    // res += getGroupNameToNumber(kopeikiStr, 3);
+    // return res;
+  }  
+  //----------------------------------------------------------------------------------------------------------------  
+  function getNameToNumber(sumSymbols, depth){
+    var res='';  
+    if (sumSymbols.length>3) {// если число еще не разбили на разряды до самых старших
+      res+= getNameToNumber( sumSymbols.slice(0, sumSymbols.length-3), depth+1 ); // тогда отсекаем 3 младших разряда и рекурсивно идем дальше
+    }  
+    // берем последние 3 разряда числа как ЧИСЛО и переводим в прописной вариант
+    var last3digits = +(('00'+sumSymbols).slice(-3))
+    res += getDigitName( last3digits, (2-depth) );
+   
+    // добовляем название группы (миллионы, тысячи, гривны)
+    res += getGroupNameToNumber(last3digits, (2-depth));  
+    return res;
+  }  
+
+  //----------------------------------------------------------------------------------------------------------------  
+  function getDigitName(x, group){
+    var res='';
+    var numberName = 
+    [ ['', 'сто ', 'двісті ',   'триста ', 'чотириста ',  "п'ятсот ", 'шістсот ', 'сімсот ',  'вісімсот ', "дев'ятсот "],
+      ['',   '',   'двадцять ', 'тридцять ', 'сорок ',  "п'ятьдесят ", 'шістьдесят ', 'сімдесят ',  'вісімдесят ', "дев'яносто "],
+      ['', 'одна ', 'дві ', 'три ', 'чотири ',  "п'ять ", 'шість ', 'сім ',  'вісім ', "дев'ять "], 
+      ['десять ', 'одинадцять ',  'дванадцять ', 'тринадцять ', 'чотирнадцять ',  "п'ятнадцять ", 'шістнадцять ', 'сімнадцять ',  'вісімнадцять ', "дев'ятнадцять "],
+      ['', 'один ', 'два ', 'три ', 'чотири ',  "п'ять ", 'шість ', 'сім ',  'вісім ', "дев'ять "] ]; 
+    
+    // если на входе 000
+    if (+x==0) return '';
+    
+    // сотни
+    var hundreds = Math.floor(x/100);  
+    res += numberName[0][hundreds];
+    
+    // десятки
+    var tens = Math.floor(x/10) %10 ;  
+    res += numberName[1][tens]; 
+    
+    var ones = Math.floor(x%10);  
+    if (tens==1){ // оди-надцать - девят-надцать
+      res += numberName[3][ones]; 
+    } else  // единицы
+        if (group) res += numberName[2][ones]; 
+          else res += numberName[4][ones]; // для миллионов: не одна (гривня) миллион, а один миллион
+    
+    return res;
+  }  
+  //----------------------------------------------------------------------------------------------------------------  
+  function getGroupNameToNumber(x, group){
+    str = String(x);
+  //прибавки для цифр 1,           2-4,       5-9,           0,  
+    var groupName = [ ['мільйон ',  'мільйона ', 'мільйонiв ', 'мільйонiв '],
+                  ['тисяча ',   'тисячі ',   'тисяч ',      'тисяч '],
+                  ['гривня ',   'гривнi ',   'гривень ',    'гривень '],
+                  [' копiйка',  ' копiйки',  ' копiйок',    ' копiйок'] ]; 
+    
+    // если на входе 000
+    if ( +x==0 ) { 
+      if (group>1) return groupName[group][2]; 
+        else return ''; 
+    }   
+    // если число от одинадцати до девятнадцати
+    if ( str.length>1 ) { 
+      var preLastSymbol= str.slice(str.length-2,str.length-1); 
+      if (preLastSymbol== '1') { return groupName[group][2]; }  
+    }
+    // для случаев, когда x!=0 и x!= ?1?;
+    var lastSymbol = str.slice(-1);
+    if (lastSymbol=='1') 
+      return groupName[group][0];
+    if (+lastSymbol>=2 && +lastSymbol<=4) 
+      return groupName[group][1];
+                                                                     
+    return groupName[group][2];
+  }  
+</script>

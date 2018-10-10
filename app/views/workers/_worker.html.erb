@@ -1,0 +1,5 @@
+<div v-if="panelShow == 'worker'" id="worker-card">
+  <section-worker-panel-info :worker="worker"></section-worker-panel-info>
+  <section-worker-works :works="worksCompany" :works-affiliates='worksAffiliates'></section-worker-works>
+  <section-worker-transactions :transactions="transactions"></section-worker-transactions>
+</div>

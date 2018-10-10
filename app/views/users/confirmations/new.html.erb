@@ -1,16 +1,27 @@
-<h2>Resend confirmation instructions</h2>
-
 <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
-  <%= devise_error_messages! %>
+  <div class="panel-list" style="background-color: whitesmoke;">
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
-  </div>
+    <div style='position: relative;'>
+      <h2 class="panel-form__title" style="margin-top: 10px; margin-left: 30px;">Письмо с активацией</h2>
+      <%= f.submit 'Отправить', class: "btn title-btn" %>
+    </div>
+    <div class="container-list gray-scrollbar">
 
-  <div class="actions">
-    <%= f.submit "Resend confirmation instructions" %>
+    <div class="cont-category-book">
+      <div class="tab-category information-section">
+        <%= devise_error_messages! %>
+        <div class="block-information authorization">
+          <div class="finput focus">
+            <%= f.label t('.email'), :email, class: 'finput-label' %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "finput-input", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email), required: 'required' %>
+          </div>
+        </div>
+        <%= render "users/shared/links" %>
+        <a class="link-to" href="<%=new_user_registration_path%>">Регистрация</a>
+        <br />
+        <a class="link-to" href="<%=new_user_session_path%>">Вход</a>
+      </div>
+    </div>
+    </div>
   </div>
 <% end %>
-
-<%= render "users/shared/links" %>

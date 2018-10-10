@@ -105,8 +105,6 @@
         filters_params = filters_params.replace(object + '-' + id + ',', '');
         filters_params = filters_params.replace(object + '-' + id, '');
 
-        console.log(filters_params);
-
         filtrationElements.splice(index, 1);
 
         if(filters_params.length > 0) {
@@ -115,14 +113,14 @@
         else {
           url = window.location.href;
           newUrl = deleteURLParameter(url, 'filters');
-          history.pushState('', '', newUrl);
+          history.replaceState('', '', newUrl);
         }
       },
       deleteAllParamsFiltration() {
         this.filtrationElements = [];
         url = window.location.href;
         newUrl = deleteURLParameter(url, 'filters');
-        history.pushState('', '', newUrl);
+        history.replaceState('', '', newUrl);
       },
 
       sortBy(sortKey) {
@@ -139,7 +137,7 @@
 
         url = window.location.href;
         newUrl = updateURLParameter(url, 'record', record.id);
-        history.pushState(record.name, record.name, newUrl);
+        history.replaceState(record.name, record.name, newUrl);
       },
       clickClient(client) {
         this.client = client;
@@ -147,7 +145,7 @@
 
         url = window.location.href;
         newUrl = updateURLParameter(url, 'client', client.id);
-        history.pushState('Клиент', 'Клиент', newUrl);
+        history.replaceState('Клиент', 'Клиент', newUrl);
 
         $.get('/get_client_transactions.json', 
           { client_id: client.id },
@@ -166,7 +164,7 @@
         }
 
         var newUrl = updateURLParameter(url, type, query);
-        history.pushState(query, query, newUrl);
+        history.replaceState(query, query, newUrl);
       },
     },
     created() {
@@ -254,11 +252,11 @@
         lastId = setTimeout(() => {
           var url = window.location.href;
           var newUrl = updateURLParameter(url, 'search', this.search);
-          history.pushState(this.search, this.search, newUrl);
+          history.replaceState(this.search, this.search, newUrl);
 
           if(this.search == '') {
             var newUrl = deleteURLParameter(url, 'search');
-            history.pushState(this.search, this.search, newUrl);
+            history.replaceState(this.search, this.search, newUrl);
           }
         }, 600);
         

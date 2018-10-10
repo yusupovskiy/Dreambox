@@ -1,7 +1,6 @@
 class CompaniesController < ApplicationController
   before_action :ensure_current_user
   before_action :confirm_actions, except: [:new, :create]
-  layout 'card'
 
   def company
     unless @user_director or @user_administrator

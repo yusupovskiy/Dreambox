@@ -2,7 +2,7 @@
 <html class="cool-scrollbar">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dreambox</title>
+    <title>Draft</title>
     <%= csrf_meta_tags %>
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
@@ -41,7 +41,7 @@
         </a>
 
         <div class="info-logo">
-          <div class="biz-logo">Dreambox</div>
+          <a href="/clients" class="biz-logo" style="<%= !(signed_in? and Client.exists? id: current_user.people_id) ? 'font-size: 29px;' : '' %>">Draft</a>
           <% if signed_in? and Client.exists? id: current_user.people_id %>
             <div class="company-logo btn-show-list">
               <div class="name-company" style="float: left;"><%= @current_company.name %></div>

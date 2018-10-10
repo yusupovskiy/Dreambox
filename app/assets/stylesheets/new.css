@@ -111,45 +111,47 @@ header {
 }
 .item-list {
     width: 100%;
-    min-height: 63px;
-    padding: 0 25px;
+    min-height: 40px;
     box-sizing: border-box;
     float: left;
     cursor: pointer;
     transition: .3s;
+    padding: 12px 25px;
 }
 .avatar-listt {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    margin: 10px 15px 10px 0;
+    margin-right: 15px;
     float: left;
 }
 div.left-content {
     float: left;
-    margin: 13px 0 0px 0;
+    height: 40px;
+    position: relative;
 }
 .name-content {
     font-size: 14px;
     color: #020202;
-    margin-bottom: 2px;
-
     width: 220px;
     overflow: hidden;
     text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     white-space: nowrap;
+    margin: 2px 0;
 }
-.left-content>span {
+.desc-content {
     font-size: 12px;
     *color: #545454;
     color: #929292;
+    margin: 1px 0;
+    display: table;
 }
 .right-content {
     float: right;
 }
 .debt {
-    margin: 22px 0 22px 0;
+    margin: 10.5px 0 10.5px 0;
     display: table;
 }
 .container-list {
@@ -207,7 +209,6 @@ a.logo:hover {
     color: #99c9f1;
     font-size: 15px;
     font-weight: bold;
-    cursor: default;
     user-select: none;
 }
 .company-logo {
@@ -527,6 +528,9 @@ div.show-panel {
 .item-panel.active {
     background-color: #f5f5f5;  
     padding: 10px 0;
+}
+.item-panel.active .left-item-panel {
+    white-space: normal;
 }
 .left-item-panel {
     font-size: 14px;
@@ -902,7 +906,7 @@ img.loading-panel {
 
 .pnl-add {
     position: fixed;
-    z-index: 40;
+    z-index: 9999;
     background-color: white;
     top: 69px;
     left: 7px;
@@ -1126,7 +1130,7 @@ header:hover {
     color: #444444;
 }
 
-.item-panel:hover .item__btns {
+.item-panel:hover .item__btns, .item-panel.active .item__btns {
     display: block;
 }
 .item-panel:hover .price-record {
@@ -1188,7 +1192,8 @@ header:hover {
     display: none;
 }
 .green-color {
-    color: #12ce88;
+    *color: #12ce88;
+    color: #0eb879;
 }
 .item-panel.active {
     opacity: 1;
@@ -1282,4 +1287,31 @@ header:hover {
 }
 .item-date.active {
     color: #3880ff;
+}
+.center-left-content {
+    display: table;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    margin: auto 0px;
+}
+
+.affiliate-work {
+    color: #585858;
+    font-size: 13px;
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+    float: left;
+    padding-left: 20px;
+    background-image: url(/images/office3.png);
+    position: relative;
+    z-index: 8;
+    width: 100%;
+}
+.not-allowed {
+    cursor: not-allowed;
+}
+#error_explanation {
+    font-size: 15px;
+    color: #171717;
 }

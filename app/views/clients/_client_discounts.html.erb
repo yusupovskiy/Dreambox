@@ -79,7 +79,8 @@
             :class="['discount-' + discount.id, discountClientId == discount.id ? 'active' : '', dateDay(discount.finish_at) == 0 ? 'default-item' : '' ]" 
             class="item-panel">
             
-            <div @click="clickActive(discount.id)" class="item-panel__basic-info" style="cursor: pointer;">
+            <div @click="clickActive(discount.id)" class="item-panel__basic-info" style="cursor: pointer;"
+              :title='discount.name_record + " на " + dateDay(discount.finish_at) + " дн."'>
               <div class="left-item-panel">
 
                 <div class="item__btns">
@@ -88,7 +89,7 @@
                   </div>
                 </div>
 
-                {{ discount.name_record }} ({{ dateDay(discount.finish_at) }} дн.)
+                {{ discount.name_record }} на {{ dateDay(discount.finish_at) }} дн.
               </div>
               <div class="right-item-panel">
                 <div class="right-item-panel--no-hover">

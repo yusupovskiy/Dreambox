@@ -6,15 +6,19 @@ class RecordsController < ApplicationController
   def get_records
     records_id = @current_record.ids.join(", ")
 
-    records = Record.find_by_sql("
-      SELECT  r.*, coalesce(SUM(rs.money_for_abon),0) AS total_price_abon
-      FROM records AS r
-        LEFT JOIN records_services AS rs
-          ON r.id = rs.record_id
-      WHERE r.id IN (#{records_id})
-      GROUP BY r.id
-      ORDER BY r.finished_at DESC
-    ")
+    if records_id.empty?
+      records = []
+    else
+      records = Record.find_by_sql("
+        SELECT  r.*, coalesce(SUM(rs.money_for_abon),0) AS total_price_abon
+        FROM records AS r
+          LEFT JOIN records_services AS rs
+            ON r.id = rs.record_id
+        WHERE r.id IN (#{records_id})
+        GROUP BY r.id
+        ORDER BY r.finished_at DESC
+      ")
+    end
 
     respond_to do |format|
       format.json { render json: records, status: :ok }

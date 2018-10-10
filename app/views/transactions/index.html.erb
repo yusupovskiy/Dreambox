@@ -591,7 +591,7 @@
         });
 
         const k = 'amount';
-        const reverse = true;
+        const reverse = false;
         return categories_expense_amount.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
       },
       affiliatesCompanyAmount() {
@@ -619,7 +619,7 @@
       },
 
       revenue() {
-        return this.transactionsDate.reduce(function(sum, transaction) {
+        return this.transactionsFilter.reduce(function(sum, transaction) {
           if(transaction.budget == 'income' && transaction.is_active)
             return sum + (transaction.amount);
           else
@@ -627,7 +627,7 @@
         }, 0);
       },
       expenses() {
-        return this.transactionsDate.reduce(function(sum, transaction) {
+        return this.transactionsFilter.reduce(function(sum, transaction) {
           if(transaction.budget == 'expense' && transaction.is_active)
             return sum + (transaction.amount);
           else

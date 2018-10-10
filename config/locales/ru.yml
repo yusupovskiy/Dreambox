@@ -17,7 +17,7 @@ ru:
     moderator: Модератор
     accountant: Бухгалтер
     responsible: Ответственный
-    director: Руководитель
+    director: Владелец
   field_type:
     field_text: Поле для текста
     field_date: Поле для даты

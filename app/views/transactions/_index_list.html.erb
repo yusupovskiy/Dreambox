@@ -4,15 +4,15 @@
 
 <div v-else-if="loadComplete && transactions.length > 0" class="container-list cool-scrollbar">
   <ul v-if="transactionsSearch.length > 0" class="list">
-    <li @click="clickTransaction(transaction)" v-for="transaction in transactionsSearch" class="item-list" :key="transaction.id" :class="['transaction-' + transaction.id, !transaction.is_active ? 'default-item' : '' ]" :title="!transaction.is_active ? 'Транзакция отменена | ' + transaction.note : transaction.note">
+    <li @click="clickTransaction(transactionItem)" v-for="transactionItem in transactionsSearch" class="item-list" :key="transactionItem.id" :class="['transaction-' + transactionItem.id, !transactionItem.is_active ? 'default-item' : '', transaction.id != transactionItem.id ? '' : 'active' ]" :title="!transactionItem.is_active ? 'Транзакция отменена | ' + transactionItem.note : transactionItem.note">
 
       <div class="left-content">
-        <div class="name-content">{{  }}{{ transaction.note }}</div>
-        <span class="desc-content">{{ date(transaction.date) }} / {{ transaction.category_name }}</span>
+        <div class="name-content">{{ transactionItem.note }}</div>
+        <span class="desc-content">{{ date(transactionItem.date) }} / {{ transactionItem.category_name }}</span>
       </div>
       <div class="right-content">
-        <span class="debt" :class="[ transaction.budget == 'income' ? 'green-color' : '', transaction.budget == 'expense' ? 'dark-color' : '' ]">
-          {{ transaction.budget == 'income' ? '+' : '' }}{{ amount(transaction.amount) }} ₽
+        <span class="debt" :class="[ transactionItem.budget == 'income' ? 'green-color' : '', transactionItem.budget == 'expense' ? 'dark-color' : '' ]">
+          {{ transactionItem.budget == 'income' ? '+' : '' }}{{ amount(transactionItem.amount) }} ₽
         </span>
       </div>
     </li>
@@ -27,9 +27,9 @@
 </div>
 <div v-else-if="loadComplete && (transactions.length == 0)" class="loading" style="z-index: 10;">
   <div style="top: 85px;">
-    <div>В компании пока нет клиентов</div>
-    <a href="/clients/new" style="    color: #3880ff;
+    <div>В компании пока нет транзакций</div>
+    <a href="/transactions/new" style="    color: #3880ff;
     margin: 20px auto;
-    float: unset;    display: table;" class="btn show-panel"><div>+Добавить клиента</div></a>
+    float: unset;    display: table;" class="btn show-panel"><div>+Добавить транзакцию</div></a>
   </div>
 </div>

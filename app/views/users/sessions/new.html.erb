@@ -11,11 +11,11 @@
         <div class="block-information authorization">
           <div class="finput focus">
             <%= f.label t('.email'), class: 'finput-label' %>
-            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "finput-input" %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "finput-input", required: 'required' %>
           </div>
           <div class="finput">
             <%= f.label t('.password'), class: 'finput-label' %>
-            <%= f.password_field :password, autocomplete: "off", class: "finput-input" %>
+            <%= f.password_field :password, autocomplete: "off", class: "finput-input", required: 'required' %>
           </div>
         </div>
         <% if devise_mapping.rememberable? -%>
@@ -24,7 +24,7 @@
             <%= f.label :remember_me, t(:remember_me), style: "margin: 0 0 0 5px; cursor: pointer;" %>
           </div>
           <br />
-        <% end -%>
+        <% end %>
 
         <a class="link-to" href="<%=new_user_registration_path%>">Регистрация</a>
         <br />

@@ -5,17 +5,17 @@
       v-for="clientItem in clientsFilter" 
       @click="clickClient(clientItem)" 
       class="item-list" :key="clientItem.id" 
-      v-bind:class="['client-' + clientItem.id, client.id != clientItem.id ? '' : 'active' ]" >
+      :class="[ 'client-' + clientItem.id, client.id != clientItem.id ? '' : 'active' ]" >
 
       <img class="avatar-listt" src="/resources/no-image-available.png">
       <div class="left-content">
-        <div class="name-content">{{ clientItem.full_name }}</div>
-        <span class="desc-content">
-
-          <span v-if="record.length == 0">- Английский язык</span>
-          <span v-else>нет абонемента</span>
-
-        </span>
+        <div class="center-left-content">
+          <div class="name-content">{{ clientItem.full_name }}</div>
+          <span class="desc-content">
+            <span v-if="record.length == 0">- Английский язык</span>
+            <span v-else>нет абонемента</span>
+          </span>
+        </div>
       </div>
       <div class="right-content">
         <span class="debt red-color">

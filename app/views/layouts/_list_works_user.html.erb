@@ -1,32 +1,32 @@
 <div class="panel-show" style="width: 260px;">
-  <div style="background-color: #e6eaed; cursor: default;">
-      <div style="float: left;">
-        <div style="font-size: 15px; font-weight: 600;"><%= Company.find(@current_people.company_id).name %></div>
+  <a href="/company" style="background-color: #e6eaed;">
+    <div style="float: left;">
+      <div style="font-size: 15px; font-weight: 600;"><%= Company.find(@current_people.company_id).name %></div>
 
-        <% if @user_director or @user_administrator %>
-          <div style="font-size: 13px; width: 100%; margin: 0 0 5px; color: darkgrey;">Подписка: <%= time_limit(@current_company.time_limit) %> дн.<br />Лимит клиентов: <%= @current_clients_company.count %> из 
-              <%= @current_company.record_limit %></div>
-        <% end %>
+      <% if @user_director or @user_administrator %>
+        <div style="font-size: 13px; width: 100%; margin: 0 0 5px; color: darkgrey;">Подписка: <%= time_limit(@current_company.time_limit) %> дн.<br />Лимит клиентов: <%= @current_clients_company.count %> из 
+            <%= @current_company.record_limit %></div>
+      <% end %>
 
-        <div class="img-input" style="width: 100%; font-size: 13px;">
-          <%= image_tag s3_image(@current_people.avatar), style: 'width: 10px; height: 10px; margin: 0 5px;' %>
-          <%= @current_people.last_name %> <%= @current_people.first_name %>
-        </div>
-        <div style="font-size: 12px; color: darkgrey; margin-top: 5px;">
-          <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
-          <% work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator' %>
-          <%if work_director.present?%>
-            - Директор
-          <%end %>                    
-          <%if work_administrator.present? %>
-            - Администратор
-          <%end %>
-          <%if (@current_people.role.to_i & Client::Role::CLIENT) > 0 %>
-            - Клиент
-          <%end %>
-        </div>
+      <div class="img-input" style="width: 100%; font-size: 13px;">
+        <%= image_tag s3_image(@current_people.avatar), style: 'width: 10px; height: 10px; margin: 0 5px;' %>
+        <%= @current_people.last_name %> <%= @current_people.first_name %>
+      </div>
+      <div style="font-size: 12px; color: darkgrey; margin-top: 5px;">
+        <% work_director = Work.where people_id: @current_people.id, position_work: 'director' %>
+        <% work_administrator = Work.where people_id: @current_people.id, position_work: 'administrator' %>
+        <%if work_director.present?%>
+          - Владелец
+        <%end %>                    
+        <%if work_administrator.present? %>
+          - Администратор
+        <%end %>
+        <%if (@current_people.role.to_i & Client::Role::CLIENT) > 0 %>
+          - Клиент
+        <%end %>
       </div>
     </div>
+  </a>
   <% @people_user = Client.where(user_id: current_user.id).where.not(id: @current_people.id) %>
   <% @people_user.each do |p| %>
     <% work_director = Work.where people_id: p.id, position_work: 'director' %>
@@ -40,7 +40,7 @@
         </div>
         <div style="font-size: 12px; color: darkgrey; margin-top: 5px;">
           <%if work_director.present?%>
-            - Директор
+            - Владелец
           <%end %>                    
           <%if work_administrator.present? %>
             - Администратор

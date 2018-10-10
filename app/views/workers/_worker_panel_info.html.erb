@@ -1,0 +1,194 @@
+<script type="text/javascript">
+
+  Vue.component('section-worker-panel-info', {
+    data: function () {
+      return {
+        loading: false,
+        showAll: false,
+        showTotalInfo: false,
+        openPanelAdd: null,
+        fieldsClient: [],
+      }
+    },
+    props: {
+      worker: Object,
+    },
+    methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      closeCart() {
+        url = window.location.href;
+        newUrl = deleteURLParameter(url, 'worker');
+        history.pushState('', 'Home', newUrl);
+        vmWorkers.worker = [];
+        vmWorkers.panelShow = 'home';
+      }
+    },
+    computed: {
+      urlEdit: function() {
+        return '/workers/' + this.worker.id + '/edit';
+      },
+      workerBasicInformation: function() {
+        let {worker} = vmWorkers;
+        var workerBasicInformation = '';
+        var patronymic = worker.patronymic != '' ? true : false;
+        var birthday = worker.birthday != null ? true : false;
+        var phone_number = worker.phone_number != '' ? true : false;
+
+        if (birthday) {
+          var birthDay = new Date(worker.birthday);
+          var yearBirthDay = birthDay.getFullYear();
+
+          var today = new Date();
+          var yearToday = today.getFullYear();
+
+          var age = yearToday - yearBirthDay;
+
+          if (age == 1 || age == 21 || age == 31) {
+            age = age + ' год';
+          }
+          else if ((1 < age && age < 5) || (21 < age && age < 25) || (31 < age && age < 35)) {
+            age = age + ' года';
+          }
+          else {
+            age = age + ' лет';
+          }
+        }
+
+        if (patronymic) {
+          if (birthday && phone_number) {
+            workerBasicInformation = worker.patronymic + ', ' + age + ', ' + worker.phone_number;
+          }
+          else if (birthday && !phone_number) {
+            workerBasicInformation = worker.patronymic + ', ' + age;
+          }
+          else if (!birthday && phone_number) {
+            workerBasicInformation = worker.patronymic + ', ' + worker.phone_number;
+          }
+          else if (!birthday && !phone_number) {
+            workerBasicInformation = worker.patronymic;
+          }
+        }
+        else if (birthday) {
+          if (phone_number) {
+            workerBasicInformation = age + ', ' + worker.phone_number;
+          }
+          else if (!phone_number) {
+            workerBasicInformation = age;
+          }
+        }
+        else if (phone_number) {
+          workerBasicInformation = worker.phone_number;
+        }
+        else {
+          workerBasicInformation = '';
+        }
+
+        return workerBasicInformation;
+      }
+    },
+    watch: {
+      "worker" : function() {
+        this.showTotalInfo = false;
+      },
+      "showTotalInfo" : function() {
+        this.loading = false;
+
+        if(this.showTotalInfo) {
+          setTimeout(() => {
+            this.loading = true;
+          }, 600);
+        }
+      }
+    },
+    template: `
+      <section id="worker-panel-info" class="panel-content">
+        <div class="panel-info">
+          <div class="basic-info">
+
+            <div @click="closeCart()" class="btn-back new-btn btn-close-pnl-add" style="    bottom: 0px;
+              margin: 5px 5px;
+              position: relative;">
+              <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+            </div>
+
+            <img v-if="worker.length != 0" class="ava" src="/resources/no-image-available.png">
+            <div class="basic-info__container">
+              <div class="basic-info__container__content">
+                <div class="name-panel">{{worker.last_name}} {{worker.first_name}}</div>
+                <div v-if="workerBasicInformation != ''" class="additional-info">{{ workerBasicInformation }}</div>
+              </div>
+            </div>
+
+            <div v-on:click="showTotalInfo = !showTotalInfo" class="click-compact" v-bind:class="{ active: showTotalInfo }"><img src="images/_ionicons_svg_ios-arrow-down.svg"></div>
+          </div>
+
+          <div v-if="showTotalInfo" class="total-info">
+
+            <div v-if="loading" style="display: grid;">
+              <div v-if="worker.birthday != null" class="item-info">
+                <div class="title-item-info">Дата рождения</div>
+                <div class="content-item-info">{{worker.birthday}}</div>
+              </div>
+              <div v-if="worker.sex != null" class="item-info">
+                <div class="title-item-info">Пол</div>
+                <div class="content-item-info">{{worker.sex}}</div>
+              </div>
+            </div>
+
+            <div v-else-if="!loading" style="width: 100%; height: 70px;">
+              <div style="position: absolute; top: 0; width: 100%; height: 100%; background-color: white;">
+                <img src="images/loading.gif" style="width: 60px; height: 60px; margin: auto; display: table; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="panel-footer">
+          <div v-if="openPanelAdd == null" class="indecators">
+
+            <div class="btn-show-panel btn-show-list">
+              <div class="panel-show" style="left: auto; right: 10px;">
+                <a :href="urlEdit">Редактировать</a>
+              </div>
+              <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
+            </div>
+            <div title="Добавить сотруднику" @click="openPanelAdd = 'addListForClient'" class="btn-add-panel">
+                <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
+            </div>
+          </div>
+
+          <section v-if="openPanelAdd == 'addListForClient'" class="panel-add show-all">
+            <h2 class="panel-form__title">
+              <div @click="openPanelAdd = null" class="btn-back new-btn">
+                <ion-icon name="arrow-back"></ion-icon>
+              </div>
+              <span>Добавление</span>
+            </h2>
+
+            <div>
+              <div @click="openPanelAdd = 'addWork'" class="item-panel" style="cursor: pointer;">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel" style="width: 100%;">Добавить должность и права доступа</div>
+                  <div class="right-item-panel"></div>
+                </div>
+              </div>
+              <div @click="openPanelAdd = 'addTransaction'" class="item-panel" style="cursor: pointer;">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel" style="width: 100%;">Прозвести транзакцию</div>
+                  <div class="right-item-panel"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section-work-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :show="openPanelAdd" :worker="worker"></section-work-add>
+
+          <section-transaction-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :show="openPanelAdd" :worker="worker"></section-transaction-add>
+
+        </div>
+      </section>
+    `
+  });
+</script>

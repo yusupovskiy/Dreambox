@@ -48,6 +48,15 @@ Rails.application.routes.draw do
   end
   get 'get_autodata_subscription' => 'subscriptions#get_autodata_subscription'
 
+  resources :workers do
+    member do
+      get 'role_employee'
+      get 'role_client'
+    end
+  end
+  get 'get_workers' => 'workers#get_workers'
+  get 'get_works' => 'companies/works#get_works'
+  
   resources :companies do
     resources :affiliates, module: :companies
     resources :workers, module: :companies do
@@ -59,7 +68,7 @@ Rails.application.routes.draw do
     post 'clients/import' => 'companies/clients#import'
     resources :fin_operations, module: :companies do
       member do
-        get 'doc_pko'
+        # get 'doc_pko'
       end
     end
     resources :histories, module: :companies
@@ -80,12 +89,17 @@ Rails.application.routes.draw do
   resources :field_templates
   resources :field_data
 
-  resources :transactions
+  resources :transactions do
+      member do
+        get 'doc_pko'
+      end
+    end
   get 'get_income' => 'transactions#get_income'
   post 'create_transaction' => 'transactions#create_transaction'
   get 'get_client_transactions' => 'transactions#get_client_transactions'
   get 'get_transactions' => 'transactions#get_transactions'
   delete 'cancel_transaction' => 'transactions#cancel_transaction'
+  # get 'doc_pko' => 'transactions#doc_pko'
   
   get 'get_affiliates' => 'companies/affiliates#get_affiliates'
   
@@ -94,5 +108,9 @@ Rails.application.routes.draw do
   resources :categories
   get 'get_categories_income' => 'categories#get_categories_income'
   get 'get_categories_expense' => 'categories#get_categories_expense'
+
+  get 'get_works_affiliates' => 'works_salaries#get_works_affiliates'
+
+  delete 'records_services_destroy' => 'works_salaries#destroy'
 
 end

@@ -1,5 +1,16 @@
 class TransactionsController < ApplicationController
 
+  def doc_pko
+    company_transactions = CompanyTransaction.where affiliate_id: @current_affiliates
+    @transaction = Transaction.find_by id: params[:id], company_transaction_id: company_transactions
+
+    if @transaction.present?
+      @company_transaction = CompanyTransaction.find_by id: @transaction.company_transaction_id
+    end
+
+    render :template => 'transactions/doc_pko',layout: false    
+  end
+
   def get_client_transactions
     client_id = params[:client_id]
 
@@ -69,7 +80,7 @@ class TransactionsController < ApplicationController
 
     @categories = Category.all
     
-    @title_card = 'Добавление операции'
+    @title_card = 'Добавление транзакции'
     @form_submit = 'Сохранить'
 
   end
@@ -84,12 +95,12 @@ class TransactionsController < ApplicationController
     client_transactions = []
 
     if amount <= 0
-        complited = false
-        note = 'Сумма не может быть меньше или равной нулю'
+      complited = false
+      note = 'Сумма не может быть меньше или равной нулю'
 
     elsif note_transaction == ''
-        complited = false
-        note = 'Оставьте комментарий к транзакции'
+      complited = false
+      note = 'Оставьте комментарий к транзакции'
 
     elsif Subscription.exists? operation_id: operation_id
 
@@ -194,12 +205,15 @@ class TransactionsController < ApplicationController
     else
       @company_transaction.number_document = 1
     end
+    
+    operation = Operation.create
+    @company_transaction.operation_id = operation.id
 
     respond_to do |format|
-      if @transaction.save and @company_transaction.save
+      if @company_transaction.save and @transaction.save
         @transaction.update_attribute(:company_transaction_id, @company_transaction.id)
 
-        format.html { redirect_to "/transactions?transaction=1" }
+        format.html { redirect_to "/transactions?transaction=#{@transaction.id}" }
         format.json { render :show, status: :created, location: @company_transaction }
       else
         # format.html { render :new, notice: "Действие не произведено"  }
