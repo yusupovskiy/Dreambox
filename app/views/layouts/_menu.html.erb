@@ -1,6 +1,6 @@
 <div class="item-menu icon-menu"></div>
 
-<% if !signed_in? %>
+<% if !signed_in? or !current_user.people_id.present? %>
 
   <div style="    width: 27px;
     height: 27px;
@@ -16,7 +16,7 @@
     <ion-icon name="contact"></ion-icon>
   </div>
 
-<% elsif signed_in? %>
+<% elsif signed_in? and current_user.people_id.present? %>
   <% url = @url[3].split('?') %>
   
   <!-- <dfn data-info="Добавление"> -->

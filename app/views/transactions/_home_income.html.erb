@@ -1,74 +1,163 @@
 <script type="text/javascript">
-  Vue.component('section-home-income', {
+  Vue.component('section-categories', {
     data: function () {
       return {
         showAll: false,
+        categoryId: null,
       }
     },
     props: {
-      categories_income: Array,
+      categories: Array,
+      title: String,
+      budget: String,
+    },
+    methods: {
+      clickActive(id) {
+        if(this.categoryId != id)
+          this.categoryId = id;
+
+        else if(this.categoryId != null)
+          this.categoryId = null;
+
+        else 
+          this.categoryId = id;
+      },
+    },
+    computed: {
+      categoriesBudget() {
+        let {budget, categories} = this;
+        return categories.filter(c => c.budget == budget);
+      },
+      categoriesTree() {
+        return {
+          value: { name: 'Категории доходов', id: 0 },
+          children: buildHierarchy(this.categoriesBudget)
+        }
+      }
+    },
+    template: `
+      <section class='panel-content' :class="{ 'show-all': showAll}">
+        <div class="panel-header">
+          <div class="title-panel">{{ title }}</div>
+          <div v-if="categoriesTree.children.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Показать все</div>
+            <div v-else-if="showAll == true">Скрыть список</div>
+          </div>
+        </div>
+
+        <ul v-if="categoriesTree.children.length > 0" class="categories-tree" style='margin: -10px 0 20px 16px;'>
+          <item v-for="category in categoriesTree.children" :key="category.id" :category="category"></item>
+        </ul>
+
+        <div v-else-if="categoriesTree.children.length <= 0" class="list-panel">
+          <div class="no-record">Нет записи</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+      </section>
+    `
+  });
+
+  // define the item component
+  Vue.component('item', {
+    template: '#item-template',
+    props: {
+      category: Object
+    },
+    data: function () {
+      return {
+        open: false
+      }
+    },
+    computed: {
+      isFolder: function () {
+        return this.category.children &&
+          this.category.children.length
+      },
     },
     methods: {
       amount(amount) {
         return amount.toLocaleString();
       },
+      toggle: function () {
+        if (this.isFolder) {
+          this.open = !this.open
+        }
+      },
       addFiltration(category) {
-        vmTransaction.addElementFiltration(category.id, 'i');
+        vmTransaction.addElementFiltration(category.number, 'i');
       },
       deleteParamsFiltration(id, object) {
         let index = vmTransaction.filtrationElements.findIndex(e => e.id == id);
 
         vmTransaction.deleteParamsFiltration(index, id, 'i');
       },
-    },
-    template: `
-      <section class='panel-content' :class="{ 'show-all': showAll}">
-        <div class="panel-header">
-          <div class="title-panel">Категории доходов</div>
-          <div v-if="categories_income.length > 3" @click="showAll = !showAll" class="btn show-panel">
-            <div v-if="showAll == false">Показать все</div>
-            <div v-else-if="showAll == true">Скрыть список</div>
+    }
+  })
+
+
+  function buildHierarchy(arry) {
+    var roots = [],
+      children = {};
+    for (var i = 0, len = arry.length; i < len; ++i) {
+      var item = arry[i],
+        p = item.level,
+        target = !p ? roots : (children[p] || (children[p] = []));
+      target.push({
+        value: item
+      });
+    }
+    var findChildren = function(parent) {
+      if (children[parent.value.id]) {
+        parent.children = children[parent.value.id];
+        for (var i = 0, len = parent.children.length; i < len; ++i) {
+          findChildren(parent.children[i]);
+        }
+      }
+    };
+    for (var i = 0, len = roots.length; i < len; ++i) {
+      findChildren(roots[i]);
+    }
+    return roots;
+  }
+
+</script>
+
+<!-- item template -->
+<script type="text/x-template" id="item-template">
+  <li :class="['category-' + category.value.number]" class="item-category">
+
+    <div class="value-item-panel">
+      <div class="left-item-panel" style="white-space: nowrap;" :class="[ open ? 'active' : '', category.value.status == 'active' ? 'active-item' : '', category.value.status == 'current' ? 'current-item' : '', category.value.status == 'default' ? 'default-item' : '']">
+
+        <div class="item__btns">
+          <div v-if="category.value.status == 'active'" @click="deleteParamsFiltration(category.value.number)" class='btn-delete'>
+            <ion-icon name="checkbox"></ion-icon>
+          </div>
+          <div v-else @click="addFiltration(category.value)" class='btn-delete'>
+            <ion-icon name="checkbox-outline"></ion-icon>
           </div>
         </div>
-        <div v-if="categories_income.length > 0" class="list-panel cool-scrollbar">
 
-          <div  v-for="category in categories_income" 
-                :class="['category-' + category.id, 
-                  category.status == 'active' ? 'active-item' : '', 
-                  category.status == 'current' ? 'current-item' : '', 
-                  category.status == 'default' ? 'default-item' : '']" 
-                class="item-panel">
-            
-            <div class="item-panel__basic-info">
-              <div class="left-item-panel" style="white-space: nowrap;">
+        <span v-if="category.value.status == 'active'" @click="deleteParamsFiltration(category.value.number)">{{ category.value.name }}</span>
+        <span v-else @click="addFiltration(category.value)" >{{ category.value.name }}</span>
 
-                  <div class="item__btns">
-                    <div v-if="category.status == 'active'" @click="deleteParamsFiltration(category.id)" class='btn-delete'>
-                      <ion-icon name="checkbox"></ion-icon>
-                    </div>
-                    <div v-else @click="addFiltration(category)" class='btn-delete'>
-                      <ion-icon name="checkbox-outline"></ion-icon>
-                    </div>
-                  </div>
-
-                  {{ category.name }}</div>
-              <div class="right-item-panel">
-                <div class="green-color">+{{ amount(category.amount) }} ₽</div>
-              </div>
-            </div>
-
-            <div class="item-panel__total-info"></div>
+        <div class="item__btns" style='margin-left: 5px;'>
+          <div @click="toggle" v-if="isFolder" class='btn-delete btn-show'>
+            <ion-icon name="arrow-dropdown"></ion-icon>
           </div>
+        </div>
+      </div>
+      <div class="right-item-panel">
+        <div class="green-color">+{{ amount(category.value.amount) }} ₽</div>
+      </div>
+    </div>
 
-        </div>
-        <div v-else-if="categories_income.length <= 0" class="list-panel">
-          <div class="no-record">Нет записи</div>
-        </div>
-        <div v-else-if="loadingPanel" class="list-panel">
-          <img class="loading-panel" src="images/loading.gif" />
-        </div>
+    <ul v-show="open" v-if="isFolder" class='categories-tree'>
+      <item v-for="category in category.children" :category="category" :key="category.value.id">
+      </item>
+    </ul>
 
-      </section>
-    `
-  });
+  </li>
 </script>

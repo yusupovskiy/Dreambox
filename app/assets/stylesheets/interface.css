@@ -168,9 +168,6 @@ a.btn-card>ion-icon {
     transform: translateX(2px);
     opacity: 1!important;
 }
-.information-section:hover .item-card {
-    opacity: 0.6;
-}
 .instrument>div, .item-quick-search>div {
     *color: #919394;
     color: #75787c;

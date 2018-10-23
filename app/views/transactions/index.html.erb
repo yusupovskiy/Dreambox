@@ -48,11 +48,10 @@
       sortKey: 'date',
       reverse: true,
 
-      categories_income: [],
-      categories_expense: [],
+      categories: [],
       affiliatesCompany: [],
 
-      filtrationElements: [],
+      filtrationElements: []
     },
     methods: {
       sendQuery(query, type, byDefault) {
@@ -112,7 +111,6 @@
         newUrl = deleteURLParameter(url, 'filters');
         history.pushState('', '', newUrl);
       },
-
 
       clickTransaction(transaction) {
         this.transaction = transaction;
@@ -212,6 +210,85 @@
         this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
         this.sortKey = sortKey;
       },
+      amountAndIdentityCategories(categories, show_category, amount) {
+        var levelsCategories = [];
+
+        // категории раскладываются по уровням
+        categories.filter(function(c) {
+          if(c.level == 0) {
+            var level = 1;
+            levelsCategories.push({
+              id: c.id, 
+              levels: [
+                {
+                  level: level,
+                  value: c
+                }
+              ]
+            });
+
+            var findChildren = function(parantId) {
+              var ids = [];
+              var categoriesChildre = categories.filter(function(c1) {
+                if(parantId.indexOf(c1.level) >= 0) {
+                  ids.push(c1.id);
+                  return c1;
+                }
+              });
+
+              if(!categoriesChildre.length > 0) {
+                return false;
+              }
+
+              level = level + 1;
+              levelsCategories[levelsCategories.length - 1].levels.push({
+                level: level,
+                value: categoriesChildre
+              });
+              findChildren(ids);
+            }
+
+            findChildren([c.id]);
+          }
+        });
+
+        // чтение содержимого в уровнях и присвоение id и amount
+        levelsCategories.filter(function(l) {
+          for(var i = (l.levels.length - 1); i > 0; --i) {
+            var value = l.levels[i].value;
+            var valueParant = l.levels[i-1].value;
+
+            value.filter(function(v) {
+              // если есть родитель то присваиваем ему сумму ребенка и id
+              if(valueParant.level > 0) {
+                valueParant.filter(function(v1) {
+                  if(v1.id == v.level) {
+                    if(amount)
+                      v1.amount = v1.amount + v.amount;
+
+                    if(show_category)
+                      v1.show_category = $.merge(v1.show_category, v.show_category);
+                  }                
+                });
+              }
+
+              // поиск категорию и присваеваем цены и массива с id
+              for(var i = 0; i < categories.length - 1; i++) {
+                var item = categories[i];
+                if(item.id == v.level) {
+                  if(amount)
+                    item.amount = item.amount + v.amount;
+
+                  if(show_category)
+                    item.show_category = $.merge(item.show_category, v.show_category);
+                }
+              }
+            });
+          }
+        });
+
+        return categories;
+      },
     },
     created() {
       var urlHash = new URL(window.location.href);
@@ -253,10 +330,8 @@
         this.filtrationElements = jsonFiltersArray;
       }
 
-      $.get('/get_categories_income.json', 
-        categories_income => this.categories_income = categories_income);
-      $.get('/get_categories_expense.json',
-        categories_expense => this.categories_expense = categories_expense);
+      $.get('/get_categories.json', 
+        categories => this.categories = categories);
       $.get('/get_affiliates.json',
         affiliatesCompany => this.affiliatesCompany = affiliatesCompany);
 
@@ -320,17 +395,41 @@
         });
       },
 
+      // получение массив с айди и номером
+      categoriesNumber() {
+        var categories = this.categories;
+        var number = 0;
+        var categoriesData = [];
+        var categoriesEtc = [];      
+
+        categoriesData = categories.filter(function(c) {
+          var presenceChildren = categories.filter(c1 => c1.level == c.id && c1.budget == c.budget);
+          number = number + 2;
+
+          if(presenceChildren.length > 0) {
+            console.log(c.amount);
+            categoriesEtc.push({id: c.id + 0.1, name: 'Прочие', budget: c.budget, subject: c.subject, level: c.id, amount: c.amount, show_category: [c.id], number: number});
+          }
+          return Object.assign(c, { show_category: [c.id], number: number - 1 });
+        });
+        
+        var categoriesNumber = $.merge(categoriesData, categoriesEtc);
+
+        return this.amountAndIdentityCategories(categoriesNumber, true, false);
+      },
+
       filtrationElementsName() {
-        let {filtrationElements, categories_income, categories_expense, affiliatesCompany} = this;
+        let {filtrationElements, affiliatesCompany} = this;
+        var categories = this.categoriesNumber;
 
         return filtrationElements.filter(function (element) {
-          let indexIncome = categories_income
-            .findIndex(i => i.id == element.id);
-          income = categories_income[indexIncome];
+          let indexIncome = categories
+            .findIndex(i => i.number == element.id);
+          income = categories[indexIncome];
 
-          let indexExpense = categories_expense
-            .findIndex(s => s.id == element.id);
-          expense = categories_expense[indexExpense];
+          let indexExpense = categories
+            .findIndex(s => s.number == element.id);
+          expense = categories[indexExpense];
 
           let indexAffiliate = affiliatesCompany
             .findIndex(a => a.id == element.id);
@@ -351,13 +450,22 @@
       // получение всех выделенных элементов
       activeCategories() {
         let {filtrationElementsName} = this;
+        var categories = this.categoriesNumber;
 
-        var arrayId = [];
+        var arrayNumber = [];
         filtrationElementsName.filter(function (element) {
           if (element.object == 'i' || element.object == 'e') {
-            arrayId.push(element.id);
+            arrayNumber.push(element.id);
           }
         });
+
+        var arrayId = [];
+        categories.filter(function (c) {
+          if(arrayNumber.indexOf(c.number) >= 0) {
+            $.merge(arrayId, c.show_category);
+          }
+        });
+
         return arrayId;
       },
       activeAffiliates() {
@@ -397,7 +505,7 @@
           }
         });
       },
-      transactionsFilterCategories() {
+      transactionsFilterAffiliates() {
         let {activeAffiliates} = this;
 
         return this.transactionsDate.filter(function(transaction) {
@@ -410,11 +518,10 @@
       currentCategories() {
         var arrayId = [];
         this.transactionsFilter.filter(function (element) {
-          // if(element.is_active)
-            arrayId.push(element.category_id);
+          arrayId.push(element.category_id);
         });
         return arrayId.filter(function(item, pos) {
-            return arrayId.indexOf(item) == pos;
+          return arrayId.indexOf(item) == pos;
         });
       },
       currentAffiliates() {
@@ -433,12 +540,13 @@
       },
 
       // получение списков со статусом
-      categoriesIncomeFilter() {
-        let {activeCategories, activeAffiliates, currentCategories, currentAffiliates, categories_income, categories_expense} = this;
+      categoriesFilter() {
+        let {activeCategories, activeAffiliates, currentCategories, currentAffiliates} = this;
+        var categories = this.categoriesNumber;
         var have = activeCategories.length > 0 || activeAffiliates.length > 0;
 
         if(have) {
-          return categories_income.filter(function (category) {
+          return categories.filter(function (category) {
             if(activeCategories.indexOf(category.id) >= 0) {
               return Object.assign(category, {status: 'active'});
             }
@@ -451,30 +559,7 @@
           });
         }
         else {
-          return categories_income.filter(function (category) {
-            return Object.assign(category, {status: 'current'});
-          });
-        }
-      },
-      categoriesExpenseFilter() {
-        let {activeCategories, activeAffiliates, currentCategories, currentAffiliates, categories_expense} = this;
-        var have = activeCategories.length > 0 || activeAffiliates.length > 0;
-
-        if(have) {
-          return categories_expense.filter(function (category) {
-            if(activeCategories.indexOf(category.id) >= 0) {
-              return Object.assign(category, {status: 'active'});
-            }
-            else if(currentCategories.indexOf(category.id) >= 0) {
-              return Object.assign(category, {status: 'current'});
-            }
-            else {
-              return Object.assign(category, {status: 'default'});
-            }
-          });
-        }
-        else {
-          return categories_expense.filter(function (category) {
+          return categories.filter(function (category) {
             return Object.assign(category, {status: 'current'});
           });
         }
@@ -546,15 +631,15 @@
       },
 
       // присваиваются суммы из списка неотфильтрованных транзакций
-      categories_income_amount() {
-        let {categoriesIncomeFilter, activeAffiliates, activeCategories} = this;
+      categoriesAmount() {
+        let {categoriesFilter, activeAffiliates, activeCategories} = this;
         
         if(activeAffiliates.length > 0)
-          var newTransactions = this.transactionsFilterCategories;
+          var newTransactions = this.transactionsFilterAffiliates;
         else
           var newTransactions = this.transactionsDate;
 
-        var categories_income_amount = categoriesIncomeFilter.filter(function(c) {
+        var categories_income_amount = categoriesFilter.filter(function(c) {
 
           sum = newTransactions.reduce(function(sum, transaction) {
             if(transaction.category_id == c.id && transaction.is_active)
@@ -565,45 +650,26 @@
 
           return Object.assign(c, {amount: sum});
         });
+
+        return categories_income_amount;
+      },
+
+      categoriesAndSubcategories() {
+        var categories = this.categoriesAmount;
+
+        categories = this.amountAndIdentityCategories(categories, false, true);
 
         const k = 'amount';
         const reverse = true;
-        return categories_income_amount.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
+        return categories.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
       },
-      categories_expense_amount() {
-        let {categoriesExpenseFilter, activeAffiliates, activeCategories} = this;
 
-        if(activeAffiliates.length > 0)
-          var newTransactions = this.transactionsFilterCategories;
-        else
-          var newTransactions = this.transactionsDate;
-
-        var categories_expense_amount = categoriesExpenseFilter.filter(function(c) {
-
-          sum = newTransactions.reduce(function(sum, transaction) {
-            if(transaction.category_id == c.id && transaction.is_active)
-              return sum + (transaction.amount);
-            else
-              return sum;
-          }, 0);
-
-          return Object.assign(c, {amount: sum});
-        });
-
-        const k = 'amount';
-        const reverse = false;
-        return categories_expense_amount.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
-      },
       affiliatesCompanyAmount() {
         let {affiliatesFilter, transactionsDate} = this;
 
         var affiliatesCompanyAmount = affiliatesFilter.filter(function(a) {
-
           sum = transactionsDate.reduce(function(sum, transaction) {
             if(transaction.affiliate_id == a.id && transaction.is_active) {
-              // if(transaction.budget == 'income')
-              //   return sum + (transaction.amount);
-              // else if(transaction.budget == 'expense')
               return sum + (transaction.amount);
             }
             else

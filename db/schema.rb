@@ -162,7 +162,6 @@ ActiveRecord::Schema.define(version: 2018_08_31_224658) do
     t.datetime "updated_at", null: false
     t.integer "record_type", null: false
     t.integer "visit_type", null: false
-    t.string "is_automatic", default: "not", null: false
     t.string "subscription_sale", default: ""
     t.bigint "operation_id", null: false
     t.index ["affiliate_id"], name: "index_records_on_affiliate_id"

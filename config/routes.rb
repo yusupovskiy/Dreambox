@@ -108,6 +108,7 @@ Rails.application.routes.draw do
   resources :categories
   get 'get_categories_income' => 'categories#get_categories_income'
   get 'get_categories_expense' => 'categories#get_categories_expense'
+  get 'get_categories' => 'categories#get_categories'
 
   get 'get_works_affiliates' => 'works_salaries#get_works_affiliates'
 

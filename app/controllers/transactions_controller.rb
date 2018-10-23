@@ -78,7 +78,7 @@ class TransactionsController < ApplicationController
   def new
     @company_transaction = CompanyTransaction.new 
 
-    @categories = Category.all
+    @categories = Category.where(subject: 'company').order(:created_at)
     
     @title_card = 'Добавление транзакции'
     @form_submit = 'Сохранить'
@@ -136,7 +136,7 @@ class TransactionsController < ApplicationController
       else
         complited = true
         note = 'Транзакция за абонемент произведена'
-        category_id = 2
+        category_id = 1
       end
 
     elsif Client.exists? operation_id: operation_id

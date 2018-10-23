@@ -7,7 +7,7 @@
   <%end%>
 <%end%>
 <div id="notifications" class='notification'>
-  <% if signed_in? %>
+  <% if signed_in? and current_user.people_id.present? %>
     <% if time_limit(@current_company.time_limit) <= 5 %>
       <div class="notification__item">
         <div class="not-complited status-complited">Внимание!</div>

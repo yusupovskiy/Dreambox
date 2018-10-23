@@ -64,7 +64,8 @@
 
   </section>
 
-  <section-home-income :categories_income="categories_income_amount"></section-home-income>
-  <section-home-expense :categories_expense="categories_expense_amount"></section-home-expense>
+  <section-categories :title='"Категории доходов"' :budget='"income"' :categories="categoriesAndSubcategories"></section-categories>
+  <section-categories :title='"Категории расходов"' :budget='"expense"' :categories="categoriesAndSubcategories"></section-categories>
+  <section-home-expense :categories_expense="categoriesAmount"></section-home-expense>
   <section-home-affiliates :affiliates="affiliatesCompanyAmount"></section-home-affiliates>
 </div>

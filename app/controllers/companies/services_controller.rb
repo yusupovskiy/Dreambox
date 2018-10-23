@@ -14,7 +14,8 @@ class Companies::ServicesController < ApplicationController
     #   ORDER BY created_at DESC 
     # ")
 
-    services = Service.where(company_id: @current_company.id).order('created_at DESC')
+    # services = Service.where(company_id: @current_company.id).order('created_at DESC')
+    services = Service.all
 
     respond_to do |format|
       format.json { render json: services, status: :ok }
