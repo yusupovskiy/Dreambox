@@ -1,50 +1,44 @@
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-
-  <%= devise_error_messages! %>
-
-  <div class="title-panel">
-    <div class="title-card"><a href="#"><img class="logo" src="/images/logo.png" /></a></div>
-  </div>
-    
-  
-  <div class="conten-card">
-  
-    <div class="menu-with-options">
-      <a href="<%=new_user_session_path%>" class="option">Вход</a>
-      <div class="option active">Регистрация</div>
+  <div class="panel-list" style="background-color: whitesmoke;">
+    <div style='position: relative;'>
+      <h2 class="panel-form__title" style="margin-top: 10px; margin-left: 30px;">Регистрация</h2>
+      <%= f.submit 'Подтвердить', name: nil, class: "btn title-btn" %>
     </div>
-    
-    <div class="cont-category-book">
-      <div class="tab-category information-section">
-        <div class="block-information authorization">
-          <div class="finput">
-            <%= f.label t('.email'), class: 'finput-label' %>
-            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "finput-input" %>
-          </div>
-          <div class="finput">
-            <%= f.label t('.password'), class: 'finput-label' %>
-            <%= f.password_field :password, autocomplete: "off", class: "finput-input" %>
-          </div>
-          <div class="finput">
-            <%= f.label t('.password_confirmation'), class: 'finput-label' %>
-            <%= f.password_field :password_confirmation, autocomplete: "off", class: "finput-input" %>
-          </div>
+    <div class="container-list gray-scrollbar">  
+      <div class="cont-category-book">
+        <div class="tab-category information-section">
+          <%= devise_error_messages! %>
+          <div class="block-information authorization">
+            <div class="finput focus">
+              <%= f.label t('.email'), class: 'finput-label' %>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "finput-input", required: 'required' %>
+            </div>
+            <div class="finput">
+              <%= f.label t('.password'), class: 'finput-label' %>
+              <%= f.password_field :password, autocomplete: "off", class: "finput-input", required: 'required' %>
+            </div>
+            <div class="finput">
+              <%= f.label t('.password_confirmation'), class: 'finput-label' %>
+              <%= f.password_field :password_confirmation, autocomplete: "off", class: "finput-input", required: 'required' %>
+            </div>
 
-          <div class="finput">
-            <%= f.label t('.first_name'), class: 'finput-label' %>
-            <%= f.text_field :first_name, class: "finput-input" %>
+            <div class="finput">
+              <%= f.label t('.first_name'), class: 'finput-label' %>
+              <%= f.text_field :first_name, class: "finput-input", required: 'required' %>
+            </div>
+            <div class="finput">
+              <%= f.label t('.last_name'), class: 'finput-label' %>
+              <%= f.text_field :last_name, class: "finput-input", required: 'required' %>
+            </div>
           </div>
-          <div class="finput">
-            <%= f.label t('.last_name'), class: 'finput-label' %>
-            <%= f.text_field :last_name, class: "finput-input" %>
-          </div>
+  <!--           <% if @minimum_password_length %>
+          <em>(<%= @minimum_password_length %> минимум символов)</em>
+          <% end %><br /> -->
 
-          <%= f.submit t(:sign_up), name: nil, class: "btn icon-authorization" %>
+          <a class="link-to" href="<%=new_user_session_path%>">Вход</a>
+          <br />
+          <%= render "users/shared/links" %>
         </div>
-<!--           <% if @minimum_password_length %>
-        <em>(<%= @minimum_password_length %> минимум символов)</em>
-        <% end %><br /> -->
-        <%= render "users/shared/links" %>
       </div>
     </div>
   </div>

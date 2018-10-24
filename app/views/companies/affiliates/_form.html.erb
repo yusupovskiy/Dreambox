@@ -1,27 +1,41 @@
 <%= form_with(model: [affiliate.company, affiliate], local: true) do |form| %>
-  <div class="conten-card">   
-    <div class="information-section">
-      <div class="block-information">
-        <%=form.text_field :name, value: affiliate.name, placeholder: "Название*", class: "input-panel" %>
-      </div>
-      
-      <div class="block-information">
-        <%=form.text_field :address, value: affiliate.address, placeholder: "Адрес филиала*", class: "input-panel" %>
-        <%=form.text_field :phone_number, value: affiliate.phone_number, placeholder: "Телефон", class: "input-panel" %>
-        <%=form.text_field :email, value: affiliate.email, placeholder: "Email", class: "input-panel" %>
-      </div>
+  <div class="panel-list" style="background-color: whitesmoke;">
+    <div style='position: relative;'>
+      <h2 class="panel-form__title" style="margin-top: 10px;">
+        <%= @title_card %>
+      </h2>
+      <a href="<%= @url_back %>" class="btn-back new-btn">
+        <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+      </a>
+      <%= form.submit @form_submit, class: "btn", style: 'float: right;
+      position: absolute;
+      right: 10px;
+      top: 0;
+      padding: 15px;
+      color: #12ce88;' %>
     </div>
-    <%= form.submit class: "btn icon-confirm" %>
-  </div>
 
-  <% if affiliate.errors.any? %>
-    <div id="error_explanation" class="message">
-      <h2><%= pluralize(affiliate.errors.count, "error") %> prohibited this affiliate from being saved:</h2>
-      <ul>
-      <% affiliate.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+    <div class="container-list gray-scrollbar">
+      <div class="conten-card">
+        <div class="information-section">
+          <div class="block-information">
+            <div class="finput">
+              <%= form.label 'Адрес филиала', class: 'finput-label' %>
+              <%= form.text_field :address, value: affiliate.address, class: "finput-input"  %>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  <% end %>
+    <% if affiliate.errors.any? %>
+      <div id="error_explanation" class="message">
+        <h2><%= pluralize(affiliate.errors.count, "error") %> prohibited this affiliate from being saved:</h2>
+        <ul>
+        <% affiliate.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
 <% end %>

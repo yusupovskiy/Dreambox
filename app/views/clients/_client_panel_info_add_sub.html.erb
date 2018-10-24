@@ -1,0 +1,201 @@
+<script type="text/javascript">
+  Vue.component('section-subs-add', {
+    data: function () {
+      return {
+        loading: false,
+        addSubsForRecordClient: '',
+        startSubs: '',
+        finishSubs: '',
+        recalculationNote: '',
+        showRecalculationAmount: false,
+        recalculationAmount: null,
+        showAmount: false,
+        amount: null,
+        subsCreateLoading: false,
+        bookingDate: '',
+        newSubscriptionClient: [],
+      }
+    },
+    // props: ['records', 'show'],
+    props: {
+      records: Array,
+      show: String,
+    },
+    methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      createSubClient() {
+        let {client, subscriptions, recordsClients} = vmClient;
+        let {addSubsForRecordClient, startSubs, finishSubs, amount, newSubscriptionClient} = this;
+        var complited = false
+
+        if(!this.subsCreateLoading) {
+          this.subsCreateLoading = true;
+
+          setTimeout(() => {
+            $.ajax('/subscriptions.json', {
+              method: 'POST',
+              data: {
+                authenticity_token: authToken,
+                record_id: addSubsForRecordClient,
+                client_id: client.id,
+                amount: amount,
+                subscription: {
+                  start_at: startSubs,
+                  finish_at: finishSubs,
+                }
+              },
+              success: messege => {
+                complited = messege.complited;
+                newSubscriptionClient = messege.result;
+                vmNotifications.notifications.unshift(messege);
+              },
+              error: e => console.warn('error', e)
+            }).done(e => {
+              if(complited) {
+                var indexRecordClient = recordsClients
+                  .findIndex(rc => rc.record_client_id == newSubscriptionClient.record_client_id);
+                var nameRecord = recordsClients[indexRecordClient].name;
+                var recordId = recordsClients[indexRecordClient].id;
+
+                newSubscriptionClient = Object.assign(newSubscriptionClient, {total_amount: 0, name: nameRecord, record_id: recordId, client_id: client.id})
+
+                subscriptions.unshift(newSubscriptionClient);
+
+                client.unpaid_debt_subs = client.unpaid_debt_subs + newSubscriptionClient.price;
+                
+                this.getDateSub();
+              }
+              this.subsCreateLoading = false;
+            });
+          }, 600);
+        }
+      },
+      getDateSub() {
+        let {client} = vmClient;
+        let {addSubsForRecordClient} = this;
+
+        if(addSubsForRecordClient != '' && addSubsForRecordClient != 0) {
+          $.get(
+            '/get_autodata_subscription.json', 
+            { client_id: client.id, record_id: addSubsForRecordClient },
+            dateSub => {
+              this.startSubs = dateSub.start_date;
+              this.finishSubs = dateSub.finish_date;
+              this.bookingDate = dateSub.booking_date;
+            }
+          );
+        }
+      },
+      openPanelAdd() {
+        // openPanelAdd = 'addListForClient';
+      }
+    },
+    watch: {
+      "addSubsForRecordClient" : function() {
+        this.getDateSub();
+      },
+      recordsClient() {
+        this.addSubsForRecordClient = '';
+      },
+    },
+    computed: {
+      recordsClient() {
+        let {recordsClients, client, recordsCompany, discountCompany} = vmClient;
+
+        return recordsClients.filter(function (rc) {
+          if(rc.client_id == client.id && rc.is_active == true) {
+            var discounts = discountCompany.filter(function(d) {
+              var currentDate = new Date();
+              var start_date = new Date(d.start_at);
+              var finish_date = new Date(d.finish_at);
+
+              if(d.record_client_id == rc.record_client_id && d.is_active == true && start_date <= currentDate && currentDate <= finish_date) {
+                return d;
+              }
+            });
+
+            if(discounts.length > 0) {
+              var total_price_abon = discounts[0].value;
+            }
+            else {
+              let indexRecord = recordsCompany.findIndex(r => r.id == rc.id);
+              var total_price_abon = recordsCompany[indexRecord].total_price_abon;
+            }
+
+            return Object.assign(rc, {total_price_abon: total_price_abon});
+          }
+        });
+      },
+    },
+    template: `
+      <section v-if="show == 'addSubscriptionClient'" class="panel-add">
+        <h2 class="panel-form__title">
+          <div @click="$emit('open-pnl-add')" class="btn-back new-btn">
+            <ion-icon name="arrow-back"></ion-icon>
+          </div>
+          <span>Продажа абонемента</span>
+        </h2>
+        <div>
+          <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+          <div class="item-panel">
+            <div class="item-panel__basic-info">
+              <select v-model="addSubsForRecordClient">
+                <option disabled value="">Выберите одну из записей</option>
+                <option v-for="record in recordsClient" :value="record.id">
+                  {{ indentAmount(record.total_price_abon) }} ₽ | {{ record.name }}
+                </option>
+              </select>
+
+              <div v-if="addSubsForRecordClient != ''">
+
+                <input v-model="startSubs" type="date" placeholder="Дата начала" />
+                <input v-model="finishSubs" type="date" placeholder="Дата завершения" />
+                
+                <div style="font-size: 14px; color: #a4a4a4; margin-bottom: 10px; user-select: none;">{{ bookingDate }}</div>
+
+                <input v-if='showAmount' v-model="amount" type="number" placeholder="Сумма оплаты" style="width: 100%;" />
+                <input v-if='showRecalculationAmount' v-model="recalculationNote" type="text" placeholder="Причина прерасчета" style="width: 100%;"/>
+                <input v-if="showRecalculationAmount && recalculationNote != ''" v-model="recalculationAmount" type="number" placeholder="Сумма прерасчета" style="width: 100%;" />
+
+                <div class="btns" style="margin: 14px 0 0;">
+                  <button v-if="startSubs != '' && finishSubs != ''" @click="createSubClient()" v-bind:class="{ active: subsCreateLoading }" class="btn-subscribe btn" style="position: absolute; right: 10px; top: 0; padding: 15px; margin: 0;">
+                    <div class="btn__text">Продать</div>
+                    <div v-if="subsCreateLoading" class="container" style="width: 58px;">
+                      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                         viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
+                      <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                        c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
+                        c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                        c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
+                        C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
+                        c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
+                        L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                        c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                        c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                        c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                        c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                        c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
+                        c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
+                        C240.5,4,237.1,0.2,232.1,0z"/>
+                      </svg>
+                    </div>
+                  </button>
+                  <button @click="showAmount = !showAmount" class="btn gray">
+                    <div v-if='!showAmount' class="btn__text">Оплатить</div>
+                    <div @click="amount = null" v-else-if='showAmount' class="btn__text">Не оплачивать</div>
+                  </button>
+                  <button @click="showRecalculationAmount = !showRecalculationAmount" class="btn gray">
+                    <div v-if='!showRecalculationAmount' class="btn__text">Прерасчет</div>
+                    <div @click="recalculationAmount = null, recalculationNote = ''" v-else-if='showRecalculationAmount' class="btn__text">Без перерасчета</div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    `
+  });
+</script>

@@ -1,0 +1,39 @@
+<%if signed_in? %>
+  <%=link_to persons_profile_path, class: "panel-account" do %>
+    <div class="account-name">
+      <%= current_user.first_name %> <%= current_user.last_name %>
+    </div>
+    <%= image_tag s3_image(current_user.avatar), class: 'account-avatar' %>
+  <%end%>
+<%end%>
+<div id="notifications" class='notification'>
+  <% if signed_in? and current_user.people_id.present? %>
+    <% if time_limit(@current_company.time_limit) <= 5 %>
+      <div class="notification__item">
+        <div class="not-complited status-complited">Внимание!</div>
+        Осталось <%= time_limit(@current_company.time_limit) %> дн. до завершения подписки: "<%= @current_company.note %>". Обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
+      </div>
+    <% end %>
+    <% if (@current_company.record_limit - @current_clients_company.count) <= 5 %>
+      <div class="notification__item">
+        <div class="not-complited status-complited">Внимание!</div>
+        Лимит по текущим клиентам скоро будет привышен, осталось <%= @current_company.record_limit - @current_clients_company.count %> мест, обратитесь к менеджеру для продления, по номеру:<br />8 (918) 730 10 05 
+      </div>
+    <% end %>
+  <% end %>
+
+  <div v-for="(notification, index) in notifications" class="notification__item">
+    <div v-if="notification.complited" class="complited status-complited">Выполнено</div>
+    <div v-else-if="!notification.complited" class="not-complited status-complited">Не выполнено</div>
+    <div style="font-size: 19px;">{{ notification.note }}</div>
+    <div @click="notifications.splice(index, 1)" class="notification-close">
+      <ion-icon name="close"></ion-icon>
+    </div>
+  </div>
+  
+  <%if flash[:notice].present?%>
+    <div class="notification__item">
+      <div><%=flash[:notice]%></div>
+    </div>
+  <%end%>
+</div>

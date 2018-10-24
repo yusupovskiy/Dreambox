@@ -1,0 +1,705 @@
+<div id="transaction">
+  <div class="panel-list">
+    <%= render 'transactions/index_search' %>
+    <%= render 'transactions/index_list' %>
+  </div>
+  <div class="panels-content hide-scrollbar">
+    <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+    <%= render 'transactions/home' %>
+    <%= render 'transactions/transaction' %>
+  </div>
+</div>
+
+<%= render 'transactions/home_income' %>
+<%= render 'transactions/home_expense' %>
+<%= render 'transactions/home_affiliates' %>
+<%= render 'transactions/transaction_panel_info' %>
+
+<script type="text/javascript">
+  var authToken = document.getElementById("authenticity_token").value;
+  var valueInput = document.getElementById("search").value
+  var lastId = null;
+
+  var vmTransaction = new Vue ({
+    el: '#transaction',
+    data: {
+      panelShow: 'home',
+      transactions: [],
+      transaction: [],
+      startDate: '',
+      finishDate: '',
+      typeDate: '',
+
+      titleInput: 'Поиск транзакций',
+      loadComplete: false,
+
+      search: '',
+      showSort: false,
+      columns: [
+        {
+          name: 'По дате',
+          column: 'date'
+        }, 
+        {
+          name: 'По оплате',
+          column: 'amount'
+        },
+      ],
+      sortKey: 'date',
+      reverse: true,
+
+      categories: [],
+      affiliatesCompany: [],
+
+      filtrationElements: []
+    },
+    methods: {
+      sendQuery(query, type, byDefault) {
+        var url = window.location.href;
+
+        if(query == '') {
+          var urlHash = new URL(url);
+          var params = urlHash.searchParams.get(type);
+          query = (params == null ? byDefault : params);
+
+          return query;
+        }
+
+        var newUrl = updateURLParameter(url, type, query);
+        history.pushState(query, query, newUrl);
+      },
+      addElementFiltration(id, object) {
+        let indexElement = this.filtrationElements
+          .findIndex(element => element.id == id && element.object == object);
+
+        if(!(indexElement > -1)) {
+          var urlHash = new URL(window.location.href);
+          var currentParamsFilters = urlHash.searchParams.get("filters");
+          var currentParamsFilters = currentParamsFilters == null ? '' : currentParamsFilters + ',';
+          var newParamsFilters = currentParamsFilters + object + '-' + id;
+          this.sendQuery(newParamsFilters, 'filters', '');
+
+          var newElementFiltration = {id: id, object: object};
+          this.filtrationElements.unshift(newElementFiltration);
+        }
+      },
+      deleteParamsFiltration(index, id, object) {
+        let {filtrationElements} = this;
+
+        var urlHash = new URL(window.location.href);
+        var filters_params = urlHash.searchParams.get("filters");
+        filters_params = filters_params.replace(',' + object + '-' + id, '');
+        filters_params = filters_params.replace(object + '-' + id + ',', '');
+        filters_params = filters_params.replace(object + '-' + id, '');
+
+        console.log(filters_params);
+
+        filtrationElements.splice(index, 1);
+
+        if(filters_params.length > 0) {
+          this.sendQuery(filters_params, 'filters', '');
+        }
+        else {
+          url = window.location.href;
+          newUrl = deleteURLParameter(url, 'filters');
+          history.pushState('', '', newUrl);
+        }
+      },
+      deleteAllParamsFiltration() {
+        this.filtrationElements = [];
+        url = window.location.href;
+        newUrl = deleteURLParameter(url, 'filters');
+        history.pushState('', '', newUrl);
+      },
+
+      clickTransaction(transaction) {
+        this.transaction = transaction;
+        this.panelShow = 'transaction';
+
+        url = window.location.href;
+        newUrl = updateURLParameter(url, 'transaction', transaction.id);
+        history.pushState('Транзакция', 'Транзакция', newUrl);
+      },
+
+      dateSwitchMonths(date) {
+        this.startDate = setDate(1, date.getMonth(), date.getFullYear());
+        var lastDayOfMonth = getLastDayOfMonth(date.getFullYear(), date.getMonth());
+        this.finishDate = setDate(lastDayOfMonth.getDate(), lastDayOfMonth.getMonth(), lastDayOfMonth.getFullYear());
+      },
+      dateSwitchQuarter(date) {
+        const arrayQueater = [ [0,1,2], [3,4,5], [6,7,8], [9,10,11] ];
+
+        for(var i = 0; i < arrayQueater.length; i++) {
+          var result = arrayQueater[i].indexOf(date.getMonth());
+
+          if(result >= 0) {
+            var numberQueater = i;
+
+          }
+        }
+        var firstMonth = arrayQueater[numberQueater][0];
+        var lastMonth = arrayQueater[numberQueater][arrayQueater[numberQueater].length - 1];
+
+        this.startDate = setDate(1, firstMonth, date.getFullYear());
+
+        var lastDayOfMonth = getLastDayOfMonth(date.getFullYear(), lastMonth);
+        this.finishDate = setDate(lastDayOfMonth.getDate(), lastDayOfMonth.getMonth(), lastDayOfMonth.getFullYear()); 
+      },
+      dateSwitchYear(date) {
+        const monthEarlyYear = 0;
+        const monthEndYear = 11;
+
+        this.startDate = setDate(1, monthEarlyYear, date.getFullYear());
+        var lastDayOfMonth = getLastDayOfMonth(date.getFullYear(), 11);
+        this.finishDate = setDate(lastDayOfMonth.getDate(), monthEndYear, lastDayOfMonth.getFullYear());
+      },
+
+      dateSwitch(side) {
+        let {typeDate} = this;
+        var startDate = new Date(this.startDate);
+        var finishDate = new Date(this.finishDate);
+        
+        if(typeDate == 'month') {
+          if(side == 'next')
+            var number = 1;
+          else if(side == 'back')
+            var number = -1;
+
+          newStartDate = startDate.addMonths(number);
+          this.dateSwitchMonths(newStartDate);
+        }
+        else if(typeDate == 'quarter') {
+          if(side == 'next')
+            var number = 3;
+          else if(side == 'back')
+            var number = -3;
+
+          var newStartDate = startDate.addMonths(number);
+          this.dateSwitchQuarter(newStartDate);
+        }
+        else if(typeDate == 'year') {
+          if(side == 'next')
+            var number = 1;
+          else if(side == 'back')
+            var number = -1;
+
+          var dateWithУearAltered = startDate.addYears(number);
+          this.dateSwitchYear(dateWithУearAltered);
+        }
+        else if(typeDate == 'arbitrarily') {
+          if(side == 'next')
+            var number = 1;
+          else if(side == 'back')
+            var number = -1;
+
+          newStartDate = startDate.addMonths(number);
+          newFinishDate = finishDate.addMonths(number);
+
+          this.startDate = setDate(newStartDate.getDate(), newStartDate.getMonth(), newStartDate.getFullYear());
+          this.finishDate = setDate(newFinishDate.getDate(), newFinishDate.getMonth(), newFinishDate.getFullYear());
+        }
+
+      },
+      date(date) {
+        return totalDate(date, true, true, true);
+      },
+      amount(amount) {
+        return amount.toLocaleString();
+      },
+      sortBy(sortKey) {
+        this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
+        this.sortKey = sortKey;
+      },
+      amountAndIdentityCategories(categories, show_category, amount) {
+        var levelsCategories = [];
+
+        // категории раскладываются по уровням
+        categories.filter(function(c) {
+          if(c.level == 0) {
+            var level = 1;
+            levelsCategories.push({
+              id: c.id, 
+              levels: [
+                {
+                  level: level,
+                  value: c
+                }
+              ]
+            });
+
+            var findChildren = function(parantId) {
+              var ids = [];
+              var categoriesChildre = categories.filter(function(c1) {
+                if(parantId.indexOf(c1.level) >= 0) {
+                  ids.push(c1.id);
+                  return c1;
+                }
+              });
+
+              if(!categoriesChildre.length > 0) {
+                return false;
+              }
+
+              level = level + 1;
+              levelsCategories[levelsCategories.length - 1].levels.push({
+                level: level,
+                value: categoriesChildre
+              });
+              findChildren(ids);
+            }
+
+            findChildren([c.id]);
+          }
+        });
+
+        // чтение содержимого в уровнях и присвоение id и amount
+        levelsCategories.filter(function(l) {
+          for(var i = (l.levels.length - 1); i > 0; --i) {
+            var value = l.levels[i].value;
+            var valueParant = l.levels[i-1].value;
+
+            value.filter(function(v) {
+              // если есть родитель то присваиваем ему сумму ребенка и id
+              if(valueParant.level > 0) {
+                valueParant.filter(function(v1) {
+                  if(v1.id == v.level) {
+                    if(amount)
+                      v1.amount = v1.amount + v.amount;
+
+                    if(show_category)
+                      v1.show_category = $.merge(v1.show_category, v.show_category);
+                  }                
+                });
+              }
+
+              // поиск категорию и присваеваем цены и массива с id
+              for(var i = 0; i < categories.length - 1; i++) {
+                var item = categories[i];
+                if(item.id == v.level) {
+                  if(amount)
+                    item.amount = item.amount + v.amount;
+
+                  if(show_category)
+                    item.show_category = $.merge(item.show_category, v.show_category);
+                }
+              }
+            });
+          }
+        });
+
+        return categories;
+      },
+    },
+    created() {
+      var urlHash = new URL(window.location.href);
+      var transaction_id = urlHash.searchParams.get("transaction");
+      var filters = urlHash.searchParams.get("filters");
+
+      setTimeout(() => {
+        $.get('/get_transactions.json', transactions => {
+          this.transactions = transactions;
+
+          if(transaction_id != null) {
+            let indexCurrentTransaction = transactions
+              .findIndex(transaction => transaction.id == transaction_id);
+
+            if(indexCurrentTransaction > -1) {
+              getTransaction = this.transactions[indexCurrentTransaction];
+              this.clickTransaction(getTransaction);
+            }
+          }
+
+          this.loadComplete = true;
+        });
+      }, 600);
+
+      if(filters != null) {
+        var filtersArray = filters.split(',');
+        var newFiltersArray = ']';
+        for (var i = 0; i < filtersArray.length; i++) {
+          var array = filtersArray[i].split('-');
+
+          if(i != 0) {
+            newFiltersArray = ',' + newFiltersArray;
+          }
+
+          newFiltersArray = '{ "id": ' + array[1] + ', "object": "' + array[0] + '" }' + newFiltersArray;
+        }
+        newFiltersArray = '[' + newFiltersArray;
+        var jsonFiltersArray = JSON.parse(newFiltersArray);
+        this.filtrationElements = jsonFiltersArray;
+      }
+
+      $.get('/get_categories.json', 
+        categories => this.categories = categories);
+      $.get('/get_affiliates.json',
+        affiliatesCompany => this.affiliatesCompany = affiliatesCompany);
+
+      this.typeDate = 'month';
+      var currentDate = new Date();
+      this.startDate = setDate(1, currentDate.getMonth(), currentDate.getFullYear());
+      var lastDayOfMonth = getLastDayOfMonth(currentDate.getFullYear(), currentDate.getMonth());
+      this.finishDate = setDate(lastDayOfMonth.getDate(), lastDayOfMonth.getMonth(),lastDayOfMonth.getFullYear());
+
+    },
+    watch: {
+      startDate() {
+        if(this.startDate == '') {
+          var currentDate = new Date();
+          this.startDate = setDate(1, currentDate.getMonth(), currentDate.getFullYear());
+        }
+      },
+      finishDate() {
+        if(this.finishDate == '') {
+          var currentDate = new Date();
+          var lastDayOfMonth = getLastDayOfMonth(currentDate.getFullYear(), currentDate.getMonth());
+          this.finishDate = setDate(lastDayOfMonth.getDate(), lastDayOfMonth.getMonth(),lastDayOfMonth.getFullYear());
+        }
+      },
+      typeDate() {
+        let {typeDate, startDate, finishDate} = this;
+        var currentDate = new Date();
+
+        if(typeDate == 'month') {
+          this.dateSwitchMonths(currentDate);
+        }
+        else if(typeDate == 'quarter') {
+          this.dateSwitchQuarter(currentDate);
+        }
+        else if(typeDate == 'year') {
+          this.dateSwitchYear(currentDate);
+        }
+      },
+    },
+    computed: {
+      transactionsAmount() {
+        return this.transactions.filter(function(transaction) {
+          if(transaction.budget == 'expense')
+            transaction.amount = - transaction.amount;
+
+          return transaction;
+        });
+      },
+      transactionsDate() {
+        let {transactionsAmount, startDate, finishDate} = this;
+        var currentDate = new Date();
+        var start_date = new Date(startDate);
+        var finish_date = new Date(finishDate);
+
+        return transactionsAmount.filter(function(t) {
+          var date = new Date(t.date);
+
+          if(start_date <= date && date <= finish_date) {
+            return t;
+          }
+        });
+      },
+
+      // получение массив с айди и номером
+      categoriesNumber() {
+        var categories = this.categories;
+        var number = 0;
+        var categoriesData = [];
+        var categoriesEtc = [];      
+
+        categoriesData = categories.filter(function(c) {
+          var presenceChildren = categories.filter(c1 => c1.level == c.id && c1.budget == c.budget);
+          number = number + 2;
+
+          if(presenceChildren.length > 0) {
+            console.log(c.amount);
+            categoriesEtc.push({id: c.id + 0.1, name: 'Прочие', budget: c.budget, subject: c.subject, level: c.id, amount: c.amount, show_category: [c.id], number: number});
+          }
+          return Object.assign(c, { show_category: [c.id], number: number - 1 });
+        });
+        
+        var categoriesNumber = $.merge(categoriesData, categoriesEtc);
+
+        return this.amountAndIdentityCategories(categoriesNumber, true, false);
+      },
+
+      filtrationElementsName() {
+        let {filtrationElements, affiliatesCompany} = this;
+        var categories = this.categoriesNumber;
+
+        return filtrationElements.filter(function (element) {
+          let indexIncome = categories
+            .findIndex(i => i.number == element.id);
+          income = categories[indexIncome];
+
+          let indexExpense = categories
+            .findIndex(s => s.number == element.id);
+          expense = categories[indexExpense];
+
+          let indexAffiliate = affiliatesCompany
+            .findIndex(a => a.id == element.id);
+          affiliate = affiliatesCompany[indexAffiliate];
+
+          if (income != null && element.object == 'i') {
+            return Object.assign(element, {name: income.name});
+          }
+          else if (expense != null && element.object == 'e') {
+            return Object.assign(element, {name: expense.name});
+          }
+          else if (affiliate != null && element.object == 'a') {
+            return Object.assign(element, {name: affiliate.address});
+          }
+        });
+      },
+
+      // получение всех выделенных элементов
+      activeCategories() {
+        let {filtrationElementsName} = this;
+        var categories = this.categoriesNumber;
+
+        var arrayNumber = [];
+        filtrationElementsName.filter(function (element) {
+          if (element.object == 'i' || element.object == 'e') {
+            arrayNumber.push(element.id);
+          }
+        });
+
+        var arrayId = [];
+        categories.filter(function (c) {
+          if(arrayNumber.indexOf(c.number) >= 0) {
+            $.merge(arrayId, c.show_category);
+          }
+        });
+
+        return arrayId;
+      },
+      activeAffiliates() {
+        let {filtrationElementsName} = this;
+
+        var arrayId = [];
+        filtrationElementsName.filter(function (element) {
+          if (element.object == 'a') {
+            arrayId.push(element.id);
+          }
+        });
+        return arrayId;
+      },
+
+      transactionsFilter() {
+        let {activeCategories, activeAffiliates} = this;
+
+        return this.transactionsDate.filter(function(transaction) {
+
+          if(activeCategories.length > 0 && activeAffiliates.length > 0) {
+            var have = (activeCategories.indexOf(transaction.category_id) >= 0) && (activeAffiliates.indexOf(transaction.affiliate_id) >= 0);
+
+            if(have) {
+              return transaction;
+            }
+
+          }
+          else if(activeCategories.length > 0 || activeAffiliates.length > 0) {
+            var have = (activeCategories.indexOf(transaction.category_id) >= 0) || (activeAffiliates.indexOf(transaction.affiliate_id) >= 0);
+
+            if(have) {
+              return transaction;
+            }
+          }
+          else {
+            return transaction;
+          }
+        });
+      },
+      transactionsFilterAffiliates() {
+        let {activeAffiliates} = this;
+
+        return this.transactionsDate.filter(function(transaction) {
+          if(activeAffiliates.indexOf(transaction.affiliate_id) >= 0) {
+            return transaction;
+          }
+        });
+      },
+      // получение всех относящихся к транзакциям элементов
+      currentCategories() {
+        var arrayId = [];
+        this.transactionsFilter.filter(function (element) {
+          arrayId.push(element.category_id);
+        });
+        return arrayId.filter(function(item, pos) {
+          return arrayId.indexOf(item) == pos;
+        });
+      },
+      currentAffiliates() {
+        var arrayId = [];
+
+        if(this.activeAffiliates.length <= 0) {
+          this.transactionsFilter.filter(function (element) {
+            // if(element.is_active)
+              arrayId.push(element.affiliate_id);
+          });
+        }
+
+        return arrayId.filter(function(item, pos) {
+            return arrayId.indexOf(item) == pos;
+        });
+      },
+
+      // получение списков со статусом
+      categoriesFilter() {
+        let {activeCategories, activeAffiliates, currentCategories, currentAffiliates} = this;
+        var categories = this.categoriesNumber;
+        var have = activeCategories.length > 0 || activeAffiliates.length > 0;
+
+        if(have) {
+          return categories.filter(function (category) {
+            if(activeCategories.indexOf(category.id) >= 0) {
+              return Object.assign(category, {status: 'active'});
+            }
+            else if(currentCategories.indexOf(category.id) >= 0) {
+              return Object.assign(category, {status: 'current'});
+            }
+            else {
+              return Object.assign(category, {status: 'default'});
+            }
+          });
+        }
+        else {
+          return categories.filter(function (category) {
+            return Object.assign(category, {status: 'current'});
+          });
+        }
+      },
+      affiliatesFilter() {
+        let {activeCategories, activeAffiliates, currentCategories, currentAffiliates, affiliatesCompany} = this;
+        var have = activeCategories.length > 0 || activeAffiliates.length > 0;
+
+        if(have) {
+          return affiliatesCompany.filter(function (affiliate) {
+            if(activeAffiliates.indexOf(affiliate.id) >= 0)
+
+            {
+              return Object.assign(affiliate, {status: 'active'});
+            }
+            else if(currentAffiliates.indexOf(affiliate.id) >= 0) {
+              return Object.assign(affiliate, {status: 'current'});
+            }
+            else {
+              return Object.assign(affiliate, {status: 'default'});
+            }
+          });
+        }
+        else {
+          return affiliatesCompany.filter(function (affiliate) {
+            return Object.assign(affiliate, {status: 'current'});
+          });
+        }
+
+      },
+
+      // красивый вывод указанных дат
+      dateDisplay() {
+        var currentDate = new Date();
+
+        var startDate = new Date(this.startDate);
+        var finishDate = new Date(this.finishDate);
+        var lastDayOfMonth = getLastDayOfMonth(finishDate.getFullYear(), finishDate.getMonth()).getDate();
+
+        var startDay = startDate.getDate();
+        var startMonth = startDate.getMonth();
+        var startYear = startDate.getFullYear();
+
+        var finishDay = finishDate.getDate();
+        var finishMonth = finishDate.getMonth();
+        var finishYear = finishDate.getFullYear();
+
+        if(startYear == finishYear) {
+          if(startMonth == finishMonth && (startDay == 1 && finishDay == lastDayOfMonth)) {
+            result = nameMonth(startMonth, 1) + ' ' + startYear;
+          }
+          else {
+            result = startDay + ' ' + nameMonth(startMonth, 2) + ' – ' + finishDay + ' ' + nameMonth(finishMonth, 2) + ' ' + finishYear;
+          }
+        }
+        else {
+          result = startDay + ' ' + nameMonth(startMonth, 2) + ' ' + startYear + ' – ' + finishDay + ' ' + nameMonth(finishMonth, 2) + ' ' + finishYear;
+        }
+        return result;
+      },
+
+      transactionsSorted() {
+        const k = this.sortKey;
+        return this.transactionsFilter.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
+      },
+      transactionsSearch() {
+        const s = validSpaces(this.search.toLowerCase());
+        return this.transactionsSorted.filter(n => Object.values(n.note.split()).some(m => m.toString().toLowerCase().includes(s)));
+      },
+
+      // присваиваются суммы из списка неотфильтрованных транзакций
+      categoriesAmount() {
+        let {categoriesFilter, activeAffiliates, activeCategories} = this;
+        
+        if(activeAffiliates.length > 0)
+          var newTransactions = this.transactionsFilterAffiliates;
+        else
+          var newTransactions = this.transactionsDate;
+
+        var categories_income_amount = categoriesFilter.filter(function(c) {
+
+          sum = newTransactions.reduce(function(sum, transaction) {
+            if(transaction.category_id == c.id && transaction.is_active)
+              return sum + (transaction.amount);
+            else
+              return sum;
+          }, 0);
+
+          return Object.assign(c, {amount: sum});
+        });
+
+        return categories_income_amount;
+      },
+
+      categoriesAndSubcategories() {
+        var categories = this.categoriesAmount;
+
+        categories = this.amountAndIdentityCategories(categories, false, true);
+
+        const k = 'amount';
+        const reverse = true;
+        return categories.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
+      },
+
+      affiliatesCompanyAmount() {
+        let {affiliatesFilter, transactionsDate} = this;
+
+        var affiliatesCompanyAmount = affiliatesFilter.filter(function(a) {
+          sum = transactionsDate.reduce(function(sum, transaction) {
+            if(transaction.affiliate_id == a.id && transaction.is_active) {
+              return sum + (transaction.amount);
+            }
+            else
+              return sum;
+          }, 0);
+
+          return Object.assign(a, {amount: sum});
+        });
+
+        const k = 'amount';
+        const reverse = true;
+        return affiliatesCompanyAmount.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
+      },
+
+      revenue() {
+        return this.transactionsFilter.reduce(function(sum, transaction) {
+          if(transaction.budget == 'income' && transaction.is_active)
+            return sum + (transaction.amount);
+          else
+            return sum;
+        }, 0);
+      },
+      expenses() {
+        return this.transactionsFilter.reduce(function(sum, transaction) {
+          if(transaction.budget == 'expense' && transaction.is_active)
+            return sum + (transaction.amount);
+          else
+            return sum;
+        }, 0);
+      }
+    },
+  });
+</script>

@@ -1,0 +1,80 @@
+<%= form_with(url: transactions_path, model: company_transaction, local: true) do |form| %>
+  <div class="panel-list" style="background-color: whitesmoke;">
+    <div style='position: relative;'>
+      <h2 class="panel-form__title" style="margin-top: 10px;"><%= @title_card %></h2>
+
+      <% 
+          if request.referrer == request.original_url or request.referrer == nil
+            @url = transactions_path
+          else
+            @url = request.referrer
+          end
+      %>
+
+      <a href="<%= @url %>" class="btn-back new-btn">
+        <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+      </a>
+      <%= form.submit form_submit, class: "btn", style: 'float: right;
+      position: absolute;
+      right: 10px;
+      top: 0;
+      padding: 15px;
+      color: #12ce88;' %>
+    </div>
+    <div class="container-list gray-scrollbar">
+      <div class="conten-card">
+        <div class="information-section">
+          <div class="block-information">
+
+              <div class="finput">
+              <%= form.label 'Дата транзакции', class: 'finput-label' %>
+              <%= form.date_field :date, class: 'finput-input', required: 'required', value: Date.today %>
+            </div>
+
+            <dfn data-info="Категория транзакции">
+              <div class="finput">
+                <%= form.label 'Категория', class: 'finput-label' %>
+                <%= form.select :category_id, @categories.map{|c| [c.name, c.id]}, {}, {class: "finput-input"} %>
+              </div>
+            </dfn>
+
+
+            <dfn data-info="Филиал, к которому относится операция">
+              <div class="finput">
+                <%= form.label 'Филиалы', class: 'finput-label' %>
+                <%= form.select :affiliate_id, @current_affiliates.map{|a| [a.address, a.id]}, {}, {class: "finput-input"} %>
+              </div>
+            </dfn>
+
+            <div class="finput">
+              <%= form.label 'Сумма', class: 'finput-label' %>
+              <%= form.text_field :amount, class: 'finput-input', required: 'required' %>
+            </div>
+
+            <div class="finput">
+              <%= form.label 'Комментарий', class: 'finput-label' %>
+              <%= form.text_field :note, class: 'finput-input', required: 'required' %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <% if @company_transaction.errors.any? %>
+        <div id="error_explanation" class="message">
+          <h2><%= pluralize(client.errors.count, "error") %> prohibited this client from being saved:</h2>
+
+          <ul>
+          <% client.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+
+
+
+<% end %>

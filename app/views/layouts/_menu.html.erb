@@ -1,0 +1,82 @@
+<div class="item-menu icon-menu"></div>
+
+<% if !signed_in? or !current_user.people_id.present? %>
+
+  <div style="    width: 27px;
+    height: 27px;
+    padding: 10px;
+    margin: 0 7px;
+    background-origin: content-box;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    float: left;
+    color: #81cbf2;
+    user-select: none;">
+    <ion-icon name="contact"></ion-icon>
+  </div>
+
+<% elsif signed_in? and current_user.people_id.present? %>
+  <% url = @url[3].split('?') %>
+  
+  <!-- <dfn data-info="Добавление"> -->
+    <div title="Добавление" class="btn-add-menu">
+      <ion-icon name="add"></ion-icon>
+    </div>
+  <!-- </dfn> -->
+  <div class="pnl-add">
+    <div class="header-pnl-add">
+      <div class="btn-back new-btn btn-close-pnl-add" style="margin: 0;">
+        <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+      </div>
+      <h2 class="title-pnl-add" style="margin-left: 50px;">Добавить</h2>
+    </div>
+    <div class="body-pnl-add">
+      <%= link_to new_client_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa"></div><div class="dsafdsaf">Клиента</div>
+      <% end %>
+      <%= link_to new_record_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/group1.png);"></div><div class="dsafdsaf">Запись</div>
+      <% end %>
+      <%= link_to new_worker_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/teacher.png);"></div><div class="dsafdsaf">Сотрудника</div>
+      <% end %>
+      <%= link_to new_transaction_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/Abacus-WF.png);"></div><div class="dsafdsaf">Транзакцию</div>
+      <% end %>
+
+      <%= link_to new_company_service_path(@current_company), class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/list.png);"></div><div class="dsafdsaf">Услугу</div>
+      <% end %>
+
+      <%= link_to new_company_affiliate_path(@current_company), class: 'item-panel-add' do %>
+        <div class="sdfdsa" style="background-image: url(/images/office3.png);"></div><div class="dsafdsaf">Филиал</div>
+      <% end %>
+
+      <%= link_to add_field_path, class: 'item-panel-add' do %>
+        <div class="sdfdsa"></div><div class="dsafdsaf">Свои поля</div>
+      <% end %>
+    </div>
+  </div>
+  <!-- <dfn data-info="Клиенты"> -->
+  <% if url[0] == 'clients' %>
+    <div title="Клиенты" class="active item-menu icon-client"></div>
+  <% else %>
+    <a title="Клиенты" href="<%= clients_path %>" class="item-menu icon-client"></a>
+  <% end %>
+  <!-- </dfn> -->
+  <!-- <dfn data-info="Структура"> -->
+  <% if url[0] == 'workers' %>
+    <div title="Структура" class="active item-menu icon-company"></div>
+  <% else %>
+    <a title="Структура" href="<%= workers_path %>" class="item-menu icon-company"></a>
+  <% end %>
+  <!-- </dfn> -->
+  <!-- <dfn data-info="Транзакции"> -->
+  <% if url[0] == 'transactions' %>
+    <div title="Транзакции" class="active item-menu icon-finance"></div>
+  <% else %>
+    <a title="Транзакции" href="<%= transactions_path %>" class="item-menu icon-finance"></a>
+  <% end %>
+  <!-- </dfn> -->
+<%end%>

@@ -1,0 +1,74 @@
+<script type="text/javascript">
+  Vue.component('section-home-affiliates', {
+    data: function () {
+      return {
+        showAll: false,
+      }
+    },
+    props: {
+      affiliates: Array,
+    },
+    methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      addFiltration(affiliate) {
+        vmTransaction.addElementFiltration(affiliate.id, 'a');
+      },
+      deleteParamsFiltration(id, object) {
+        let index = vmTransaction.filtrationElements.findIndex(e => e.id == id);
+
+        vmTransaction.deleteParamsFiltration(index, id, 'a');
+      },
+    },
+    template: `
+      <section class='panel-content' :class="{ 'show-all': showAll}">
+        <div class="panel-header">
+          <div class="title-panel">Филиалы</div>
+          <div v-if="affiliates.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Показать все</div>
+            <div v-else-if="showAll == true">Скрыть список</div>
+          </div>
+        </div>
+        <div v-if="affiliates.length > 0" class="list-panel cool-scrollbar">
+
+          <div  v-for="affiliate in affiliates" 
+                :class="['affiliate-' + affiliate.id, 
+                  affiliate.status == 'active' ? 'active-item' : '', 
+                  affiliate.status == 'current' ? 'current-item' : '', 
+                  affiliate.status == 'default' ? 'default-item' : '']" 
+                class="item-panel">
+            
+            <div class="item-panel__basic-info">
+              <div class="left-item-panel" style="white-space: nowrap;">
+
+                  <div class="item__btns">
+                    <div v-if="affiliate.status == 'active'" @click="deleteParamsFiltration(affiliate.id)" class='btn-delete'>
+                      <ion-icon name="checkbox"></ion-icon>
+                    </div>
+                    <div v-else @click="addFiltration(affiliate)" class='btn-delete'>
+                      <ion-icon name="checkbox-outline"></ion-icon>
+                    </div>
+                  </div>
+
+                  {{ affiliate.address }}</div>
+              <div class="right-item-panel">
+                <div :class="[ affiliate.amount < 0 ? 'dark-color' : 'green-color' ]">{{ indentAmount(affiliate.amount) }} ₽</div>
+              </div>
+            </div>
+
+            <div class="item-panel__total-info"></div>
+          </div>
+
+        </div>
+        <div v-else-if="affiliates.length <= 0" class="list-panel">
+          <div class="no-record">Нет записи</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+
+      </section>
+    `
+  });
+</script>

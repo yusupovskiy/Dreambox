@@ -1,0 +1,83 @@
+<script type="text/javascript">
+  Vue.component('section-home-records', {
+    data: function () {
+      return {
+        showAll: false,
+      }
+    },
+    props: {
+      records: Array,
+      show: String,
+    },
+    methods: {
+      addRecordFiltration(record) {
+        vmClient.addElementFiltration(record.id, 'r');
+      },
+      clickRecord(record) {
+        vmClient.clickRecord(record);
+      },
+      deleteParamsFiltration(id) {
+        let index = vmClient.filtrationElements.findIndex(e => e.id == id);
+
+        vmClient.deleteParamsFiltration(index, id, 'r');
+      },
+    },
+    watch: {
+    },
+    computed: {
+      statusItem() {
+
+      }
+    },
+    template: `
+      <section v-if="show == 'home'" class='panel-content' :class="{ 'show-all': showAll}">
+        <div class="panel-header">
+          <div class="title-panel">Записи</div>
+          <div v-if="records.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Показать все</div>
+            <div v-else-if="showAll == true">Скрыть список</div>
+          </div>
+        </div>
+        <div v-if="records.length > 0" class="list-panel cool-scrollbar">
+
+          <div  v-for="record in records" 
+                :class="['record-' + record.id, 
+                  record.status == 'active' ? 'active-item' : '', 
+                  record.status == 'current' ? 'current-item' : '', 
+                  record.status == 'default' ? 'default-item' : '']" 
+                class="item-panel">
+            
+            <div class="item-panel__basic-info">
+              <div class="left-item-panel" style="white-space: nowrap;">
+
+                  <div class="item__btns">
+                    <div v-if="record.status == 'active'" @click="deleteParamsFiltration(record.id)" class='btn-delete'>
+                      <ion-icon name="checkbox"></ion-icon>
+                    </div>
+                    <div v-else @click="addRecordFiltration(record)" class='btn-delete'>
+                      <ion-icon name="checkbox-outline"></ion-icon>
+                    </div>
+                    <div @click="clickRecord(record)" class='btn-delete'>
+                      <ion-icon name="open"></ion-icon>
+                    </div>
+                  </div>
+
+                  {{ record.name }}</div>
+              <div class="right-item-panel"></div>
+            </div>
+
+            <div class="item-panel__total-info"></div>
+          </div>
+
+        </div>
+        <div v-else-if="records.length <= 0" class="list-panel">
+          <div class="no-record">Нет записи</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+
+      </section>
+    `
+  });
+</script>

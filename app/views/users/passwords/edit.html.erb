@@ -1,25 +1,38 @@
-<h2>Change your password</h2>
-
 <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= devise_error_messages! %>
-  <%= f.hidden_field :reset_password_token %>
+  <div class="panel-list" style="background-color: whitesmoke;">
 
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "off" %>
-  </div>
+    <div style='position: relative;'>
+      <h2 class="panel-form__title" style="margin-top: 10px; margin-left: 30px;">Изменение пароля</h2>
+      <%= f.submit 'Отправить', class: "btn title-btn" %>
+    </div>
+    <div class="container-list gray-scrollbar">
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %>
-  </div>
+    <div class="cont-category-book">
+      <div class="tab-category information-section">
+        <%= devise_error_messages! %>
+        <%= f.hidden_field :reset_password_token %>
+        <div class="block-information authorization">
 
-  <div class="actions">
-    <%= f.submit "Change my password" %>
+          <div class="finput focus">
+            <%= f.label 'Новый пароль', :email, class: 'finput-label' %><br />
+            <%= f.password_field :password, autofocus: true, autocomplete: "off", required: 'required', class: "finput-input" %>
+          </div>
+          <% if @minimum_password_length %>
+            <div class="finput-desc">(<%= @minimum_password_length %> characters minimum)</div>
+          <% end %>
+
+          <div class="finput">
+            <%= f.label 'Подтверждение нового пароля', :email, class: 'finput-label' %><br />
+            <%= f.password_field :password_confirmation, autocomplete: "off", required: 'required', class: "finput-input" %>
+          </div>
+
+        </div>
+        <%= render "users/shared/links" %>
+        <a class="link-to" href="<%=new_user_registration_path%>">Регистрация</a>
+        <br />
+        <a class="link-to" href="<%=new_user_session_path%>">Вход</a>
+      </div>
+    </div>
+    </div>
   </div>
 <% end %>
-
-<%= render "users/shared/links" %>

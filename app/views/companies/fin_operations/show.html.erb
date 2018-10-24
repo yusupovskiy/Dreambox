@@ -1,0 +1,126 @@
+<div class="title-panel">
+  <div class="btns-card" style="position: absolute;">
+    
+    <%= link_to company_fin_operations_path(@current_company), class: "btn-card", style: "float: left;" do %>
+      <ion-icon name="arrow-back"></ion-icon>
+    <% end %>
+
+    <% if @fin_operation.is_active == true %>
+      <div class="btn-card btn-show-list">
+        <div class="panel-show" style="left: auto; right: 10px;">
+            <%= link_to 'Распечатать', doc_pko_company_fin_operation_path(@current_company, params[:id]) %>
+            <div id="cancel">Отменить оплату</div>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+  <div class="role-card">Финансовая операция</div>
+</div>
+
+<div class="conten-card tabs">
+  <div class="cont-category-book">
+    <div class="tab-category information-section">
+
+      <% if @fin_operation.is_active == true %>
+        <%=form_with url: company_histories_path(params[:company_id]), model: @history, local: true, html: {class: 'block-information', id: 'cancel-panel', style: 'display: none;'} do |f|%>
+          <h3><div class="icon-time"></div>Отмена операции</h3>
+          <%=f.hidden_field :object_log, value: 'fin_operation'%>
+          <%=f.hidden_field :object_id, value: @fin_operation.id %>
+          <%=f.hidden_field :type_history, value: 'cancel'%>
+          
+          <div class="finput">
+            <label class="finput-label">Причина отмены*</label>
+            <%= f.text_field :note, class: 'finput-input', required: 'required' %>
+          </div>
+          <div class="btns-confirm">
+            <%= f.submit class: 'btn icon-confirm' %>
+            <div id="btn-cancel-panel" class="btn btn-no"></div>
+          </div>
+        <%end%>
+      <% end %>
+
+      <div class="block-information">
+        <div class="container-information">
+
+          <div class="item-information">
+          	<span class="title-input">Сумма операции</span>
+          	<span class="text-input"><span class="amount"><%= @fin_operation.amount %> ₽</span></span>
+          </div>
+
+          <% if @fin_operation.operation_type == 'payment_subscription' %>
+            <div class="item-information">
+              <span class="title-input">Тип операции</span>
+              <span class="text-input"><%= link_to t('operation_type.' + @fin_operation.operation_type), company_subscription_path(params[:company_id], @subscription.id) %></span>
+            </div>
+            <div class="item-information">
+              <span class="title-input">Оплатил</span>
+              <%= link_to company_client_path(params[:company_id], @client_subscription.id), class: 'img-input' do %>
+                <%= image_tag s3_image(@client_subscription.avatar) %>
+                <span><%= @client_subscription.first_name %> <%= @client_subscription.last_name %></span>
+              <% end %>
+            </div>
+          <% elsif @fin_operation.operation_type == 'payment_other' %>
+            <div class="item-information">
+              <span class="title-input">Тип операции</span>
+              <span class="text-input">Оплата за клиента</span>
+            </div>
+            <div class="item-information">
+              <span class="title-input">Оплатил</span>
+              <%= link_to company_client_path(params[:company_id], @subscription.id), class: 'img-input' do %>
+                <%= image_tag s3_image(@subscription.avatar) %>
+                <span><%= @subscription.first_name %> <%= @subscription.last_name %></span>
+              <% end %>
+            </div>
+          <% end %>
+          <div class="item-information">
+          	<span class="title-input">Примечание</span>
+          	<span class="text-input"><%= @fin_operation.amount %></span>
+          </div>
+          <div class="item-information">
+          	<span class="title-input">Ответственный</span>
+          	<span class="img-input">
+              <%= image_tag s3_image(@responsible.avatar) %>
+          		<span><%= @responsible.first_name %> <%= @responsible.last_name %></span>
+            </span>
+          </div>
+          <div class="item-information">
+            <span class="title-input">Номер операции</span>
+            <span class="text-input"><%= @fin_operation.operation_number %></span>
+          </div>
+          <div class="item-information">
+            <span class="title-input">Примечание</span>
+            <span class="text-input"><%= @fin_operation.description %></span>
+          </div>
+          <% if @fin_operation.affiliate_id.present? %>
+            <div class="item-information">
+            	<span class="title-input">Филиал</span>
+            	<span class="text-input"><%= Affiliate.find(@fin_operation.affiliate_id).address %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @history_subscription.size > 0 %>
+        <div class="block-information show-hide-panel">
+          <h3>
+            <div class="icon-time"></div>История операций<span><%= @history_subscription.size %></span>
+          </h3>
+          <div class="container-information compact">
+            <% @history_subscription.each do |h| %>
+              <% user_history = User.find(h.user_id) %>
+              <div class="item-element">
+                <div class="left-side-elem"><%= h.note %>
+                </div>
+                <div class="rigth-side-elem"><span><%= user_history.first_name %> <%= user_history.last_name %>, </span><span><%= h.created_at.strftime("%d %b %Y") %></span></div>
+              </div>
+            <% end %>
+          </div>
+          <div class="testt click-compact">Раскрыть</div>
+          <div class="testt click-compact compact">Скрыть</div>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>

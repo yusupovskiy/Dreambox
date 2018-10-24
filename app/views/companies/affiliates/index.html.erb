@@ -1,22 +1,23 @@
 <div class="btns-card">
   <a href="/" title="Закрыть" class="btn-card icon-closed-card"></a>
   <a href="/" title="На главную" class="btn-card icon-home"></a>
-  <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div>
+  <!-- <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div> -->
 </div>
 
-<div class="panel-sorting">
+<!-- <div class="panel-sorting">
   Сортировка списка
-</div>
-<input class="card-search" type="text" placeholder="Поиск филиала...">
+</div> -->
+<!-- <input class="card-search" type="text" placeholder="Поиск филиала..."> -->
 
 <div class="conten-card">
-  <div class="menu-with-options">
-    <div class="option active">Все филиалы <%=@total_affiliates%></div>
-  </div>
-  <a class="btn icon-plus" href="<%=new_company_affiliate_path%>"></a>
-  <div class="cont-category-book">
+  <% if @current_affiliates.present? %>
+    <div class="menu-with-options">
+      <div class="option active">Все филиалы <%= @current_affiliates.size %></div>
+    </div>
+    <div class="cont-category-book">
+
     <div class="tab-category information-section">
-      <% @affiliates.each do |affiliate| %>
+      <% @current_affiliates.each do |affiliate| %>
         <%= link_to [affiliate.company, affiliate], class: "item-card" do %>
           <div class="left-content">
             <div class="name-content"><%= affiliate.name %></div>
@@ -28,5 +29,12 @@
         <%end%>
       <% end %>
     </div>
-  </div>
+    </div>
+  <% else %>
+    <div class="loading-block">
+      <div>
+        <div>Нет филиалов</div>
+      </div>
+    </div>
+  <% end %>
 </div>

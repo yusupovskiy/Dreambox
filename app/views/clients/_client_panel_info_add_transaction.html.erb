@@ -1,0 +1,266 @@
+<script type="text/javascript">
+  Vue.component('section-transaction-add', {
+    data: function () {
+      return {
+        loading: false,
+        amount: null,
+        fix_amount: null,
+        note: '',
+        addTransForSubs: '',
+        transactionCreateLoading: false,
+        category_id: '',
+        categories_income: [],
+        categories_expense: [],
+        dateTransaction: '',
+
+        affiliates: [],
+        affiliate_id: '',
+
+        newTransactionClient: []
+      }
+    },
+    props: {
+      records: Array,
+      show: String,
+      client: Object,
+    },
+    methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      createTransactionClient() {
+        let {client, clientTransactions, clientSubscriptions} = vmClient;
+        let {amount, note, addTransForSubs, category_id, dateTransaction, affiliate_id, newTransactionClient} = this;
+        var complited = false;
+
+        if(!this.transactionCreateLoading) {
+          this.transactionCreateLoading = true;
+
+          if(addTransForSubs == 'income') {
+            budget = 'income';
+            addTransForSubs = client.operation_id;
+          }
+          else if(addTransForSubs == 'expense') {
+            budget = 'expense';
+            addTransForSubs = client.operation_id;
+          }
+
+          setTimeout(() => {
+            $.ajax('/create_transaction.json', {
+              method: 'POST',
+              data: {
+                authenticity_token: authToken,
+                operation_id: addTransForSubs,
+                amount: amount,
+                note: note,
+                category_id: category_id,
+                affiliate_id: affiliate_id,
+                date: dateTransaction,
+              },
+              success: messege => {
+                complited = messege.complited;
+                newTransactionClient = messege.result[0];
+                vmNotifications.notifications.unshift(messege);
+              },
+              error: e => console.warn('error', e)
+            }).done(e => {
+              if(complited) {
+
+                clientTransactions.unshift(newTransactionClient);
+
+                if(addTransForSubs != client.operation_id && 
+                  addTransForSubs != 'expense' &&
+                  addTransForSubs != 'income') {
+
+                  let indexSub = clientSubscriptions
+                    .findIndex(s => s.operation_id == addTransForSubs);
+                  total_amount = parseInt(clientSubscriptions[indexSub].total_amount, 10);
+                  clientSubscriptions[indexSub].total_amount = total_amount + parseInt(amount, 10);
+
+                  client.unpaid_debt_subs = client.unpaid_debt_subs - parseInt(amount, 10);
+                }
+                client.total_amount = client.total_amount + parseInt(amount, 10);
+
+                this.addTransForSubs = '';
+              }
+              this.transactionCreateLoading = false;
+            });
+          }, 600);
+        }
+      },
+    },
+    watch: {
+      "addTransForSubs" : function() {
+        let {client, clientSubscriptions} = vmClient;
+        let {addTransForSubs} = this;
+
+        var currentDate = new Date();
+        this.dateTransaction = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());;
+
+        let indexSub = clientSubscriptions
+          .findIndex(s => s.operation_id == addTransForSubs);
+
+        if(indexSub >= 0) {
+          price = clientSubscriptions[indexSub].price;
+          total_amount = clientSubscriptions[indexSub].total_amount;
+          start_at = clientSubscriptions[indexSub].start_at;
+          finish_at = clientSubscriptions[indexSub].finish_at;
+          name = clientSubscriptions[indexSub].name;
+
+          this.amount = price - total_amount;
+          this.fix_amount = price - total_amount;
+          this.note = 'За абонемент от ' + totalDate(start_at, true, true, true) + ' до ' + totalDate(finish_at, true, true, true) + ', на посещение "' + name + '"';
+        }
+        else if(addTransForSubs == client.operation_id || 
+          addTransForSubs == 'expense' ||
+          addTransForSubs == 'income') {
+
+          this.fix_amount = null;
+          this.amount = null;
+          this.note = '';
+          this.category_id = '';
+        }
+
+        if(this.addTransForSubs == 'income') {
+          this.category_id = this.categories_income[0].id;
+        }
+        else if(this.addTransForSubs == 'expense') {
+          this.category_id = this.categories_expense[0].id;
+        }
+      },
+      "amount" : function() {
+        if(this.fix_amount != null && this.amount > this.fix_amount) {
+          this.amount = this.fix_amount;
+        }
+      },
+      "show" : function() {
+        $.get(
+          '/get_categories_income.json',
+          categories_income => {
+            this.categories_income = categories_income;
+          }
+        );
+        $.get(
+          '/get_categories_expense.json',
+          categories_expense => {
+            this.categories_expense = categories_expense;
+          }
+        );
+        $.get(
+          '/get_affiliates.json',
+          affiliates => {
+            this.affiliates = affiliates;
+
+            if(affiliates.length > 0)
+              this.affiliate_id = affiliates[0].id;
+          }
+        );
+      },
+      unpaidSubscriptionsClient() {
+        this.addTransForSubs = '';
+        this.fix_amount = null;
+        this.amount = null;
+        this.note = '';
+        this.category_id = '';
+      },
+    },
+    computed: {
+      unpaidSubscriptionsClient: function () {
+        let {clientSubscriptions} = vmClient;
+
+        return clientSubscriptions.filter(function (subs) {
+          if ((subs.price - subs.total_amount) > 0) {
+            return subs;
+          }
+        });
+      }
+    },
+    template: `
+      <section v-if="show == 'addTransactionClient'" class="panel-add">
+        <h2 class="panel-form__title">
+          <div @click="$emit('open-pnl-add')" class="btn-back new-btn">
+            <ion-icon name="arrow-back"></ion-icon>
+          </div>
+          <span>Произвести транзакцию</span>
+        </h2>
+        <div>
+          <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+          <div class="item-panel">
+            <div class="item-panel__basic-info">
+
+              <select v-model="addTransForSubs">
+                <option disabled value="">Выберите вариант транзакции</option>
+                <option v-for="unpaidSubscription in unpaidSubscriptionsClient" :value="unpaidSubscription.operation_id">
+                  {{ indentAmount(unpaidSubscription.total_amount) }} из 
+                  {{ indentAmount(unpaidSubscription.price) }} ₽ | {{ unpaidSubscription.name }} от 
+                  {{ unpaidSubscription.start_at }} до {{ unpaidSubscription.finish_at }}
+                </option>
+                <option value="income">Доход</option>
+                <option value="expense">Расход</option>
+              </select>
+
+              <div v-if="addTransForSubs != ''">
+                <select v-if="addTransForSubs == 'income'" v-model="category_id">
+                  <option disabled value="">Выберите одну из статей дохода</option>
+                  <option v-for="category in categories_income" :value="category.id">
+                    {{ category.name }}
+                  </option>
+                </select>
+
+                <select v-else-if="addTransForSubs == 'expense'" v-model="category_id">
+                  <option disabled value="">Выберите одну из статей расхода</option>
+                  <option v-for="category in categories_expense" :value="category.id">
+                    {{ category.name }}
+                  </option>
+                </select>
+
+                <select v-if="affiliates.length > 1 && (addTransForSubs == 'income' || addTransForSubs == 'expense')" v-model="affiliate_id">
+                  <option disabled value="">Выберите филиал</option>
+                  <option v-for="affiliate in affiliates" :value="affiliate.id">
+                    {{ affiliate.address }}
+                  </option>
+                </select>
+                <input v-else v-model="affiliate_id" type="hidden">
+
+                <input v-model="amount" type="number" placeholder="Сумма" />
+                <input v-model="dateTransaction" id="date" type="date" placeholder="Дата транзакции" />
+                <textarea v-model="note" placeholder="Комментарий" class="textarea"></textarea> 
+              </div>
+
+              <div v-if="addTransForSubs != '' && amount != null && amount != 0 && note != '' && dateTransaction != ''" class="btns" style="margin: 0;">
+                <button 
+                  @click="createTransactionClient()" 
+                  v-bind:class="{ active: transactionCreateLoading }" 
+                  class="btn-subscribe btn" 
+                  style="position: absolute; right: 10px; top: 0; padding: 15px; margin: 0;">
+
+                  <div class="btn__text">Произвести</div>
+                  <div v-if="transactionCreateLoading" class="container" style="width: 58px;">
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                       viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
+                    <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                      c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
+                      c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                      c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
+                      C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
+                      c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
+                      L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
+                      C240.5,4,237.1,0.2,232.1,0z"/>
+                    </svg>
+                  </div>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    `
+  });
+</script>

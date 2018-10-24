@@ -15,7 +15,7 @@
     .footer {
         display: none;
     }
-    .active-company {
+    .active-company, .current-object.mini {
         top: 20px;
     }
     .message {
@@ -30,10 +30,19 @@
         width: 100%;
         border-radius: 0;
     }
+    .current-object {
+        right: auto;
+        left: 40px;
+    }
+    .current-object.mini .object-info .name-people {
+        display: none;
+    } 
 }
-@media (max-width: 350px) {
+@media (max-width: 415px) {
     .card {
         width: 100%;
         border-radius: 0;
+        margin-bottom: 0;
+        margin-top: 250px;
     }
 }

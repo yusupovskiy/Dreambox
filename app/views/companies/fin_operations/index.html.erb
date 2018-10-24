@@ -1,0 +1,77 @@
+<div class="btns-card">
+  <%= link_to root_path, class: "btn-card", style: "float: left;" do %>
+    <ion-icon name="arrow-back"></ion-icon>
+  <% end %>
+  <div class="btn-card top-scroll"></div>
+</div>
+
+<!-- <input class="card-search" type="text" placeholder="Поиск"> -->
+
+<div class="panel-content"></div>
+
+<div class="conten-card tabs">
+
+
+  <% if @fin_operations.present? %>
+    <div style="margin: 0 30px 30px;">
+      <%= form_with url: company_fin_operations_path(@current_company.id), local: true, method: :get, class: 'block-information' do |f|%>
+        <h3>Сортировка по дате</h3>
+        <div class="finput">
+          <%= f.label 'Начала периода', class: 'finput-label' %>
+          <%= f.date_field :start_date, value: @start_date, class: "finput-input" %>
+        </div>
+        <div class="finput">
+          <%= f.label 'Конец периода', class: 'finput-label' %>
+          <%= f.date_field :finish_date, value: @finish_date, class: "finput-input" %>
+        </div>
+        <div class="btns-confirm">
+          <%= f.button '', class: 'btn icon-confirm' %>
+        </div>
+      <%end%>
+    </div>
+  <%end%>
+
+
+  <% if @fin_operations.present? %>
+  <div class="menu-with-options">
+    <div class="option active" title="">Доход<span class="amount"><%= @fin_operations.where(is_active: true).sum(:amount) %> ₽</span></div>
+    <!-- <div class="option" title="">Расход</div> -->
+  </div>
+  <%end%>
+
+  <div class="cont-category-book">
+  <% if @fin_operations.present? %>
+
+    <div class="tab-category information-section">
+      <% @fin_operations.each do |fo| %>
+          <%= link_to company_fin_operation_path(params[:company_id], fo.id), class: "item-card" do %>
+            <div class="left-content">
+              <div class="name-content"><%= t('operation_type.' + fo.operation_type)%> | <%= fo.operation_date.strftime("%d %b, %Y") %></div>
+              <span class="">
+                <% if fo.is_active == false %>
+                  <span class="debt" style="margin-right: 5px;">Отмененная оплата!</span>
+                <% end %>
+                <%= fo.description %>
+              </span>
+            </div>
+            <div class="right-content">
+              <span class="amount"><%= fo.amount %> ₽</span>
+            </div>
+          <% end %>
+      <% end %>
+    </div>
+    <div class="tab-category information-section">
+      cписок расходов
+    </div>
+  <% else %>
+    <div class="loading-block">
+      <div>
+        <div>Список пуст</div>
+      </div>
+    </div>
+  <% end %>
+
+
+  </div>
+</div>
+

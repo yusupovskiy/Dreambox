@@ -6,11 +6,11 @@
       <div class="btn-card btn-show-list">
         <div class="panel-show">
           <%= link_to 'Вернуться к списку', company_affiliates_path %>
-          <%= link_to 'Редактировать', edit_company_affiliate_path(@affiliate) %>
+          <%= link_to 'Редактировать', edit_company_affiliate_path(@current_company, @current_affiliate) %>
         </div>
       </div>
     </div>
-    <div class="title-card"><%=@affiliate.name%></div>
+    <div class="title-card"><%=@current_affiliate.name%></div>
     <div class="role-card">Филиал</div>
   </div>
   
@@ -18,9 +18,9 @@
     <div class="cont-category-book">
       <div class="tab-category information-section">
         <div class="block-information">
-          <div class="item-information"><span class="title-input">Адрес</span><span class="text-input"><%=@affiliate.address%></span></div>
-          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input"><%=@affiliate.phone_number || '[not given]'%></span></div>
-          <div class="item-information"><span class="title-input">Email</span><span class="text-input"><%=@affiliate.email || '[not given]'%></span></div>
+          <div class="item-information"><span class="title-input">Адрес</span><span class="text-input"><%=@current_affiliate.address%></span></div>
+          <div class="item-information"><span class="title-input">Телефон</span><span class="text-input"><%=@current_affiliate.phone_number || '[not given]'%></span></div>
+          <div class="item-information"><span class="title-input">Email</span><span class="text-input"><%=@current_affiliate.email || '[not given]'%></span></div>
         </div>
       </div>
     </div>

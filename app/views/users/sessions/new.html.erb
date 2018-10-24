@@ -1,37 +1,37 @@
 <%= form_for(resource, as: resource_name, url: session_path(resource_name, return_url: params[:return_url])) do |f| %>
-  <div class="title-panel">
-    <div class="title-card"><a href="#"><img class="logo" src="/images/logo.png" /></a></div>
-  </div>
-  <div class="conten-card">
-    <div class="menu-with-options">
-      <div class="option active">Вход</div>
-      <a href="<%=new_user_registration_path%>" class="option">Регистрация</a>
+  <div class="panel-list" style="background-color: whitesmoke;">
+    <div style='position: relative;'>
+      <h2 class="panel-form__title" style="margin-top: 10px; margin-left: 30px;">Авторизация</h2>
+      <%= f.submit 'Подтвердить', class: "btn title-btn" %>
     </div>
+    <div class="container-list gray-scrollbar">
+
     <div class="cont-category-book">
       <div class="tab-category information-section">
         <div class="block-information authorization">
-          <div class="finput">
+          <div class="finput focus">
             <%= f.label t('.email'), class: 'finput-label' %>
-            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "finput-input" %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "finput-input", required: 'required' %>
           </div>
           <div class="finput">
             <%= f.label t('.password'), class: 'finput-label' %>
-            <%= f.password_field :password, autocomplete: "off", class: "finput-input" %>
+            <%= f.password_field :password, autocomplete: "off", class: "finput-input", required: 'required' %>
           </div>
-          
-          
-          <%= f.submit class: "btn icon-authorization" %>
-
         </div>
         <% if devise_mapping.rememberable? -%>
-          <div class="field">
-            <%= f.check_box :remember_me %>
-            <%= f.label :remember_me, t(:remember_me) %>
+          <div class="field" style="font-size: 14px; user-select: none; cursor: pointer;">
+            <%= f.check_box :remember_me, style: "margin: 0; cursor: pointer;" %>
+            <%= f.label :remember_me, t(:remember_me), style: "margin: 0 0 0 5px; cursor: pointer;" %>
           </div>
           <br />
-        <% end -%>
+        <% end %>
+
+        <a class="link-to" href="<%=new_user_registration_path%>">Регистрация</a>
+        <br />
         <%= render "users/shared/links" %>
       </div>
     </div>
+    </div>
   </div>
 <% end %>
+

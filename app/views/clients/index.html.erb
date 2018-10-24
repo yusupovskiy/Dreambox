@@ -1,0 +1,579 @@
+<div id="clients">
+  <div class="panel-list">
+    <%= render 'clients/index_search' %>
+    <%= render 'clients/index_list' %>
+  </div>
+
+  <div class="panels-content hide-scrollbar">
+    <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+    <%= render 'clients/home' %>
+    <%= render 'clients/client' %>
+    <%= render 'clients/record' %>
+  </div>
+</div>
+
+<%= render 'clients/client_records_vue' %>
+<%= render 'clients/home_records' %>
+<%= render 'clients/home_services' %>
+<%= render 'clients/home_affiliates' %>
+<%= render 'clients/client_panel_info' %>
+<%= render 'clients/client_panel_info_add_sub' %>
+<%= render 'clients/client_panel_info_add_transaction' %>
+<%= render 'clients/client_panel_info_add_discount' %>
+<%= render 'clients/client_records' %>
+<%= render 'clients/client/client_transactions' %>
+<%= render 'clients/client_discounts' %>
+
+<%= render 'clients/record_panel_info' %>
+<%= render 'clients/record_panel_info_add_service' %>
+<%= render 'clients/record_service' %>
+
+<script type="text/javascript">
+  var authToken = document.getElementById("authenticity_token").value;
+  // var valueInput = document.getElementById("search").value
+  var lastId = null;
+
+  var vmClient = new Vue ({
+    el: '#clients',
+    data: {
+      clients: [],
+      affiliatesCompany: [],
+      recordsCompany: [],
+      recordsClients: [],
+      servicesCompany: [],
+      discountCompany: [],
+      titleInput: 'Поиск клиентов',
+      loadComplete: false,
+
+      subscriptions: [],
+
+      panelShow: 'home',
+
+      client: [],
+      clientTransactions: [],
+
+      record: [],
+      recordsServices: [],
+
+      search: '',
+      showSort: false,
+      columns: [
+        {
+          name: 'По ФИО',
+          column: 'full_name'
+        }, 
+        {
+          name: 'По дате рождения',
+          column: 'birthday'
+        }, 
+        {
+          name: 'По долгу',
+          column: 'unpaid_debt_subs'
+        },
+      ],
+      sortKey: 'full_name',
+      reverse: false,
+
+      filtrationElements: [],
+      typeClients: '',
+    },
+    methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      addElementFiltration(id, object) {
+        let indexElement = this.filtrationElements
+          .findIndex(element => element.id == id && element.object == object);
+
+        if(!(indexElement > -1)) {
+          var urlHash = new URL(window.location.href);
+          var currentParamsFilters = urlHash.searchParams.get("filters");
+          var currentParamsFilters = currentParamsFilters == null ? '' : currentParamsFilters + ',';
+          var newParamsFilters = currentParamsFilters + object + '-' + id;
+          this.sendQuery(newParamsFilters, 'filters', '');
+
+          var newElementFiltration = {id: id, object: object};
+          this.filtrationElements.unshift(newElementFiltration);
+        }
+      },
+      deleteParamsFiltration(index, id, object) {
+        let {filtrationElements} = this;
+
+        var urlHash = new URL(window.location.href);
+        var filters_params = urlHash.searchParams.get("filters");
+        filters_params = filters_params.replace(',' + object + '-' + id, '');
+        filters_params = filters_params.replace(object + '-' + id + ',', '');
+        filters_params = filters_params.replace(object + '-' + id, '');
+
+        filtrationElements.splice(index, 1);
+
+        if(filters_params.length > 0) {
+          this.sendQuery(filters_params, 'filters', '');
+        }
+        else {
+          url = window.location.href;
+          newUrl = deleteURLParameter(url, 'filters');
+          history.replaceState('', '', newUrl);
+        }
+      },
+      deleteAllParamsFiltration() {
+        this.filtrationElements = [];
+        url = window.location.href;
+        newUrl = deleteURLParameter(url, 'filters');
+        history.replaceState('', '', newUrl);
+      },
+
+      sortBy(sortKey) {
+        this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
+        this.sortKey = sortKey;
+      },
+      clickRecord(record) {
+        this.record = record;
+        this.panelShow = 'record';
+        this.titleInput = record.name;
+
+        if(this.typeClients == 'total')
+          this.typeClients = 'current';
+
+        url = window.location.href;
+        newUrl = updateURLParameter(url, 'record', record.id);
+        history.replaceState(record.name, record.name, newUrl);
+      },
+      clickClient(client) {
+        this.client = client;
+        this.panelShow = 'client';
+
+        url = window.location.href;
+        newUrl = updateURLParameter(url, 'client', client.id);
+        history.replaceState('Клиент', 'Клиент', newUrl);
+
+        $.get('/get_client_transactions.json', 
+          { client_id: client.id },
+          clientTransactions => this.clientTransactions = clientTransactions
+        );
+      },
+      sendQuery(query, type, byDefault) {
+        var url = window.location.href;
+
+        if(query == '') {
+          var urlHash = new URL(url);
+          var params = urlHash.searchParams.get(type);
+          query = (params == null ? byDefault : params);
+
+          return query;
+        }
+
+        var newUrl = updateURLParameter(url, type, query);
+        history.replaceState(query, query, newUrl);
+      },
+    },
+    created() {
+      this.search = this.sendQuery('', 'search', '');
+      this.typeClients = this.sendQuery('', 'clients', 'current');
+
+      var urlHash = new URL(window.location.href);
+      var client_id = urlHash.searchParams.get("client");
+      var record_id = urlHash.searchParams.get("record");
+      var filters = urlHash.searchParams.get("filters");
+
+      setTimeout(() => {
+        $.get('/get_records.json',
+          recordsCompany => {
+            this.recordsCompany = recordsCompany;
+
+            if(record_id != null) {
+              let indexCurrentRecord = recordsCompany
+                .findIndex(record => record.id == record_id);
+
+              if(indexCurrentRecord > -1) {
+                getRecord = this.recordsCompany[indexCurrentRecord];
+                this.clickRecord(getRecord);
+              }
+            }
+          }
+        );
+
+        $.get('/get_clients.json', clients => {
+          this.clients = clients;
+
+          if(client_id != null) {
+            let indexCurrentClient = clients
+              .findIndex(client => client.id == client_id);
+
+            if(indexCurrentClient > -1) {
+              getClient = this.clients[indexCurrentClient];
+              this.clickClient(getClient);
+            }
+          }
+          
+          if(filters != null) {
+            var filtersArray = filters.split(',');
+            var newFiltersArray = ']';
+            for (var i = 0; i < filtersArray.length; i++) {
+              var array = filtersArray[i].split('-');
+  
+              if(i != 0) {
+                newFiltersArray = ',' + newFiltersArray;
+              }
+  
+              newFiltersArray = '{ "id": ' + array[1] + ', "object": "' + array[0] + '" }' + newFiltersArray;
+            }
+            newFiltersArray = '[' + newFiltersArray;
+            var jsonFiltersArray = JSON.parse(newFiltersArray);
+            this.filtrationElements = jsonFiltersArray;
+          }
+
+          this.loadComplete = true;
+        });
+
+        $.get('/get_affiliates.json',
+          affiliatesCompany => this.affiliatesCompany = affiliatesCompany );
+
+        $.get('/get_services.json',
+          servicesCompany => this.servicesCompany = servicesCompany );
+
+        $.get('/records_services.json',
+          recordsServices => this.recordsServices = recordsServices);
+
+        $.get('/subscriptions.json',
+          subscriptions => this.subscriptions = subscriptions);
+
+        $.get('/get_records_clients.json',
+          recordsClients => this.recordsClients = recordsClients);
+
+        $.get('/discounts.json', 
+          discountCompany => this.discountCompany = discountCompany);
+      }, 600);
+    },
+    watch: {
+      search() {
+        clearTimeout(lastId);
+
+        lastId = setTimeout(() => {
+          var url = window.location.href;
+          var newUrl = updateURLParameter(url, 'search', this.search);
+          history.replaceState(this.search, this.search, newUrl);
+
+          if(this.search == '') {
+            var newUrl = deleteURLParameter(url, 'search');
+            history.replaceState(this.search, this.search, newUrl);
+          }
+        }, 600);
+        
+        // если в указанном списке нет клиентов, проверка, есть ли в других, и переключение, где клиенты есть
+        if(this.clientsCurrent.length > 0) {
+          this.typeClients = 'current';
+        }
+        else if(this.clientsDebtors.length > 0) {
+          this.typeClients = 'debtors';
+        }
+        else if(this.clientsTotal.length > 0) {
+          this.typeClients = 'total';
+        }
+      },
+    },
+    computed: {
+      filtrationElementsName() {
+        let {filtrationElements, recordsCompany, servicesCompany, affiliatesCompany} = this;
+
+        return filtrationElements.filter(function (element) {
+          let indexRecord = recordsCompany
+            .findIndex(r => r.id == element.id);
+          record = recordsCompany[indexRecord];
+
+          let indexService = servicesCompany
+            .findIndex(s => s.id == element.id);
+          service = servicesCompany[indexService];
+
+          let indexAffiliate = affiliatesCompany
+            .findIndex(a => a.id == element.id);
+          affiliate = affiliatesCompany[indexAffiliate];
+
+          if (record != null && element.object == 'r') {
+            return Object.assign(element, {name: record.name});
+          }
+          else if (service != null && element.object == 's') {
+            return Object.assign(element, {name: service.name});
+          }
+          else if (affiliate != null && element.object == 'a') {
+            return Object.assign(element, {name: affiliate.address});
+          }
+        });
+
+      },
+      // получение всех выделенных записей
+      activeRecords() {
+        let {filtrationElementsName} = this;
+
+        return filtrationElementsName.filter(function (element) {
+          if (element.object == 'r') {
+            return element;
+          }
+        });
+      },
+      activeServices() {
+        let {filtrationElementsName} = this;
+
+        return filtrationElementsName.filter(function (element) {
+          if (element.object == 's') {
+            return element;
+          }
+        });
+      },
+      activeAffiliates() {
+        let {filtrationElementsName} = this;
+
+        return filtrationElementsName.filter(function (element) {
+          if (element.object == 'a') {
+            return element;
+          }
+        });
+      },
+      // получение записей активных услуг и филиалов
+      currentRecords() {
+        let {activeRecords, activeServices, servicesCompany, recordsCompany, activeAffiliates, recordsServices} = this;
+        var arrayIdActiveRecord = [];
+
+        recordsServices.filter(function (service_record) {
+          if(activeServices.find( value => value.id == service_record.category_id) != undefined) {
+            arrayIdActiveRecord = arrayIdActiveRecord.concat(service_record.record_id);
+          }
+        });
+        // добавление записей активных филиалов
+        recordsCompany.map(function (record) {
+          if(activeAffiliates.find( currentValue => currentValue.id == record.affiliate_id ) != undefined) {
+
+            arrayIdActiveRecord = arrayIdActiveRecord.concat(record.id);
+          }
+        });
+
+        return arrayIdActiveRecord.filter(function(item, pos) {
+            return arrayIdActiveRecord.indexOf(item) == pos;
+        });
+      },
+      // добавления статуса для каждого элемента для списка записей по данным, полученым  выше
+      recordsFilter() {
+        let {recordsCompany, activeRecords, currentRecords, activeServices, activeAffiliates} = this;
+        var have = Object.keys(activeRecords).length > 0 || Object.keys(activeServices).length > 0 || Object.keys(activeAffiliates).length > 0;
+
+        if(have) {
+          return recordsCompany.filter(function (record) {
+            if(activeRecords.find( currentValue => currentValue.id == record.id ) != undefined) {
+              return Object.assign(record, {status: 'active'});
+            }
+            else if(currentRecords.find( currentValue => currentValue == record.id ) != undefined) {
+              return Object.assign(record, {status: 'current'});
+            }
+            else {
+              return Object.assign(record, {status: 'default'});
+            }
+          });
+        }
+        else {
+          return recordsCompany.filter(function (record) {
+            return Object.assign(record, {status: 'current'});
+          });
+        }
+      },
+
+      // содержаться все услуги, записи которых являются активными
+      currentServices() {
+        let {recordsServices, activeRecords} = this;
+
+        var arrayIdRecord = [];
+        var have = Object.keys(activeRecords).length > 0;
+
+        if(have) {
+          recordsServices.filter(function (service_record) {
+            if(activeRecords.find( value => value.id == service_record.record_id) != undefined) {
+              arrayIdRecord = arrayIdRecord.concat(service_record.category_id);
+            }
+          });
+        }
+
+        return arrayIdRecord.filter(function(item, pos) {
+            return arrayIdRecord.indexOf(item) == pos;
+        });
+      },
+      // содержаться все филиалы, записи которых являются активными
+      currentAffiliates() {
+        let {recordsFilter, activeRecords} = this;
+
+        var arrayIdRecord = [];
+        var have = Object.keys(activeRecords).length > 0;
+
+        if(have) {
+          recordsFilter.filter(function(record) {
+            if(record.status == 'active') {
+              arrayIdRecord.push(record.affiliate_id);
+            }
+          });
+        }
+
+        return arrayIdRecord.filter(function(item, pos) {
+            return arrayIdRecord.indexOf(item) == pos;
+        });
+      },
+
+      servicesFilter() {
+        let {servicesCompany, currentServices, activeServices, activeRecords} = this;
+        var have = Object.keys(activeServices).length > 0 || Object.keys(activeRecords).length > 0;
+
+        if(have) {
+          return servicesCompany.filter(function (service) {
+            if(activeServices.find( currentValue => currentValue.id == service.id ) != undefined) {
+              return Object.assign(service, {status: 'active'});
+            }
+            else if(currentServices.find( currentValue => currentValue == service.id ) != undefined) {
+              return Object.assign(service, {status: 'current'});
+            }
+            else {
+              return Object.assign(service, {status: 'default'});
+            }
+          });
+        }
+        else {
+          return servicesCompany.filter(function (service) {
+            return Object.assign(service, {status: 'current'});
+          });
+        }
+      },
+      affiliatesFilter() {
+        let {affiliatesCompany, activeAffiliates, currentAffiliates, activeRecords} = this;
+        var sortAffiliates = Object.keys(activeAffiliates).length > 0 || Object.keys(activeRecords).length > 0;
+
+        if(sortAffiliates) {
+          return affiliatesCompany.filter(function (affiliate) {
+            if(activeAffiliates.find( currentValue => currentValue.id == affiliate.id ) != undefined) {
+              return Object.assign(affiliate, {status: 'active'});
+            }
+            else if(currentAffiliates.find( currentValue => currentValue == affiliate.id ) != undefined) {
+              return Object.assign(affiliate, {status: 'current'});
+            }
+            else {
+              return Object.assign(affiliate, {status: 'default'});
+            }
+          });
+        }
+        else {
+          return affiliatesCompany.filter(function (affiliate) {
+            return Object.assign(affiliate, {status: 'current'});
+          });
+        }
+      },
+
+      clientSubscriptions: function () {
+        let {subscriptions, client} = this;
+        return subscriptions.filter(function (subs) {
+          if (subs.client_id == client.id && subs.is_active == true) {
+            return subs;
+          }
+        });
+      },
+
+      clientsRecords() {
+        let {clients, recordsClients} = this;
+
+        return clients.filter(function (client) {
+          var arraySubscribedRecordsId = [];
+          var arrayUnsubscribedRecordsId = [];
+
+          recordsClients.filter(function (record_client) {
+            if(client.id == record_client.client_id) {
+              if(record_client.is_active == true) {
+                arraySubscribedRecordsId.push(record_client.id);
+              }
+              else if(record_client.is_active == false) {
+                arrayUnsubscribedRecordsId.push(record_client.id);
+              }
+            }
+          });
+
+          arraySubscribedRecordsId = arraySubscribedRecordsId.filter(function(item, pos) {
+              return arraySubscribedRecordsId.indexOf(item) == pos;
+          });
+          arrayUnsubscribedRecordsId = arrayUnsubscribedRecordsId.filter(function(item, pos) {
+              return arrayUnsubscribedRecordsId.indexOf(item) == pos;
+          });
+
+          Object.assign(client, {subscribed_records_id: arraySubscribedRecordsId});
+          Object.assign(client, {unsubscribed_records_id: arrayUnsubscribedRecordsId});
+
+          return client;
+        });
+      },
+
+      clientsSorted() {
+        const k = this.sortKey;
+        return this.clientsRecords.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
+      },
+      clientsSearch() {
+        const s = validSpaces(this.search.toLowerCase());
+        return this.clientsSorted.filter(n => Object.values(n.full_name.split()).some(m => m.toString().toLowerCase().includes(s)));
+      },
+      clientsFiltRecord() {
+        let {record, recordsFilter, activeRecords, currentRecords, activeServices, activeAffiliates} = this;
+
+        var arrayIdRecord = [];
+        var sortClientRecords = Object.keys(activeRecords).length > 0  || Object.keys(activeServices).length > 0 || Object.keys(activeAffiliates).length > 0;
+        recordsFilter.filter(function(record) {
+          if(record.status == 'active' || record.status == 'current') {
+            arrayIdRecord.push(record.id);
+          }
+        });
+
+        return this.clientsSearch.filter(function (client) {
+          if(Object.keys(record).length > 0) {
+            if(client.subscribed_records_id.find( currentValue => currentValue == record.id ) == record.id)
+              return client;
+          }
+          else if(sortClientRecords) {
+            if(arrayIdRecord.some(e => client.subscribed_records_id.indexOf(e) >= 0)) {
+              return client;
+            }
+          }
+          else
+            return client;
+        });
+      },
+      clientsDebtors() {
+        return this.clientsFiltRecord.filter(function (client) {
+          if (client.unpaid_debt_subs > 0) {
+            return client;
+          }
+        });
+      },
+      clientsCurrent() {
+        return this.clientsFiltRecord.filter(function (client) {
+          if(client.subscribed_records_id.length > 0) {
+            return client;
+          }
+        });
+      },
+      clientsTotal() {
+        return this.clientsSearch;
+      },
+      clientsFilter() {
+        this.sendQuery(this.typeClients, 'clients',  '')
+
+        if(this.typeClients == 'debtors') {
+          return this.clientsDebtors;
+        }
+        else if(this.typeClients == 'current') {
+          return this.clientsCurrent;
+        }
+        else if(this.typeClients == 'total') {
+          return this.clientsTotal;
+        }
+      },
+      currentRecordsClient() {
+
+      },
+      amountTotalDebtors() {
+        return this.clientsFilter.reduce(function(sum, client) {
+          return sum + (client.unpaid_debt_subs);
+        }, 0);
+      }
+    }
+  });
+</script>

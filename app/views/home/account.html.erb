@@ -1,0 +1,21 @@
+<% sleep 0.5 %>
+<% if @user_accounts.nil? %>
+  
+  <span style="font-size: 14px; color: #ff7375; cursor: default; user-select: none;">Указанная почта не зарегистрированна, создайте аккаунт введя пароль ниже:</span>
+  <div class="finput">
+    <label class="finput-label">Пароль</label>
+    <input id="client_passoword" class="finput-input" type="passoword" value="" name="client[passoword]">
+  </div>
+  <div class="finput">
+    <label class="finput-label">Пароль</label>
+    <input id="client_password_confirmation" class="finput-input" type="passoword" value="" name="client[password_confirmation]">
+  </div>
+<% else %>
+  <span style="font-size: 14px; color: #12ce88; cursor: default; user-select: none;">Аккаунт указанной почты:</span>
+  <div class="item-element">
+    <div class="left-side-elem" style="cursor: default;">
+      <img class="avatar-list" src="<%= @user_accounts.avatar.nil? ? @user_accounts.avatar : '/resources/no-image-available.png' %>">
+      <div><%= @user_accounts.first_name %> <%= @user_accounts.last_name %></div>
+    </div>
+  </div>
+<% end %>

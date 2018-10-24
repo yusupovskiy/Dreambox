@@ -1,12 +1,18 @@
 class Companies::AffiliatesController < ApplicationController
+  before_action :confirm_actions, only: [:create, :update, :destroy, :new, :edit]
   before_action :ensure_current_user, :ensure_company_owner_role, only: [:index, :new, :edit, :update, :destroy]
-  before_action :set_affiliate, only: [:show, :edit, :update, :destroy]
-  layout 'card'
+  before_action :set_affiliate, only: [:show, :new, :edit]
+
+  def get_affiliates
+    respond_to do |format|
+      format.json { render json: @current_affiliates }
+    end
+  end
 
   # GET /affiliates
   # GET /affiliates.json
   def index
-    @affiliates = Affiliate.where(company: params[:company_id])
+    @affiliates = Affiliate.where(company_id: @current_company.id)
     @total_affiliates = @affiliates.count
   end
 
@@ -17,7 +23,15 @@ class Companies::AffiliatesController < ApplicationController
 
   # GET /affiliates/new
   def new
-    @affiliate = Affiliate.new company_id: params[:company_id]
+    @affiliate = Affiliate.new company_id: @current_company.id
+    @title_card = 'Добавление филиала'
+    @form_submit = 'Сохранить'
+
+    if request.referrer == request.original_url or request.referrer == nil
+      @url_back = clients_path
+    else
+      @url_back = request.referrer
+    end
   end
 
   # GET /affiliates/1/edit
@@ -31,10 +45,11 @@ class Companies::AffiliatesController < ApplicationController
 
     respond_to do |format|
       if @affiliate.save
-        format.html { redirect_to [@affiliate.company, @affiliate], notice: t('affiliate.created') }
+        format.html { redirect_to clients_path, notice: t('affiliate.created') }
         format.json { render :show, status: :created, location: @affiliate }
       else
-        format.html { render :new }
+        # format.html { render :new, notice: "Действие не произведено"  }
+        format.html { redirect_to request.referer, notice: "Действие не произведено"  }
         format.json { render json: @affiliate.errors, status: :unprocessable_entity }
       end
     end
@@ -65,16 +80,13 @@ class Companies::AffiliatesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_affiliate
-      # @affiliate = Affiliate.where(company: current_user.company).find(params[:id])
-      @affiliate = Affiliate.find(params[:id])
-    end
-
     # Never trust parameters from the scary internet, only allow the white list through.
+    def set_affiliate
+      @current_affiliate = Affiliate.find_by company_id: @current_company
+    end
     def affiliate_params
       params.require(:affiliate)
           .permit(:name, :address, :email, :phone_number)
-          .merge(company_id: params[:company_id])
+          .merge(company_id: @current_company.id)
     end
 end

@@ -1,0 +1,45 @@
+<div class="btns-card">
+  <!-- <div href="/" title="Сортировка списка" class="btn-card icon-sorting"></div> -->
+  <%= link_to root_path, class: "btn-card", style: "float: left;" do %>
+    <ion-icon name="arrow-back"></ion-icon>
+  <% end %>
+  <div class="btn-card top-scroll"></div>
+</div>
+
+<div class="panel-sorting">
+  Сортировка списка
+</div>
+
+<!-- <input class="card-search" type="text" placeholder="Поиск..."> -->
+
+<div class="conten-card tabs">
+  <% if @no_completed_records.present? or @completed_records.present? %>
+    <div class="menu-with-options">
+      <% if @no_completed_records.present? then %>
+        <div class="option">Текущие <%= @no_completed_records.size %></div>
+      <% end %>
+      <% if @completed_records.present? then %>
+        <div class="option">Завершенные <%= @completed_records.size %></div>
+      <% end %>
+    </div>
+
+    <div class="cont-category-book">
+      <% if @no_completed_records.present? then %>
+        <div class="tab-category information-section">
+          <%= render @no_completed_records %>
+        </div>
+      <% end %>
+      <% if @completed_records.present? then %>
+        <div class="tab-category information-section">
+          <%= render @completed_records %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="loading-block">
+      <div>
+        <div>Список пуст</div>
+      </div>
+    </div>
+  <% end %>
+</div>

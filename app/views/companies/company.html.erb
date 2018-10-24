@@ -1,0 +1,39 @@
+<div class="panel-list" style="background-color: whitesmoke;">
+  <div style='position: relative;'>
+    <h2 class="panel-form__title" style="margin-top: 10px; margin-left: 30px;"><%= @current_company.name %></h2>
+  </div>
+  <div class="container-list gray-scrollbar">
+
+    <div class="cont-category-book">
+      <div class="tab-category information-section">
+
+        <div class="block-information">
+          <h3>Тариф</h3>
+      
+          <div class="container-information" style="color: #4a4a4a;">
+            <% if @user_director %>
+              <div class="days-subs" style="font-weight: 600;">
+                <%= @current_clients_company.count %> из 
+                <%= @current_company.record_limit %></div>
+              лимит текущих клиентов
+              <br />
+              <br />
+            <% end %>
+            <div class="days-subs" style="font-weight: 600;"><%= time_limit(@current_company.time_limit) %></div>
+            оставшихся дней
+            <br />
+            <br />
+            <div style="float: left; font-size: 14px; margin-bottom: 10px; font-style: italic; color: #858585;">
+              <% if time_limit(@current_company.time_limit) == 0 %>
+                <div class="debt" style="font-size: 12px; margin-bottom: 5px;">Время периода использования исчерпан!</div>
+                Вы можете продлить его связавшись с менеджером по номеру: <br /><br /><span style="color: #4a4a4a; font-style: normal; font-weight: bold;">8 (918) 730 10 05</span>
+              <% else %>
+                Чтобы продлить или сменить тариф вы можете связаться с менеджером по номеру: <br /><br /><span style="color: #4a4a4a; font-style: normal; font-weight: bold;">8 (918) 730 10 05</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,126 @@
+<script type="text/javascript">
+  Vue.component('section-record-records', {
+    data: function () {
+      return {
+        loadingDelete: false,
+        showAll: false,
+        subsClient: [],
+        recordClientId: null,
+      }
+    },
+    props: {
+      records: Array,
+    },
+    methods: {
+      deleteRecordServise(index) {
+        let {recordsServices, recordsCompany} = vmClient;
+        let rs = recordsServices[index];
+        var complited = false
+
+        if(!this.loadingDelete) {
+          this.loadingDelete = true;
+
+          setTimeout(() => {
+            $.ajax('/records_services.json',{
+              method: 'DELETE',
+              data: {
+                authenticity_token: authToken,
+                record_service: {
+                  record_id: rs.record_id,
+                  category_id: rs.category_id
+                }
+              },
+              success: messege => {
+                complited = messege.complited;
+                vmNotifications.notifications.unshift(messege);
+                // recordsServices.splice(index, 1);
+              },
+              error: e => console.warn('error', e)
+            }).done(e => {
+              if(complited) {
+                recordsServices.splice(index, 1);
+                
+                let indexRecord = recordsCompany.findIndex(r => r.id == rs.record_id);
+                vmClient.recordsCompany[indexRecord].total_price_abon = recordsCompany[indexRecord].total_price_abon - rs.money_for_abon;
+              }
+              this.loadingDelete = false;
+            });
+          }, 600);
+        }
+
+
+
+      },
+    },
+    computed: {
+      services() {
+        let {servicesCompany, recordsServices, record} = vmClient;
+
+        return recordsServices.filter(function (record_service) {
+          if(record_service.record_id == record.id) {
+            var service = servicesCompany.filter(function (service) {
+              if(record_service.category_id == service.id) {
+                 return service;
+              }
+            });
+
+            return Object.assign(record_service, service[0]);
+          }
+        });
+      },
+    },
+    template: `
+      <section id="record-services" class="panel-content" :class="{ 'show-all': showAll}">
+        <dfn data-info="Все оказываемые услуги">
+          <div class="panel-header">
+            <div class="title-panel">Оказываемые услуги</div>
+            <div v-if="services.length > 3" @click="showAll = !showAll" class="btn show-panel">
+              <div v-if="showAll == false">Показать все</div>
+              <div v-else-if="showAll == true">Скрыть список</div>
+            </div>
+          </div>
+        </dfn>
+        <div v-if="services.length > 0" class="list-panel">
+
+          <div 
+            v-for="(service, index) in services" 
+            :class="[ 'service-' + service.id ]" 
+            class="item-panel">
+            
+            <div class="item-panel__basic-info">
+              <div class="left-item-panel">
+                <div class='item__btns'>
+                  <div class='btn-delete'>
+                    <ion-icon name="options"></ion-icon>
+                  </div>
+                  <div @click="deleteRecordServise(index)" class='btn-delete'>
+                    <ion-icon name="trash"></ion-icon>
+                  </div>
+                </div>
+                {{ service.name }}
+              </div>
+              <div class="right-item-panel">
+
+                <div class="price-record">
+                  <div v-if="service.money_for_abon > 0">{{ service.money_for_abon }} ₽</div>
+                  <div v-if="service.money_for_visit > 0">{{ service.money_for_visit }} ₽</div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="item-panel__total-info"></div>
+          </div>
+
+        </div>
+        <div v-else-if="services.length <= 0" class="list-panel">
+          <div class="no-record">Перед записью клиентов добавьте услугу</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+
+      </section>
+    `
+  });
+</script>

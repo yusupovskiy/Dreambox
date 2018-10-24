@@ -21,10 +21,7 @@
         <td><%= subscription.finish_at %></td>
         <td><%= subscription.visits %></td>
         <td><%= subscription.is_active %></td>
-        <td><%= subscription.note %></td>
-        <td><%= link_to 'Show', subscription %></td>
-        <td><%= link_to 'Edit', edit_subscription_path(subscription) %></td>
-        <td><%= link_to 'Destroy', subscription, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= subscription.note %></td>-->
       </tr>
     <% end %>
   </tbody>
@@ -32,4 +29,4 @@
 
 <br>
 
-<%= link_to 'New Subscription', new_subscription_path %>
+<% # link_to 'New Subscription', new_subscription_path %>

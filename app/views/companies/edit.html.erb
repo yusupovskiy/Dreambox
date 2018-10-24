@@ -1,7 +1,16 @@
-<h1>Editing Company</h1>
+<div class="title-panel">
+	<div class="btns-card">
+	  <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
+	  <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>
+      <div class="btn-card top-scroll"></div>
+      <div class="btn-card btn-show-list">      
+        <div class="panel-show">
+          <%= link_to 'Назад', companies_path %>
+        </div>
+      </div>
 
-<%=flash.notice%>
+	</div>
+    <div class="title-card">Редактирование компании</div>
+</div>
+
 <%= render 'form', company: @company %>
-
-<%= link_to 'Show', @company %> |
-<%= link_to 'Back', companies_path %>

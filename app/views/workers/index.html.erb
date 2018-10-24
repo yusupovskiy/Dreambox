@@ -1,0 +1,129 @@
+<div id="workers">
+  <div class="panel-list">
+    <%= render 'workers/index_search' %>
+    <%= render 'workers/index_list' %>
+  </div>
+  <div class="panels-content hide-scrollbar">
+    <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+    <%= render 'workers/home' %>
+    <%= render 'workers/worker' %>
+  </div>
+</div>
+
+<%= render 'workers/worker_panel_info' %>
+<%= render 'workers/worker_panel_info_add_work' %>
+<%= render 'workers/worker_panel_info_add_transaction' %>
+<%= render 'workers/worker_works' %>
+<%= render 'workers/worker_transactions' %>
+
+<script type="text/javascript">
+  var authToken = document.getElementById("authenticity_token").value;
+
+  var vmWorkers = new Vue ({
+    el: '#workers',
+    data: {
+      titleInput: 'Поиск сотрудники',
+      workers: [],
+      worker: [],
+      loadComplete: false,
+      worksCompany: [],
+      panelShow: 'home',
+      transactions: [],
+      affiliatesCompany: [],
+      worksAffiliates: [],
+
+      search: '',
+      showSort: false,
+      columns: [
+        {
+          name: 'По ФИО',
+          column: 'full_name'
+        }, 
+        {
+          name: 'По дате рождения',
+          column: 'birthday'
+        },
+      ],
+      sortKey: 'full_name',
+      reverse: false,
+    },
+    methods: {
+      clickWorker(worker) {
+        this.worker = worker;
+        this.panelShow = 'worker';
+
+        url = window.location.href;
+        newUrl = updateURLParameter(url, 'worker', worker.id);
+        history.pushState('Сотрудник', 'Сотрудник', newUrl);
+      },
+      sortBy(sortKey) {
+        this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
+        this.sortKey = sortKey;
+      },
+    },
+    created() {
+      var urlHash = new URL(window.location.href);
+      var worker_id = urlHash.searchParams.get("worker");
+
+      setTimeout(() => {
+        $.get('/get_workers.json', workers => {
+          this.workers = workers;
+
+          if(worker_id != null) {
+            let indexCurrent = workers
+              .findIndex(worker => worker.id == worker_id);
+
+            if(indexCurrent > -1) {
+              getWorker = this.workers[indexCurrent];
+              this.clickWorker(getWorker);
+            }
+          }
+
+          this.loadComplete = true;
+        });
+
+        $.get('/get_affiliates.json',
+          affiliatesCompany => this.affiliatesCompany = affiliatesCompany );
+
+        $.get('/get_works.json',
+          worksCompany => this.worksCompany = worksCompany );
+
+        $.get('/get_transactions.json',
+          transactions => this.transactions = transactions);
+
+        $.get('/get_transactions.json',
+          transactions => this.transactions = transactions);
+        
+        $.get('/get_works_affiliates.json',
+          worksAffiliates => this.worksAffiliates = worksAffiliates);
+
+      }, 600);
+    },
+    computed: {
+      workersWorks() {
+        let {worksCompany} = this;
+        return this.workers.filter(function(worker) {
+          var worksWorker = '';
+          worksCompany.filter(function(work) {
+            if(work.people_id == worker.id) {
+              if(work.position_work == "director")
+                worksWorker = worksWorker + '- владелец '
+              else if(work.position_work == "administrator")
+                worksWorker = worksWorker + '- администратор '
+            }
+          });
+          return Object.assign(worker, {position_work: worksWorker});
+        });
+      },
+
+      workersSorted() {
+        const k = this.sortKey;
+        return this.workersWorks.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
+      },
+      workersSearch() {
+        const s = validSpaces(this.search.toLowerCase());
+        return this.workersSorted.filter(n => Object.values(n.full_name.split()).some(m => m.toString().toLowerCase().includes(s)));
+      },
+    },
+  });
+</script>

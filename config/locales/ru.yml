@@ -7,24 +7,45 @@ ru:
   remember_me: Запомнить
   forgot_your_password?: Забыли пароль?
   didnt_receive_confirmation_instruction?: Не получили письмо с активацией?
-  reserved_range_for_subscription: This range is reserved!!!
+  reserved_range_for_subscription: Абонемент на указанную дату уже зарезервирован
   sex:
     male: Мужской
     female: Женский
     unknown: Не указано
+  position_work:
+    administrator: Администратор
+    moderator: Модератор
+    accountant: Бухгалтер
+    responsible: Ответственный
+    director: Владелец
+  field_type:
+    field_text: Поле для текста
+    field_date: Поле для даты
+    field_number: Поле для чисел
+    field_datetime: Полея для даты и времени
+  operation_type:
+    payment_other: Прочая оплата за клиента
+    payment_subscription: Оплата за абонемент
+    payment_salaries: Выплота зарплаты
   record_type:
     grouping: групповая
     personal: индивидуальная
+  subscription_sale:
+    by_period: по периоду
+    by_calendar: по календарю
+    automatically_by_period: автоматически по периоду
+    automatically_by_calendar: автоматически по календарю
   visit_type:
     one_time_visit: Одноразовое посещение
     reusable_visit: Многоразовое посещение
-    one_time_abon: по абонементу
+    subscriptions: по абонементу
+    # one_time_abon: по абонементу
     automatic_abon: Автоматический абонемент
     dynamic_abon: Динамический абонемент
   client:
-    created: Клиент успешно создан
-    updated: Клиент успешно сохранён
-    destroyed: Клиент успешно удалён
+    created: Успешно создан
+    updated: Успешно сохранён
+    destroyed: Успешно удалён
   company:
     created: Компания успешно создана
     updated: Компания успешно сохранёна
@@ -53,39 +74,58 @@ ru:
     created: Услуга успешно создана
     updated: Услуга успешно сохранёна
     destroyed: Услуга успешно удалёна
-  companies: 
-    records: 
-      show: 
-        completed_ecords: Завершена!
-        desc_completed_ecords: Указанный срок подошел к концу
-        record_type: Тип записи
-        visit_type: Тип визита
-        abon_period: Период абонемента (в днях)*
-        record_type:
-          grouping: Групповая запись
-          personal: Индивидуальная запись
-      form:
-        record_type: Запись*
-        visit_type: Визит*
-        abon_period: Период абонемента (в днях)*
-        name: Название*
-        total_clients: Лимит в группе
-        created_at: Дата начала*
-        finished_at: Дата завершения*
-        affiliate_id: Филиал*
-        total_visits: Посещений за абонемент
-      edit:
-        name: Название*
-        total_clients: Лимит в группе
-        finished_at: Дата завершения*
-        total_visits: Посещений за абонемент
-        
-    clients:
-      form:
-        last_name: 'Фамилия*'
-        first_name: 'Имя*'
-        patronymic: 'Отчество'
-        birthday: 'Дата рождения'
-        sex: 'Пол'
-        phone_number: 'Телефон'
+  records: 
+    show: 
+      completed_ecords: Завершена!
+      desc_completed_ecords: Указанный срок подошел к концу
+      record_type: Запись
+      visit_type: Визит
+      abon_period: Период абонемента (в днях)*
+      record_type:
+        grouping: Групповая запись
+        personal: Индивидуальная запись
+    form:
+      record_type: Запись*
+      visit_type: Визит*
+      abon_period: Период абонемента (в днях)*
+      name: Название*
+      total_clients: Лимит в группе
+      created_at: Дата начала*
+      finished_at: Дата завершения
+      affiliate_id: Филиал*
+      total_visits: Посещений за абонемент
+    edit:
+      name: Название*
+      total_clients: Лимит в группе
+      finished_at: Дата завершения*
+      total_visits: Посещений за абонемент
+      
+  clients:
+    form:
+      last_name: 'Фамилия*'
+      first_name: 'Имя*'
+      patronymic: 'Отчество'
+      birthday: 'Дата рождения'
+      sex: 'Пол'
+      phone_number: 'Телефон'
+    edit:
+      last_name: 'Фамилия*'
+      first_name: 'Имя*'
+      patronymic: 'Отчество'
+      birthday: 'Дата рождения'
+      sex: 'Пол'
+      phone_number: 'Телефон'
+    show:
+      amount: Сумма оплаты*
+      operation_date: Дата оплаты*
+      description: Примечение к оплате*
+      affiliate_id: Филиал*
 
+  fin_operations:
+    form:
+      operation_type: Тип операции
+      operation_object_id: Ссылка на операцию
+      amount: Сумма операции
+      operation_date: Дата операции
+      description: Примечение
+      affiliate_id: Филиал*

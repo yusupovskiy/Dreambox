@@ -1,20 +1,50 @@
-<%= form_with(model: [service.company, service], local: true) do |form| %>
-  <div class="conten-card">   
-    <div class="information-section">
-      <div class="block-information">
-        <%= form.text_field :name, placeholder: "Название*", class: "input-panel"  %>
+<%= form_with(model: [@current_company, service], local: true) do |form| %>
+  <div class="panel-list" style="background-color: whitesmoke;">
+    <div style='position: relative;'>
+      <h2 class="panel-form__title" style="margin-top: 10px;">
+        <%= 'Добавить услугу' %>
+      </h2>
+
+      <% 
+        if request.referrer == request.original_url or request.referrer == nil
+          url = clients_path
+        else
+          url = request.referrer
+        end
+      %>
+
+      <a href="<%= url %>" class="btn-back new-btn">
+        <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+      </a>
+      <%= form.submit 'Сохранить', class: "btn", style: 'float: right;
+      position: absolute;
+      right: 10px;
+      top: 0;
+      padding: 15px;
+      color: #12ce88;' %>
+    </div>
+
+    <div class="container-list gray-scrollbar">
+      <div class="conten-card">
+        <div class="information-section">
+          <div class="block-information">
+            <div class="finput">
+              <%= form.label 'Название услуги', class: 'finput-label' %>
+              <%= form.text_field :name, class: "finput-input"  %>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <%= form.submit class: "btn icon-confirm" %>
+    <% if service.errors.any? %>
+      <div id="error_explanation" class="message">
+        <h4><%= pluralize(service.errors.count, "error") %> prohibited this service from being saved:</h4>
+        <ul>
+        <% service.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
   </div>
-  <% if service.errors.any? %>
-    <div id="error_explanation" class="message">
-      <h4><%= pluralize(service.errors.count, "error") %> prohibited this service from being saved:</h4>
-      <ul>
-      <% service.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
 <% end %>

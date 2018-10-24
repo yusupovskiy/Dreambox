@@ -1,0 +1,298 @@
+<script type="text/javascript">
+
+  Vue.component('section-client-panel-info', {
+    data: function () {
+      return {
+        loading: false,
+        showAll: false,
+        subsClient: [],
+        showTotalInfo: false,
+        openPanelAdd: null,
+        fieldsClient: [],
+      }
+    },
+    // props: {
+    //   client: Array,
+    //   records: Array,
+    //   no_records: Array,
+    //   show: String,
+    // },
+    props: ['client', 'records'],
+    methods: {
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      closeCartClient() {
+        let {client, record, recordsCompany} = vmClient;
+
+        url = window.location.href;
+        newUrl = deleteURLParameter(url, 'client');
+        history.pushState('', 'Home', newUrl);
+        vmClient.client = [];
+        vmClient.panelShow = 'home';
+
+        var urlHash = new URL(window.location.href);
+        var record_id = urlHash.searchParams.get("record");
+
+        if(record_id != null) {
+          let indexCurrentRecord = recordsCompany
+            .findIndex(record => record.id == record_id);
+
+          if(indexCurrentRecord > -1) {
+            getRecord = recordsCompany[indexCurrentRecord];
+            vmClient.clickRecord(getRecord);
+          }
+        }
+      }
+    },
+    computed: {
+      no_records() {
+        let {recordsClients} = vmClient;
+        let {client, records} = this;
+        
+        return records.filter(function (r) {
+          var rc = recordsClients.filter(function (rc) {
+            if(r.id == rc.id && rc.is_active == true && rc.client_id == client.id) {
+              return rc;
+            }
+          });
+          if(rc.length <= 0)
+            return r;
+        });
+      },
+      urlEditClient: function() {
+        let {client} = vmClient
+        return '/clients/' + client.id + '/edit';
+      },
+      clientBasicInformation: function() {
+        let {client} = vmClient
+        var clientBasicInformation = '';
+        var patronymic = client.patronymic != '' ? true : false;
+        var birthday = client.birthday != null ? true : false;
+        var phone_number = client.phone_number != '' ? true : false;
+
+        if (birthday) {
+          var birthDay = new Date(client.birthday);
+          var yearBirthDay = birthDay.getFullYear();
+
+          var today = new Date();
+          var yearToday = today.getFullYear();
+
+          var age = yearToday - yearBirthDay;
+
+          if (age == 1 || age == 21 || age == 31) {
+            age = age + ' год';
+          }
+          else if ((1 < age && age < 5) || (21 < age && age < 25) || (31 < age && age < 35)) {
+            age = age + ' года';
+          }
+          else {
+            age = age + ' лет';
+          }
+        }
+
+        if (patronymic) {
+          if (birthday && phone_number) {
+            clientBasicInformation = client.patronymic + ', ' + age + ', ' + client.phone_number;
+          }
+          else if (birthday && !phone_number) {
+            clientBasicInformation = client.patronymic + ', ' + age;
+          }
+          else if (!birthday && phone_number) {
+            clientBasicInformation = client.patronymic + ', ' + client.phone_number;
+          }
+          else if (!birthday && !phone_number) {
+            clientBasicInformation = client.patronymic;
+          }
+        }
+        else if (birthday) {
+          if (phone_number) {
+            clientBasicInformation = age + ', ' + client.phone_number;
+          }
+          else if (!phone_number) {
+            clientBasicInformation = age;
+          }
+        }
+        else if (phone_number) {
+          clientBasicInformation = client.phone_number;
+        }
+        else {
+          clientBasicInformation = '';
+        }
+
+        return clientBasicInformation;
+      }
+    },
+    watch: {
+      "client" : function() {
+        this.showTotalInfo = false;
+        this.fieldsClient = [];
+      },
+      "showTotalInfo" : function() {
+        let {client} = vmClient;
+        this.loading = false;
+
+        if(this.showTotalInfo) {
+          setTimeout(() => {
+            $.get(
+              '/get_fields_client.json', 
+              { client_id: client.id },
+              fieldsClient => {
+                this.fieldsClient = fieldsClient;
+              }
+            );
+            this.loading = true;
+          }, 600);
+        }
+      }
+    },
+    template: `
+      <section id="client-panel-info" class="panel-content">
+        <div class="panel-info">
+          <div class="basic-info">
+
+            <div @click="closeCartClient()" class="btn-back new-btn btn-close-pnl-add" style="    bottom: 0px;
+              margin: 5px 5px;
+              position: relative;">
+              <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+            </div>
+
+            <img v-if="client.length != 0" class="ava" src="/resources/no-image-available.png">
+            <div class="basic-info__container">
+              <div class="basic-info__container__content">
+                <div class="name-panel">{{client.last_name}} {{client.first_name}}</div>
+                <div v-if="clientBasicInformation != ''" class="additional-info">{{ clientBasicInformation }}</div>
+              </div>
+            </div>
+
+            <div v-on:click="showTotalInfo = !showTotalInfo" class="click-compact" v-bind:class="{ active: showTotalInfo }"><img src="images/_ionicons_svg_ios-arrow-down.svg"></div>
+          </div>
+
+          <div v-if="showTotalInfo" class="total-info">
+
+            <div v-if="loading" style="display: grid;">
+              <div v-if="client.birthday != null" class="item-info">
+                <div class="title-item-info">Дата рождения</div>
+                <div class="content-item-info">{{client.birthday}}</div>
+              </div>
+              <div v-if="client.sex != null" class="item-info">
+                <div class="title-item-info">Пол</div>
+                <div class="content-item-info">{{client.sex}}</div>
+              </div>
+
+              <div v-if="block.values[0] != null" v-for="block in fieldsClient">
+                <div v-if="block.name != ''">
+                  <div class="title-info">{{ block.name }}</div>
+
+                  <div v-if="field.title != '' && field.value != ''" v-for="field in block.values" class="item-info">
+                    <div class="title-item-info">{{ field.title }}</div>
+                    <div class="content-item-info">{{ field.value }}</div>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+
+            <div v-else-if="!loading" style="width: 100%; height: 70px;">
+              <div style="position: absolute; top: 0; width: 100%; height: 100%; background-color: white;">
+                <img src="images/loading.gif" style="width: 60px; height: 60px; margin: auto; display: table; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="panel-footer">
+          <div v-if="openPanelAdd == null" class="indecators">
+
+            <div class="indecator green-color">
+              <div class="index-indecator">{{ indentAmount(client.total_amount) }} ₽</div>
+              <div class="name-indecator">Оплатил</div>
+            </div>
+
+            <div class="indecator red-color">
+              <div class="index-indecator">{{ indentAmount(client.unpaid_debt_subs) }} ₽</div>
+              <div class="name-indecator">Долг</div>
+            </div>
+
+            <div class="btn-show-panel btn-show-list">
+              <div class="panel-show" style="left: auto; right: 10px;">
+                <a :href="urlEditClient">Редактировать</a>
+              </div>
+              <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
+            </div>
+            <div @click="openPanelAdd = 'addListForClient'" class="btn-add-panel">
+                <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
+            </div>
+          </div>
+
+          <section v-if="openPanelAdd == 'addListForClient'" class="panel-add show-all">
+            <h2 class="panel-form__title">
+              <div @click="openPanelAdd = null" class="btn-back new-btn">
+                <ion-icon name="arrow-back"></ion-icon>
+              </div>
+              <span>Добавление</span>
+            </h2>
+
+            <div>
+              <div @click="openPanelAdd = 'addRecordClient'" class="item-panel" style="cursor: pointer;">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel" style="width: 100%;">Записать в группу</div>
+                  <div class="right-item-panel"></div>
+                </div>
+              </div>
+              <div @click="openPanelAdd = 'addSubscriptionClient'" class="item-panel" style="cursor: pointer;">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel" style="width: 100%;">Продать абонемент</div>
+                  <div class="right-item-panel"></div>
+                </div>
+              </div>
+              <div @click="openPanelAdd = 'addTransactionClient'" class="item-panel" style="cursor: pointer;">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel" style="width: 100%;">Прозвести транзакцию</div>
+                  <div class="right-item-panel"></div>
+                </div>
+              </div>
+              <div @click="openPanelAdd = 'addDiscountClient'" class="item-panel" style="cursor: pointer;">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel" style="width: 100%;">Добавить скидку или скорректировать цену</div>
+                  <div class="right-item-panel"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section v-if="openPanelAdd == 'addRecordClient'" class="panel-add show-all">
+            <h2 class="panel-form__title">
+              <div @click="openPanelAdd = 'addListForClient'" class="btn-back new-btn">
+                <ion-icon name="arrow-back"></ion-icon>
+              </div>
+              <span>Запись клиента в группу</span>
+            </h2>
+
+            <div v-if="no_records.length != 0" >
+              <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+              <div v-for="record in no_records" class="item-panel">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel">{{ record.name }}</div>
+                  <div class="right-item-panel">
+                    <button-subscribe :record="record" :client="client"></button-subscribe>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else>
+              <div class="no-record">Нет групп для записи</div>
+            </div>
+            <a href="/records/new" class="btn-add btn">+ Создать группу</a>
+          </section>
+
+          <section-subs-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd"></section-subs-add>
+
+          <section-transaction-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd" :client="client"></section-transaction-add>
+
+          <section-add-discount v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd"></section-add-discount>
+        </div>
+      </section>
+    `
+  });
+</script>

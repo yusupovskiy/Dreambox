@@ -1,45 +1,119 @@
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= devise_error_messages! %>
-
-    <div class="title-panel">
-      <div class="btns-card">
-        <a href="<%=root_path%>" title="Закрыть" class="btn-card icon-closed-card"></a>
-        <a href="<%=root_path%>" title="На главную" class="btn-card icon-home"></a>      <div class="btn-card top-scroll"></div>
-      <div class="btn-card btn-show-list"></div>
-      <div class="panel-show">
-        <%= link_to "Вернуться назад", :back %>
-      </div>
-      </div>
-      <div class="title-card">Edit <%= resource_name.to_s.humanize %></div>
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, id: 'main-form' }) do |f| %>
+  <div class="panel-list" style="background-color: whitesmoke;">
+    <div style='position: relative;'>
+      <h2 class="panel-form__title" style="margin-top: 10px;">Настройка аккаунта</h2>
+      <a href="<%= persons_profile_path %>" class="btn-back new-btn">
+        <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+      </a>
+      <%= f.submit 'Изменить', class: "btn", style: 'float: right; position: absolute; right: 10px; top: 0; padding: 15px; color: #12ce88;' %>
     </div>
-
-    <div class="conten-card">
+    <div class="container-list gray-scrollbar">  
       <div class="cont-category-book">
         <div class="tab-category information-section">
+          <%= devise_error_messages! %>
+
           <div class="block-information">
-            <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Электронная почта", class: "input-panel" %>
-            <%= f.password_field :password, autocomplete: "off", placeholder: "Пароль (оставьте поле пустым, если вы не хотите его менять)", class: "input-panel" %>
+            <div id="drop_zone" class="add-avatar">
+              <div class="icon-add-avatar">
+                <input id="client_avatar" type="file" style="display: none;">
+                <%=f.hidden_field :avatar, id: 'client_avatar_field', value: current_user.avatar%>
+              </div>
+              <%= image_tag s3_image(current_user.avatar), class: 'people-avatar' %>
+            </div>
+            
 <!--             <% if @minimum_password_length %>
               <br />
               <em><%= @minimum_password_length %> characters minimum</em>
             <% end %> -->
-            <%= f.password_field :password_confirmation, autocomplete: "off", placeholder: "Подтверждение пароля", class: "input-panel" %>
-            <%= f.password_field :current_password, autocomplete: "off", placeholder: "Текущий пароль", class: "input-panel" %>
-            <%= f.text_field :first_name, placeholder: "Фамилия", class: "input-panel" %>
-            <%= f.text_field :last_name, placeholder: "Имя", class: "input-panel" %>
-            <%= f.text_field :patronymic, placeholder: "Отчество", class: "input-panel" %>
-            <%= f.date_field :birthday, placeholder: "День рождения", class: "input-panel" %>
+
+            <div class="finput">
+              <%= f.label 'Фамилия*', class: 'finput-label' %>
+              <%= f.text_field :first_name, class: "finput-input" %>
+            </div>
+            <div class="finput">
+              <%= f.label 'Имя*', class: 'finput-label' %>
+              <%= f.text_field :last_name, class: "finput-input" %>
+            </div>
+            <div class="finput">
+              <%= f.label 'Отчество', class: 'finput-label' %>
+              <%= f.text_field :patronymic, class: "finput-input" %>
+            </div>
+            <div class="finput">
+              <%= f.label 'Дата рождения', class: 'finput-label' %>
+              <%= f.date_field :birthday, class: "finput-input" %>
+            </div>
           </div>
+          <div class="block-information">
+            <h3>Настройка авторизации</h3>
+            <div class="container-info">
+              <div class="finput">
+                <%= f.label 'Электронная почта', class: 'finput-label' %>
+                <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "finput-input" %>
+              </div>
+
+              <div class="finput">
+                <%= f.label 'Текущий пароль*', class: 'finput-label' %>
+                <%= f.password_field :current_password, autocomplete: "off", class: "finput-input" %>
+              </div>
+              <div class="finput-desc">для сохранения изменений обязательно нужно указать текущий пароль</div>
+
+              <div class="finput">
+                <%= f.label 'Пароль', class: 'finput-label' %>
+                <%= f.password_field :password, autocomplete: "off", class: "finput-input" %>
+              </div>
+              <div class="finput-desc">оставьте поле пустым, если вы не хотите его менять</div>
+              
+              <div class="finput">
+                <%= f.label 'Подтверждение пароля', class: 'finput-label' %>
+                <%= f.password_field :password_confirmation, autocomplete: "off", class: "finput-input" %>
+              </div>
+            </div>
+          </div>
+
+  <!--           <% if @minimum_password_length %>
+          <em>(<%= @minimum_password_length %> минимум символов)</em>
+          <% end %><br /> -->
         </div>
       </div>
-      <%= f.submit class: "btn icon-confirm" %>
     </div>
-
+  </div>
 
   <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
     <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
   <% end %>
 <% end %>
+
+<script>
+  if (!FileList.prototype.slice)  // firefox
+    FileList.prototype.slice = Array.prototype.slice
+  var form = document.getElementById('main-form')
+  var data = JSON.parse(form.dataset.formData)
+  var clientAvatarField = document.getElementById('client_avatar_field')
+  var clientAvatar = $("#client_avatar")
+  var result = clientAvatar.withDropZone('#drop_zone', {
+    url: form.dataset.url,
+    autoUpload: true,
+    formData: (index, blob, filename)=> {
+      formData = new FormData
+      for (var i in data)
+          formData.set(i, data[i])
+      formData.set('file', blob, filename)
+      return formData
+    },
+    action: {
+      name: "image",
+      params: {
+        preview: true,
+      }
+    },
+    done(filenames) {
+      var fn = filenames.map(filename => eval('`' + data.key + '`'))[0];
+      clientAvatarField.value = fn
+      console.log(fn)
+    }
+  })
+  clientAvatar.on('change', () => clientAvatarField.value = '')
+</script>
 
 <!-- <h3>Cancel my account</h3>
 

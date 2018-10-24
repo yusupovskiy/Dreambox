@@ -1,0 +1,12 @@
+<%= link_to company_record_path(params[:company_id], record), class: "item-card" do %>
+  <div class="left-content">
+    <div class="name-content"><%= record.name %></div>
+    <span class="">
+      <!-- <span style="margin-right: 2px;">Долг</span>  -->
+      <span class="amount debt"><%= debt_record(record.id) %> ₽</span>
+    </span>
+  </div>
+  <div class="right-content">
+    <div class="people-on-course"><%= RecordClient.where(record_id: record.id, is_active: true).size %><img src="/images/visitors1.png"></div>
+  </div>
+<% end %>

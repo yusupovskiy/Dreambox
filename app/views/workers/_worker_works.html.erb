@@ -1,0 +1,100 @@
+<script type="text/javascript">
+  Vue.component('section-worker-works', {
+    data: function () {
+      return {
+        showAll: false,
+      }
+    },
+    props: {
+      works: Array,
+      worksAffiliates: Array,
+    },
+    methods: {
+      clickActive(id) {
+        if(!$('.work-'+id).hasClass('active')) {
+          $('.work-'+id).parents().children().removeClass('active');
+          $('.work-'+id).addClass('active');
+        }
+        else {
+          $('.work-'+id).parents().children().removeClass('active');
+          // this.note = '';
+        }
+      },
+      position_work(position_work) {
+        if(position_work == 'director')
+          return 'Владелец'
+        else if(position_work == 'administrator')
+          return 'Администратор'
+      },
+    },
+    watch: {
+    },
+    computed: {
+      worksWorker() {
+        return this.works.filter(function(w) {
+          if(w.people_id == vmWorkers.worker.id) {
+            var nameAffiliate = '';
+            vmWorkers.affiliatesCompany.filter(function(a) {
+              if(a.id == w.affiliate_id)
+                nameAffiliate = a.address;
+            });
+            return Object.assign(w, {name_affiliate: nameAffiliate});
+          }
+        });
+      },
+      worksAffiliatesName() {
+        return this.worksAffiliates.filter(function(w) {
+          var nameAffiliate = '';
+          vmWorkers.affiliatesCompany.filter(function(a) {
+            if(a.id == w.affiliate_id)
+              nameAffiliate = a.address;
+          });
+          return Object.assign(w, {name_affiliate: nameAffiliate});
+        });
+      },
+    },
+    template: `
+      <section title="Все должности сотрудника" id="worker-works" class="panel-content" :class="{ 'show-all': showAll}">
+        <div class="panel-header">
+          <div class="title-panel">Должность и ставка</div>
+          <div v-if="worksWorker.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Показать все</div>
+            <div v-else-if="showAll == true">Скрыть список</div>
+          </div>
+        </div>
+        <div v-if="worksWorker.length > 0" class="list-panel">
+
+          <div v-for="work in worksWorker" v-bind:class="'work-' + work.id" class="item-panel">
+            
+            <div @click="clickActive(work.id)" class="item-panel__basic-info" style="cursor: pointer;">
+              <div class="left-item-panel">
+                {{ position_work(work.position_work) }}
+              </div>
+              <div class="right-item-panel">
+                <div class="right-item-panel--no-hover"></div>
+                <div class="btn-hide btn">Скрыть</div>
+              </div>
+            </div>
+
+            <div class="item-panel__total-info">
+              <div title='Место работы' v-if="work.affiliate_id != null" class="affiliate-work">{{ work.name_affiliate }}</div>
+
+              <div title='Ставка' class="red-color">{{ work.fixed_rate }}</div>
+
+              <ul>
+                <li v-if='wa.work_id == work.id' v-for='wa in worksAffiliatesName'>{{ wa.name_affiliate }}</li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+        <div v-else-if="worksWorker.length <= 0" class="list-panel">
+          <div class="no-record">Список пуст</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+      </section>
+    `
+  });
+</script>

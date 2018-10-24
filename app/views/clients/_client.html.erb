@@ -1,0 +1,11 @@
+<div v-if="panelShow == 'client'" id="client-card">
+
+  <section-client-panel-info :client="client" :records="recordsCompany">
+  </section-client-panel-info>
+
+  <section-client-records :client="client"></section-client-records>
+
+  <section-client-transactions :transactions="clientTransactions"></section-client-transactions>
+
+  <section-client-discounts></section-client-discounts>
+</div>

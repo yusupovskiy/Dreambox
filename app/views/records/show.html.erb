@@ -1,0 +1,207 @@
+<div class="title-panel">
+  <div class="btns-card" style="position: absolute;">
+    
+    
+    <div class="btn-card top-scroll"></div>
+
+    <div class="btn-card btn-show-list">
+      <div class="panel-show" style="left: auto; right: 10px;">
+        <%= link_to 'Редактировать', edit_company_record_path(@current_company, @record) %>
+        <%= link_to 'Закрыть группу', end_recording_company_record_path(@current_company, @record), data: {confirm: 'Вы уверены, что хотите завершить запись?'} %>
+
+<!--        <div>Продать всем абонементы</div>
+        <div>Динамические цены</div> -->
+      </div>
+    </div>
+ 
+  </div>
+
+  <%if @record.finished_at.present? and @record.finished_at < Date.today %>
+    <div title="<%= t('.desc_completed_ecords') %>" class="completed-records"> <%= t('.completed_ecords') %></div>
+  <%end%>
+
+  <div class="title-card"><%= @record.name %></div>
+  <div class="role-card"><%= t('.record_type.' + @record.record_type)%></div>
+</div>
+
+<div class="conten-card tabs">
+  <div class="cont-category-book">
+    <div class="tab-category information-section">
+
+      <% render 'companies/records/visiting_time' %>
+
+      <%= render 'companies/records/record_clients' %>
+
+
+
+
+      <div id="records_services_part" data-record-id="<%=@record.id%>" class="block-information">
+        <h3><div class="icon-list"></div>Оказываемые услуги <span>{{recordsServices.length}}</span></h3>
+        
+        <div class="container-information compact">
+          <div v-for="(recordService, index) in recordsServices" class="item-element">
+            <div class="left-side-elem">
+              <div>{{recordService.service.name}}</div>
+              <div class="panel-show">
+                <a :href="`/companies/<%=params[:company_id]%>/services/${recordService.service_id}`">Открыть карточку</a>
+                <div @click="editingRS = {...recordsServices[index]}">Редактировать пункт</div>
+                <div @click="deleteRecordService(index)" class="remove_this_item">Удалить пункт</div>
+              </div>
+            </div>
+            <div class="rigth-side-elem">{{recordService.money_for_abon}} ₽ ({{recordService.money_for_visit}} ₽)</div>
+          </div>
+        </div>
+
+        <div class="show-and-hide-container">
+          <div class="add-discount btn-show-panel">+ Добавить</div>
+          <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+
+          <div id="" class="panel-attachment show-and-hide-panel">
+            <div class="finput">
+              <label class="finput-label">Услуга</label>
+              <select class="finput-input" id="attachedService" v-model="attachedServiceId" @change="updateFromSelectedText">
+                <%=options_for_select(@services.map{|s| [s.name, s.id]})%>
+              </select>
+            </div>
+            <div class="finput">
+              <label class="finput-label">Цена за абонемент</label>
+              <input class="finput-input" type="number" v-model="moneyForAbon" min="0">
+            </div>
+            <div class="finput">
+              <label class="finput-label">Цена за посещение</label>
+              <input class="finput-input" type="number" v-model="moneyForVisit" min="0">
+            </div>
+            <div class="btns-confirm">
+              <a class="btn icon-plus" href="<%=new_company_service_path%>"></a>
+              <input class="btn icon-confirm btn-hide-panel" type="button" @click="attachService">
+              <div class="btn btn-no btn-hide-panel"></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="editingRS" class="panel-attachment">
+          <input class="input-attachment" type="number" placeholder="Цена за абонемент" v-model="editingRS.money_for_abon" min="0">
+          <input class="input-attachment" type="number" placeholder="Цена за посещение" v-model="editingRS.money_for_visit" min="0">
+          <div class="btns-confirm">
+            <input class="btn icon-confirm" type="button" @click="editRS">
+            <input class="btn btn-no btn-hide-panel" type="button" @click="cancelEditing">
+          </div>
+        </div>
+        <div class="testt click-compact">Раскрыть</div>
+        <div class="testt click-compact compact">Скрыть</div>
+
+      </div>
+
+      <script>
+        var authToken = document.getElementById("authenticity_token").value
+        var itemInformations = document.getElementById("records_services_part")
+        var recordId = itemInformations.dataset.recordId
+        var vm = new Vue({
+          el: '#records_services_part',
+          data: {
+            recordsServices: [],
+            moneyForAbon: null,
+            moneyForVisit: null,
+            attachedServiceId: null,
+            editingRS: null,
+          },
+          methods: {
+            deleteRecordService(index) {
+              let rs = this.recordsServices[index]
+              $.ajax('/records_services',{
+                method: 'DELETE',
+                data: {
+                  authenticity_token: authToken,
+                  record_service: {
+                    record_id: rs.record_id,
+                    service_id: rs.service_id
+                  }
+                },
+                success: e => this.recordsServices.splice(index, 1),
+                error: e => console.warn('error', e)
+              })
+            },
+            editRS() {
+              $.ajax('/records_services', {
+                method: 'PATCH',
+                data: {
+                  authenticity_token: authToken,
+                  record_service: { ...this.editingRS }
+                },
+                success: e => {
+                  this.editingRS = null
+                  let {record_id, service_id} = e
+                  let index = this.recordsServices
+                    .findIndex(rs => rs.record_id == e.record_id && rs.service_id == e.service_id)
+                  this.recordsServices[index] = {...this.recordsServices[index], ...e}
+                },
+                error: e => console.warn('error', e)
+              })
+              // this.editingRS = null
+            },
+            cancelEditing() {
+              this.editingRS = null
+            },
+            attachService() {
+              let {moneyForAbon, moneyForVisit, attachedServiceId, serviceName} = this
+              $.ajax('/records_services', {
+                method: 'POST',
+                data: {
+                  authenticity_token: authToken,
+                  record_service: {
+                    record_id: recordId,
+                    service_id: attachedServiceId,
+                    money_for_abon: moneyForAbon,
+                    money_for_visit: moneyForVisit,
+                  }
+                },
+                error: e => console.warn('error', e)
+              }).done(newRecordService => {
+                newRecordService.service = {id: attachedServiceId, name: serviceName}
+                this.recordsServices.push(newRecordService)
+              })
+            },
+            updateFromSelectedText(e) {
+              let {options} = e.target
+              this.serviceName = options[options.selectedIndex].text
+            }
+          },
+          created() {
+            $.get('/records_services.json?record_id='+recordId,
+                  result => this.recordsServices = result)
+          }
+        })
+      </script>
+
+      <% render 'companies/records/responsible' %>
+
+      <div class="block-information parent-compact show-and-hide-container">
+        <h3>Настройки записи</h3>
+        <div class="btn-compact click-compact"><div></div></div>
+        <div class="container-information compact">
+          <div class="item-information"><span class="title-input">Запись</span><span class="text-input"><%= t('record_type.' + @record.record_type)%></span></div>
+          <div class="item-information"><span class="title-input"><%= t('.visit_type') %></span><span class="text-input"><%= t('visit_type.' + @record.visit_type)%></span></div>
+          <div class="item-information"><span class="title-input">Лимит в записи</span><span class="text-input"><%= @record.total_clients %></span></div>
+          <div class="item-information"><span class="title-input">Дата начала</span><span class="text-input"><%= @record.created_at.strftime("%d %b, %Y") %></span></div>
+          <div class="item-information"><span class="title-input">Дата завершения</span><span class="text-input"><%= @record.finished_at.nil? ? 'не задано' : @record.finished_at.strftime("%d %b, %Y") %></span></div>
+          <div class="item-information"><span class="title-input">Филиал</span><span class="text-input"><%= @record.affiliate.name%></span></div>
+        </div>
+      </div>
+
+      <div class="block-information parent-compact show-and-hide-container">
+        <h3>Настройки абонементов</h3>
+        <div class="btn-compact click-compact"><div></div></div>
+
+        <div class="container-information compact">
+          <div class="item-information"><span class="title-input">Период абонемента</span><span class="text-input"><%= @record.abon_period %> дней</span></div>
+          <div class="item-information"><span class="title-input">Посещений за абонемент</span><span class="text-input"><%= @record.total_visits %></span></div>
+          <div class="item-information">
+            <span class="title-input">Продажа абонемента</span>
+            <span class="text-input"><%= t('subscription_sale.' + @record.subscription_sale) %></span>
+          </div>
+          <div class="item-information"><span class="title-input">Формирование цены</span><span class="text-input">за абонемент</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

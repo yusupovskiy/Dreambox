@@ -1,0 +1,54 @@
+<section v-if="panelShow == 'home'" class="panel-content">
+  <dfn data-info="Можно отфильтровать списки по записям, услугам и филиалам. Для этого нужно отметить галочками нужные варианты в списках ниже">
+    <div class="params-filters">
+        <div v-if="filtrationElementsName.length > 0" class="list-params">
+          <div v-for="(element, index) in filtrationElementsName" @click="deleteParamsFiltration(index, element.id, element.object)" :key="element.id" class="params-filter">
+
+            <div class="params-filter__img">
+              <div>
+                <img v-if="element.object == 'r'" src="/images/group4.png" style="width: 100%;" />
+                <img v-else-if="element.object == 's'" src="/images/service.png" style="width: 100%;" />
+                <img v-else-if="element.object == 'a'" src="/images/office4.png" style="width: 100%;" />
+              </div>
+              <ion-icon name="close-circle"></ion-icon>
+            </div>
+            <span>{{ element.name }}</span>
+          </div>
+        </div>
+
+        <div v-else class="empty-list">Без фильтрации</div>
+
+        <div v-if="filtrationElementsName.length > 0" @click="deleteAllParamsFiltration()" class="reset-search" style="margin: 2.5px 5px 2.5px 0;">
+          <ion-icon name="close"></ion-icon>
+        </div>
+    </div>
+  </dfn>
+
+  <div class="panel-footer">
+    <div class="indecators">
+      <div @click="typeClients = 'current'" class="indecator interact blue-color current" :class="[typeClients == 'current' ? 'active' : '']">
+        <div class="index-indecator">{{ clientsCurrent.length }}</div>
+        <div class="name-indecator">Текущие<br />клиенты</div>
+      </div>
+      <div @click="typeClients = 'debtors'" class="indecator interact blue-color debtors" :class="[typeClients == 'debtors' ? 'active' : '']">
+        <div class="index-indecator">{{ clientsDebtors.length }}</div>
+        <div class="name-indecator">Должники</div>
+      </div>
+      <div @click="typeClients = 'total'" class="indecator interact blue-color total" :class="[ typeClients == 'total' ? 'active' : '' ]">
+        <div class="index-indecator">{{ clientsTotal.length }}</div>
+        <div class="name-indecator">Все клиенты</div>
+      </div>
+
+      <div class="indecator red-color">
+        <div class="index-indecator">{{ indentAmount(amountTotalDebtors) }} ₽</div>
+        <div class="name-indecator">Долг</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section-home-records :records="recordsFilter" :show="panelShow"></section-home-records>
+
+<section-home-services :services="servicesFilter" :show="panelShow"></section-home-services>
+
+<section-home-affiliates :affiliates="affiliatesFilter" :show="panelShow"></section-home-affiliates>

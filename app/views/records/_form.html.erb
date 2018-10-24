@@ -1,0 +1,110 @@
+<%= form_with(url: [record], model: record, local: true) do |form| %>
+      <%=form.hidden_field :record_type, value: :grouping %>
+      <%=form.hidden_field :visit_type, value: :subscriptions %>
+
+  <div class="panel-list" style="background-color: whitesmoke;">
+    <div style='position: relative;'>
+      <h2 class="panel-form__title" style="margin-top: 10px;"><%= @title_card %></h2>
+      <a href="<%= @url_back%>" class="btn-back new-btn">
+        <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
+      </a>
+      <%= form.submit @form_submit, class: "btn", style: 'float: right;
+      position: absolute;
+      right: 10px;
+      top: 0;
+      padding: 15px;
+      color: #12ce88;' %>
+    </div>
+
+    <div class="container-list gray-scrollbar">
+      <div class="conten-card">
+        <div class="information-section">
+          <div class="block-information">
+            <div class="finput">
+              <%= form.label t('.name'), class: 'finput-label' %>
+              <%= form.text_field :name, class: "finput-input", required: 'required' %>
+            </div>
+          </div>
+
+          <div class="block-information">
+            <h3>Настройка группы</h3>
+    <!--         <dfn data-info="Запись группы или индивидуально">
+              <div class="finput">
+                <%= form.label t('.record_type'), class: 'finput-label' %>
+                <%= form.select :record_type, options_for(Record.record_types, 'record_type'), {selected: record.record_type}, {class: "finput-input"}%>
+              </div>
+            </dfn>
+            <dfn data-info="Что необходимо для посещения">
+              <div class="finput">
+                <%= form.label t('.visit_type'), class: 'finput-label' %>
+                <%= form.select :visit_type, options_for(Record.visit_types, 'visit_type'), {selected: record.visit_type}, {class: "finput-input"}%>
+              </div>
+            </dfn> -->
+    <!--         <dfn data-info="Количество мест в записи клиентов">
+              <div class="finput">
+                <%= form.label t('.total_clients'), class: 'finput-label' %>
+                <%= form.number_field :total_clients, class: "finput-input" %>
+              </div> -->
+            </dfn>
+            <dfn data-info="Дата, когда начнется запись">
+              <div class="finput">
+                <%= form.label t('.created_at'), class: 'finput-label' %>
+                <%= form.date_field :created_at, class: "finput-input", required: 'required', value: Date.today %>
+              </div>
+            </dfn>
+            <dfn data-info="Дата, когда подойдет время завешения записи">
+              <div class="finput">
+                <%= form.label t('.finished_at'), class: 'finput-label' %>
+                <%= form.date_field :finished_at, class: "finput-input" %>
+              </div>
+            </dfn>
+            <!--<input type="text" class="input-panel" placeholder="Период обучения* (указать в месяцах)" />-->
+                   
+            <dfn data-info="Филиал, к которому относится запись">
+              <div class="finput">
+                <%= form.label t('.affiliate_id'), class: 'finput-label' %>
+                <%= form.select :affiliate_id, @current_affiliates.map{|a| [a.address, a.id]}, {}, {class: "finput-input"} %>
+              </div>
+            </dfn>
+           
+          </div>
+          <div class="block-information">
+            <h3>Настройка абонементов</h3>
+            <dfn data-info="Тут задается количиство дней абонемента">
+              <div class="finput">
+                <%= form.label t('.abon_period'), class: 'finput-label' %>
+                <%= form.number_field :abon_period, class: "finput-input", value: "30", required: 'required' %>
+              </div>
+            </dfn>
+
+
+            <dfn data-info="Создает абонементы автоматически. ⚫ по завершению: создает абонемент после того, как у клиента закончится абонемент. ⚫ по календарю: создает абонемент с первого числа до конца месяца">
+              <div class="finput focus">
+                <%= form.label 'Продажа абонемента*', class: 'finput-label' %>
+                <%= form.select :subscription_sale, options_for(Record.subscription_sales, 'subscription_sale'), {selected: record.subscription_sale}, {class: "finput-input"} %>
+              </div>
+            </dfn>
+
+
+    <!--         <dfn data-info="Количество посещений за один проданный абонемент клиенту">
+              <div class="finput">
+                <%= form.label t('.total_visits'), class: 'finput-label' %>
+                <%= form.number_field :total_visits, class: "finput-input" %>
+              </div>
+            </dfn> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <% if record.errors.any? %>
+      <div id="error_explanation" class="message">
+        <h2><%= pluralize(record.errors.count, "error") %> prohibited this record from being saved:</h2>
+        <ul>
+        <% record.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+<% end %>

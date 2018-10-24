@@ -1,0 +1,22 @@
+<%= link_to company_worker_path(@current_company, client.id), class: "item-card" do %>
+  <%=image_tag s3_image(client.avatar), class: "avatar-list" %>
+  <div class="left-content">
+    <div class="name-content">
+      <%= client.last_name %>
+      <%= client.first_name %>
+    </div>
+    <span class="desc-content">
+      <% work_director = Work.where people_id: client.id, position_work: 'director' %>
+      <% work_administrator = Work.where people_id: client.id, position_work: 'administrator' %>
+      <%if work_director.present?%>
+        - Директор
+      <%end %>                    
+      <%if work_administrator.present? %>
+        - Администратор
+      <%end %>
+    </span>
+  </div>
+  <div class="right-content">
+    <span class="amount debt"><%= monetary_indicator(person.id) %> ₽</span>
+  </div>
+<%end%>
