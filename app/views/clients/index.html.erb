@@ -229,7 +229,7 @@
         $.get('/get_affiliates.json',
           affiliatesCompany => this.affiliatesCompany = affiliatesCompany );
 
-        $.get('/companies/1/services.json',
+        $.get('/get_services.json',
           servicesCompany => this.servicesCompany = servicesCompany );
 
         $.get('/records_services.json',
@@ -335,7 +335,7 @@
         var arrayIdActiveRecord = [];
 
         recordsServices.filter(function (service_record) {
-          if(activeServices.find( value => value.id == service_record.service_id) != undefined) {
+          if(activeServices.find( value => value.id == service_record.category_id) != undefined) {
             arrayIdActiveRecord = arrayIdActiveRecord.concat(service_record.record_id);
           }
         });
@@ -386,7 +386,7 @@
         if(have) {
           recordsServices.filter(function (service_record) {
             if(activeRecords.find( value => value.id == service_record.record_id) != undefined) {
-              arrayIdRecord = arrayIdRecord.concat(service_record.service_id);
+              arrayIdRecord = arrayIdRecord.concat(service_record.category_id);
             }
           });
         }

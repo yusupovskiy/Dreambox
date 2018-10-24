@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_31_224658) do
+ActiveRecord::Schema.define(version: 2018_10_24_144026) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -181,15 +181,15 @@ ActiveRecord::Schema.define(version: 2018_08_31_224658) do
     t.index ["record_id"], name: "index_records_clients_on_record_id"
   end
 
-  create_table "records_services", primary_key: ["record_id", "service_id"], force: :cascade do |t|
+  create_table "records_services", id: false, force: :cascade do |t|
     t.bigint "record_id", null: false
-    t.bigint "service_id", null: false
     t.float "money_for_abon"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "money_for_visit"
+    t.bigint "category_id", null: false
+    t.index ["category_id"], name: "index_records_services_on_category_id"
     t.index ["record_id"], name: "index_records_services_on_record_id"
-    t.index ["service_id"], name: "index_records_services_on_service_id"
   end
 
   create_table "salaries", force: :cascade do |t|
@@ -325,8 +325,8 @@ ActiveRecord::Schema.define(version: 2018_08_31_224658) do
   add_foreign_key "records", "operations"
   add_foreign_key "records_clients", "clients"
   add_foreign_key "records_clients", "records"
+  add_foreign_key "records_services", "categories"
   add_foreign_key "records_services", "records"
-  add_foreign_key "records_services", "services"
   add_foreign_key "salaries", "operations"
   add_foreign_key "services", "companies"
   add_foreign_key "subscriptions", "operations"

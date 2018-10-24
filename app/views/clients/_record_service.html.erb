@@ -27,7 +27,7 @@
                 authenticity_token: authToken,
                 record_service: {
                   record_id: rs.record_id,
-                  service_id: rs.service_id
+                  category_id: rs.category_id
                 }
               },
               success: messege => {
@@ -59,7 +59,7 @@
         return recordsServices.filter(function (record_service) {
           if(record_service.record_id == record.id) {
             var service = servicesCompany.filter(function (service) {
-              if(record_service.service_id == service.id) {
+              if(record_service.category_id == service.id) {
                  return service;
               }
             });

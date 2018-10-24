@@ -29,7 +29,7 @@
                 authenticity_token: authToken,
                 record_service: {
                   record_id: record.id,
-                  service_id: addServicesRecord,
+                  category_id: addServicesRecord,
                   money_for_abon: amountServiceSub,
                   money_for_visit: amountServiceVisit,
                 }
@@ -70,7 +70,7 @@
 
         return servicesCompany.filter(function (service) {
           var record_service = recordsServices.filter(function (record_service) {
-            if(record_service.record_id == record.id && record_service.service_id == service.id) {
+            if(record_service.record_id == record.id && record_service.category_id == service.id) {
               return record_service;
             }
           });

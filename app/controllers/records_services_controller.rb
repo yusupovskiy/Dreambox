@@ -17,8 +17,8 @@ class RecordsServicesController < ApplicationController
 
   def create
     pms = record_service_params
-    record = Record.eager_load(:affiliate).find pms[:record_id]
-    service = Service.eager_load(:company).find pms[:service_id]
+    # record = Record.eager_load(:affiliate).find pms[:record_id]
+    # service = Service.eager_load(:company).find pms[:service_id]
     result = []
 
 
@@ -27,27 +27,27 @@ class RecordsServicesController < ApplicationController
     # rs.money_for_abon = 0 if not rs.money_for_abon.nil? and rs.money_for_abon < 0
     # rs.money_for_visit = 0 if not rs.money_for_visit.nil? and rs.money_for_visit < 0
 
-    if RecordService.exists? record_id: record.id, service_id: service.id
-      complited = false
-      note = 'Выборанная услуга уже указана'
+    # if RecordService.exists? record_id: record.id, service_id: service.id
+    #   complited = false
+    #   note = 'Выборанная услуга уже указана'
 
-    elsif !(Service.exists? id: service.id)
-      complited = false
-      note = 'Нет такой услуги'
+    # elsif !(Service.exists? id: service.id)
+    #   complited = false
+    #   note = 'Нет такой услуги'
 
-    elsif !(Record.exists? id: record.id)
-      complited = false
-      note = 'Нет такой записи'
+    # elsif !(Record.exists? id: record.id)
+    #   complited = false
+    #   note = 'Нет такой записи'
 
-    elsif !(rs.money_for_abon > 0)
-      complited = false
-      note = 'Цена должна быть больше нулю'
+    # elsif !(rs.money_for_abon > 0)
+    #   complited = false
+    #   note = 'Цена должна быть больше нулю'
 
-    elsif service.company_id != record.affiliate.company_id
-      complited = false
-      note = 'В компании нет такой услуги'
+    # elsif service.company_id != record.affiliate.company_id
+    #   complited = false
+    #   note = 'В компании нет такой услуги'
 
-    elsif rs.save
+    if rs.save
       complited = true
       note = 'Услуга прикреплена'
       result = rs
@@ -62,10 +62,10 @@ class RecordsServicesController < ApplicationController
 
   def update
     pms = record_service_params
-    ids = pms.permit(:record_id, :service_id)
+    ids = pms.permit(:record_id, :category_id)
     record_service = RecordService.find_by(ids)
     pms.delete(:record_id)
-    pms.delete(:service_id)
+    pms.delete(:category_id)
 
     pms = Hash(pms)
     RecordService.where(ids).update_all(pms)
@@ -78,21 +78,21 @@ class RecordsServicesController < ApplicationController
 
   def destroy
     pms = record_service_params
-    record = RecordService.eager_load(:service)
-      .find_by(record_id: pms[:record_id], service_id: pms[:service_id])
+    # record = RecordService.eager_load(:service)
+    #   .find_by(record_id: pms[:record_id], category_id: pms[:category_id])
 
-    if record.service.company.user_id != current_user.id
-      complited = false
-      note = 'В компании нет такой услуги'
+    # if record.service.company.user_id != current_user.id
+    #   complited = false
+    #   note = 'В компании нет такой услуги'
 
-    elsif !(@current_record.exists? id: pms[:record_id])
+    if !(@current_record.exists? id: pms[:record_id])
       complited = false
       note = 'Нет такой записи'
 
     else
       complited = true
       note = 'Услуга откреплена'
-      RecordService.where(record_id: pms[:record_id], service_id: pms[:service_id]).delete_all
+      RecordService.where(record_id: pms[:record_id], category_id: pms[:category_id]).delete_all
     end
   
     messege = {complited: complited, note: note}
@@ -105,6 +105,6 @@ class RecordsServicesController < ApplicationController
   private
     def record_service_params
       params.require(:record_service)
-        .permit(:record_id, :service_id, :money_for_abon, :money_for_visit)
+        .permit(:record_id, :category_id, :money_for_abon, :money_for_visit)
     end
 end

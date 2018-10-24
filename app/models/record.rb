@@ -1,8 +1,8 @@
 class Record < ApplicationRecord
   belongs_to :affiliate
   delegate :company, to: :affiliate, allow_nil: true
-  has_many :record_service
-  has_many :services, through: :record_service
+  # has_many :record_service
+  # has_many :services, through: :record_service
 
   # enum record_type: {grouping: 0, personal: 1}
   # enum visit_type: {one_time_visit: 0, reusable_visit: 1,
