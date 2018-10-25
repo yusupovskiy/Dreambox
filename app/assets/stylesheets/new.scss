@@ -539,6 +539,9 @@ div.show-panel {
     text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     white-space: nowrap;
+    padding: 3px 0;
+    font-weight: 600;
+    color: #212121;
 }
 .right-item-panel {
     font-size: 14px;
@@ -1112,11 +1115,11 @@ header:hover {
     background-color: white;
 }
 
-.btn-delete {
-    width: 16px;
-    height: 16px;
+.btn-delete {    
+    width: 18px;
+    height: 18px;
     padding: 4px;
-    margin: -4px;
+    margin: -5px;
     float: left;
     cursor: pointer;
     user-select: none;
