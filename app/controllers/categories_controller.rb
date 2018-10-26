@@ -1,31 +1,40 @@
 class CategoriesController < ApplicationController
   def get_categories
-    categories = Category.where(subject: 'company').order(:id)
+    categories = Category.where("subject = 'company' AND (company_id IS NULL OR company_id = #{@current_company.id})").order(:id)
 
     respond_to do |format|
       format.json { render json: categories }
     end
   end
-  def get_services
-    @services = []
 
-    def find_children(level)
-      services_children = Category.where(level: level).order(:id)
-      id_categories_array = []
-      if !(services_children.length > 0)
-        return false
-      end
-      services_children.each do |i| 
-        id_categories_array.push(i.id)
-      end
-      @services = @services | services_children
-      find_children(id_categories_array)
+  def create
+    @category = Category.new(params.require(:category).permit(:name, :budget, :level, :color))
+    @category.company_id = @current_company.id
+    @category.subject = 'company'
+    result = []
+
+    if @category.level.nil?
+      complited = false
+      note = 'Не указан уровень категории'
+
+    elsif !Category.where("subject = 'company' AND (company_id IS NULL OR company_id = #{@current_company.id}) AND level = #{@category.level}").present?
+      complited = false
+      note = 'Указанного уровня не существует'
+
+    elsif (@category.budget == 'income' or @category.budget == 'expense') and @category.save
+      complited = true
+      note = 'Категория создана'
+      result = @category
+
+    else
+      complited = false
+      note = 'Категория не создана'
     end
 
-    find_children([1])
+    messege = { complited: complited, note: note, result: result }
 
     respond_to do |format|
-      format.json { render json: @services }
+      format.json { render json: messege }
     end
   end
 end

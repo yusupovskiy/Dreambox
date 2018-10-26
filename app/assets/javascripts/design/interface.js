@@ -52,8 +52,9 @@ document.addEventListener('turbolinks:load', function() {
   $('.btn-close-pnl-add').click(function() {
     menuPnlAdd.removeClass('open');
   });
+  var menuHeaderPnlAdd = $('.header-pnl-add');
   $(document).mouseup(function (e) {
-    if (!menuPnlAdd.is(e.target) && menuPnlAdd.has(e.target).length === 0) {
+    if (!menuHeaderPnlAdd.is(e.target) && menuHeaderPnlAdd.has(e.target).length === 0) {
       menuPnlAdd.removeClass('open');
     }
   });

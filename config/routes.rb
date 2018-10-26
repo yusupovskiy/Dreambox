@@ -107,7 +107,6 @@ Rails.application.routes.draw do
   
   resources :categories
   get 'get_categories' => 'categories#get_categories'
-  get 'get_services' => 'categories#get_services'
 
   get 'get_works_affiliates' => 'works_salaries#get_works_affiliates'
 

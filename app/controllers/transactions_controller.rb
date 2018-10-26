@@ -98,6 +98,10 @@ class TransactionsController < ApplicationController
       complited = false
       note = 'Сумма не может быть меньше или равной нулю'
 
+    elsif !(category_id > 0)
+      complited = false
+      note = 'Не указанна статья дохода или расхода'
+
     elsif note_transaction == ''
       complited = false
       note = 'Оставьте комментарий к транзакции'
@@ -136,7 +140,6 @@ class TransactionsController < ApplicationController
       else
         complited = true
         note = 'Транзакция за абонемент произведена'
-        category_id = 1
       end
 
     elsif Client.exists? operation_id: operation_id
@@ -144,10 +147,6 @@ class TransactionsController < ApplicationController
       if !(affiliate_id > 0)
         complited = false
         note = 'Не указан филиал'
-
-      elsif !(category_id > 0)
-        complited = false
-        note = 'Не указанна статья дохода или расхода'
 
       else
         complited = true

@@ -539,7 +539,6 @@ div.show-panel {
     text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 3px 0;
     font-weight: 600;
     color: #212121;
 }
@@ -940,6 +939,8 @@ img.loading-panel {
 .item-panel-add {
     padding: 7px 14px;
     transition: .3s;
+    user-select: none;
+    cursor: pointer;
 }
 .item-panel-add:hover {
     background-color: whitesmoke;
@@ -1115,11 +1116,11 @@ header:hover {
     background-color: white;
 }
 
-.btn-delete {    
-    width: 18px;
-    height: 18px;
+.btn-delete {
+    width: 20px;
+    height: 20px;
     padding: 4px;
-    margin: -5px;
+    margin: -6px;
     float: left;
     cursor: pointer;
     user-select: none;
@@ -1375,4 +1376,143 @@ header:hover {
 }
 .left-item-panel.active .btn-show {
     transform: rotate(0deg);
+}
+
+.pnl-add1 {
+    width: 390px;
+    margin: 100px auto;
+    padding: 10px 20px 10px 34px;
+    min-height: 100px;
+    background-color: white;
+    z-index: 9999999999;
+    border-radius: 4px;
+    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.12);
+}
+.pnl-add1>input {
+    color: #212121;
+    background-color: transparent;
+    border: none;
+    display: block;
+    font: 400 24px Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+    margin: 24px 0 24px 0;
+    outline: none;
+    padding: 0;
+    font-weight: bold;
+    width: 100%;
+}
+
+.pnl-add1>input::-webkit-input-placeholder {
+    color: #cecece;
+}
+.pnl-add1>input:-moz-placeholder {
+    color: #cecece;
+}
+
+.tree-categories-add {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    display: grid;
+    user-select: none;
+}
+.item-tree-category {
+    font-size: 14px;
+    font-weight: bold;
+    color: #212121;
+    display: grid;
+}
+
+.item-tree-category>div>div {
+    float: left;
+    cursor: pointer;
+}
+
+.color-panel {
+    width: 100%;
+    display: table;
+    margin: 20px 0;
+}
+.item-color-panel {
+    width: 24px;
+    height: 24px;
+    background: #e3e3e3;
+    float: left;
+    margin-right: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0.5;
+}
+.item-color-panel:hover {
+    opacity: 1;
+}
+
+.pnls-add {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999;
+    overflow-y: overlay;
+}
+
+.btns-pnls-add {
+    display: table;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.btn-pnls-add {
+    border: 0;
+    padding: 12px 20px 10px 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    float: right;
+    cursor: pointer;
+    background: #3880ff;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.09);
+    transition: .3s;
+    outline: none;
+    user-select: none;
+    margin-left: 10px;
+}
+.btn-pnls-cancel {
+    border: 0;
+    padding: 12px 20px 10px 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+    transition: .3s;
+    outline: none;
+    user-select: none;
+    margin-left: 10px;
+    background-color: transparent;
+    color: #787878;
+}
+.btn-pnls-cancel:hover {
+    background-color: #ededed;
+}
+
+.btn-pnls-add:hover {
+    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.3);
+    outline: none;
+}
+
+.item-tree-category>div {
+    width: 100%;
+    padding: 8px 0;
+}
+.item-tree-category.open>div>.item__btns>.btn-show {
+    transform: rotate(0deg);
+}
+.item-color-panel.active {
+    opacity: 1;
+    border: 2px solid;
+    margin: -2px 6px -2px 0;
 }

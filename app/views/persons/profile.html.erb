@@ -41,7 +41,7 @@
           <div class="content-item-info"><%= current_user.email %></div>
         </div>
         <div class="item-info">
-          <div class="title-item-info">Дата Рождения</div>
+          <div class="title-item-info">Дата рождения</div>
           <div class="content-item-info"><%= current_user.birthday.nil? ? 'Не указана' : current_user.birthday.strftime("%d %b, %Y") %></div>
         </div>
 
@@ -62,7 +62,7 @@
         <% end %>
       <% else %>
           <div style="    font-size: 15px;
-        color: #252525;
+        color: #b5b5b5;
         margin-bottom: 10px;">добавьте свою первую компанию</div>
       <% end %>
 

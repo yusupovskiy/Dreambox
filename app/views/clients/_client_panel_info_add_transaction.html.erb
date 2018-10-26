@@ -9,8 +9,7 @@
         addTransForSubs: '',
         transactionCreateLoading: false,
         category_id: '',
-        categories_income: [],
-        categories_expense: [],
+        categories: [],
         dateTransaction: '',
 
         affiliates: [],
@@ -90,6 +89,13 @@
       },
     },
     watch: {
+      category_id() {
+        let {addTransForSubs, category_id, categoriesRecordService} = this;
+
+        if(addTransForSubs != 'income' && addTransForSubs != 'expense') {
+          this.amount = categoriesRecordService.filter(c => c.category_id == category_id)[0].money_for_abon;
+        }
+      },
       "addTransForSubs" : function() {
         let {client, clientSubscriptions} = vmClient;
         let {addTransForSubs} = this;
@@ -110,6 +116,7 @@
           this.amount = price - total_amount;
           this.fix_amount = price - total_amount;
           this.note = 'За абонемент от ' + totalDate(start_at, true, true, true) + ' до ' + totalDate(finish_at, true, true, true) + ', на посещение "' + name + '"';
+          this.category_id = '';
         }
         else if(addTransForSubs == client.operation_id || 
           addTransForSubs == 'expense' ||
@@ -122,10 +129,10 @@
         }
 
         if(this.addTransForSubs == 'income') {
-          this.category_id = this.categories_income[0].id;
+          this.category_id = this.categoriesIncome[0].id;
         }
         else if(this.addTransForSubs == 'expense') {
-          this.category_id = this.categories_expense[0].id;
+          this.category_id = this.categoriesExpense[0].id;
         }
       },
       "amount" : function() {
@@ -135,15 +142,9 @@
       },
       "show" : function() {
         $.get(
-          '/get_categories_income.json',
-          categories_income => {
-            this.categories_income = categories_income;
-          }
-        );
-        $.get(
-          '/get_categories_expense.json',
-          categories_expense => {
-            this.categories_expense = categories_expense;
+          '/get_categories.json',
+          categories => {
+            this.categories = categories;
           }
         );
         $.get(
@@ -165,6 +166,33 @@
       },
     },
     computed: {
+      categoriesIncome() {
+        return this.categories.filter(c => c.budget == 'income');
+      },
+      categoriesExpense() {
+        return this.categories.filter(c => c.budget == 'expense');
+      },
+      categoriesRecordService() {
+        let {servicesCompany, recordsServices, recordsClients, subscriptions} = vmClient;
+        let {addTransForSubs} = this;
+
+        subscription = subscriptions.filter(s => s.operation_id == addTransForSubs)[0]
+
+        record = recordsClients.filter(r => r.record_client_id == subscription.record_client_id);
+
+        console.log(recordsClients);
+
+        return recordsServices.filter(function (record_service) {
+          if(record_service.record_id == record[0].id) {
+            var service = servicesCompany.filter(function (service) {
+              if(record_service.category_id == service.id) {
+                 return service;
+              }
+            });
+            return Object.assign(record_service, service[0]);
+          }
+        });
+      },
       unpaidSubscriptionsClient: function () {
         let {clientSubscriptions} = vmClient;
 
@@ -200,16 +228,23 @@
               </select>
 
               <div v-if="addTransForSubs != ''">
+                <select v-if="addTransForSubs != 'income' && addTransForSubs != 'expense'" v-model="category_id">
+                  <option disabled value="">Выберите услугу</option>
+                  <option v-for="category in categoriesRecordService" :value="category.id">
+                    Сумма в записи {{ indentAmount(category.money_for_abon) }} ₽ | {{ category.name }}
+                  </option>
+                </select>
+
                 <select v-if="addTransForSubs == 'income'" v-model="category_id">
                   <option disabled value="">Выберите одну из статей дохода</option>
-                  <option v-for="category in categories_income" :value="category.id">
+                  <option v-for="category in categoriesIncome" :value="category.id">
                     {{ category.name }}
                   </option>
                 </select>
 
                 <select v-else-if="addTransForSubs == 'expense'" v-model="category_id">
                   <option disabled value="">Выберите одну из статей расхода</option>
-                  <option v-for="category in categories_expense" :value="category.id">
+                  <option v-for="category in categoriesExpense" :value="category.id">
                     {{ category.name }}
                   </option>
                 </select>

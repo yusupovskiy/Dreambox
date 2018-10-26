@@ -17,37 +17,32 @@ class RecordsServicesController < ApplicationController
 
   def create
     pms = record_service_params
-    # record = Record.eager_load(:affiliate).find pms[:record_id]
+    record = Record.eager_load(:affiliate).find pms[:record_id]
     # service = Service.eager_load(:company).find pms[:service_id]
+    category = Category.find_by id: pms[:category_id], company_id: @current_company.id, subject: 'company'
     result = []
 
-
-
     rs = RecordService.new pms
-    # rs.money_for_abon = 0 if not rs.money_for_abon.nil? and rs.money_for_abon < 0
-    # rs.money_for_visit = 0 if not rs.money_for_visit.nil? and rs.money_for_visit < 0
+    rs.money_for_abon = 0 if not rs.money_for_abon.nil? and rs.money_for_abon < 0
+    rs.money_for_visit = 0 if not rs.money_for_visit.nil? and rs.money_for_visit < 0
 
-    # if RecordService.exists? record_id: record.id, service_id: service.id
-    #   complited = false
-    #   note = 'Выборанная услуга уже указана'
+    if RecordService.exists? record_id: record.id, category_id: category.id
+      complited = false
+      note = 'Выборанная услуга уже указана'
 
-    # elsif !(Service.exists? id: service.id)
-    #   complited = false
-    #   note = 'Нет такой услуги'
+    elsif !(Category.exists? id: pms[:category_id])
+      complited = false
+      note = 'Нет такой услуги'
 
-    # elsif !(Record.exists? id: record.id)
-    #   complited = false
-    #   note = 'Нет такой записи'
+    elsif !(Record.exists? id: pms[:record_id])
+      complited = false
+      note = 'Нет такой записи'
 
-    # elsif !(rs.money_for_abon > 0)
-    #   complited = false
-    #   note = 'Цена должна быть больше нулю'
+    elsif !(rs.money_for_abon > 0)
+      complited = false
+      note = 'Цена должна быть больше нулю'
 
-    # elsif service.company_id != record.affiliate.company_id
-    #   complited = false
-    #   note = 'В компании нет такой услуги'
-
-    if rs.save
+    elsif rs.save
       complited = true
       note = 'Услуга прикреплена'
       result = rs

@@ -1,3 +1,28 @@
+function buildHierarchy(arry) {
+  var roots = [],
+    children = {};
+  for (var i = 0, len = arry.length; i < len; ++i) {
+    var item = arry[i],
+      p = item.level,
+      target = !p ? roots : (children[p] || (children[p] = []));
+    target.push({
+      value: item
+    });
+  }
+  var findChildren = function(parent) {
+    if (children[parent.value.id]) {
+      parent.children = children[parent.value.id];
+      for (var i = 0, len = parent.children.length; i < len; ++i) {
+        findChildren(parent.children[i]);
+      }
+    }
+  };
+  for (var i = 0, len = roots.length; i < len; ++i) {
+    findChildren(roots[i]);
+  }
+  return roots;
+}
+
 function updateURLParameter(url, param, paramVal){
   var newAdditionalURL = "";
   var tempArray = url.split("?");

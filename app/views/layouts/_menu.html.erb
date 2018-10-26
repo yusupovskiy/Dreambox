@@ -24,7 +24,7 @@
       <ion-icon name="add"></ion-icon>
     </div>
   <!-- </dfn> -->
-  <div class="pnl-add">
+  <div id='pnl-add' class="pnl-add">
     <div class="header-pnl-add">
       <div class="btn-back new-btn btn-close-pnl-add" style="margin: 0;">
         <ion-icon name="arrow-back" role="img" class="hydrated" aria-label="arrow back"></ion-icon>
@@ -45,9 +45,13 @@
         <div class="sdfdsa" style="background-image: url(/images/Abacus-WF.png);"></div><div class="dsafdsaf">Транзакцию</div>
       <% end %>
 
-      <%= link_to new_company_service_path(@current_company), class: 'item-panel-add' do %>
+      <div @click='showPanelAdd("services")' class='item-panel-add'>
         <div class="sdfdsa" style="background-image: url(/images/list.png);"></div><div class="dsafdsaf">Услугу</div>
-      <% end %>
+      </div>
+
+      <div @click='showPanelAdd("categories")' class='item-panel-add'>
+        <div class="sdfdsa" style="background-image: url(/images/list.png);"></div><div class="dsafdsaf">Категорию</div>
+      </div>
 
       <%= link_to new_company_affiliate_path(@current_company), class: 'item-panel-add' do %>
         <div class="sdfdsa" style="background-image: url(/images/office3.png);"></div><div class="dsafdsaf">Филиал</div>
@@ -58,6 +62,20 @@
       <% end %>
     </div>
   </div>
+
+    <script type="text/javascript">
+      var vmAdd = new Vue ({
+        el: '#pnl-add',
+        data: {
+        },
+        methods: {
+          showPanelAdd(panel) {
+            vmPanelsAdd.panelAddCategory = panel;
+          }
+        }
+      });
+    </script>
+
   <!-- <dfn data-info="Клиенты"> -->
   <% if url[0] == 'clients' %>
     <div title="Клиенты" class="active item-menu icon-client"></div>
@@ -80,3 +98,4 @@
   <% end %>
   <!-- </dfn> -->
 <%end%>
+

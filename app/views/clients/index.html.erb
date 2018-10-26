@@ -40,10 +40,10 @@
       affiliatesCompany: [],
       recordsCompany: [],
       recordsClients: [],
-      servicesCompany: [],
       discountCompany: [],
       titleInput: 'Поиск клиентов',
       loadComplete: false,
+      categories: [],
 
       subscriptions: [],
 
@@ -229,8 +229,8 @@
         $.get('/get_affiliates.json',
           affiliatesCompany => this.affiliatesCompany = affiliatesCompany );
 
-        $.get('/get_services.json',
-          servicesCompany => this.servicesCompany = servicesCompany );
+        $.get('/get_categories.json',
+          categories => this.categories = categories );
 
         $.get('/records_services.json',
           recordsServices => this.recordsServices = recordsServices);
@@ -273,6 +273,29 @@
       },
     },
     computed: {
+      servicesCompany() {
+        let {categories} = this;
+        var services = [];
+        var find_children = function(level) {
+          var services_children = categories.filter(c => c.level == level);
+          var id_categories_array = []
+
+          if(!services_children.length > 0) {
+            return false
+          }
+
+          services_children.filter(function(i) {
+            id_categories_array.push(i.id)
+          });
+
+          services = $.merge(services, services_children)
+          find_children(id_categories_array)
+        }
+        
+        find_children([1]);
+
+        return services;
+      },
       filtrationElementsName() {
         let {filtrationElements, recordsCompany, servicesCompany, affiliatesCompany} = this;
 

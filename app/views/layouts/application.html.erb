@@ -59,6 +59,8 @@
       <%= render 'layouts/menu' %>
     </nav>
 
+    <%= render 'layouts/panels_add' %>
+
     <content>
       <%= yield %>
     </content>
@@ -69,7 +71,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
 
-    <script type="text/javascript">      
+    <script type="text/javascript">
       var vmNotifications = new Vue ({
         el: '#notifications',
         data: {
