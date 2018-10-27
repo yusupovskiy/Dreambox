@@ -1387,6 +1387,7 @@ header:hover {
     z-index: 9999999999;
     border-radius: 4px;
     box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.12);
+    cursor: default;
 }
 .pnl-add1>input {
     color: #212121;
@@ -1455,6 +1456,7 @@ header:hover {
     background: rgba(0, 0, 0, 0.6);
     z-index: 999;
     overflow-y: overlay;
+    cursor: pointer;
 }
 
 .btns-pnls-add {
@@ -1515,4 +1517,7 @@ header:hover {
     opacity: 1;
     border: 2px solid;
     margin: -2px 6px -2px 0;
+}
+.item-tree-category>div>div>div>div {
+    float: left;
 }

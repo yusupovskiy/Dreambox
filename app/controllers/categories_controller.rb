@@ -17,7 +17,7 @@ class CategoriesController < ApplicationController
       complited = false
       note = 'Не указан уровень категории'
 
-    elsif !Category.where("subject = 'company' AND (company_id IS NULL OR company_id = #{@current_company.id}) AND level = #{@category.level}").present?
+    elsif !Category.where("subject = 'company' AND (company_id IS NULL OR company_id = #{@current_company.id}) AND id = #{@category.level}").present?
       complited = false
       note = 'Указанного уровня не существует'
 

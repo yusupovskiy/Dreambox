@@ -26,11 +26,20 @@
     computed: {
       categoriesBudget() {
         let {budget, categories} = this;
-        return categories.filter(c => c.budget == budget);
+        categories = categories.filter(c => c.budget == budget);
+
+        if(budget == 'income')
+          reverse = true;
+
+        else if(budget == 'expense')
+          reverse = false;
+
+        const k = 'amount';
+        return categories.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
       },
       categoriesTree() {
         return {
-          value: { name: 'Категории доходов', id: 0 },
+          value: { name: 'Категории', id: 0 },
           children: buildHierarchy(this.categoriesBudget)
         }
       }
@@ -123,7 +132,8 @@
         </div>
       </div>
       <div class="right-item-panel">
-        <div class="green-color">+{{ amount(category.value.amount) }} ₽</div>
+        <div v-if='category.value.budget == "income"' class="green-color">+{{ amount(category.value.amount) }} ₽</div>
+        <div v-else-if='category.value.budget == "expense"' class="dark-color">{{ amount(category.value.amount) }} ₽</div>
       </div>
     </div>
 

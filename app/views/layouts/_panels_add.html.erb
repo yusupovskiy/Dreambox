@@ -1,4 +1,4 @@
-<div v-if='panelAddCategory != null' id='pnls-add' class='pnls-add'>
+<div @click='cancelPanels()' v-if='panelAddCategory != null' id='pnls-add' class='pnls-add'>
   <add-category v-if='panelAddCategory == "services"' :placeholder='"Название услуги"' :panel-add-category='panelAddCategory' v-on:cancel-panel="panelAddCategory = null"></add-category>
   <add-category v-else-if='panelAddCategory == "categories"' :placeholder='"Название категории"' :panel-add-category='panelAddCategory' v-on:cancel-panel="panelAddCategory = null"></add-category>
 </div>
@@ -11,6 +11,19 @@
       categoryId: null,
       budget: '',
     },
+    methods: {
+      cancelPanels() {
+        var cancelPanels = $('.pnl-add1');
+        $(document).mouseup(function (e) {
+          // if (!cancelPanels.is(e.target) && cancelPanels.has(e.target).length === 0) {
+          //   vmPanelsAdd.panelAddCategory = null;
+          // }
+  if(!$(e.target).closest(".pnl-add1").length) {
+    vmPanelsAdd.panelAddCategory = null;
+  }
+        });
+      },
+    },
     watch: {
       panelAddCategory() {
         if(this.panelAddCategory == 'services') {
@@ -21,7 +34,6 @@
           this.budget = '';
           this.categoryId = null;
         }
-
       },
     },
   });
@@ -79,8 +91,8 @@
                 }
 
                 categories.push(newCategory);
-                vmClient.categories.push(newCategory);
-                vmTransaction.categories.push(newCategory);
+                // vmClient.categories.push(newCategory);
+                // vmTransaction.categories.push(newCategory);
               }
               this.loadingCategory = false;
             });
@@ -185,19 +197,27 @@
 <script type="text/x-template" id="item-category">
   <li class="item-tree-category" :class="[ open ? 'open' : '' ]">
     <div>
-      <div class="item__btns" :style=" category.value.color ? 'color: ' + category.value.color : 'color: #212121;' ">
-        <div v-if='categoryId == category.value.id && budget == category.value.budget' @click='updateCategoryId(null, "")' class='btn-delete'>
-          <ion-icon name="radio-button-on"></ion-icon>
-        </div>
-
-        <div v-else @click='updateCategoryId(category.value.id, category.value.budget)' class='btn-delete'>
-          <ion-icon name="radio-button-off"></ion-icon>
-        </div>
-      </div>
 
       <div :style=" category.value.color ? 'color: ' + category.value.color : 'color: #212121;' ">
-        <div v-if='categoryId == category.value.id && budget == category.value.budget' @click='updateCategoryId(null, "")'>{{ category.value.name }}</div>
-        <div v-else @click='updateCategoryId(category.value.id, category.value.budget)'>{{ category.value.name }}</div>
+
+        <div v-if='categoryId == category.value.id && budget == category.value.budget' @click='updateCategoryId(null, "")'>
+          <div class="item__btns">
+            <div class='btn-delete'>
+              <ion-icon name="radio-button-on"></ion-icon>
+            </div>
+          </div>
+          <div>{{ category.value.name }}</div>
+        </div>
+
+        <div v-else @click='updateCategoryId(category.value.id, category.value.budget)'>
+          <div class="item__btns">
+            <div class='btn-delete'>
+              <ion-icon name="radio-button-off"></ion-icon>
+            </div>
+          </div>
+          <div>{{ category.value.name }}</div>
+        </div>
+
       </div>
 
       <div class="item__btns" style='margin-left: 5px;'>
