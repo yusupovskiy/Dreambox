@@ -161,7 +161,7 @@
 
         return recordsServices.filter(function (record_service) {
           var service = servicesCompany.filter(function (service) {
-            if(record_service.service_id == service.id) {
+            if(record_service.category_id == service.id) {
                return service;
             }
           });

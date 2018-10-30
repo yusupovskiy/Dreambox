@@ -92,10 +92,9 @@ ActiveRecord::Schema.define(version: 2018_10_24_144026) do
   create_table "field_data", force: :cascade do |t|
     t.string "value"
     t.bigint "field_id", null: false
-    t.bigint "client_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["client_id"], name: "index_field_data_on_client_id"
+    t.integer "client_id"
     t.index ["field_id"], name: "index_field_data_on_field_id"
   end
 

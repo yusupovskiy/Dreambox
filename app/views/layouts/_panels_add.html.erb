@@ -10,17 +10,15 @@
       panelAddCategory: null,
       categoryId: null,
       budget: '',
+      categories: [],
     },
     methods: {
       cancelPanels() {
         var cancelPanels = $('.pnl-add1');
         $(document).mouseup(function (e) {
-          // if (!cancelPanels.is(e.target) && cancelPanels.has(e.target).length === 0) {
-          //   vmPanelsAdd.panelAddCategory = null;
-          // }
-  if(!$(e.target).closest(".pnl-add1").length) {
-    vmPanelsAdd.panelAddCategory = null;
-  }
+          if(!$(e.target).closest(".pnl-add1").length) {
+            vmPanelsAdd.panelAddCategory = null;
+          }
         });
       },
     },
@@ -36,12 +34,15 @@
         }
       },
     },
+    created() {
+      $.get('/get_categories.json', 
+        categories => this.categories = categories);
+    },
   });
 
   Vue.component('add-category', {
     data: function () {
       return {
-        categories: [],
         nameCategory: '',
         newCategory: [],
         loadingCategory: false,
@@ -55,7 +56,9 @@
     },
     methods: {
       createCategory() {
-        let {nameCategory, categories, color} = this;
+        let {nameCategory, color} = this;
+        let {categories} = vmPanelsAdd;
+        
         let {categoryId, budget} = vmPanelsAdd;
         var complited = false;
 
@@ -91,8 +94,6 @@
                 }
 
                 categories.push(newCategory);
-                // vmClient.categories.push(newCategory);
-                // vmTransaction.categories.push(newCategory);
               }
               this.loadingCategory = false;
             });
@@ -102,7 +103,7 @@
     },
     computed: {
       services() {
-        var categories = this.categories.filter(c => c.budget == 'income');
+        var categories = vmPanelsAdd.categories.filter(c => c.budget == 'income');
 
         return {
           value: { name: 'Доход', id: 0, budget: 'income' },
@@ -110,7 +111,7 @@
         }.children[0]
       },
       categoriesTreeIncome() {
-        var categories = this.categories.filter(c => c.budget == 'income');
+        var categories = vmPanelsAdd.categories.filter(c => c.budget == 'income');
 
         return {
           value: { name: 'Доход', id: 0, budget: 'income' },
@@ -119,7 +120,7 @@
         // .children[0]
       },
       categoriesTreeExpense() {
-        var categories = this.categories.filter(c => c.budget == 'expense');
+        var categories = vmPanelsAdd.categories.filter(c => c.budget == 'expense');
 
         return {
           value: { name: 'Расход', id: 0, budget: 'expense' },
@@ -128,9 +129,6 @@
       }
     },
     created() {
-      $.get('/get_categories.json', 
-        categories => this.categories = categories);
-
       this.colors = ['#ad2257', '#f4511f', '#288043', '#f6bf26', '#3f51b5', '#3cb678', '#a79b8e', '#616161', '#e67b72']
     },
     template: `

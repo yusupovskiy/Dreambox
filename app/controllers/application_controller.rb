@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   before_action :access_levels
 
+
+  
   private
     # def current_user
     #   @current_user ||= User.eager_load(:@current_company).find

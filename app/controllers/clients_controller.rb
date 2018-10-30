@@ -5,6 +5,20 @@ class ClientsController < ApplicationController
   before_action :confirm_actions, only: [:create, :update, :destroy, :archive, :role_employee, :role_client, :new, :edit]
   before_action :set_client, only: [:show, :edit, :update, :destroy, :archive]
 
+  def create_client
+    @client = Client.new params.require(:client)
+        .permit(:archive, :birthday, :avatar, :first_name, :last_name, :patronymic, :phone_number, :role, :sex)
+    @client.company_id = @current_company.id
+
+    operation = Operation.create
+    @client.operation_id = operation.id
+
+    @client.save
+    respond_to do |format|
+      format.json { render json: @client, status: :ok }
+    end
+  end
+
   def index
   end
 

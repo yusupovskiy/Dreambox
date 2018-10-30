@@ -112,4 +112,6 @@ Rails.application.routes.draw do
 
   delete 'records_services_destroy' => 'works_salaries#destroy'
 
+  post 'create_client' => 'clients#create_client'
+  post 'create_field_data' => 'clients#create_field_data'
 end

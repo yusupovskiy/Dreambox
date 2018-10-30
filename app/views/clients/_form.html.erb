@@ -1,4 +1,4 @@
-<%= form_with(url: [client], model: client, local: true, html: {id: 'main-form'}, data: { 'form-data' => @s3_direct_post.fields, 'url' => @s3_direct_post.url, 'host' => URI.parse(@s3_direct_post.url).host }) do |form| %>
+<%= form_with(url: '/clients.json', model: client, local: true, html: {id: 'main-form'}, data: { 'form-data' => @s3_direct_post.fields, 'url' => @s3_direct_post.url, 'host' => URI.parse(@s3_direct_post.url).host }) do |form| %>
 
   <div class="panel-list" style="background-color: whitesmoke;">
     <div style='position: relative;'>
@@ -124,7 +124,6 @@
                     <% fields_templates.each do |ft| %>
 
                       <% f = @client.field_data.find_by(field_id: ft.id) %>
-                      <input type="hidden" name="client[field_data_attributes][<%= i %>][id]" id="client_field_data_attributes_0_id" value="<%=f.nil? ? '' : f.id %>">
 
                       <input value="<%= ft.id %>" type="hidden" name="client[field_data_attributes][<%= i %>][field_id]" id="client_field_data_attributes_0_field_id">
 
