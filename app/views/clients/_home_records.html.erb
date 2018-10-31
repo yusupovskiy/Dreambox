@@ -3,12 +3,13 @@
     data: function () {
       return {
         showAll: false,
-        search: '',
+        lastShowAll: false,
       }
     },
     props: {
       records: Array,
       show: String,
+      search_record: String,
     },
     methods: {
       addRecordFiltration(record) {
@@ -24,13 +25,34 @@
       },
     },
     watch: {
-      search() {
+      search_record() {
+        clearTimeout(lastId);
 
+        lastId = setTimeout(() => {
+          let url = window.location.href;
+
+          if(this.search_record == '') {
+            let newUrl = deleteURLParameter(url, 'search_record');
+            history.replaceState(this.search_record, this.search_record, newUrl);
+          }
+          else {
+            let newUrl = updateURLParameter(url, 'search_record', this.search_record);
+            history.replaceState(this.search_record, this.search_record, newUrl);
+          }
+        }, 600);
+
+        if(this.search_record != '') {
+          this.lastShowAll = this.showAll;
+          this.showAll = true;
+        }
+        else if(this.search_record == '') {
+          this.showAll = this.lastShowAll;
+        }
       },
     },
     computed: {
       recordsSearch() {
-        const s = validSpaces(this.search.toLowerCase());
+        const s = validSpaces(this.search_record.toLowerCase());
         return this.records.filter(n => Object.values(n.name.split()).some(m => m.toString().toLowerCase().includes(s)));
       }
     },
@@ -41,12 +63,16 @@
           <div class="title-panel">
             <img src="/images/_ionicons_svg_ios-search.svg" class='search-section-icon'>
 
-            <input v-model="search" name="search" class='search-section' type="text" placeholder="Записи" id="search" autocomplete="off" />
+            <input v-model="search_record" name="search_record" class='search-section' type="text" placeholder="Записи" id="search_record" autocomplete="off" />
+
+            <div v-if="search_record.length > 0" class="reset-search reset-search-section" @click="search_record = ''" >
+              <ion-icon name="close"></ion-icon>
+            </div>
           </div>
 
           <div v-if="recordsSearch.length > 3" @click="showAll = !showAll" class="btn show-panel">
-            <div v-if="showAll == false">Показать все</div>
-            <div v-else-if="showAll == true">Скрыть список</div>
+            <div v-if="showAll == false">Еще</div>
+            <div v-else-if="showAll == true">Скрыть</div>
           </div>
         </div>
 

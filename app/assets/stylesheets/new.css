@@ -427,6 +427,8 @@ div.show-panel {
     color: #3880ff;
     float: right;
     padding: 0;
+    padding: 10px;
+    margin: -8px;
 }
 .show-panel:hover {
     opacity: 1;
@@ -1529,16 +1531,17 @@ header:hover {
 }
 
 .search-section {
+    width: 275px;
     border: 0;
     outline: none;
     font-size: 16px;
     color: #404040;
-    padding: 0;
     float: left;
-    padding-left: 26px;
     position: relative;
     z-index: 100;
     background-color: transparent;
+    padding: 10px 5px 10px 26px;
+    margin: -10px 0;
 }
 .search-section-icon {
     width: 20px;
@@ -1548,4 +1551,8 @@ header:hover {
     float: left;
     position: absolute;
     z-index: 60;
+}
+.reset-search-section {
+    color: black;
+    margin: -12px;
 }
