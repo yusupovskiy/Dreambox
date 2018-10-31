@@ -3,6 +3,7 @@
     data: function () {
       return {
         showAll: false,
+        search: '',
       }
     },
     props: {
@@ -23,24 +24,39 @@
       },
     },
     watch: {
+      search() {
+
+      },
     },
     computed: {
-      statusItem() {
-
+      recordsSearch() {
+        const s = validSpaces(this.search.toLowerCase());
+        return this.records.filter(n => Object.values(n.name.split()).some(m => m.toString().toLowerCase().includes(s)));
       }
     },
     template: `
       <section v-if="show == 'home'" class='panel-content' :class="{ 'show-all': showAll}">
         <div class="panel-header">
-          <div class="title-panel">Записи</div>
-          <div v-if="records.length > 3" @click="showAll = !showAll" class="btn show-panel">
+
+          <div class="title-panel">
+            <img src="/images/_ionicons_svg_ios-search.svg" class='search-section-icon'>
+
+            <input v-model="search" name="search" class='search-section' type="text" placeholder="Записи" id="search" autocomplete="off" />
+          </div>
+
+          <div v-if="recordsSearch.length > 3" @click="showAll = !showAll" class="btn show-panel">
             <div v-if="showAll == false">Показать все</div>
             <div v-else-if="showAll == true">Скрыть список</div>
           </div>
         </div>
-        <div v-if="records.length > 0" class="list-panel cool-scrollbar">
 
-          <div  v-for="record in records" 
+        <div v-if="records.length <= 0" class="list-panel">
+          <div class="no-record">Нет записи</div>
+        </div>
+
+        <div v-else-if="recordsSearch.length > 0" class="list-panel cool-scrollbar">
+
+          <div  v-for="record in recordsSearch" 
                 :class="['record-' + record.id, 
                   record.status == 'active' ? 'active-item' : '', 
                   record.status == 'current' ? 'current-item' : '', 
@@ -70,8 +86,8 @@
           </div>
 
         </div>
-        <div v-else-if="records.length <= 0" class="list-panel">
-          <div class="no-record">Нет записи</div>
+        <div v-else-if="recordsSearch.length <= 0" class="list-panel">
+          <div class="no-record">Ничего не найдено</div>
         </div>
         <div v-else-if="loadingPanel" class="list-panel">
           <img class="loading-panel" src="images/loading.gif" />
