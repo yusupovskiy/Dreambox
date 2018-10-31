@@ -2,7 +2,7 @@
   <img src="images/loading.gif" />
 </div>
 
-<div v-else-if="loadComplete && workers.length > 0" class="container-list cool-scrollbar">
+<div v-else-if="loadComplete && workers.length > 0" id='main-list' class="container-list cool-scrollbar">
   <ul v-if="workersSearch.length > 0" class="list">
     <li @click="clickWorker(workerItem)" v-for="workerItem in workersSearch" class="item-list" :key="workerItem.id" :class="['worker-' + workerItem.id, worker.id != workerItem.id ? '' : 'active' ]" :title='workerItem.full_name'>
 

@@ -100,7 +100,8 @@ header {
 .list {
     user-select: none;
     display: table;
-    padding: 10px 0 30px 0;
+    /*padding: 10px 0 30px 0;*/
+    padding: 0 0 30px 0;
     list-style-type: none;
     margin: 0;
     width: 100%;
@@ -1106,10 +1107,11 @@ header:hover {
     opacity: .7;
 }
 .search {
-    background-color: #f5f5f5f5;
+    /*background-color: #f5f5f5f5;*/
     position: relative;
     z-index: 80;
     border-radius: 4px;
+    transition: .3s;
 }
 .search.active {
     box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.12);
@@ -1520,4 +1522,8 @@ header:hover {
 }
 .item-tree-category>div>div>div>div {
     float: left;
+}
+
+.scroll-main-list {
+    box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.06);
 }

@@ -2,7 +2,7 @@
   <img src="images/loading.gif" />
 </div>
 
-<div v-else-if="loadComplete && transactions.length > 0" class="container-list cool-scrollbar">
+<div v-else-if="loadComplete && transactions.length > 0" id='main-list' class="container-list cool-scrollbar">
   <ul v-if="transactionsSearch.length > 0" class="list">
     <li @click="clickTransaction(transactionItem)" v-for="transactionItem in transactionsSearch" class="item-list" :key="transactionItem.id" :class="['transaction-' + transactionItem.id, !transactionItem.is_active ? 'default-item' : '', transaction.id != transactionItem.id ? '' : 'active' ]" :title="!transactionItem.is_active ? 'Транзакция отменена | ' + transactionItem.note : transactionItem.note">
 
