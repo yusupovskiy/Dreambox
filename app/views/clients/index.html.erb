@@ -57,7 +57,9 @@
       recordsServices: [],
 
       search: '',
-      search_record: '',
+      search_r: '',
+      search_s: '',
+      search_a: '',
       showSort: false,
       columns: [
         {
@@ -170,40 +172,11 @@
       },
     },
     created() {
-      // let {var1, var2} = this
-
-      // var1.filter(function(c) {
-      //   setTimeout(() => {
-      //     let client;
-
-      //     $.ajax('/create_client.json', {
-      //       method: 'POST',
-      //       data: {
-      //         authenticity_token: authToken,
-      //         client: {
-      //           first_name: c.first_name, 
-      //           last_name: c.last_name, 
-      //           patronymic: c.patronymic,
-      //           birthday: c.birthday, 
-      //           phone_number: c.phone_number, 
-      //           user_id: c.user_id, 
-      //           archive: c.archive, 
-      //           sex: c.sex, 
-      //           avatar: c.avatar, 
-      //           role: c.role
-      //         }
-      //       },
-      //       success: client => {},
-      //       error: e => console.warn('error', e)
-      //     });
-
-      //   }, 500);
-      // });
-
-
       this.search = this.sendQuery('', 'search', '');
       this.typeClients = this.sendQuery('', 'clients', 'current');
-      this.search_record = this.sendQuery('', 'search_record', '');
+      this.search_r = this.sendQuery('', 'search_r', '');
+      this.search_s = this.sendQuery('', 'search_s', '');
+      this.search_a = this.sendQuery('', 'search_a', '');
 
       var urlHash = new URL(window.location.href);
       var client_id = urlHash.searchParams.get("client");

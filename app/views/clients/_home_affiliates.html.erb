@@ -3,11 +3,13 @@
     data: function () {
       return {
         showAll: false,
+        lastShowAll: false,
       }
     },
     props: {
       affiliates: Array,
       show: String,
+      search_a: String,
     },
     methods: {
       addFiltration(affiliate) {
@@ -23,19 +25,64 @@
       },
     },
     watch: {
+      search_a() {
+        clearTimeout(lastId);
+
+        lastId = setTimeout(() => {
+          let url = window.location.href;
+
+          if(this.search_a == '') {
+            let newUrl = deleteURLParameter(url, 'search_a');
+            history.replaceState(this.search_a, this.search_a, newUrl);
+          }
+          else {
+            let newUrl = updateURLParameter(url, 'search_a', this.search_a);
+            history.replaceState(this.search_a, this.search_a, newUrl);
+          }
+        }, 600);
+
+        if(this.search_a != '') {
+          this.lastShowAll = this.showAll;
+          this.showAll = true;
+        }
+        else if(this.search_a == '') {
+          this.showAll = this.lastShowAll;
+        }
+      },
+    },
+    computed: {
+      affiliatesSearch() {
+        const s = validSpaces(this.search_a.toLowerCase());
+        return this.affiliates.filter(n => Object.values(n.address.split()).some(m => m.toString().toLowerCase().includes(s)));
+      }
     },
     template: `
       <section v-if="show == 'home'" class='panel-content' :class="{ 'show-all': showAll}">
         <div class="panel-header">
-          <div class="title-panel">Филиалы</div>
-          <div v-if="affiliates.length > 3" @click="showAll = !showAll" class="btn show-panel">
-            <div v-if="showAll == false">Показать все</div>
-            <div v-else-if="showAll == true">Скрыть список</div>
+
+          <div class="title-panel">
+            <img src="/images/_ionicons_svg_ios-search.svg" class='search-section-icon'>
+
+            <input v-model="search_a" name="search_a" class='search-section' type="text" placeholder="Филиалы" id="search_a" autocomplete="off" />
+
+            <div v-if="search_a.length > 0" class="reset-search reset-search-section" @click="search_a = ''" >
+              <ion-icon name="close"></ion-icon>
+            </div>
+          </div>
+
+          <div v-if="affiliatesSearch.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Еще</div>
+            <div v-else-if="showAll == true">Скрыть</div>
           </div>
         </div>
-        <div v-if="affiliates.length > 0" class="list-panel cool-scrollbar">
 
-          <div  v-for="affiliate in affiliates" 
+        <div v-if="affiliates.length <= 0" class="list-panel">
+          <div class="no-record">Список пуст</div>
+        </div>
+
+        <div v-if="affiliatesSearch.length > 0" class="list-panel cool-scrollbar">
+
+          <div  v-for="affiliate in affiliatesSearch" 
                 :class="['affiliate-' + affiliate.id, 
                   affiliate.status == 'active' ? 'active-item' : '', 
                   affiliate.status == 'current' ? 'current-item' : '', 
@@ -62,8 +109,8 @@
           </div>
 
         </div>
-        <div v-else-if="affiliates.length <= 0" class="list-panel">
-          <div class="no-record">Нет записи</div>
+        <div v-else-if="affiliatesSearch.length <= 0" class="list-panel">
+          <div class="no-record">Ничего не найдено</div>
         </div>
         <div v-else-if="loadingPanel" class="list-panel">
           <img class="loading-panel" src="images/loading.gif" />

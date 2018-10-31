@@ -2,13 +2,14 @@
   Vue.component('section-home-services', {
     data: function () {
       return {
-        loading: false,
         showAll: false,
+        lastShowAll: false,
       }
     },
     props: {
       services: Array,
       show: String,
+      search_s: String,
     },
     methods: {
       addFiltration(service) {
@@ -21,19 +22,64 @@
       },
     },
     watch: {
+      search_s() {
+        clearTimeout(lastId);
+
+        lastId = setTimeout(() => {
+          let url = window.location.href;
+
+          if(this.search_s == '') {
+            let newUrl = deleteURLParameter(url, 'search_s');
+            history.replaceState(this.search_s, this.search_s, newUrl);
+          }
+          else {
+            let newUrl = updateURLParameter(url, 'search_s', this.search_s);
+            history.replaceState(this.search_s, this.search_s, newUrl);
+          }
+        }, 600);
+
+        if(this.search_s != '') {
+          this.lastShowAll = this.showAll;
+          this.showAll = true;
+        }
+        else if(this.search_s == '') {
+          this.showAll = this.lastShowAll;
+        }
+      },
+    },
+    computed: {
+      servicesSearch() {
+        const s = validSpaces(this.search_s.toLowerCase());
+        return this.services.filter(n => Object.values(n.name.split()).some(m => m.toString().toLowerCase().includes(s)));
+      }
     },
     template: `
       <section v-if="show == 'home'" class='panel-content' :class="{ 'show-all': showAll}">
         <div class="panel-header">
-          <div class="title-panel">Услуги</div>
-          <div v-if="services.length > 3" @click="showAll = !showAll" class="btn show-panel">
-            <div v-if="showAll == false">Показать все</div>
-            <div v-else-if="showAll == true">Скрыть список</div>
+
+          <div class="title-panel">
+            <img src="/images/_ionicons_svg_ios-search.svg" class='search-section-icon'>
+
+            <input v-model="search_s" name="search_s" class='search-section' type="text" placeholder="Услуги" id="search_s" autocomplete="off" />
+
+            <div v-if="search_s.length > 0" class="reset-search reset-search-section" @click="search_s = ''" >
+              <ion-icon name="close"></ion-icon>
+            </div>
+          </div>
+
+          <div v-if="servicesSearch.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Еще</div>
+            <div v-else-if="showAll == true">Скрыть</div>
           </div>
         </div>
-        <div v-if="services.length > 0" class="list-panel cool-scrollbar">
 
-          <div  v-for="service in services" 
+        <div v-if="services.length <= 0" class="list-panel">
+          <div class="no-record">Список пуст</div>
+        </div>
+
+        <div v-else-if="servicesSearch.length > 0" class="list-panel cool-scrollbar">
+
+          <div  v-for="service in servicesSearch" 
                 :class="['service-' + service.id,
                   service.status == 'active' ? 'active-item' : '', 
                   service.status == 'current' ? 'current-item' : '', 
@@ -60,8 +106,8 @@
           </div>
 
         </div>
-        <div v-else-if="services.length <= 0" class="list-panel">
-          <div class="no-record">Нет записи</div>
+        <div v-else-if="servicesSearch.length <= 0" class="list-panel">
+          <div class="no-record">Ничего не найдено</div>
         </div>
         <div v-else-if="loadingPanel" class="list-panel">
           <img class="loading-panel" src="images/loading.gif" />

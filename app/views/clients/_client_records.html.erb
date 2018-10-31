@@ -3,16 +3,19 @@
     data: function () {
       return {
         loadingCancel: false,
-        showAll: false,
         recordClientId: null,
         note: '',
         subClientId: null,
 
         showNoteCancel: false,
+
+        showAll: false,
+        lastShowAll: false,
       }
     },
     props: {
       client: Object,
+      search_r: String,
     },
     methods: {
       indentAmount(amount) {
@@ -141,6 +144,32 @@
       showNoteCancel() {
         this.note = '';
       },
+      search_r() {
+        vmClient.search_r = this.search_r;
+
+        clearTimeout(lastId);
+
+        lastId = setTimeout(() => {
+          let url = window.location.href;
+
+          if(this.search_r == '') {
+            let newUrl = deleteURLParameter(url, 'search_r');
+            history.replaceState(this.search_r, this.search_r, newUrl);
+          }
+          else {
+            let newUrl = updateURLParameter(url, 'search_r', this.search_r);
+            history.replaceState(this.search_r, this.search_r, newUrl);
+          }
+        }, 600);
+
+        if(this.search_r != '') {
+          this.lastShowAll = this.showAll;
+          this.showAll = true;
+        }
+        else if(this.search_r == '') {
+          this.showAll = this.lastShowAll;
+        }
+      },
     },
     computed: {
       clientSubscriptions: function () {
@@ -155,6 +184,10 @@
            return rc;
           }
         });
+      },
+      recordsSearch() {
+        const s = validSpaces(this.search_r.toLowerCase());
+        return this.recordsClient.filter(n => Object.values(n.name.split()).some(m => m.toString().toLowerCase().includes(s)));
       },
       services() {
         let {servicesCompany, recordsServices, client} = vmClient;
@@ -171,20 +204,31 @@
       },
     },
     template: `
-      <section id="client-records" class="panel-content" :class="{ 'show-all': showAll}">
-        <dfn data-info="Все записи клиента">
-          <div class="panel-header">
-            <div class="title-panel">Записи</div>
-            <div v-if="recordsClient.length > 3" @click="showAll = !showAll" class="btn show-panel">
-              <div v-if="showAll == false">Показать все</div>
-              <div v-else-if="showAll == true">Скрыть список</div>
+      <section title='Все записи клиента' id="client-records" class="panel-content" :class="{ 'show-all': showAll}">
+        <div title='Поиск записей' class="panel-header">
+          <div class="title-panel">
+            <img src="/images/_ionicons_svg_ios-search.svg" class='search-section-icon'>
+
+            <input v-model="search_r" name="search_r" class='search-section' type="text" placeholder="Записи клиента" id="search_r" autocomplete="off" />
+
+            <div v-if="search_r.length > 0" class="reset-search reset-search-section" @click="search_r = ''" >
+              <ion-icon name="close"></ion-icon>
             </div>
           </div>
-        </dfn>
-        <div v-if="recordsClient.length > 0" class="list-panel">
+          <div v-if="recordsSearch.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Показать все</div>
+            <div v-else-if="showAll == true">Скрыть список</div>
+          </div>
+        </div>
 
-          <div 
-            v-for="record in recordsClient" 
+        <div v-if="recordsClient.length <= 0" class="list-panel">
+          <div class="no-record">Список пуст</div>
+        </div>
+
+        <div v-else-if="recordsSearch.length > 0" class="list-panel">
+
+          <div :title='record.name'
+            v-for="record in recordsSearch" 
             :class="['record-' + record.id, recordClientId == record.id ? 'active' : '' ]" 
             class="item-panel">
             
@@ -281,8 +325,8 @@
           </div>
 
         </div>
-        <div v-else-if="recordsClient.length <= 0" class="list-panel">
-          <div class="no-record">Список пуст</div>
+        <div v-else-if="recordsSearch.length <= 0" class="list-panel">
+          <div class="no-record">Ничего не найдено</div>
         </div>
         <div v-else-if="loadingPanel" class="list-panel">
           <img class="loading-panel" src="images/loading.gif" />

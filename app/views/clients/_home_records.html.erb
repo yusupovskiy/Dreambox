@@ -9,7 +9,7 @@
     props: {
       records: Array,
       show: String,
-      search_record: String,
+      search_r: String,
     },
     methods: {
       addRecordFiltration(record) {
@@ -25,34 +25,36 @@
       },
     },
     watch: {
-      search_record() {
+      search_r() {
+        vmClient.search_r = this.search_r;
+        
         clearTimeout(lastId);
 
         lastId = setTimeout(() => {
           let url = window.location.href;
 
-          if(this.search_record == '') {
-            let newUrl = deleteURLParameter(url, 'search_record');
-            history.replaceState(this.search_record, this.search_record, newUrl);
+          if(this.search_r == '') {
+            let newUrl = deleteURLParameter(url, 'search_r');
+            history.replaceState(this.search_r, this.search_r, newUrl);
           }
           else {
-            let newUrl = updateURLParameter(url, 'search_record', this.search_record);
-            history.replaceState(this.search_record, this.search_record, newUrl);
+            let newUrl = updateURLParameter(url, 'search_r', this.search_r);
+            history.replaceState(this.search_r, this.search_r, newUrl);
           }
         }, 600);
 
-        if(this.search_record != '') {
+        if(this.search_r != '') {
           this.lastShowAll = this.showAll;
           this.showAll = true;
         }
-        else if(this.search_record == '') {
+        else if(this.search_r == '') {
           this.showAll = this.lastShowAll;
         }
       },
     },
     computed: {
       recordsSearch() {
-        const s = validSpaces(this.search_record.toLowerCase());
+        const s = validSpaces(this.search_r.toLowerCase());
         return this.records.filter(n => Object.values(n.name.split()).some(m => m.toString().toLowerCase().includes(s)));
       }
     },
@@ -63,9 +65,9 @@
           <div class="title-panel">
             <img src="/images/_ionicons_svg_ios-search.svg" class='search-section-icon'>
 
-            <input v-model="search_record" name="search_record" class='search-section' type="text" placeholder="Записи" id="search_record" autocomplete="off" />
+            <input v-model="search_r" name="search_r" class='search-section' type="text" placeholder="Записи" id="search_r" autocomplete="off" />
 
-            <div v-if="search_record.length > 0" class="reset-search reset-search-section" @click="search_record = ''" >
+            <div v-if="search_r.length > 0" class="reset-search reset-search-section" @click="search_r = ''" >
               <ion-icon name="close"></ion-icon>
             </div>
           </div>
@@ -77,7 +79,7 @@
         </div>
 
         <div v-if="records.length <= 0" class="list-panel">
-          <div class="no-record">Нет записи</div>
+          <div class="no-record">Список пуст</div>
         </div>
 
         <div v-else-if="recordsSearch.length > 0" class="list-panel cool-scrollbar">
