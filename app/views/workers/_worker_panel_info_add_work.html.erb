@@ -134,6 +134,14 @@
       show() {
         $.get('/get_affiliates.json',
           affiliates => this.affiliates = affiliates );
+        $.get('/get_affiliates.json',
+          affiliates => {
+            this.affiliates = affiliates;
+
+            if(affiliates.length > 0)
+              this.affiliate_id = affiliates[0].id;
+          }
+        );
       },
       worker() {
         this.addWork = '';
@@ -168,7 +176,6 @@
         let {worksWorker, addWork} = this;
         var checkedArray = [];
         var disabledArray = [];
-
 
         vmWorkers.worksAffiliates.filter(function(wa) {
           if(wa.work_id == addWork)

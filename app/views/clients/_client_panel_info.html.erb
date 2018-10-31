@@ -46,20 +46,6 @@
       }
     },
     computed: {
-      no_records() {
-        let {recordsClients} = vmClient;
-        let {client, records} = this;
-        
-        return records.filter(function (r) {
-          var rc = recordsClients.filter(function (rc) {
-            if(r.id == rc.id && rc.is_active == true && rc.client_id == client.id) {
-              return rc;
-            }
-          });
-          if(rc.length <= 0)
-            return r;
-        });
-      },
       urlEditClient: function() {
         let {client} = vmClient
         return '/clients/' + client.id + '/edit';
@@ -261,30 +247,7 @@
             </div>
           </section>
 
-          <section v-if="openPanelAdd == 'addRecordClient'" class="panel-add show-all">
-            <h2 class="panel-form__title">
-              <div @click="openPanelAdd = 'addListForClient'" class="btn-back new-btn">
-                <ion-icon name="arrow-back"></ion-icon>
-              </div>
-              <span>Запись клиента в группу</span>
-            </h2>
-
-            <div v-if="no_records.length != 0" >
-              <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
-              <div v-for="record in no_records" class="item-panel">
-                <div class="item-panel__basic-info">
-                  <div class="left-item-panel">{{ record.name }}</div>
-                  <div class="right-item-panel">
-                    <button-subscribe :record="record" :client="client"></button-subscribe>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div v-else>
-              <div class="no-record">Нет групп для записи</div>
-            </div>
-            <a href="/records/new" class="btn-add btn">+ Создать группу</a>
-          </section>
+          <section-add-record v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :client='client' :show="openPanelAdd"></section-add-record>
 
           <section-subs-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd"></section-subs-add>
 
