@@ -16,8 +16,9 @@ class RecordsController < ApplicationController
             ON r.id = rs.record_id
         WHERE r.id IN (#{records_id})
         GROUP BY r.id
-        ORDER BY r.finished_at DESC
+        ORDER BY r.name
       ")
+        # ORDER BY r.finished_at DESC
     end
 
     respond_to do |format|
