@@ -42,8 +42,10 @@
         }, 600);
 
         if(this.search_a != '') {
-          this.lastShowAll = this.showAll;
-          this.showAll = true;
+          if(this.showAll == false) {
+            this.lastShowAll = this.showAll;
+            this.showAll = true;
+          }
         }
         else if(this.search_a == '') {
           this.showAll = this.lastShowAll;

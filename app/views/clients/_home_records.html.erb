@@ -27,7 +27,7 @@
     watch: {
       search_r() {
         vmClient.search_r = this.search_r;
-        
+
         clearTimeout(lastId);
 
         lastId = setTimeout(() => {
@@ -44,8 +44,10 @@
         }, 600);
 
         if(this.search_r != '') {
-          this.lastShowAll = this.showAll;
-          this.showAll = true;
+          if(this.showAll == false) {
+            this.lastShowAll = this.showAll;
+            this.showAll = true;
+          }
         }
         else if(this.search_r == '') {
           this.showAll = this.lastShowAll;
