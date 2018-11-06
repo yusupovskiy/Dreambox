@@ -21,7 +21,7 @@
 
         url = window.location.href;
         newUrl = deleteURLParameter(url, 'client');
-        history.pushState('', 'Home', newUrl);
+        history.replaceState('', 'Home', newUrl);
         vmClient.client = [];
         vmClient.panelShow = 'home';
 
@@ -185,13 +185,13 @@
           <div v-if="openPanelAdd == null" class="indecators">
 
             <div class="indecator green-color">
-              <div class="index-indecator">{{ indentAmount(client.total_amount) }} ₽</div>
-              <div class="name-indecator">Оплатил</div>
+              <div class="index-indecator">{{ indentAmount(client.total_amount) }}</div>
+              <div class="name-indecator">Оплатил ₽</div>
             </div>
 
             <div class="indecator red-color">
-              <div class="index-indecator">{{ indentAmount(client.unpaid_debt_subs) }} ₽</div>
-              <div class="name-indecator">Долг</div>
+              <div class="index-indecator">{{ indentAmount(client.unpaid_debt_subs) }}</div>
+              <div class="name-indecator">Долг ₽</div>
             </div>
 
             <div class="btn-show-panel btn-show-list">

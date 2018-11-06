@@ -3,6 +3,9 @@
 
 document.addEventListener('turbolinks:load', function() {
 
+  // document.getElementById('main-list').onscroll = function() {
+  //   console.log(document.getElementById('main-list').scrollTop);
+  // }
   setInterval(
     () => {
       let scroll = document.getElementById("main-list").scrollTop;

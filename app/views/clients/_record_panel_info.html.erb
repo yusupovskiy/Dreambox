@@ -28,10 +28,10 @@
 
         url = window.location.href;
         newUrl = deleteURLParameter(url, 'record');
-        history.pushState('', 'Home', newUrl);
+        history.replaceState('', 'Home', newUrl);
         vmClient.record = [];
         vmClient.panelShow = 'home';
-        vmClient.titleInput = 'Поиск клиентов';
+        vmClient.titleInput = 'Клиенты';
 
         var urlHash = new URL(window.location.href);
         var client_id = urlHash.searchParams.get("client");

@@ -25,7 +25,7 @@
       closeCart() {
         url = window.location.href;
         newUrl = deleteURLParameter(url, 'transaction');
-        history.pushState('', 'Home', newUrl);
+        history.replaceState('', 'Home', newUrl);
         vmTransaction.transaction = [];
         vmTransaction.panelShow = 'home';
       }

@@ -25,7 +25,7 @@
   </dfn>
 
   <div class="panel-footer">
-    <div class="indecators">
+    <div class="indecators" style='display: flex;'>
       <div @click="typeClients = 'current'" class="indecator interact blue-color current" :class="[typeClients == 'current' ? 'active' : '']">
         <div class="index-indecator">{{ clientsCurrent.length }}</div>
         <div class="name-indecator">Текущие<br />клиенты</div>
@@ -40,8 +40,8 @@
       </div>
 
       <div class="indecator red-color">
-        <div class="index-indecator">{{ indentAmount(amountTotalDebtors) }} ₽</div>
-        <div class="name-indecator">Долг</div>
+        <div class="index-indecator">{{ indentAmount(amountTotalDebtors) }}</div>
+        <div class="name-indecator">Долг ₽</div>
       </div>
     </div>
   </div>

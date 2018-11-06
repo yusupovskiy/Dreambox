@@ -54,7 +54,7 @@
 
         url = window.location.href;
         newUrl = updateURLParameter(url, 'worker', worker.id);
-        history.pushState('Сотрудник', 'Сотрудник', newUrl);
+        history.replaceState('Сотрудник', 'Сотрудник', newUrl);
       },
       sortBy(sortKey) {
         this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;

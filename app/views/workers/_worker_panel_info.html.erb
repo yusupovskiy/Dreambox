@@ -20,7 +20,7 @@
       closeCart() {
         url = window.location.href;
         newUrl = deleteURLParameter(url, 'worker');
-        history.pushState('', 'Home', newUrl);
+        history.replaceState('', 'Home', newUrl);
         vmWorkers.worker = [];
         vmWorkers.panelShow = 'home';
       }

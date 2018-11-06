@@ -65,7 +65,7 @@
         }
 
         var newUrl = updateURLParameter(url, type, query);
-        history.pushState(query, query, newUrl);
+        history.replaceState(query, query, newUrl);
       },
       addElementFiltration(id, object) {
         let indexElement = this.filtrationElements
@@ -101,14 +101,14 @@
         else {
           url = window.location.href;
           newUrl = deleteURLParameter(url, 'filters');
-          history.pushState('', '', newUrl);
+          history.replaceState('', '', newUrl);
         }
       },
       deleteAllParamsFiltration() {
         this.filtrationElements = [];
         url = window.location.href;
         newUrl = deleteURLParameter(url, 'filters');
-        history.pushState('', '', newUrl);
+        history.replaceState('', '', newUrl);
       },
 
       clickTransaction(transaction) {
@@ -117,7 +117,7 @@
 
         url = window.location.href;
         newUrl = updateURLParameter(url, 'transaction', transaction.id);
-        history.pushState('Транзакция', 'Транзакция', newUrl);
+        history.replaceState('Транзакция', 'Транзакция', newUrl);
       },
 
       dateSwitchMonths(date) {
