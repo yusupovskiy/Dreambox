@@ -9,9 +9,6 @@
       affiliates: Array,
     },
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       addFiltration(affiliate) {
         vmTransaction.addElementFiltration(affiliate.id, 'a');
       },
@@ -53,7 +50,7 @@
 
                   {{ affiliate.address }}</div>
               <div class="right-item-panel">
-                <div :class="[ affiliate.amount < 0 ? 'dark-color' : 'green-color' ]">{{ indentAmount(affiliate.amount) }} ₽</div>
+                <div :class="[ affiliate.amount < 0 ? 'dark-color' : 'green-color' ]">{{ affiliate.amount | money }} ₽</div>
               </div>
             </div>
 

@@ -16,9 +16,6 @@
     },
     // props: ['transaction'],
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       date(date) {
         return totalDate(date, true, true, true);
       },
@@ -52,11 +49,11 @@
               <a target="_blank" :href='"/transactions/" + transaction.id + "/doc_pko"'>Document</a>
               <div v-if="transaction.number_document != ''" class="item-info">
                 <div class="title-item-info">Номер документа</div>
-                <div class="content-item-info">{{ indentAmount(transaction.number_document) }}</div>
+                <div class="content-item-info">{{ transaction.number_document }}</div>
               </div>
               <div v-if="transaction.amount != ''" class="item-info">
                 <div class="title-item-info">Сумма</div>
-                <div class="content-item-info">{{ indentAmount(transaction.amount) }}</div>
+                <div class="content-item-info">{{ transaction.amount | money }}</div>
               </div>
               <div v-if="transaction.category_name != ''" class="item-info">
                 <div class="title-item-info">Категория</div>

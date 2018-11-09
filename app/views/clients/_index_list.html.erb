@@ -18,8 +18,8 @@
         </div>
       </div>
       <div class="right-content">
-        <span class="debt red-color">
-          {{ clientItem.unpaid_debt_subs > 0 ? '- ' + indentAmount(clientItem.unpaid_debt_subs) + ' ₽' : ''}}
+        <span v-if='clientItem.unpaid_debt_subs > 0' class="debt red-color">
+          - {{ clientItem.unpaid_debt_subs | money }} ₽
         </span>
       </div>
     </li>

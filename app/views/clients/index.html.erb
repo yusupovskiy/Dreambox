@@ -34,6 +34,13 @@
   // var valueInput = document.getElementById("search").value
   var lastId = null;
 
+      // Vue.filter('money', function(value) {
+      //   if (!value) return '';
+      //   value = value.toLocaleString();
+
+      //   return '1';
+      // });
+
 
   var vmClient = new Vue ({
     el: '#clients',
@@ -83,9 +90,6 @@
       typeClients: '',
     },
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       addElementFiltration(id, object) {
         let indexElement = this.filtrationElements
           .findIndex(element => element.id == id && element.object == object);

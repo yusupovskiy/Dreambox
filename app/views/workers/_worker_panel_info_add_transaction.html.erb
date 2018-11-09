@@ -23,9 +23,6 @@
       show: String,
     },
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       createTransaction() {
         let {transactions} = vmWorkers;
         let {amount, note, addTransaction, category_id, dateTransaction, affiliate_id, newTransaction} = this;

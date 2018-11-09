@@ -202,9 +202,6 @@
       date(date) {
         return totalDate(date, true, true, true);
       },
-      amount(amount) {
-        return amount.toLocaleString();
-      },
       sortBy(sortKey) {
         this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
         this.sortKey = sortKey;

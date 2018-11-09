@@ -86,9 +86,6 @@
       },
     },
     methods: {
-      amount(amount) {
-        return amount.toLocaleString();
-      },
       toggle: function () {
         if (this.isFolder) {
           this.open = !this.open
@@ -132,8 +129,8 @@
         </div>
       </div>
       <div class="right-item-panel">
-        <div v-if='category.value.budget == "income"' class="green-color">+{{ amount(category.value.amount) }} ₽</div>
-        <div v-else-if='category.value.budget == "expense"' class="dark-color">{{ amount(category.value.amount) }} ₽</div>
+        <div v-if='category.value.budget == "income"' class="green-color">+{{ category.value.amount | money }} ₽</div>
+        <div v-else-if='category.value.budget == "expense"' class="dark-color">{{ category.value.amount | money }} ₽</div>
       </div>
     </div>
 

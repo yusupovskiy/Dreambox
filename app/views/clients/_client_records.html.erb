@@ -18,9 +18,6 @@
       search_r: String,
     },
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       cancelSubscriptionClient(sub) {
         let {subscriptions, client, clientTransactions} = vmClient;
         let {note} = this;
@@ -274,7 +271,7 @@
                     </div>
 
                     <div class="sub-desc">
-                      <div :class="[ subs.total_amount == subs.price ? 'green-color' : 'red-color']">{{ indentAmount(subs.total_amount) }} из {{ indentAmount(subs.price) }} ₽</div>
+                      <div :class="[ subs.total_amount == subs.price ? 'green-color' : 'red-color']">{{ subs.total_amount | money }} из {{ subs.price | money }} ₽</div>
 
                       <div v-if="showNoteCancel">
                         <textarea v-model="note" placeholder="Комментарий к отмене" class="textarea"></textarea>

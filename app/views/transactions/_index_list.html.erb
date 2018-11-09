@@ -12,7 +12,8 @@
       </div>
       <div class="right-content">
         <span class="debt" :class="[ transactionItem.budget == 'income' ? 'green-color' : '', transactionItem.budget == 'expense' ? 'dark-color' : '' ]">
-          {{ transactionItem.budget == 'income' ? '+' : '' }}{{ amount(transactionItem.amount) }} ₽
+          {{ transactionItem.budget == 'income' ? '+' : '' }} 
+          {{ transactionItem.amount | money }} ₽
         </span>
       </div>
     </li>

@@ -14,9 +14,6 @@
       worker: Object,
     },
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       closeCart() {
         url = window.location.href;
         newUrl = deleteURLParameter(url, 'worker');

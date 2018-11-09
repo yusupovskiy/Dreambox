@@ -9,9 +9,6 @@
     props: {
     },
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       clickActive(id) {
         let {client} = vmClient;
 
@@ -93,7 +90,7 @@
               </div>
               <div class="right-item-panel">
                 <div class="right-item-panel--no-hover">
-                  <span class="green-color">{{ indentAmount(discount.value) }} ₽</span>
+                  <span class="green-color">{{ discount.value | money }} ₽</span>
                   <span>{{ percent(discount.price_record, discount.value) }}</span>
                 </div>
                 <div class="btn-hide btn">Скрыть</div>
@@ -104,7 +101,7 @@
               <div style="margin-left: 10px;">
                 <div class="item-info">
                   <div class="title-item-info">Сумма (процент скидки)</div>
-                  <div class="content-item-info"><span class="green-color">{{ indentAmount(discount.value) }} ₽</span> <span>{{ percent(discount.price_record, discount.value) }}</span>
+                  <div class="content-item-info"><span class="green-color">{{ discount.value | money }} ₽</span> <span>{{ percent(discount.price_record, discount.value) }}</span>
                   </div>
                 </div>
                 <div class="item-info">

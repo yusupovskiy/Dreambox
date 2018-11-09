@@ -18,9 +18,6 @@
       show: String,
     },
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       createDiscount() {
         let {client, discountCompany} = vmClient;
         let {addDiscount, startDate, finishDate, amount, note, newDiscount} = this;
@@ -127,7 +124,7 @@
               <select v-model="addDiscount">
                 <option disabled value="">Выберите одну из записей</option>
                 <option v-for="record in recordsClient" :value="record.record_client_id">
-                  {{ indentAmount(record.total_price_abon) }} ₽ | {{ record.name }}
+                  {{ record.total_price_abon | money }} ₽ | {{ record.name }}
                 </option>
               </select>
 

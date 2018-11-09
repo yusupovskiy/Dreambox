@@ -54,8 +54,8 @@
 
         </div>
 
-        <div class="indecator" :class="[ revenue + expenses < 0 ? 'dark-color' : 'green-color' ]" :title='"Доход " + amount(revenue) + " ₽ / Расход " + amount(expenses) + " ₽"'>
-          <div class="index-indecator">{{ amount(revenue + expenses) }} ₽</div>
+        <div class="indecator" :class="[ revenue + expenses < 0 ? 'dark-color' : 'green-color' ]" :title='"Доход " + revenue + " ₽ / Расход " + expenses + " ₽"'>
+          <div class="index-indecator">{{ (revenue + expenses) | money }} ₽</div>
           <div class="name-indecator">Прибыль</div>
         </div>
       </div>

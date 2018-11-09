@@ -24,9 +24,6 @@
       client: Object,
     },
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       createTransactionClient() {
         let {client, clientTransactions, clientSubscriptions} = vmClient;
         let {amount, note, addTransForSubs, category_id, dateTransaction, affiliate_id, newTransactionClient} = this;
@@ -219,8 +216,8 @@
               <select v-model="addTransForSubs">
                 <option disabled value="">Выберите вариант транзакции</option>
                 <option v-for="unpaidSubscription in unpaidSubscriptionsClient" :value="unpaidSubscription.operation_id">
-                  {{ indentAmount(unpaidSubscription.total_amount) }} из 
-                  {{ indentAmount(unpaidSubscription.price) }} ₽ | {{ unpaidSubscription.name }} от 
+                  {{ unpaidSubscription.total_amount | money }} из 
+                  {{ unpaidSubscription.price | money }} ₽ | {{ unpaidSubscription.name }} от 
                   {{ unpaidSubscription.start_at }} до {{ unpaidSubscription.finish_at }}
                 </option>
                 <option value="income">Доход</option>
@@ -231,7 +228,7 @@
                 <select v-if="addTransForSubs != 'income' && addTransForSubs != 'expense'" v-model="category_id">
                   <option disabled value="">Выберите услугу</option>
                   <option v-for="category in categoriesRecordService" :value="category.id">
-                    Сумма в записи {{ indentAmount(category.money_for_abon) }} ₽ | {{ category.name }}
+                    Сумма в записи {{ category.money_for_abon | money }} ₽ | {{ category.name }}
                   </option>
                 </select>
 

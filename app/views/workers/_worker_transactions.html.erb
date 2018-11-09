@@ -15,9 +15,6 @@
       transactions: Array,
     },
     methods: {
-      indentAmount(amount) {
-        return amount.toLocaleString();
-      },
       date(date) {
         return totalDate(date, true, true, true);
       },
@@ -101,7 +98,7 @@
               <div class="right-item-panel">
                 <div class="right-item-panel--no-hover" :class="[transaction.budget == 'income' ? 'income' : 'expense']">
                   {{ transaction.budget == 'income' ? '+ ' : '- ' }}
-                  {{ indentAmount(transaction.amount) }} ₽
+                  {{ transaction.amount | money }} ₽
                 </div>
                 <div class="btn-hide btn">Скрыть</div>
               </div>

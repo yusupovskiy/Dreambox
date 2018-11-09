@@ -13,6 +13,12 @@
     <%end%>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <script type="text/javascript" charset="utf-8">
+
+      Vue.filter('money', function(value) {
+        if (!value) return 0;
+        return value.toLocaleString();
+      });
+
       Vue.config.productionTip = Vue.config.devtools = false;
       const Routes = {
           getAllClients:    companyId => `/companies/${companyId}/clients.json`,
