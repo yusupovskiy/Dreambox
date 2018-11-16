@@ -26,15 +26,15 @@
 
   <div class="panel-footer">
     <div class="indecators" style='display: flex;'>
-      <div @click="typeClients = 'current'" class="indecator interact blue-color current" :class="[typeClients == 'current' ? 'active' : '']">
+      <div @click="typeClients = 'current', titleInput = 'Клиенты'" class="indecator interact blue-color current" :class="[typeClients == 'current' ? 'active' : '']">
         <div class="index-indecator">{{ clientsCurrent.length }}</div>
         <div class="name-indecator">Текущие<br />клиенты</div>
       </div>
-      <div @click="typeClients = 'debtors'" class="indecator interact blue-color debtors" :class="[typeClients == 'debtors' ? 'active' : '']">
+      <div @click="typeClients = 'debtors', titleInput = 'Должники'" class="indecator interact blue-color debtors" :class="[typeClients == 'debtors' ? 'active' : '']">
         <div class="index-indecator">{{ clientsDebtors.length }}</div>
         <div class="name-indecator">Должники</div>
       </div>
-      <div @click="typeClients = 'total'" class="indecator interact blue-color total" :class="[ typeClients == 'total' ? 'active' : '' ]">
+      <div @click="typeClients = 'total', titleInput = 'Все клиенты'" class="indecator interact blue-color total" :class="[ typeClients == 'total' ? 'active' : '' ]">
         <div class="index-indecator">{{ clientsTotal.length }}</div>
         <div class="name-indecator">Все клиенты</div>
       </div>

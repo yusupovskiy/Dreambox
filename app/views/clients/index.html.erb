@@ -175,6 +175,16 @@
       this.search_s = this.sendQuery('', 'search_s', '');
       this.search_a = this.sendQuery('', 'search_a', '');
 
+      if(this.typeClients === "current") {
+        this.titleInput = "Клиенты"
+      }
+      else if(this.typeClients === "debtors") {
+        this.titleInput = "Должники"
+      }
+      if(this.typeClients === "total") {
+        this.titleInput = "Все клиенты"
+      }
+
       var urlHash = new URL(window.location.href);
       var client_id = urlHash.searchParams.get("client");
       var record_id = urlHash.searchParams.get("record");
