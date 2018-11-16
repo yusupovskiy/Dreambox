@@ -8,8 +8,7 @@
         addTransaction: '',
         transactionCreateLoading: false,
         category_id: '',
-        categories_income: [],
-        categories_expense: [],
+        categories: [],
         dateTransaction: '',
 
         affiliates: [],
@@ -78,20 +77,10 @@
         }
       },
       show() {
-        $.get(
-          '/get_categories_income.json',
-          categories_income => {
-            this.categories_income = categories_income;
-          }
+        $.get('/get_categories.json',
+          categories => this.categories = categories
         );
-        $.get(
-          '/get_categories_expense.json',
-          categories_expense => {
-            this.categories_expense = categories_expense;
-          }
-        );
-        $.get(
-          '/get_affiliates.json',
+        $.get('/get_affiliates.json',
           affiliates => {
             this.affiliates = affiliates;
 
@@ -99,6 +88,22 @@
               this.affiliate_id = affiliates[0].id;
           }
         );
+      },
+    },
+    computed: {
+      categories_income() {
+        return this.categories.filter(c => {
+          if(c.budget === 'income') {
+            return c;
+          }
+        });
+      },
+      categories_expense() {
+        return this.categories.filter(c => {
+          if(c.budget === 'expense') {
+            return c;
+          }
+        });
       },
     },
     template: `

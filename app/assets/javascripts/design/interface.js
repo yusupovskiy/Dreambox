@@ -1,6 +1,3 @@
-
-
-
 document.addEventListener('turbolinks:load', function() {
 
   // document.getElementById('main-list').onscroll = function() {

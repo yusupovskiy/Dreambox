@@ -1556,3 +1556,6 @@ header:hover {
     color: black;
     margin: -12px;
 }
+.left-item-panel.default-item>span {
+    text-decoration: line-through;
+}

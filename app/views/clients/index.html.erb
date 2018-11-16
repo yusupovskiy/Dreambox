@@ -30,19 +30,10 @@
 <%= render 'clients/record_service' %>
 
 <script type="text/javascript">
-  var authToken = document.getElementById("authenticity_token").value;
-  // var valueInput = document.getElementById("search").value
-  var lastId = null;
+  let authToken = document.getElementById("authenticity_token").value;
+  let lastId = null;
 
-      // Vue.filter('money', function(value) {
-      //   if (!value) return '';
-      //   value = value.toLocaleString();
-
-      //   return '1';
-      // });
-
-
-  var vmClient = new Vue ({
+  let vmClient = new Vue ({
     el: '#clients',
     data: {
       clients: [],
@@ -108,8 +99,8 @@
       deleteParamsFiltration(index, id, object) {
         let {filtrationElements} = this;
 
-        var urlHash = new URL(window.location.href);
-        var filters_params = urlHash.searchParams.get("filters");
+        let urlHash = new URL(window.location.href);
+        let filters_params = urlHash.searchParams.get("filters");
         filters_params = filters_params.replace(',' + object + '-' + id, '');
         filters_params = filters_params.replace(object + '-' + id + ',', '');
         filters_params = filters_params.replace(object + '-' + id, '');
@@ -139,7 +130,8 @@
       clickRecord(record) {
         this.record = record;
         this.panelShow = 'record';
-        this.titleInput = record.name;
+        // this.titleInput = record.name;
+        this.titleInput = "Записанные клиенты";
 
         if(this.typeClients == 'total')
           this.typeClients = 'current';
