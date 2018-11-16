@@ -76,9 +76,9 @@ function totalDate(date, d, m, y) {
   else if(dateArray[1] == 5)
     dateArray[1] = 'мая';
   else if(dateArray[1] == 6)
-    dateArray[1] = 'июля';
-  else if(dateArray[1] == 7)
     dateArray[1] = 'июня';
+  else if(dateArray[1] == 7)
+    dateArray[1] = 'июля';
   else if(dateArray[1] == 8)
     dateArray[1] = 'августа';
   else if(dateArray[1] == 9)
