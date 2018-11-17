@@ -44,21 +44,13 @@ class WorkersController < ApplicationController
 
   def edit
 
-    @title_card = 'Редактирование клиента'
+    @title_card = 'Редактирование сотрудника'
     @form_submit = 'Изменить'
   end
 
   def create
     prms = client_params
     @worker = Client.new(prms)
-
-    email = params[:client][:email]
-
-    account = User.find_by(email: email)
-    if account.present?
-      @worker.user_id = account.id
-    end
-
     @worker.role = (Client::Role::STUFF).to_s(2).to_i
 
     operation = Operation.create
@@ -66,6 +58,17 @@ class WorkersController < ApplicationController
 
     respond_to do |format|
       if @worker.save
+        email = params[:client][:email]
+        operation.update_attribute(:client_id, @worker.id)
+
+        account = User.find_by(email: email)
+        if account.present?
+          @worker.update_attribute(:user_id, account.id)
+          unless account.people_id.present?
+            account.update_attribute(:people_id, @worker.id)
+          end
+        end
+
         format.html { redirect_to "/workers?worker=#{@worker.id}", notice: t('client.created') }
         format.json { render :show, status: :created }
       else

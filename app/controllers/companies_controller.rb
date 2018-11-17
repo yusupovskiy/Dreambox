@@ -39,8 +39,8 @@ class CompaniesController < ApplicationController
   def create
     @company = Company.new(company_params)
 
-    @company.record_limit = 20
-    @company.time_limit = Date.today + 30
+    @company.record_limit = 200
+    @company.time_limit = Date.today + 14
     @company.note = "Пробный период"
 
     success_saving = ActiveRecord::Base.transaction do
@@ -55,6 +55,8 @@ class CompaniesController < ApplicationController
         company_id: @company.id, sex: 0, 
         user_id: user.id, role: (Client::Role::STUFF).to_s(2).to_i,
         operation_id: operation.id)
+
+      operation.update_attribute(:client_id, people.id)
 
       user.update_attribute(:people_id, people.id)
 

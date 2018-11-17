@@ -115,4 +115,5 @@ Rails.application.routes.draw do
 
   post 'create_client' => 'clients#create_client'
   post 'create_field_data' => 'clients#create_field_data'
+  get 'up_clients' => 'clients#up_clients'
 end
