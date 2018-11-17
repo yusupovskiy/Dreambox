@@ -150,6 +150,14 @@ div.left-content {
 }
 .right-content {
     float: right;
+    background-color: white;
+    z-index: 10;
+    position: relative;
+    padding-left: 10px;
+    transition: .3s;
+}
+.item-list.active .right-content {
+    background-color: whitesmoke;
 }
 .debt {
     margin: 10.5px 0 10.5px 0;

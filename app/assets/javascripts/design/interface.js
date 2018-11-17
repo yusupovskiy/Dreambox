@@ -3,18 +3,18 @@ document.addEventListener('turbolinks:load', function() {
   // document.getElementById('main-list').onscroll = function() {
   //   console.log(document.getElementById('main-list').scrollTop);
   // }
-  setInterval(
-    () => {
-      let scroll = document.getElementById("main-list").scrollTop;
+  // setInterval(
+  //   () => {
+  //     let scroll = document.getElementById("main-list").scrollTop;
 
-      if(scroll >= 10) {
-        $('#search').addClass('scroll-main-list');
-      }
-      else if(scroll < 10) {
-        $('#search').removeClass('scroll-main-list');
-      }
-    },
-  500);
+  //     if(scroll >= 10) {
+  //       $('#search').addClass('scroll-main-list');
+  //     }
+  //     else if(scroll < 10) {
+  //       $('#search').removeClass('scroll-main-list');
+  //     }
+  //   },
+  // 500);
 
   $(".open-tabs>div>div").niceScroll({cursorcolor:"transparent", cursorborder:"transparent"});
 

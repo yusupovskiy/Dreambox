@@ -248,6 +248,39 @@ class SubscriptionsController < ApplicationController
     end
   end
 
+  def recalculation
+    subscription_id = params[:id]
+    price = params[:price]
+    subscription_recalculation_note = params[:note]
+    current_record_client = RecordClient.where record_id: @current_record
+
+
+    if price === '' || price === nil
+      complited = false
+      note = 'Нужно указать сумму перерасчета'
+
+    elsif subscription_recalculation_note == ''
+      complited = false
+      note = 'Нужно указать причину отмены в поле'
+
+    elsif !(Subscription.exists? id: subscription_id, record_client_id: current_record_client)
+      complited = false
+      note = 'Нет такого абонемента'
+
+    else
+      s = Subscription.find subscription_id
+      s.update_attributes(price: price, note: subscription_recalculation_note)
+      complited = true
+      note = 'Перерасчет произведен'
+    end
+
+    messege = {complited: complited, note: note}
+
+    respond_to do |format|
+      format.json { render json: messege }
+    end    
+  end
+
   def cancel
     subscription_id = params[:id]
     subscription_cancel_note = params[:note]
@@ -280,10 +313,6 @@ class SubscriptionsController < ApplicationController
     respond_to do |format|
       format.json { render json: messege }
     end
-  end
-
-  def recalculation
-    
   end
 
   private

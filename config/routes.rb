@@ -44,6 +44,7 @@ Rails.application.routes.draw do
   resources :subscriptions do
     member do
       delete 'cancel'
+      post 'recalculation'
     end
   end
   get 'get_autodata_subscription' => 'subscriptions#get_autodata_subscription'
