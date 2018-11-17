@@ -88,6 +88,11 @@
       }
     },
     computed: {
+      transactionsSort() {
+        const k = 'date';
+        const reverse = true;
+        return this.transactions.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
+      },
     },
     template: `
       <section id="client-transactions" class="panel-content" :class="{ 'show-all': showAll}">
@@ -100,7 +105,7 @@
         </div>
         <div v-if="transactions.length > 0" class="list-panel">
 
-          <div v-for="transaction in transactions" v-bind:class="'transaction-' + transaction.id" class="item-panel" :title='transaction.note'>
+          <div v-for="transaction in transactionsSort" v-bind:class="'transaction-' + transaction.id" class="item-panel" :title='transaction.note'>
             
             <div @click="clickTransactionClientActive(transaction.id)" class="item-panel__basic-info" style="cursor: pointer;">
               <div class="left-item-panel">

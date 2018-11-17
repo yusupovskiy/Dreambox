@@ -223,8 +223,10 @@
       },
     },
     computed: {
-      clientSubscriptions: function () {
-        return vmClient.clientSubscriptions;
+      clientSubscriptions() {
+        const k = 'start_at';
+        const reverse = true;
+        return vmClient.clientSubscriptions.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
       },
       recordsClient() {
         let {recordsClients} = vmClient;
