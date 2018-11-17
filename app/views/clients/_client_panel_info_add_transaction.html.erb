@@ -89,8 +89,8 @@
       category_id() {
         let {addTransForSubs, category_id, categoriesRecordService} = this;
 
-        if(addTransForSubs != 'income' && addTransForSubs != 'expense') {
-          this.amount = categoriesRecordService.filter(c => c.category_id == category_id)[0].money_for_abon;
+        if(addTransForSubs !== 'income' && addTransForSubs !== 'expense' && category_id !== '') {
+          this.amount = categoriesRecordService.filter(c => c.category_id === category_id)[0].money_for_abon;
         }
       },
       "addTransForSubs" : function() {
@@ -177,9 +177,8 @@
 
         record = recordsClients.filter(r => r.record_client_id == subscription.record_client_id);
 
-        console.log(recordsClients);
 
-        return recordsServices.filter(function (record_service) {
+        let recordServices = recordsServices.filter(function (record_service) {
           if(record_service.record_id == record[0].id) {
             var service = servicesCompany.filter(function (service) {
               if(record_service.category_id == service.id) {
@@ -189,6 +188,9 @@
             return Object.assign(record_service, service[0]);
           }
         });
+        
+        this.category_id = recordServices[0].id;
+        return recordServices;
       },
       unpaidSubscriptionsClient: function () {
         let {clientSubscriptions} = vmClient;
