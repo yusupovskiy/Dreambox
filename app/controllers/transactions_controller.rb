@@ -25,7 +25,7 @@ class TransactionsController < ApplicationController
           INNER JOIN operations ON company_transactions.operation_id = operations.id
         WHERE transactions.is_active = true AND operations.client_id = #{client_id}
                AND affiliate_id IN (#{affiliates_id})
-        ORDER BY transactions.date
+        ORDER BY transactions.date DESC
       ")
 
       respond_to do |format|
@@ -43,7 +43,7 @@ class TransactionsController < ApplicationController
         INNER JOIN categories ON company_transactions.category_id = categories.id
         INNER JOIN operations ON company_transactions.operation_id = operations.id
       WHERE affiliate_id IN (#{affiliates_id})
-      ORDER BY transactions.date
+      ORDER BY transactions.date DESC
     ")
 
     respond_to do |format|
