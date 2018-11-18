@@ -3,6 +3,7 @@
     data: function () {
       return {
         loading: false,
+        newRecordClient: [],
       }
     },
     props: {
@@ -32,12 +33,13 @@
               },
               success: messege => {
                 complited = messege.complited
+                newRecordClient = messege.result;
                 vmNotifications.notifications.unshift(messege);
               },
               error: e => console.warn('error', e)
-            }).done(newRecordClient => {
+            }).done(e => {
               if(complited) {
-                newRecordClient = Object.assign(record, {is_active: true, client_id: client.id});
+                // newRecordClient = Object.assign(record, {is_active: true, client_id: client.id});
 
                 let indexCurrentRecord = recordsClients
                   .findIndex(rs => rs.id == record.id && rs.client_id == client.id);

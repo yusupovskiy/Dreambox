@@ -3,7 +3,7 @@ class RecordsClientsController < ApplicationController
 
   def get_records_clients
     records = RecordClient.joins(:record)
-                          .select(' records.id, name, abon_period, finished_at, 
+                          .select(' records.id AS id, name, abon_period, finished_at, 
                                     records_clients.created_at as create_records_client, 
                                     record_type, visit_type, 
                                     is_active, client_id, records_clients.id as record_client_id')
@@ -18,28 +18,44 @@ class RecordsClientsController < ApplicationController
   def create
     pms = record_client_params
     record = Record.find_by id: params[:record_client][:record_id]
+    result = []
 
     if !Client.exists? company_id: @current_company, id: params[:record_client][:client_id]
-      messege = {complited: false, note: 'Нет такого клиента для записи'}
+      complited = false
+      note = 'Нет такого клиента для записи'
 
     elsif !@current_record.exists? id: params[:record_client][:record_id]
-      messege = {complited: false, note: 'Нет такой записи'}
+      complited = false
+      note = 'Нет такой записи'
 
     elsif (@current_company.record_limit - @current_clients_company.count) <= 0
-      messege = {complited: false, note: 'Вы достигли лимита по тарифу'}
+      complited = false
+      note = 'Вы достигли лимита по тарифу'
     
     elsif record.finished_at.present? and record.finished_at < Date.today
-      messege = {complited: false, note: 'Невозможно совершить запись когда ее срок истек'}
+      complited = false
+      note = 'Невозможно совершить запись когда ее срок истек'
 
     else
       if record_client = RecordClient.find_by(pms.permit(:record_id, :client_id))
         record_client.update_attribute(:is_active, true)
       else
         record_client = RecordClient.create!(pms.merge(is_automatic: false, is_dynamic: false))
+        
+        result = RecordClient.joins(:record)
+                      .select(' records.id AS id, name, abon_period, finished_at, 
+                                records_clients.created_at as create_records_client, 
+                                record_type, visit_type, 
+                                is_active, client_id, records_clients.id as record_client_id')
+                      .order('is_active DESC, create_records_client DESC, finished_at DESC')
+                      .find_by id: record_client.id, record_id: @current_record
       end
 
-      messege = {complited: true, note: 'Клиент записан'}
+      complited = true
+      note = 'Клиент записан'
     end
+
+    messege = {complited: true, note: note, result: result}
 
     respond_to do |format|
       format.json { render json: messege }

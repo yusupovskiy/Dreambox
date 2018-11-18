@@ -22,8 +22,8 @@
     },
     methods: {
       createSubClient() {
-        let {client, subscriptions, recordsClients} = vmClient;
-        let {addSubsForRecordClient, startSubs, finishSubs, amount, newSubscriptionClient} = this;
+        let {client, subscriptions} = vmClient;
+        let {addSubsForRecordClient, startSubs, finishSubs, amount, newSubscriptionClient, recordsClient} = this;
         var complited = false
 
         if(!this.subsCreateLoading) {
@@ -51,10 +51,11 @@
               error: e => console.warn('error', e)
             }).done(e => {
               if(complited) {
-                var indexRecordClient = recordsClients
+                var indexRecordClient = recordsClient
                   .findIndex(rc => rc.record_client_id == newSubscriptionClient.record_client_id);
-                var nameRecord = recordsClients[indexRecordClient].name;
-                var recordId = recordsClients[indexRecordClient].id;
+
+                var nameRecord = recordsClient[indexRecordClient].name;
+                var recordId = recordsClient[indexRecordClient].id;
 
                 newSubscriptionClient = Object.assign(newSubscriptionClient, {total_amount: 0, name: nameRecord, record_id: recordId, client_id: client.id})
 
