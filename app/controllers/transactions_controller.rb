@@ -224,7 +224,7 @@ class TransactionsController < ApplicationController
 
   def cancel_transaction 
     company_transaction_id = params[:id]
-    note = params[:note]
+    note_cancel = params[:note]
     affiliates_id = @current_affiliates.ids.join(", ")
 
     transaction = CompanyTransaction.find_by_sql("
@@ -237,7 +237,7 @@ class TransactionsController < ApplicationController
              AND affiliate_id IN (#{affiliates_id})
     ")
 
-    if note == ''
+    if note_cancel == ''
       complited = false
       note = 'Нужно указать причину отмены в поле'
 
@@ -247,6 +247,7 @@ class TransactionsController < ApplicationController
 
     else
       t = Transaction.find_by company_transaction_id: transaction
+      t.update_attribute(:note, 'Причина отмены: "' + note_cancel + '" | ' + t.note)
       t.update_attribute(:is_active, false)
       complited = true
       note = 'Отмена произведена'

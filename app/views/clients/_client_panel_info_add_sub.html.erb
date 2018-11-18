@@ -16,7 +16,6 @@
         newSubscriptionClient: [],
       }
     },
-    // props: ['records', 'show'],
     props: {
       records: Array,
       show: String,
@@ -44,6 +43,7 @@
                 }
               },
               success: messege => {
+                console.log(messege);
                 complited = messege.complited;
                 newSubscriptionClient = messege.result;
                 vmNotifications.notifications.unshift(messege);

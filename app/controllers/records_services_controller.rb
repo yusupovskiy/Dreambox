@@ -19,22 +19,25 @@ class RecordsServicesController < ApplicationController
     pms = record_service_params
     record = Record.eager_load(:affiliate).find pms[:record_id]
     # service = Service.eager_load(:company).find pms[:service_id]
-    category = Category.find_by id: pms[:category_id], company_id: @current_company.id, subject: 'company'
+    service = Category.find_by("subject = 'company' 
+                            AND (company_id IS NULL 
+                              OR company_id = #{@current_company.id}) 
+                            AND id = #{pms[:category_id]}")
     result = []
 
     rs = RecordService.new pms
     rs.money_for_abon = 0 if not rs.money_for_abon.nil? and rs.money_for_abon < 0
     rs.money_for_visit = 0 if not rs.money_for_visit.nil? and rs.money_for_visit < 0
 
-    if RecordService.exists? record_id: record.id, category_id: category.id
+    if RecordService.exists? record_id: record.id, category_id: service.id
       complited = false
       note = 'Выборанная услуга уже указана'
 
-    elsif !(Category.exists? id: pms[:category_id])
+    elsif !(service.present?)
       complited = false
       note = 'Нет такой услуги'
 
-    elsif !(Record.exists? id: pms[:record_id])
+    elsif !(Record.exists? id: pms[:record_id], id: @current_record)
       complited = false
       note = 'Нет такой записи'
 
