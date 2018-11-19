@@ -89,7 +89,12 @@ Rails.application.routes.draw do
   resources :info_blocks
   resources :field_templates
   resources :field_data
-  resources :reminders
+  resources :reminders do
+    member do
+      post 'update_completed'
+    end
+  end
+  resources :logs
 
   resources :transactions do
       member do

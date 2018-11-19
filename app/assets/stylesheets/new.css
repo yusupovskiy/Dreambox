@@ -1567,3 +1567,28 @@ header:hover {
 .left-item-panel.default-item>span {
     text-decoration: line-through;
 }
+
+.logs {
+    display: grid;
+    float: left;
+    width: 100%;
+    margin-top: 10px;
+}
+.log__user > .avatar-listt {
+    width: 20px;
+    height: 20px;
+    margin-right: 7px;
+}
+.log__user > div {
+    font-size: 14px;
+    color: darkgrey;
+    float: left;
+    margin: 2px 0;
+}
+.log__note {
+    font-size: 15px;
+    margin-bottom: 3px;
+}
+.log {
+    margin: 10px 0;
+}

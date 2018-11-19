@@ -83,6 +83,7 @@
       typeClients: '',
 
       reminders: [],
+      logs: [],
     },
     methods: {
       addElementFiltration(id, object) {
@@ -264,6 +265,9 @@
 
         $.get('/reminders.json', 
           reminders => this.reminders = reminders);
+
+        $.get('/logs.json', 
+          logs => this.logs = logs);
       }, 600);
     },
     watch: {
@@ -296,6 +300,29 @@
       },
     },
     computed: {
+
+      // clientsReminderDebt() {
+      //   let { reminders } = this;
+
+      //   return this.clientsRecords.filter(c => {
+      //     // let reminder = reminders.fil(r => r.client_id === c.id);
+
+      //     let debtSum = reminders.reduce((sum, r) => {
+      //       if(r.client_id === c.id) {
+      //         return sum + (r.debt);
+      //       }
+      //       else {
+      //         return sum;
+      //       }
+      //     }, 0);
+
+      //     if(debtSum > 0) {
+      //       c.unpaid_debt_subs = c.unpaid_debt_subs + debtSum;
+      //     }
+
+      //     return c;
+      //   });
+      // },
       servicesCompany() {
         let {categories} = this;
         var services = [];

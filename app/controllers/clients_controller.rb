@@ -54,7 +54,7 @@ class ClientsController < ApplicationController
           c.birthday, c.phone_number, c.archive, c.sex, 
           c.avatar, c.role, c.operation_id, 
           coalesce(o.total_amount,0) AS total_amount,
-          coalesce((SUM(s.price) - SUM(s.subs_amount)),0) AS unpaid_debt_subs
+          coalesce((SUM(s.price) - SUM(s.subs_amount) + coalesce(SUM(r.debt),0) ),0) AS unpaid_debt_subs
 
         FROM clients AS c
           LEFT JOIN ( SELECT rc.*
@@ -92,6 +92,13 @@ class ClientsController < ApplicationController
                       GROUP BY o.client_id
           ) AS o
           ON c.id = o.client_id
+            
+          LEFT JOIN ( SELECT r.client_id, SUM(r.debt) AS debt
+                      FROM reminders AS r
+                      WHERE r.completed = false
+                      GROUP BY r.client_id
+          ) AS r
+          ON c.id = r.client_id
 
         WHERE (role & #{Client::Role::CLIENT}) != 0
           AND c.company_id = #{@current_company.id}

@@ -9,6 +9,7 @@
         debt: null,
         affiliateId: null,
         newElement: null,
+        newLog: [],
       }
     },
     props: {
@@ -40,25 +41,18 @@
               success: messege => {
                 complited = messege.complited;
                 newElement = messege.result;
+                newLog = messege.log;
                 vmNotifications.notifications.unshift(messege);
               },
               error: e => console.warn('error', e)
             }).done(e => {
               if(complited) {
-                // var indexRecordClient = recordsClient
-                //   .findIndex(rc => rc.record_client_id == newSubscriptionClient.record_client_id);
-
-                // var nameRecord = recordsClient[indexRecordClient].name;
-                // var recordId = recordsClient[indexRecordClient].id;
-
-                // newSubscriptionClient = Object.assign(newSubscriptionClient, {total_amount: 0, name: nameRecord, record_id: recordId, client_id: client.id})
-
                 reminders.unshift(newElement);
 
                 if(parseInt(newElement.debt) > 0)
                   client.unpaid_debt_subs = client.unpaid_debt_subs + newElement.debt;
                 
-                // this.getDateSub();
+                vmClient.logs.unshift(newLog);
               }
               this.loading = false;
             });
@@ -75,7 +69,7 @@
           });
 
         let currentDate = new Date();
-        this.dateTransaction = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());
+        this.date = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());
       },
     },
     computed: {

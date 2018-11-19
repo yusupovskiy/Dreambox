@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_19_112621) do
+ActiveRecord::Schema.define(version: 2018_11_19_201841) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -143,6 +143,24 @@ ActiveRecord::Schema.define(version: 2018_11_19_112621) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "logs", force: :cascade do |t|
+    t.text "note", null: false
+    t.bigint "user_id", null: false
+    t.text "type_log", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_logs_on_user_id"
+  end
+
+  create_table "operation_logs", force: :cascade do |t|
+    t.bigint "operation_id", null: false
+    t.bigint "log_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["log_id"], name: "index_operation_logs_on_log_id"
+    t.index ["operation_id"], name: "index_operation_logs_on_operation_id"
+  end
+
   create_table "operations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -200,8 +218,10 @@ ActiveRecord::Schema.define(version: 2018_11_19_112621) do
     t.bigint "affiliate_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "operation_id"
     t.index ["affiliate_id"], name: "index_reminders_on_affiliate_id"
     t.index ["client_id"], name: "index_reminders_on_client_id"
+    t.index ["operation_id"], name: "index_reminders_on_operation_id"
   end
 
   create_table "salaries", force: :cascade do |t|
@@ -332,6 +352,9 @@ ActiveRecord::Schema.define(version: 2018_11_19_112621) do
   add_foreign_key "discounts", "records_clients", column: "record_client_id"
   add_foreign_key "field_templates", "info_blocks"
   add_foreign_key "histories", "users"
+  add_foreign_key "logs", "users"
+  add_foreign_key "operation_logs", "logs"
+  add_foreign_key "operation_logs", "operations"
   add_foreign_key "operations", "clients"
   add_foreign_key "records", "affiliates"
   add_foreign_key "records", "operations"
@@ -341,6 +364,7 @@ ActiveRecord::Schema.define(version: 2018_11_19_112621) do
   add_foreign_key "records_services", "records"
   add_foreign_key "reminders", "affiliates"
   add_foreign_key "reminders", "clients"
+  add_foreign_key "reminders", "operations"
   add_foreign_key "salaries", "operations"
   add_foreign_key "services", "companies"
   add_foreign_key "subscriptions", "operations"

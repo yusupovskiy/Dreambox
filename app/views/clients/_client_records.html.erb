@@ -271,7 +271,7 @@
 
           <div :title='record.name'
             v-for="record in recordsSearch" 
-            :class="['record-' + record.id, recordClientId == record.id ? 'active' : '' ]" 
+            :class="['record-' + record.id, recordClientId == record.id ? 'active' : '', record.is_active ? '' : 'default-item' ]" 
             class="item-panel">
             
             <div @click="clickRecordClientActive(record.id)" class="item-panel__basic-info" style="cursor: pointer;">
