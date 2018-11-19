@@ -112,7 +112,7 @@
               </div>
               <div class="right-item-panel">
                 <div v-if='reminder.debt !== null' class="right-item-panel--no-hover">
-                  <span class="red-color">{{ reminder.debt | money }} ₽</span>
+                  <span class="red-color">- {{ reminder.debt | money }} ₽</span>
                 </div>
                 <div class="btn-hide btn">Скрыть</div>
               </div>
@@ -169,7 +169,7 @@
                 <div v-if="reminder.debt > 0" class="item-info">
                   <div class="title-item-info">Задолжность</div>
                   <div class="content-item-info">
-                    <span v-if="reminder.debt > 0" class="red-color">{{ reminder.debt }} ₽</span>
+                    <span v-if="reminder.debt > 0" class="red-color">- {{ reminder.debt }} ₽</span>
                   </div>
                 </div>
 
