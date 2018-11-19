@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_24_144026) do
+ActiveRecord::Schema.define(version: 2018_11_19_112621) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -191,6 +191,19 @@ ActiveRecord::Schema.define(version: 2018_10_24_144026) do
     t.index ["record_id"], name: "index_records_services_on_record_id"
   end
 
+  create_table "reminders", force: :cascade do |t|
+    t.text "note", null: false
+    t.date "date", null: false
+    t.float "debt"
+    t.boolean "completed", default: false, null: false
+    t.bigint "client_id", null: false
+    t.bigint "affiliate_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["affiliate_id"], name: "index_reminders_on_affiliate_id"
+    t.index ["client_id"], name: "index_reminders_on_client_id"
+  end
+
   create_table "salaries", force: :cascade do |t|
     t.date "start_at", null: false
     t.date "finish_at", null: false
@@ -326,6 +339,8 @@ ActiveRecord::Schema.define(version: 2018_10_24_144026) do
   add_foreign_key "records_clients", "records"
   add_foreign_key "records_services", "categories"
   add_foreign_key "records_services", "records"
+  add_foreign_key "reminders", "affiliates"
+  add_foreign_key "reminders", "clients"
   add_foreign_key "salaries", "operations"
   add_foreign_key "services", "companies"
   add_foreign_key "subscriptions", "operations"

@@ -1,5 +1,6 @@
 class Client < ApplicationRecord
   belongs_to :company
+  # belongs_to :reminder
   has_one :user
   has_many :field_data
   accepts_nested_attributes_for :field_data

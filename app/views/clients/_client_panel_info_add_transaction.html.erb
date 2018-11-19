@@ -98,7 +98,7 @@
         let {addTransForSubs} = this;
 
         var currentDate = new Date();
-        this.dateTransaction = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());;
+        this.dateTransaction = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());
 
         let indexSub = clientSubscriptions
           .findIndex(s => s.operation_id == addTransForSubs);

@@ -89,6 +89,7 @@ Rails.application.routes.draw do
   resources :info_blocks
   resources :field_templates
   resources :field_data
+  resources :reminders
 
   resources :transactions do
       member do

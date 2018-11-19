@@ -235,6 +235,12 @@
                   <div class="right-item-panel"></div>
                 </div>
               </div>
+              <div @click="openPanelAdd = 'addReminderClient'" class="item-panel" style="cursor: pointer;">
+                <div class="item-panel__basic-info">
+                  <div class="left-item-panel" style="width: 100%;">Заметку</div>
+                  <div class="right-item-panel"></div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -245,6 +251,8 @@
           <section-transaction-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd" :client="client"></section-transaction-add>
 
           <section-add-discount v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd"></section-add-discount>
+
+          <section-add-reminder v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd"></section-add-reminder>
         </div>
       </section>
     `

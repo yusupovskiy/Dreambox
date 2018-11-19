@@ -1,0 +1,98 @@
+<script type="text/javascript">
+  Vue.component('section-client-reminders', {
+    data: function () {
+      return {
+        showAll: false,
+        activeId: null,
+      }
+    },
+    props: {
+    },
+    methods: {
+      clickActive(id) {
+        let {client} = vmClient;
+
+        if(this.activeId != id)
+          this.activeId = id;
+
+        else if(this.activeId != null)
+          this.activeId = null;
+
+        else 
+          this.activeId = id;
+      },
+    },
+    watch: {
+    },
+    computed: {
+      remindersClient() {
+        let {reminders, client} = vmClient;
+
+        return reminders.filter(r => {
+          if(r.client_id === client.id)
+            return r;
+        });
+      },
+    },
+    template: `
+      <section id="client-records" class="panel-content" :class="{ 'show-all': showAll}">
+        <dfn data-info="Все заметки по клиенту">
+          <div class="panel-header">
+            <div class="title-panel">Заметки</div>
+            <div v-if="remindersClient.length > 3" @click="showAll = !showAll" class="btn show-panel">
+              <div v-if="showAll == false">Еще</div>
+              <div v-else-if="showAll == true">Скрыть</div>
+            </div>
+          </div>
+        </dfn>
+        <div v-if="remindersClient.length > 0" class="list-panel">
+
+          <div 
+            v-for="reminder in remindersClient" 
+            :class="['reminder-' + reminder.id, activeId == reminder.id ? 'active' : '', reminder.completed ? 'default-item' : '' ]" 
+            class="item-panel">
+            
+            <div @click="clickActive(reminder.id)" class="item-panel__basic-info" style="cursor: pointer;">
+              <div class="left-item-panel">
+
+                <div class="item__btns">
+                  <div class='btn-delete'>
+                    <ion-icon name="arrow-dropdown"></ion-icon>
+                  </div>
+                </div>
+
+                {{ reminder.note }}
+              </div>
+              <div class="right-item-panel">
+                <div v-if='reminder.debt !== null' class="right-item-panel--no-hover">
+                  <span class="red-color">{{ reminder.debt | money }} ₽</span>
+                </div>
+                <div class="btn-hide btn">Скрыть</div>
+              </div>
+            </div>
+
+            <div class="item-panel__total-info">
+              <div style="margin-left: 10px;">
+                <div class="item-info">
+                  <div class="title-item-info">Дата заметки</div>
+                  <div class="content-item-info">
+                    {{ reminder.date }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        <div v-else-if="remindersClient.length <= 0" class="list-panel">
+          <div class="no-record">Список пуст</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+
+      </section>
+    `
+  });
+</script>

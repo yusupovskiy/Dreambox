@@ -21,9 +21,11 @@
 <%= render 'clients/client_panel_info_add_sub' %>
 <%= render 'clients/client_panel_info_add_transaction' %>
 <%= render 'clients/client_panel_info_add_discount' %>
+<%= render 'clients/client_panel_info_add_reminder' %>
 <%= render 'clients/client_records' %>
 <%= render 'clients/client/client_transactions' %>
 <%= render 'clients/client_discounts' %>
+<%= render 'clients/client_reminders' %>
 
 <%= render 'clients/record_panel_info' %>
 <%= render 'clients/record_panel_info_add_service' %>
@@ -79,6 +81,8 @@
 
       filtrationElements: [],
       typeClients: '',
+
+      reminders: [],
     },
     methods: {
       addElementFiltration(id, object) {
@@ -257,6 +261,9 @@
 
         $.get('/discounts.json', 
           discountCompany => this.discountCompany = discountCompany);
+
+        $.get('/reminders.json', 
+          reminders => this.reminders = reminders);
       }, 600);
     },
     watch: {
