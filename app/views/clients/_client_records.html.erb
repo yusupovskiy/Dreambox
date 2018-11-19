@@ -66,7 +66,7 @@
           }, 600);
         }
       },
-      recalculationSubscriptionClient(sub) {
+      recalculationSubscriptionClient(sub, index) {
         let {subscriptions, client, clientTransactions} = vmClient;
         let {showNoteSubRecalculation, newPriceSub} = this;
         let complited = false;
@@ -92,22 +92,11 @@
               error: e => console.warn('error', e)
             }).done(e => {
               if(complited) {
-                // let index = subscriptions.findIndex(s => s.id == sub.id);
-                // subscriptions[index].is_active = false;
-                
-                // client.unpaid_debt_subs = client.unpaid_debt_subs - sub.price;
+                let index = subscriptions.findIndex(s => s.id == sub.id);
 
-                // vmClient.clientTransactions = clientTransactions.filter(function(t) {
-                //   if(t.operation_id == sub.operation_id) {
-                //     client.total_amount = client.total_amount - t.amount;
-                //   }
-                //   else {
-                //     return t;
-                //   }
-                // });
-                // this.noteRecalculation = '';
-                // this.showNoteSubRecalculation = false;
-                // // отменять все транзакции у которых такой оператион
+                client.unpaid_debt_subs = client.unpaid_debt_subs - subscriptions[index].price + parseInt(newPriceSub);
+
+                subscriptions[index].price = newPriceSub;
               }
               this.loadingRecalculation = false;
             });
@@ -316,7 +305,7 @@
               </div>
 
               <div class="subscriptions">
-                <div v-if="record.id == subs.record_id" v-for="subs in clientSubscriptions" class="subscription" :class="[ 'subscription-' + subs.id, subClientId == subs.id ? 'active' : '' ]">
+                <div v-if="record.id == subs.record_id" v-for="(subs, index) in clientSubscriptions" class="subscription" :class="[ 'subscription-' + subs.id, subClientId == subs.id ? 'active' : '' ]">
                   <div class="data-subscriptions" :class="[ currentSubsctiption(subs.start_at, subs.finish_at) ]">
 
                     <div @click="clickSubActive(subs.id)">
@@ -378,7 +367,7 @@
                       <div class="btns" style="margin: 0;">
                         <button 
                           v-if="noteRecalculation !== '' && showNoteSubRecalculation && newPriceSub.length > 0"
-                          @click="recalculationSubscriptionClient(subs)" 
+                          @click="recalculationSubscriptionClient(subs, index)" 
                           :class="{ active: loadingCancel }" 
                           class="btn-subscribe btn">
 

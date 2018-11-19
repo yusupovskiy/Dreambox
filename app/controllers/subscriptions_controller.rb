@@ -11,18 +11,22 @@ class SubscriptionsController < ApplicationController
     record = Record.find(record_client.record_id)
     last_subscriptions_client = Subscription.where(record_client_id: record_client.id, is_active: true).order('finish_at').last
     
-    if last_subscriptions_client.present? and last_subscriptions_client.finish_at > Date.today
+    # if last_subscriptions_client.present? and last_subscriptions_client.finish_at > Date.today
+    if last_subscriptions_client.present?
       message_start_date = "Подставилась дата на свободное число, после текущего и предстоящего абонементов"
       start_date = last_subscriptions_client.finish_at + 1.days
+
     else
       message_start_date = "Эта дата свободна"
       start_date = Date.today
     end
+
     if record.subscription_sale == 'by_calendar' or record.subscription_sale == 'automatically_by_calendar'
       message_finish_date = "Так как в этой записи указаны абонементы по календарю, дата завершения абонемента подставляется на конец месяца"
       today = start_date
       date_of_last_day_of_previous_month = today - today.day.days
       finish_date = date_of_last_day_of_previous_month + Time.days_in_month(today.month).days
+
     else
       message_finish_date = "Дата, увеличенная на #{record.abon_period} дней с момента открытия"
       finish_date = start_date + record.abon_period.day

@@ -173,10 +173,9 @@
         let {servicesCompany, recordsServices, recordsClients, subscriptions} = vmClient;
         let {addTransForSubs} = this;
 
-        subscription = subscriptions.filter(s => s.operation_id == addTransForSubs)[0]
+        let subscription = subscriptions.filter(s => s.operation_id == addTransForSubs)[0]
 
-        record = recordsClients.filter(r => r.record_client_id == subscription.record_client_id);
-
+        let record = recordsClients.filter(r => r.record_client_id == subscription.record_client_id);
 
         let recordServices = recordsServices.filter(function (record_service) {
           if(record_service.record_id == record[0].id) {
