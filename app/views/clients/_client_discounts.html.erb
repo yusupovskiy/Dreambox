@@ -42,16 +42,16 @@
     },
     computed: {
       discountsClient() {
-        let {recordsClients, client, discountCompany, recordsCompany} = vmClient;
+        let {recordsClients, client, discounts, records} = vmClient;
 
         var recordsClient = recordsClients.filter(rc => rc.client_id == client.id);
-        return discountCompany.filter(function (d) {
+        return discounts.filter(function (d) {
           var indexRecordClient = recordsClient.findIndex(rc => rc.record_client_id == d.record_client_id);
 
           if(indexRecordClient >= 0) {
-            var indexRecord = recordsCompany.findIndex(r => r.id == recordsClient[indexRecordClient].id);
-            var nameRecord = recordsCompany[indexRecord].name;
-            var price = recordsCompany[indexRecord].total_price_abon;
+            var indexRecord = records.findIndex(r => r.id == recordsClient[indexRecordClient].id);
+            var nameRecord = records[indexRecord].name;
+            var price = records[indexRecord].total_price_abon;
 
             return Object.assign(d, {price_record: price, name_record: nameRecord});
           }
@@ -134,6 +134,7 @@
           <img class="loading-panel" src="images/loading.gif" />
         </div>
 
+        <button style="margin-top: 0px; padding-bottom: 10px;" class="btn-add btn">+ Добавить</button>
       </section>
     `
   });

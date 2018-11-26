@@ -1,54 +1,51 @@
-<section v-if="panelShow == 'home'" class="panel-content">
-  <dfn data-info="Можно отфильтровать списки по записям, услугам и филиалам. Для этого нужно отметить галочками нужные варианты в списках ниже">
-    <div class="params-filters">
-        <div v-if="filtrationElementsName.length > 0" class="list-params">
-          <div v-for="(element, index) in filtrationElementsName" @click="deleteParamsFiltration(index, element.id, element.object)" :key="element.id" class="params-filter">
+<%= render 'clients/home_indecators' %>
+<%= render 'clients/home_records' %>
+<%= render 'clients/home_services' %>
+<%= render 'clients/home_affiliates' %>
 
-            <div class="params-filter__img">
-              <div>
-                <img v-if="element.object == 'r'" src="/images/group4.png" style="width: 100%;" />
-                <img v-else-if="element.object == 's'" src="/images/service.png" style="width: 100%;" />
-                <img v-else-if="element.object == 'a'" src="/images/office4.png" style="width: 100%;" />
-              </div>
-              <ion-icon name="close-circle"></ion-icon>
-            </div>
-            <span>{{ element.name }}</span>
-          </div>
-        </div>
+<script type="text/javascript">
+  Vue.component('home', {
+    data: function() {
+      return {}
+    },
+    props: {
+      filtrationElements: Array,
+      recordsCompany: Array,
+      servicesCompany: Array,
+      affiliatesCompany: Array,
+      clientsCurrent: Array,
+      clientsDebtors: Array,
+      clientsTotal: Array,
+      typeClients: String,
+      amountTotalDebtors: Number,
+      recordsFilter: Array,
+      search_r: String,
+      servicesFilter: Array,
+      search_s: String,
+      affiliatesFilter: Array,
+      search_a: String,
+    },
+    template: `
+      <div id='home' class='home'>
+        <section-home-indecators 
+          :filtration-elements='filtrationElements' 
+          :records-company='recordsCompany' 
+          :services-company='servicesCompany' 
+          :affiliates-company='affiliatesCompany'
+          :clients-current='clientsCurrent'
+          :clients-debtors='clientsDebtors'
+          :clients-total='clientsTotal'
+          :type-clients='typeClients'
+          :amount-total-debtors='amountTotalDebtors'
+          >
+        </section-home-indecators>
 
-        <div v-else class="empty-list">Без фильтрации</div>
+        <section-home-records :records="recordsFilter" :search_r='search_r'></section-home-records>
 
-        <div v-if="filtrationElementsName.length > 0" @click="deleteAllParamsFiltration()" class="reset-search" style="margin: 2.5px 5px 2.5px 0;">
-          <ion-icon name="close"></ion-icon>
-        </div>
-    </div>
-  </dfn>
+        <section-home-services :services="servicesFilter" :search_s='search_s'></section-home-services>
 
-  <div class="panel-footer">
-    <div class="indecators" style='display: flex;'>
-      <div @click="typeClients = 'current', titleInput = 'Клиенты'" class="indecator interact blue-color current" :class="[typeClients == 'current' ? 'active' : '']">
-        <div class="index-indecator">{{ clientsCurrent.length }}</div>
-        <div class="name-indecator">Текущие<br />клиенты</div>
+        <section-home-affiliates :affiliates="affiliatesFilter" :search_a='search_a'></section-home-affiliates>
       </div>
-      <div @click="typeClients = 'debtors', titleInput = 'Должники'" class="indecator interact blue-color debtors" :class="[typeClients == 'debtors' ? 'active' : '']">
-        <div class="index-indecator">{{ clientsDebtors.length }}</div>
-        <div class="name-indecator">Должники</div>
-      </div>
-      <div @click="typeClients = 'total', titleInput = 'Все клиенты'" class="indecator interact blue-color total" :class="[ typeClients == 'total' ? 'active' : '' ]">
-        <div class="index-indecator">{{ clientsTotal.length }}</div>
-        <div class="name-indecator">Все клиенты</div>
-      </div>
-
-      <div class="indecator red-color">
-        <div class="index-indecator">{{ amountTotalDebtors | money }}</div>
-        <div class="name-indecator">Долг ₽</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section-home-records :records="recordsFilter" :show="panelShow" :search_r='search_r'></section-home-records>
-
-<section-home-services :services="servicesFilter" :show="panelShow" :search_s='search_s'></section-home-services>
-
-<section-home-affiliates :affiliates="affiliatesFilter" :show="panelShow" :search_a='search_a'></section-home-affiliates>
+    `
+  });
+</script>

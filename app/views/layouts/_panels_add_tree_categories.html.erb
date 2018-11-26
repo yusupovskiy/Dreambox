@@ -1,0 +1,90 @@
+<script type="text/javascript">
+  Vue.component('tree', {
+    props: {
+      arrTree: Array,
+    },
+    template: `
+      <ul class="tree-categories-add">
+        <item-tree v-for="item in arrTree" :category="item"></item-tree>
+      </ul>
+    `
+  });
+</script>
+
+<script type="text/javascript">
+  Vue.component('item-tree', {
+    template: '#item-tree',
+    props: {
+      category: Object
+    },
+    data: function () {
+      return {
+        open: false,
+      }
+    },
+    computed: {
+      isFolder: function () {
+        return this.category.children &&
+          this.category.children.length
+      },
+      categoryId() {
+        return vmPanelsAdd.categoryId;
+      },
+      budget() {
+        return vmPanelsAdd.budget;
+      },
+    },
+    methods: {
+      toggle: function () {
+        if (this.isFolder) {
+          this.open = !this.open
+        }
+      },
+      updateCategoryId(categoryId, budget) {
+        vmPanelsAdd.categoryId = categoryId;
+        vmPanelsAdd.budget = budget;
+      },
+    }
+  })
+</script>
+
+
+<script type="text/x-template" id="item-tree">
+  <li class="item-tree-category" :class="[ open ? 'open' : '' ]">
+    <div>
+
+      <div :style=" category.value.color ? 'color: ' + category.value.color : 'color: #212121;' ">
+
+        <div v-if='categoryId == category.value.id && budget == category.value.budget' @click='updateCategoryId(null, "")'>
+          <div class="item__btns">
+            <div class='btn-delete'>
+              <ion-icon name="radio-button-on"></ion-icon>
+            </div>
+          </div>
+          <div>{{ category.value.name }}</div>
+        </div>
+
+        <div v-else @click='updateCategoryId(category.value.id, category.value.budget)'>
+          <div class="item__btns">
+            <div class='btn-delete'>
+              <ion-icon name="radio-button-off"></ion-icon>
+            </div>
+          </div>
+          <div>{{ category.value.name }}</div>
+        </div>
+
+      </div>
+
+      <div class="item__btns" style='margin-left: 5px;'>
+        <div @click="toggle" v-if="isFolder" class='btn-delete btn-show'>
+          <ion-icon name="arrow-dropdown"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <ul v-show="open" v-if="isFolder" class='tree-categories-add' style='margin-left: 16px;'>
+      <item-tree v-for="category in category.children" :category="category" :key="category.value.id">
+      </item-tree>
+    </ul>
+  </li>
+</script>

@@ -34,7 +34,7 @@
         return this.works.filter(function(w) {
           if(w.people_id == vmWorkers.worker.id) {
             var nameAffiliate = '';
-            vmWorkers.affiliatesCompany.filter(function(a) {
+            vmWorkers.affiliates.filter(function(a) {
               if(a.id == w.affiliate_id)
                 nameAffiliate = a.address;
             });
@@ -45,7 +45,7 @@
       worksAffiliatesName() {
         return this.worksAffiliates.filter(function(w) {
           var nameAffiliate = '';
-          vmWorkers.affiliatesCompany.filter(function(a) {
+          vmWorkers.affiliates.filter(function(a) {
             if(a.id == w.affiliate_id)
               nameAffiliate = a.address;
           });

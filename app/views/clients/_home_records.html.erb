@@ -8,7 +8,6 @@
     },
     props: {
       records: Array,
-      show: String,
       search_r: String,
     },
     methods: {
@@ -61,7 +60,7 @@
       }
     },
     template: `
-      <section title='Все записи' v-if="show == 'home'" class='panel-content' :class="{ 'show-all': showAll}">
+      <section title='Все записи' class='panel-content' :class="{ 'show-all': showAll}">
         <div title='Поиск записей' class="panel-header">
 
           <div class="title-panel">

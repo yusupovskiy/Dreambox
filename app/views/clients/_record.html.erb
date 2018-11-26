@@ -1,4 +1,35 @@
-<div v-if="panelShow == 'record'" id="record-card">
-  <section-record-panel-info :record="record" :services-company="servicesCompany" :clients-current="clientsCurrent" :clients-debtors="clientsDebtors" :clients-total="clientsTotal" :amount-total-debtors="amountTotalDebtors"></section-record-panel-info>
-  <section-record-records :services-company="servicesCompany"></section-record-records>
-</div>
+<%= render 'clients/record_panel_info' %>
+<%= render 'clients/record_panel_info_add_service' %>
+<%= render 'clients/record_service' %>
+
+<script type="text/javascript">
+  Vue.component('record', {
+    data: function() {
+      return {}
+    },
+    props: {
+      record: Object,
+      servicesCompany: Array,
+      clientsCurrent: Array,
+      clientsDebtors: Array,
+      clientsTotal: Array,
+      amountTotalDebtors: Number,
+    },
+    template: `
+      <div id="record-card" class="record-card">
+        <section-record-panel-info 
+          :record="record" 
+          :services-company="servicesCompany" 
+          :clients-current="clientsCurrent" 
+          :clients-debtors="clientsDebtors" 
+          :clients-total="clientsTotal" 
+          :amount-total-debtors="amountTotalDebtors"
+        ></section-record-panel-info>
+
+        <section-record-records 
+          :services-company="servicesCompany"
+        ></section-record-records>
+      </div>
+    `
+  });
+</script>

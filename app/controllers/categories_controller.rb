@@ -1,12 +1,4 @@
 class CategoriesController < ApplicationController
-  def get_categories
-    categories = Category.where("subject = 'company' AND (company_id IS NULL OR company_id = #{@current_company.id})").order(:id)
-
-    respond_to do |format|
-      format.json { render json: categories }
-    end
-  end
-
   def create
     @category = Category.new(params.require(:category).permit(:name, :budget, :level, :color))
     @category.company_id = @current_company.id

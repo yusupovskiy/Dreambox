@@ -1,4 +1,90 @@
-<div class="search" :class="[showSort ? 'active' : '']">
+<script type="text/javascript">
+  Vue.component('search-list', {
+    data: function () {
+      return {
+        search: this.search,
+        showSort: false,
+      }
+    },
+    props: {
+      search: String,
+      subjectSearch: Array,
+      titleInput: String,
+      columns: Array,
+      sortKey: String,
+      reverse: Boolean,
+    },
+    methods: {
+      sortBy(sortKey) {
+        this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
+        this.sortKey = sortKey;
+      },
+    },
+    watch: {
+      search() {
+        clearTimeout(lastId);
+        vmClient.search = this.search;
+
+        lastId = setTimeout(() => {
+
+          let url = window.location.href;
+
+          if(this.search == '') {
+            let newUrl = deleteURLParameter(url, 'search');
+            history.replaceState(this.search, this.search, newUrl);
+          }
+          else {
+            let newUrl = updateURLParameter(url, 'search', this.search);
+            history.replaceState(this.search, this.search, newUrl);
+          }
+        }, 600);
+        
+        // если в указанном списке нет клиентов, проверка, есть ли в других, и переключение, где клиенты есть
+        // if(this.clientsCurrent.length > 0) {
+        //   this.typeClients = 'current';
+        // }
+        // else if(this.clientsDebtors.length > 0) {
+        //   this.typeClients = 'debtors';
+        // }
+        // else if(this.clientsTotal.length > 0) {
+        //   this.typeClients = 'total';
+        // }
+      },
+    },
+    computed: {
+    },
+    template: `
+      <div class="search" :class="[showSort ? 'active' : '']">
+        <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon" />
+
+        <input v-model="search" name="search" class="search-field" type="text" :placeholder="titleInput" id="search" autocomplete="off" />
+
+        <div style="position: absolute; z-index: 999; top: 0; right: 0px; padding-right: 5px;">
+          <div @click="showSort = !showSort" class="reset-search" :class="[showSort ? 'active' : '']">
+            <ion-icon name="options"></ion-icon>
+          </div>
+          <div v-if="search.length > 0" class="reset-search" @click="search = ''" >
+            <ion-icon name="close"></ion-icon>
+          </div>
+        </div>
+
+        <div v-if="showSort" class="search-info">
+          <div v-for="column in columns" class="item-search" :class="[ sortKey == column.column ? 'active' : '' ]">
+            <div @click="sortBy(column.column)" style="float: left;">
+              {{ column.name }}
+            </div>
+            <div v-if="sortKey == column.column" style="width: 16px; height: 16px; float: right;">
+              <ion-icon v-if="!reverse" name="arrow-dropdown"></ion-icon>
+              <ion-icon v-else-if="reverse" name="arrow-dropup"></ion-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
+  });
+</script>
+
+<!-- <div class="search" :class="[showSort ? 'active' : '']">
   <img src="/images/_ionicons_svg_ios-search.svg" class="search-icon" />
 
   <input v-model="search" name="search" class="search-field" type="text" :placeholder="titleInput" id="search" autocomplete="off" />
@@ -7,9 +93,6 @@
     <div @click="showSort = !showSort" class="reset-search" :class="[showSort ? 'active' : '']">
       <ion-icon name="options"></ion-icon>
     </div>
-<!--     <div class="reset-search" >
-      <ion-icon name="person-add"></ion-icon>
-    </div> -->
     <div v-if="search.length > 0" class="reset-search" @click="search = ''" >
       <ion-icon name="close"></ion-icon>
     </div>
@@ -26,4 +109,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->

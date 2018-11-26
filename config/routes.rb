@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   end
 
   root 'home#index'
+  
+  get 'get_data' => 'application#get_data'
 
   get 'iairgmqqimuuoeexaspwkjykrtaocalendar' => 'home#add_subscriptions_automatically'
   get 'upewuadesutgqavgimmwvdwfizyfgwperiod' => 'home#automatically_by_period'
@@ -27,7 +29,6 @@ Rails.application.routes.draw do
     end
   end
   post 'clients/:id/archive/:archive_status' => 'companies/clients#archive', as: 'clients_archive'
-  get 'get_clients' => 'clients#get_clients'
   get 'add_field' => 'clients#add_field'
   get 'get_fields_client' => 'clients#get_fields_client'
 
@@ -38,7 +39,7 @@ Rails.application.routes.draw do
       get 'end_recording'
     end
   end
-  get 'get_records' => 'records#get_records'
+
   get 'get_records_clients' => 'records_clients#get_records_clients'
 
   resources :subscriptions do
@@ -103,17 +104,13 @@ Rails.application.routes.draw do
     end
   get 'get_income' => 'transactions#get_income'
   post 'create_transaction' => 'transactions#create_transaction'
-  get 'get_client_transactions' => 'transactions#get_client_transactions'
-  get 'get_transactions' => 'transactions#get_transactions'
   delete 'cancel_transaction' => 'transactions#cancel_transaction'
   # get 'doc_pko' => 'transactions#doc_pko'
   
-  get 'get_affiliates' => 'companies/affiliates#get_affiliates'
   
   resources :company_transactions
   
   resources :categories
-  get 'get_categories' => 'categories#get_categories'
 
   get 'get_works_affiliates' => 'works_salaries#get_works_affiliates'
 

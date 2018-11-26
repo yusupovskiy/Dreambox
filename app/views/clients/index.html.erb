@@ -1,48 +1,76 @@
 <div id="clients">
-  <div class="panel-list">
-    <%= render 'clients/index_search' %>
-    <%= render 'clients/index_list' %>
+  <div class="panel-list" :class="[ clientActive() ? '' : 'active-client' ]">
+
+    <search-list :title-input='titleInput' :search='search' :subject-search='clients' :columns='columns' :sort-key='sortKey' :reverse='reverse'></search-list>
+
+    <list :load-complete='loadComplete' 
+          :client='client'
+          :clients='clients' 
+          :clients-filter='clientsFilter'
+          :record='record'
+    ></list>
   </div>
 
   <div class="panels-content hide-scrollbar">
     <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
-    <%= render 'clients/home' %>
-    <%= render 'clients/client' %>
-    <%= render 'clients/record' %>
+
+    <home v-if="panelShow == 'home'"
+          :filtration-elements='filtrationElements' 
+          :records-company='records' 
+          :services-company='servicesCompany' 
+          :affiliates-company='affiliates' 
+          :clients-current='clientsCurrent' 
+          :clients-debtors='clientsDebtors' 
+          :clients-total='clientsTotal' 
+          :type-clients='typeClients' 
+          :amount-total-debtors='amountTotalDebtors' 
+          :records-filter='recordsFilter' 
+          :search_r='search_r' 
+          :services-filter='servicesFilter' 
+          :search_s='search_s' 
+          :affiliates-filter='affiliatesFilter' 
+          :search_a='search_a'
+    ></home>
+
+    <client
+      v-if='panelShow == "client"'
+      :client="client" 
+      :records="records"
+      :categories="categories"
+      :affiliates="affiliates" 
+      :search_r='search_r' 
+    ></client>
+
+    <record 
+      v-if='panelShow == "record"'
+      :record="record" 
+      :services-company="servicesCompany" 
+      :clients-current="clientsCurrent" 
+      :clients-debtors="clientsDebtors" 
+      :clients-total="clientsTotal" 
+      :amount-total-debtors="amountTotalDebtors"
+    ></record>
+
   </div>
 </div>
 
-<%= render 'clients/client_records_vue' %>
-<%= render 'clients/home_records' %>
-<%= render 'clients/home_services' %>
-<%= render 'clients/home_affiliates' %>
-<%= render 'clients/client_panel_info' %>
-<%= render 'clients/client_panel_info_add_record' %>
-<%= render 'clients/client_panel_info_add_sub' %>
-<%= render 'clients/client_panel_info_add_transaction' %>
-<%= render 'clients/client_panel_info_add_discount' %>
-<%= render 'clients/client_panel_info_add_reminder' %>
-<%= render 'clients/client_records' %>
-<%= render 'clients/client/client_transactions' %>
-<%= render 'clients/client_discounts' %>
-<%= render 'clients/client_reminders' %>
+<%= render 'clients/index_search' %>
+<%= render 'clients/index_list' %>
+<%= render 'clients/home' %>
+<%= render 'clients/client' %>
+<%= render 'clients/record' %>
 
-<%= render 'clients/record_panel_info' %>
-<%= render 'clients/record_panel_info_add_service' %>
-<%= render 'clients/record_service' %>
+<script type="application/javascript">
+  var lastId = null;
 
-<script type="text/javascript">
-  let authToken = document.getElementById("authenticity_token").value;
-  let lastId = null;
-
-  let vmClient = new Vue ({
+  var vmClient = new Vue ({
     el: '#clients',
     data: {
       clients: [],
-      affiliatesCompany: [],
-      recordsCompany: [],
+      affiliates: [],
+      records: [],
       recordsClients: [],
-      discountCompany: [],
+      discounts: [],
       titleInput: 'Клиенты',
       loadComplete: false,
       categories: [],
@@ -51,17 +79,17 @@
 
       panelShow: 'home',
 
-      client: [],
-      clientTransactions: [],
-
-      record: [],
+      client: {},
+      record: {},
       recordsServices: [],
 
       search: '',
       search_r: '',
       search_s: '',
       search_a: '',
-      showSort: false,
+
+      sortKey: 'full_name',
+      reverse: false,
       columns: [
         {
           name: 'По ФИО',
@@ -76,14 +104,21 @@
           column: 'unpaid_debt_subs'
         },
       ],
-      sortKey: 'full_name',
-      reverse: false,
 
       filtrationElements: [],
       typeClients: '',
 
       reminders: [],
       logs: [],
+
+
+      sortKey: 'full_name',
+      reverse: false,
+      querySearch: {},
+
+      transactions: [],
+      operations: [],
+      reminders: [],
     },
     methods: {
       addElementFiltration(id, object) {
@@ -121,17 +156,7 @@
           history.replaceState('', '', newUrl);
         }
       },
-      deleteAllParamsFiltration() {
-        this.filtrationElements = [];
-        url = window.location.href;
-        newUrl = deleteURLParameter(url, 'filters');
-        history.replaceState('', '', newUrl);
-      },
 
-      sortBy(sortKey) {
-        this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
-        this.sortKey = sortKey;
-      },
       clickRecord(record) {
         this.record = record;
         this.panelShow = 'record';
@@ -152,11 +177,9 @@
         url = window.location.href;
         newUrl = updateURLParameter(url, 'client', client.id);
         history.replaceState('Клиент', 'Клиент', newUrl);
-
-        $.get('/get_client_transactions.json', 
-          { client_id: client.id },
-          clientTransactions => this.clientTransactions = clientTransactions
-        );
+      },
+      clientActive() {
+        return Object.keys(this.client).length == 0;
       },
       sendQuery(query, type, byDefault) {
         var url = window.location.href;
@@ -196,27 +219,22 @@
       var filters = urlHash.searchParams.get("filters");
 
       setTimeout(() => {
-        $.get('/get_records.json',
-          recordsCompany => {
-            this.recordsCompany = recordsCompany;
-
-            if(record_id != null) {
-              let indexCurrentRecord = recordsCompany
-                .findIndex(record => record.id == record_id);
-
-              if(indexCurrentRecord > -1) {
-                getRecord = this.recordsCompany[indexCurrentRecord];
-                this.clickRecord(getRecord);
-              }
-            }
-          }
-        );
-
-        $.get('/get_clients.json', clients => {
-          this.clients = clients;
+        $.get('/get_data.json', data => {
+          this.logs = data.logs;
+          this.operations = data.operations;
+          this.clients = data.clients;
+          this.affiliates = data.affiliates;
+          this.subscriptions = data.subscriptions;
+          this.reminders = data.reminders;
+          this.categories = data.categories;
+          this.records = data.records;
+          this.recordsServices = data.records_services;
+          this.transactions = data.transactions;
+          this.discounts = data.discounts;
+          this.recordsClients = data.records_clients;
 
           if(client_id != null) {
-            let indexCurrentClient = clients
+            let indexCurrentClient = this.clients
               .findIndex(client => client.id == client_id);
 
             if(indexCurrentClient > -1) {
@@ -224,7 +242,16 @@
               this.clickClient(getClient);
             }
           }
-          
+          else if(record_id != null) {
+            let indexCurrentRecord = this.records
+              .findIndex(record => record.id == record_id);
+
+            if(indexCurrentRecord > -1) {
+              getRecord = this.records[indexCurrentRecord];
+              this.clickRecord(getRecord);
+            }
+          }
+
           if(filters != null) {
             var filtersArray = filters.split(',');
             var newFiltersArray = ']';
@@ -244,85 +271,26 @@
 
           this.loadComplete = true;
         });
-
-        $.get('/get_affiliates.json',
-          affiliatesCompany => this.affiliatesCompany = affiliatesCompany );
-
-        $.get('/get_categories.json',
-          categories => this.categories = categories );
-
-        $.get('/records_services.json',
-          recordsServices => this.recordsServices = recordsServices);
-
-        $.get('/subscriptions.json',
-          subscriptions => this.subscriptions = subscriptions);
-
-        $.get('/get_records_clients.json',
-          recordsClients => this.recordsClients = recordsClients);
-
-        $.get('/discounts.json', 
-          discountCompany => this.discountCompany = discountCompany);
-
-        $.get('/reminders.json', 
-          reminders => this.reminders = reminders);
-
-        $.get('/logs.json', 
-          logs => this.logs = logs);
       }, 600);
     },
-    watch: {
-      search() {
-        clearTimeout(lastId);
-
-        lastId = setTimeout(() => {
-          let url = window.location.href;
-
-          if(this.search == '') {
-            let newUrl = deleteURLParameter(url, 'search');
-            history.replaceState(this.search, this.search, newUrl);
-          }
-          else {
-            let newUrl = updateURLParameter(url, 'search', this.search);
-            history.replaceState(this.search, this.search, newUrl);
-          }
-        }, 600);
-        
-        // если в указанном списке нет клиентов, проверка, есть ли в других, и переключение, где клиенты есть
-        if(this.clientsCurrent.length > 0) {
-          this.typeClients = 'current';
-        }
-        else if(this.clientsDebtors.length > 0) {
-          this.typeClients = 'debtors';
-        }
-        else if(this.clientsTotal.length > 0) {
-          this.typeClients = 'total';
-        }
-      },
-    },
     computed: {
+      subscriptionsAmount() {
+        let { subscriptions, transactions, operations } = this;
 
-      // clientsReminderDebt() {
-      //   let { reminders } = this;
+        return subscriptions.filter(s => {
+          let payment = transactions.reduce((sum, t) => {
+            return (t.operation_id === s.operation_id && t.is_active) ? sum + t.amount : sum;
+          }, 0);
+          let client_id = operations.find(o => o.id === s.operation_id).client_id;
 
-      //   return this.clientsRecords.filter(c => {
-      //     // let reminder = reminders.fil(r => r.client_id === c.id);
+          return Object.assign(s, { 
+            payment: payment, 
+            debt: s.price - payment, 
+            client_id: client_id 
+          });
+        });
+      },
 
-      //     let debtSum = reminders.reduce((sum, r) => {
-      //       if(r.client_id === c.id) {
-      //         return sum + (r.debt);
-      //       }
-      //       else {
-      //         return sum;
-      //       }
-      //     }, 0);
-
-      //     if(debtSum > 0) {
-      //       c.unpaid_debt_subs = c.unpaid_debt_subs + debtSum;
-      //     }
-
-      //     return c;
-      //   });
-      // },
       servicesCompany() {
         let {categories} = this;
         var services = [];
@@ -346,57 +314,29 @@
 
         return services;
       },
-      filtrationElementsName() {
-        let {filtrationElements, recordsCompany, servicesCompany, affiliatesCompany} = this;
-
-        return filtrationElements.filter(function (element) {
-          let indexRecord = recordsCompany
-            .findIndex(r => r.id == element.id);
-          record = recordsCompany[indexRecord];
-
-          let indexService = servicesCompany
-            .findIndex(s => s.id == element.id);
-          service = servicesCompany[indexService];
-
-          let indexAffiliate = affiliatesCompany
-            .findIndex(a => a.id == element.id);
-          affiliate = affiliatesCompany[indexAffiliate];
-
-          if (record != null && element.object == 'r') {
-            return Object.assign(element, {name: record.name});
-          }
-          else if (service != null && element.object == 's') {
-            return Object.assign(element, {name: service.name});
-          }
-          else if (affiliate != null && element.object == 'a') {
-            return Object.assign(element, {name: affiliate.address});
-          }
-        });
-
-      },
       // получение всех выделенных записей
       activeRecords() {
-        let {filtrationElementsName} = this;
+        let {filtrationElements} = this;
 
-        return filtrationElementsName.filter(function (element) {
+        return filtrationElements.filter(function (element) {
           if (element.object == 'r') {
             return element;
           }
         });
       },
       activeServices() {
-        let {filtrationElementsName} = this;
+        let {filtrationElements} = this;
 
-        return filtrationElementsName.filter(function (element) {
+        return filtrationElements.filter(function (element) {
           if (element.object == 's') {
             return element;
           }
         });
       },
       activeAffiliates() {
-        let {filtrationElementsName} = this;
+        let {filtrationElements} = this;
 
-        return filtrationElementsName.filter(function (element) {
+        return filtrationElements.filter(function (element) {
           if (element.object == 'a') {
             return element;
           }
@@ -404,7 +344,7 @@
       },
       // получение записей активных услуг и филиалов
       currentRecords() {
-        let {activeRecords, activeServices, servicesCompany, recordsCompany, activeAffiliates, recordsServices} = this;
+        let {activeRecords, activeServices, servicesCompany, records, activeAffiliates, recordsServices} = this;
         var arrayIdActiveRecord = [];
 
         recordsServices.filter(function (service_record) {
@@ -413,7 +353,7 @@
           }
         });
         // добавление записей активных филиалов
-        recordsCompany.map(function (record) {
+        records.map(function (record) {
           if(activeAffiliates.find( currentValue => currentValue.id == record.affiliate_id ) != undefined) {
 
             arrayIdActiveRecord = arrayIdActiveRecord.concat(record.id);
@@ -426,11 +366,11 @@
       },
       // добавления статуса для каждого элемента для списка записей по данным, полученым  выше
       recordsFilter() {
-        let {recordsCompany, activeRecords, currentRecords, activeServices, activeAffiliates} = this;
+        let {records, activeRecords, currentRecords, activeServices, activeAffiliates} = this;
         var have = Object.keys(activeRecords).length > 0 || Object.keys(activeServices).length > 0 || Object.keys(activeAffiliates).length > 0;
 
         if(have) {
-          return recordsCompany.filter(function (record) {
+          return records.filter(function (record) {
             if(activeRecords.find( currentValue => currentValue.id == record.id ) != undefined) {
               return Object.assign(record, {status: 'active'});
             }
@@ -443,7 +383,7 @@
           });
         }
         else {
-          return recordsCompany.filter(function (record) {
+          return records.filter(function (record) {
             return Object.assign(record, {status: 'current'});
           });
         }
@@ -512,11 +452,11 @@
         }
       },
       affiliatesFilter() {
-        let {affiliatesCompany, activeAffiliates, currentAffiliates, activeRecords} = this;
+        let {affiliates, activeAffiliates, currentAffiliates, activeRecords} = this;
         var sortAffiliates = Object.keys(activeAffiliates).length > 0 || Object.keys(activeRecords).length > 0;
 
         if(sortAffiliates) {
-          return affiliatesCompany.filter(function (affiliate) {
+          return affiliates.filter(function (affiliate) {
             if(activeAffiliates.find( currentValue => currentValue.id == affiliate.id ) != undefined) {
               return Object.assign(affiliate, {status: 'active'});
             }
@@ -529,20 +469,20 @@
           });
         }
         else {
-          return affiliatesCompany.filter(function (affiliate) {
+          return affiliates.filter(function (affiliate) {
             return Object.assign(affiliate, {status: 'current'});
           });
         }
       },
 
-      clientSubscriptions: function () {
-        let {subscriptions, client} = this;
-        return subscriptions.filter(function (subs) {
-          if (subs.client_id == client.id && subs.is_active == true) {
-            return subs;
-          }
-        });
-      },
+      // clientSubscriptions() {
+      //   let {subscriptions, client} = this;
+      //   return subscriptions.filter(function (subs) {
+      //     if (subs.client_id == client.id && subs.is_active == true) {
+      //       return subs;
+      //     }
+      //   });
+      // },
 
       clientsRecords() {
         let {clients, recordsClients} = this;
@@ -576,9 +516,26 @@
         });
       },
 
+      clientDebt() {
+        let { clientsRecords, subscriptionsAmount, reminders } = this;
+
+        return clientsRecords.filter(c => {
+          let debt_subscriptions = subscriptionsAmount.reduce((sum, s) => {
+            return (c.id === s.client_id && s.is_active) ? sum + s.debt : sum;
+          }, 0);
+          let debt_reminders = reminders.reduce((sum, r) => {
+            return (c.id === r.client_id && !r.completed) ? sum + r.debt : sum;
+          }, 0);
+
+          return Object.assign(c, { 
+            full_name: c.first_name + ' ' + c.last_name + ' ' + c.patronymic,
+            debt: debt_subscriptions + debt_reminders 
+          });
+        });
+      },
       clientsSorted() {
         const k = this.sortKey;
-        return this.clientsRecords.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
+        return this.clientDebt.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);
       },
       clientsSearch() {
         const s = validSpaces(this.search.toLowerCase());
@@ -609,16 +566,16 @@
             return client;
         });
       },
-      clientsDebtors() {
+      clientsCurrent() {
         return this.clientsFiltRecord.filter(function (client) {
-          if (client.unpaid_debt_subs > 0) {
+          if(client.subscribed_records_id.length > 0) {
             return client;
           }
         });
       },
-      clientsCurrent() {
+      clientsDebtors() {
         return this.clientsFiltRecord.filter(function (client) {
-          if(client.subscribed_records_id.length > 0) {
+          if (client.debt > 0) {
             return client;
           }
         });
@@ -639,12 +596,9 @@
           return this.clientsTotal;
         }
       },
-      currentRecordsClient() {
-
-      },
       amountTotalDebtors() {
         return this.clientsFilter.reduce(function(sum, client) {
-          return sum + (client.unpaid_debt_subs);
+          return sum + (client.debt);
         }, 0);
       }
     }

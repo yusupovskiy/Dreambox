@@ -1,42 +1,72 @@
-+<div v-if="!loadComplete" class="loading"><img src="images/loading.gif" /></div>
-<div v-else-if="loadComplete && clients.length > 0" id='main-list' class="container-list cool-scrollbar">
-  <ul v-if="clientsFilter.length > 0" class="list">
-    <li 
-      v-for="clientItem in clientsFilter" 
-      @click="clickClient(clientItem)" 
-      class="item-list" :key="clientItem.id" 
-      :class="[ 'client-' + clientItem.id, client.id != clientItem.id ? '' : 'active' ]" >
+<script type="text/javascript">
+  Vue.component('list', {
+    data: function() {
+      return {}
+    },
+    props: {
+      loadComplete: Boolean,
+      clients: Array,
+      clientsFilter: Array,
+      client: Object,
+      record: Object,
+    },
+    methods: {
+      clickClient(client) {
+        vmClient.client = client;
+        vmClient.panelShow = 'client';
 
-      <img class="avatar-listt" src="/resources/no-image-available.png">
-      <div class="left-content">
-        <div class="center-left-content">
-          <div class="name-content">{{ clientItem.full_name }}</div>
-          <span class="desc-content">
-            <span v-if="record.length == 0">- Английский язык</span>
-            <span v-else>нет абонемента</span>
-          </span>
+        url = window.location.href;
+        newUrl = updateURLParameter(url, 'client', client.id);
+        history.replaceState('Клиент', 'Клиент', newUrl);
+      },
+    },
+    template: `
+      <div>
+        <div v-if="!loadComplete" class="loading"><img src="images/loading.gif" /></div>
+        <div v-else-if="loadComplete && clients.length > 0" id='main-list' class="container-list cool-scrollbar">
+          <ul v-if="clientsFilter.length > 0" class="list">
+            <li 
+              v-for="clientItem in clientsFilter" 
+              @click="clickClient(clientItem)" 
+              class="item-list" :key="clientItem.id" 
+              :class="[ 'client-' + clientItem.id, client.id != clientItem.id ? '' : 'active' ]" >
+
+              <img class="avatar-listt" src="/resources/no-image-available.png">
+              <div class="left-content">
+                <div class="center-left-content">
+                  <div class="name-content">{{ clientItem.full_name }}</div>
+                  <span class="desc-content">
+                    <span v-if="record.length == 0">- Английский язык</span>
+                    <span v-else>нет абонемента</span>
+                  </span>
+                </div>
+              </div>
+              
+              <div class="right-content">
+                <span v-if='clientItem.debt > 0' class="debt red-color">
+                  - {{ clientItem.debt | money }} ₽
+                </span>
+              </div>
+            </li>
+          </ul>
+          <div v-else class="loading">
+            <div>
+              <img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
+              <div>Ничего не найдено</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div v-else-if="loadComplete && (clients.length == 0)" class="loading" style="z-index: 10;">
+          <div style="top: 85px;">
+            <div>В компании пока нет клиентов</div>
+            <a href="/clients/new" style="    color: #3880ff;
+            margin: 20px auto;
+            float: unset;    display: table;" class="btn show-panel"><div>+Добавить клиента</div></a>
+          </div>
         </div>
       </div>
-      <div class="right-content">
-        <span v-if='clientItem.unpaid_debt_subs > 0' class="debt red-color">
-          - {{ clientItem.unpaid_debt_subs | money }} ₽
-        </span>
-      </div>
-    </li>
-  </ul>
-  <div v-else class="loading">
-    <div>
-      <img src="images/crying.png" style="width: 40px; margin: auto; margin-bottom: 10px;" />
-      <div>Ничего не найдено</div>
-    </div>
-  </div>
-
-</div>
-<div v-else-if="loadComplete && (clients.length == 0)" class="loading" style="z-index: 10;">
-  <div style="top: 85px;">
-    <div>В компании пока нет клиентов</div>
-    <a href="/clients/new" style="    color: #3880ff;
-    margin: 20px auto;
-    float: unset;    display: table;" class="btn show-panel"><div>+Добавить клиента</div></a>
-  </div>
-</div>
+    `
+  });
+</script>

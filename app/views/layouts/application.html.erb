@@ -13,12 +13,6 @@
     <%end%>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <script type="text/javascript" charset="utf-8">
-
-      Vue.filter('money', function(value) {
-        if (!value) return 0;
-        return value.toLocaleString();
-      });
-
       Vue.config.productionTip = Vue.config.devtools = false;
       const Routes = {
           getAllClients:    companyId => `/companies/${companyId}/clients.json`,
@@ -38,6 +32,14 @@
   </head>
 
   <body data-params="<%=params.to_json%>" class="home">
+    <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
+    <script type="text/javascript">
+      var authToken = document.getElementById("authenticity_token").value;
+      Vue.filter('money', function(value) {
+        if (!value) return 0;
+        return value.toLocaleString();
+      });
+    </script>
 
     <header>
       <div class="panel-logo">
@@ -58,14 +60,12 @@
       </div>
 
       <%= render 'layouts/panel_user' %>
-
     </header>
 
-    <nav class="menu">
-      <%= render 'layouts/menu' %>
-    </nav>
-
     <%= render 'layouts/panels_add' %>
+    <%= render 'layouts/menu' %>
+
+
 
     <content>
       <%= yield %>

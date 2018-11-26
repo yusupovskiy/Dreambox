@@ -1,0 +1,97 @@
+<%= render 'layouts/panels_add_tree_categories' %>
+
+<script type="text/javascript">
+  Vue.component('add-category', {
+    data: function () {
+      return {
+        nameCategory: '',
+        newCategory: [],
+        loadingCategory: false,
+        colors: [],
+        color: null,
+      }
+    },
+    props: {
+      placeholder: String,
+      panelAddCategory: String,
+
+      arrTree: Array,
+    },
+    methods: {
+      createCategory() {
+        let {nameCategory, color} = this;
+        let {categories} = vmPanelsAdd;
+        
+        let {categoryId, budget} = vmPanelsAdd;
+        var complited = false;
+
+        if(!this.loadingCategory) {
+          this.loadingCategory = true;
+
+          setTimeout(() => {
+            $.ajax('/categories.json', {
+              method: 'POST',
+              data: {
+                authenticity_token: authToken,
+                category: {
+                  name: nameCategory,
+                  budget: budget,
+                  level: categoryId,
+                  color: color,
+                }
+              },
+              success: messege => {
+                complited = messege.complited;
+                newCategory = messege.result;
+                vmNotifications.notifications.unshift(messege);
+              },
+              error: e => console.warn('error', e)
+            }).done(e => {
+              if(complited) {
+                this.nameCategory = '';
+                this.color = null;
+
+                if(vmPanelsAdd.panelAddCategory == "categories") {
+                  vmPanelsAdd.budget = '';
+                  vmPanelsAdd.categoryId = null;                  
+                }
+
+                categories.unshift(newCategory);
+
+                if(typeof vmClient !== 'undefined') {
+                  vmClient.categories.unshift(newCategory);                  
+                }
+                else if(typeof vmTransaction !== 'undefined') {
+                  vmTransaction.categories.unshift(newCategory);                  
+                }
+                else if(typeof vmWorkers !== 'undefined') {
+                  vmWorkers.categories.unshift(newCategory);                  
+                }
+              }
+              this.loadingCategory = false;
+            });
+          }, 600);
+        }
+      },
+    },
+    created() {
+      this.colors = ['#ad2257', '#f4511f', '#288043', '#f6bf26', '#3f51b5', '#3cb678', '#a79b8e', '#616161', '#e67b72']
+    },
+    template: `
+      <div class="pnl-add1">
+        <input v-model='nameCategory' type="text" class="whsOnd zHQkBf" autocomplete="off" tabindex="0" :placeholder="placeholder" autofocus="" data-initial-value="" badinput="false">
+
+        <tree :arr-tree="arrTree"></tree>
+
+        <div class='color-panel'>
+          <div :class='[ color == colorItem ? "active " : "" ]' @click='color = colorItem' v-for='colorItem in colors' :style="'background-color: ' + colorItem" class='item-color-panel'></div>
+        </div>
+
+        <div class='btns-pnls-add'>
+          <button @click='createCategory()' class='btn-pnls-add'>Добавить</button>
+          <button @click="$emit('cancel-panel')" class='btn-pnls-cancel'>Отмена</button>
+        </div>
+      </div>
+    `
+  });
+</script>

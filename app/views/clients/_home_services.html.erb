@@ -8,7 +8,6 @@
     },
     props: {
       services: Array,
-      show: String,
       search_s: String,
     },
     methods: {
@@ -56,7 +55,7 @@
       }
     },
     template: `
-      <section v-if="show == 'home'" class='panel-content' :class="{ 'show-all': showAll}">
+      <section class='panel-content' :class="{ 'show-all': showAll}">
         <div class="panel-header">
 
           <div class="title-panel">

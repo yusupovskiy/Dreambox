@@ -4,7 +4,6 @@
     <%= render 'workers/index_list' %>
   </div>
   <div class="panels-content hide-scrollbar">
-    <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
     <%= render 'workers/home' %>
     <%= render 'workers/worker' %>
   </div>
@@ -17,8 +16,6 @@
 <%= render 'workers/worker_transactions' %>
 
 <script type="text/javascript">
-  var authToken = document.getElementById("authenticity_token").value;
-
   var vmWorkers = new Vue ({
     el: '#workers',
     data: {
@@ -29,7 +26,7 @@
       worksCompany: [],
       panelShow: 'home',
       transactions: [],
-      affiliatesCompany: [],
+      affiliates: [],
       worksAffiliates: [],
 
       search: '',
@@ -46,6 +43,7 @@
       ],
       sortKey: 'full_name',
       reverse: false,
+      categories: [],
     },
     methods: {
       clickWorker(worker) {
@@ -82,17 +80,16 @@
           this.loadComplete = true;
         });
 
-        $.get('/get_affiliates.json',
-          affiliatesCompany => this.affiliatesCompany = affiliatesCompany );
+        $.get('/get_data.json', data => {
+          this.transactions = data.transactions;
+          this.affiliates = data.affiliates;
+          this.categories = data.categories;
+
+          this.loadComplete = true;
+        });
 
         $.get('/get_works.json',
           worksCompany => this.worksCompany = worksCompany );
-
-        $.get('/get_transactions.json',
-          transactions => this.transactions = transactions);
-
-        $.get('/get_transactions.json',
-          transactions => this.transactions = transactions);
         
         $.get('/get_works_affiliates.json',
           worksAffiliates => this.worksAffiliates = worksAffiliates);

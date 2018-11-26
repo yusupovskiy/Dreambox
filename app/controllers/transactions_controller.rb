@@ -11,45 +11,45 @@ class TransactionsController < ApplicationController
     render :template => 'transactions/doc_pko',layout: false    
   end
 
-  def get_client_transactions
-    client_id = params[:client_id]
+  # def get_client_transactions
+  #   client_id = params[:client_id]
 
-    if client_id.present?
-      affiliates_id = @current_affiliates.ids.join(", ")
+  #   if client_id.present?
+  #     affiliates_id = @current_affiliates.ids.join(", ")
 
-      client_transactions = CompanyTransaction.find_by_sql("
-        SELECT company_transactions.*, transactions.*, categories.name AS category_name, categories.budget
-        FROM company_transactions 
-          INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
-          INNER JOIN categories ON company_transactions.category_id = categories.id
-          INNER JOIN operations ON company_transactions.operation_id = operations.id
-        WHERE transactions.is_active = true AND operations.client_id = #{client_id}
-               AND affiliate_id IN (#{affiliates_id})
-        ORDER BY transactions.date DESC
-      ")
+  #     client_transactions = CompanyTransaction.find_by_sql("
+  #       SELECT company_transactions.*, transactions.*, categories.name AS category_name, categories.budget
+  #       FROM company_transactions 
+  #         INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
+  #         INNER JOIN categories ON company_transactions.category_id = categories.id
+  #         INNER JOIN operations ON company_transactions.operation_id = operations.id
+  #       WHERE transactions.is_active = true AND operations.client_id = #{client_id}
+  #              AND affiliate_id IN (#{affiliates_id})
+  #       ORDER BY transactions.date DESC
+  #     ")
 
-      respond_to do |format|
-        format.json { render json: client_transactions, status: :ok }
-      end
-    end
-  end
-  def get_transactions
-    affiliates_id = @current_affiliates.ids.join(", ")
+  #     respond_to do |format|
+  #       format.json { render json: client_transactions, status: :ok }
+  #     end
+  #   end
+  # end
+  # def get_transactions
+  #   affiliates_id = @current_affiliates.ids.join(", ")
 
-    transactions = CompanyTransaction.find_by_sql("
-      SELECT company_transactions.*, transactions.*, categories.name AS category_name, categories.budget
-      FROM company_transactions 
-        INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
-        INNER JOIN categories ON company_transactions.category_id = categories.id
-        INNER JOIN operations ON company_transactions.operation_id = operations.id
-      WHERE affiliate_id IN (#{affiliates_id})
-      ORDER BY transactions.date DESC
-    ")
+  #   transactions = CompanyTransaction.find_by_sql("
+  #     SELECT company_transactions.*, transactions.*, categories.name AS category_name, categories.budget
+  #     FROM company_transactions 
+  #       INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
+  #       INNER JOIN categories ON company_transactions.category_id = categories.id
+  #       INNER JOIN operations ON company_transactions.operation_id = operations.id
+  #     WHERE affiliate_id IN (#{affiliates_id})
+  #     ORDER BY transactions.date DESC
+  #   ")
 
-    respond_to do |format|
-      format.json { render json: transactions, status: :ok }
-    end
-  end
+  #   respond_to do |format|
+  #     format.json { render json: transactions, status: :ok }
+  #   end
+  # end
 
   def get_income
     affiliates_id = @current_affiliates.ids.join(", ")

@@ -213,9 +213,17 @@
     },
     computed: {
       clientSubscriptions() {
+        let { subscriptionsAmount, client } = vmClient;
+
+        let subscriptions = subscriptionsAmount.filter(function (s) {
+          if (s.is_active && client.id === s.client_id) {
+            return s;
+          }
+        });
+
         const k = 'start_at';
         const reverse = true;
-        return vmClient.clientSubscriptions.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
+        return subscriptions.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
       },
       recordsClient() {
         let {recordsClients} = vmClient;
@@ -305,7 +313,7 @@
               </div>
 
               <div class="subscriptions">
-                <div v-if="record.id == subs.record_id" v-for="(subs, index) in clientSubscriptions" class="subscription" :class="[ 'subscription-' + subs.id, subClientId == subs.id ? 'active' : '' ]">
+                <div v-if="record.record_client_id == subs.record_client_id" v-for="(subs, index) in clientSubscriptions" class="subscription" :class="[ 'subscription-' + subs.id, subClientId == subs.id ? 'active' : '' ]">
                   <div class="data-subscriptions" :class="[ currentSubsctiption(subs.start_at, subs.finish_at) ]">
 
                     <div @click="clickSubActive(subs.id)">
@@ -314,7 +322,7 @@
                     </div>
 
                     <div class="sub-desc">
-                      <div :class="[ subs.total_amount == subs.price ? 'green-color' : 'red-color']">{{ subs.total_amount | money }} из {{ subs.price | money }} ₽</div>
+                      <div :class="[ subs.payment >= subs.price ? 'green-color' : 'red-color']">{{ subs.payment | money }} из {{ subs.price | money }} ₽</div>
 
                       <div v-if="showNoteCancel">
                         <textarea v-model="note" placeholder="Комментарий к отмене" class="textarea"></textarea>
@@ -419,6 +427,8 @@
         <div v-else-if="loadingPanel" class="list-panel">
           <img class="loading-panel" src="images/loading.gif" />
         </div>
+        
+        <button style="margin-top: 0px; padding-bottom: 10px;" class="btn-add btn">+ Добавить</button>
       </section>
     `
   });

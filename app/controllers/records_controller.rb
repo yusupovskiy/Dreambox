@@ -3,28 +3,28 @@ class RecordsController < ApplicationController
   before_action :ensure_user_has_company
   before_action :set_record, only: [:show, :edit, :update]
 
-  def get_records
-    records_id = @current_record.ids.join(", ")
+  # def get_records
+  #   records_id = @current_record.ids.join(", ")
 
-    if records_id.empty?
-      records = []
-    else
-      records = Record.find_by_sql("
-        SELECT  r.*, coalesce(SUM(rs.money_for_abon),0) AS total_price_abon
-        FROM records AS r
-          LEFT JOIN records_services AS rs
-            ON r.id = rs.record_id
-        WHERE r.id IN (#{records_id})
-        GROUP BY r.id
-        ORDER BY r.name
-      ")
-        # ORDER BY r.finished_at DESC
-    end
+  #   if records_id.empty?
+  #     records = []
+  #   else
+  #     records = Record.find_by_sql("
+  #       SELECT  r.*, coalesce(SUM(rs.money_for_abon),0) AS total_price_abon
+  #       FROM records AS r
+  #         LEFT JOIN records_services AS rs
+  #           ON r.id = rs.record_id
+  #       WHERE r.id IN (#{records_id})
+  #       GROUP BY r.id
+  #       ORDER BY r.name
+  #     ")
+  #       # ORDER BY r.finished_at DESC
+  #   end
 
-    respond_to do |format|
-      format.json { render json: records, status: :ok }
-    end
-  end
+  #   respond_to do |format|
+  #     format.json { render json: records, status: :ok }
+  #   end
+  # end
   
   def index
     ids = @current_company.affiliates.select(:id)

@@ -1,0 +1,133 @@
+<script type="text/javascript">
+  Vue.component('section-home-indecators', {
+    data: function () {
+      return {
+      }
+    },
+    props: {
+      filtrationElements: Array,
+      recordsCompany: Array,
+      servicesCompany: Array,
+      affiliatesCompany: Array,
+      clientsCurrent: Array,
+      clientsDebtors: Array,
+      clientsTotal: Array,
+      typeClients: String,
+      amountTotalDebtors: Number,
+    },
+    methods: {
+      clickTypeClients(typeClients, titleType) {
+        vmClient.typeClients = typeClients;
+        vmClient.titleInput = titleType;
+      },
+      deleteAllParamsFiltration() {
+        vmClient.filtrationElements = [];
+        url = window.location.href;
+        newUrl = deleteURLParameter(url, 'filters');
+        history.replaceState('', '', newUrl);
+      },
+      deleteParamsFiltration(index, id, object) {
+        let {filtrationElements} = this;
+
+        let urlHash = new URL(window.location.href);
+        let filters_params = urlHash.searchParams.get("filters");
+        filters_params = filters_params.replace(',' + object + '-' + id, '');
+        filters_params = filters_params.replace(object + '-' + id + ',', '');
+        filters_params = filters_params.replace(object + '-' + id, '');
+
+        filtrationElements.splice(index, 1);
+
+        if(filters_params.length > 0) {
+          this.sendQuery(filters_params, 'filters', '');
+        }
+        else {
+          url = window.location.href;
+          newUrl = deleteURLParameter(url, 'filters');
+          history.replaceState('', '', newUrl);
+        }
+      },
+    },
+    watch: {
+    },
+    computed: {
+      filtrationElementsName() {
+        let {filtrationElements, recordsCompany, servicesCompany, affiliatesCompany} = this;
+
+        return filtrationElements.filter(function (element) {
+          let indexRecord = recordsCompany
+            .findIndex(r => r.id == element.id);
+          record = recordsCompany[indexRecord];
+
+          let indexService = servicesCompany
+            .findIndex(s => s.id == element.id);
+          service = servicesCompany[indexService];
+
+          let indexAffiliate = affiliatesCompany
+            .findIndex(a => a.id == element.id);
+          affiliate = affiliatesCompany[indexAffiliate];
+
+          if (record != null && element.object == 'r') {
+            return Object.assign(element, {name: record.name});
+          }
+          else if (service != null && element.object == 's') {
+            return Object.assign(element, {name: service.name});
+          }
+          else if (affiliate != null && element.object == 'a') {
+            return Object.assign(element, {name: affiliate.address});
+          }
+        });
+
+      },
+    },
+    template: `
+
+      <section class="panel-content">
+        <div title="Можно отфильтровать списки по записям, услугам и филиалам. Для этого нужно отметить галочками нужные варианты в списках ниже" class="params-filters">
+            <div v-if="filtrationElementsName.length > 0" class="list-params">
+              <div v-for="(element, index) in filtrationElementsName" @click="deleteParamsFiltration(index, element.id, element.object)" :key="element.id" class="params-filter">
+
+                <div class="params-filter__img">
+                  <div>
+                    <img v-if="element.object == 'r'" src="/images/group4.png" style="width: 100%;" />
+                    <img v-else-if="element.object == 's'" src="/images/service.png" style="width: 100%;" />
+                    <img v-else-if="element.object == 'a'" src="/images/office4.png" style="width: 100%;" />
+                  </div>
+                  <ion-icon name="close-circle"></ion-icon>
+                </div>
+                <span>{{ element.name }}</span>
+              </div>
+            </div>
+
+            <div v-else class="empty-list">Без фильтрации</div>
+
+            <div v-if="filtrationElementsName.length > 0" @click="deleteAllParamsFiltration()" class="reset-search" style="margin: 2.5px 5px 2.5px 0;">
+              <ion-icon name="close"></ion-icon>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+          <div class="indecators" style='display: flex;'>
+            <div @click="clickTypeClients('current', 'Клиенты')" class="indecator interact blue-color current" :class="[typeClients == 'current' ? 'active' : '']">
+              <div class="index-indecator">{{ clientsCurrent.length }}</div>
+              <div class="name-indecator">Текущие<br />клиенты</div>
+            </div>
+            <div @click="clickTypeClients('debtors', 'Должники')" class="indecator interact blue-color debtors" :class="[typeClients == 'debtors' ? 'active' : '']">
+              <div class="index-indecator">{{ clientsDebtors.length }}</div>
+              <div class="name-indecator">Должники</div>
+            </div>
+            <div @click="clickTypeClients('total', 'Все клиенты')" class="indecator interact blue-color total" :class="[ typeClients == 'total' ? 'active' : '' ]">
+              <div class="index-indecator">{{ clientsTotal.length }}</div>
+              <div class="name-indecator">Все клиенты</div>
+            </div>
+
+            <div class="indecator red-color">
+              <div class="index-indecator">{{ amountTotalDebtors | money }}</div>
+              <div class="name-indecator">Долг ₽</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    `
+  });
+</script>

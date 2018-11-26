@@ -29,7 +29,7 @@
         url = window.location.href;
         newUrl = deleteURLParameter(url, 'record');
         history.replaceState('', 'Home', newUrl);
-        vmClient.record = [];
+        vmClient.record = {};
         vmClient.panelShow = 'home';
         vmClient.titleInput = 'Клиенты';
 

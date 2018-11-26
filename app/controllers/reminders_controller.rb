@@ -1,13 +1,4 @@
 class RemindersController < ApplicationController
-
-  def index
-    reminders = Reminder.where affiliate_id: @current_affiliates
-
-    respond_to do |format|
-      format.json { render json: reminders }
-    end
-  end
-
   def create
     prms = params.require(:reminder).permit(:note, :date, :debt, :client_id, :affiliate_id)
     reminder = Reminder.new prms

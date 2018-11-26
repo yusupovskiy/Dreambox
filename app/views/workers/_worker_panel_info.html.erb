@@ -12,6 +12,8 @@
     },
     props: {
       worker: Object,
+      affiliates: Array,
+      categories: Array,
     },
     methods: {
       closeCart() {
@@ -180,9 +182,20 @@
             </div>
           </section>
 
-          <section-work-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :show="openPanelAdd" :worker="worker"></section-work-add>
+          <section-work-add 
+            v-on:open-pnl-add="openPanelAdd = 'addListForClient'" 
+            :show="openPanelAdd" 
+            :worker="worker"
+            :affiliates="affiliates"
+          ></section-work-add>
 
-          <section-transaction-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :show="openPanelAdd" :worker="worker"></section-transaction-add>
+          <section-transaction-add 
+            v-on:open-pnl-add="openPanelAdd = 'addListForClient'" 
+            :show="openPanelAdd"
+            :worker="worker"
+            :affiliates="affiliates"
+            :categories="categories"
+          ></section-transaction-add>
 
         </div>
       </section>

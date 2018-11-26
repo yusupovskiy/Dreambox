@@ -9,10 +9,8 @@
         addTransForSubs: '',
         transactionCreateLoading: false,
         category_id: '',
-        categories: [],
         dateTransaction: '',
 
-        affiliates: [],
         affiliate_id: '',
 
         newTransactionClient: []
@@ -22,10 +20,12 @@
       records: Array,
       show: String,
       client: Object,
+      categories: Array,
+      affiliates: Array,
     },
     methods: {
       createTransactionClient() {
-        let {client, clientTransactions, clientSubscriptions} = vmClient;
+        let {client, clientSubscriptions} = vmClient;
         let {amount, note, addTransForSubs, category_id, dateTransaction, affiliate_id, newTransactionClient} = this;
         var complited = false;
 
@@ -61,21 +61,7 @@
               error: e => console.warn('error', e)
             }).done(e => {
               if(complited) {
-
-                clientTransactions.unshift(newTransactionClient);
-
-                if(addTransForSubs != client.operation_id && 
-                  addTransForSubs != 'expense' &&
-                  addTransForSubs != 'income') {
-
-                  let indexSub = clientSubscriptions
-                    .findIndex(s => s.operation_id == addTransForSubs);
-                  total_amount = parseInt(clientSubscriptions[indexSub].total_amount, 10);
-                  clientSubscriptions[indexSub].total_amount = total_amount + parseInt(amount, 10);
-
-                  client.unpaid_debt_subs = client.unpaid_debt_subs - parseInt(amount, 10);
-                }
-                client.total_amount = client.total_amount + parseInt(amount, 10);
+                vmClient.transactions.unshift(newTransactionClient);
 
                 this.addTransForSubs = '';
               }
@@ -94,24 +80,25 @@
         }
       },
       "addTransForSubs" : function() {
-        let {client, clientSubscriptions} = vmClient;
-        let {addTransForSubs} = this;
+        let {client} = vmClient;
+        let {addTransForSubs, unpaidSubscriptionsClient} = this;
 
         var currentDate = new Date();
         this.dateTransaction = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());
 
-        let indexSub = clientSubscriptions
+        let indexSub = unpaidSubscriptionsClient
           .findIndex(s => s.operation_id == addTransForSubs);
 
         if(indexSub >= 0) {
-          price = clientSubscriptions[indexSub].price;
-          total_amount = clientSubscriptions[indexSub].total_amount;
-          start_at = clientSubscriptions[indexSub].start_at;
-          finish_at = clientSubscriptions[indexSub].finish_at;
-          name = clientSubscriptions[indexSub].name;
+          let subscription = unpaidSubscriptionsClient[indexSub];
 
-          this.amount = price - total_amount;
-          this.fix_amount = price - total_amount;
+          let debt = subscription.debt;
+          let start_at = subscription.start_at;
+          let finish_at = subscription.finish_at;
+          let name = subscription.name;
+
+          this.amount = debt;
+          this.fix_amount = debt;
           this.note = 'За абонемент от ' + totalDate(start_at, true, true, true) + ' до ' + totalDate(finish_at, true, true, true) + ', на посещение "' + name + '"';
           this.category_id = '';
         }
@@ -138,21 +125,8 @@
         }
       },
       "show" : function() {
-        $.get(
-          '/get_categories.json',
-          categories => {
-            this.categories = categories;
-          }
-        );
-        $.get(
-          '/get_affiliates.json',
-          affiliates => {
-            this.affiliates = affiliates;
-
-            if(affiliates.length > 0)
-              this.affiliate_id = affiliates[0].id;
-          }
-        );
+        if(this.affiliates.length > 0)
+          this.affiliate_id = this.affiliates[0].id;
       },
       unpaidSubscriptionsClient() {
         this.addTransForSubs = '';
@@ -173,7 +147,7 @@
         let {servicesCompany, recordsServices, recordsClients, subscriptions} = vmClient;
         let {addTransForSubs} = this;
 
-        let subscription = subscriptions.filter(s => s.operation_id == addTransForSubs)[0]
+        let subscription = subscriptions.find(s => s.operation_id == addTransForSubs)
 
         let record = recordsClients.filter(r => r.record_client_id == subscription.record_client_id);
 
@@ -192,11 +166,11 @@
         return recordServices;
       },
       unpaidSubscriptionsClient: function () {
-        let {clientSubscriptions} = vmClient;
+        let { subscriptionsAmount, client } = vmClient;
 
-        return clientSubscriptions.filter(function (subs) {
-          if ((subs.price - subs.total_amount) > 0) {
-            return subs;
+        return subscriptionsAmount.filter(function (s) {
+          if (s.is_active && client.id === s.client_id && s.debt > 0) {
+            return s;
           }
         });
       }
@@ -217,7 +191,7 @@
               <select v-model="addTransForSubs">
                 <option disabled value="">Выберите вариант транзакции</option>
                 <option v-for="unpaidSubscription in unpaidSubscriptionsClient" :value="unpaidSubscription.operation_id">
-                  {{ unpaidSubscription.total_amount | money }} из 
+                  {{ unpaidSubscription.payment | money }} из 
                   {{ unpaidSubscription.price | money }} ₽ | {{ unpaidSubscription.name }} от 
                   {{ unpaidSubscription.start_at }} до {{ unpaidSubscription.finish_at }}
                 </option>

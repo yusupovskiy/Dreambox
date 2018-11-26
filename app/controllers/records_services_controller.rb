@@ -3,18 +3,6 @@ class RecordsServicesController < ApplicationController
   before_action :record_service_params, only: :create
   layout false
 
-  def index
-    # if @current_record.exists? params[:record_id]
-    #   records_services = @current_record.find(params[:record_id]).record_service.eager_load(:service).order('services.created_at')
-
-      records_services = RecordService.where(record_id: @current_record).order('created_at DESC')
-
-      respond_to do |format|
-        format.json { render json: records_services }
-      end
-    # end
-  end
-
   def create
     pms = record_service_params
     record = Record.eager_load(:affiliate).find pms[:record_id]

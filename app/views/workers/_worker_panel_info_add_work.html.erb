@@ -6,8 +6,6 @@
         amount: null,
         addWork: '',
         loadingCreateWork: false,
-
-        affiliates: [],
         affiliate_id: '',
 
         newWork: [],
@@ -18,6 +16,7 @@
     props: {
       worker: Object,
       show: String,
+      affiliates: Array,
     },
     methods: {
       createWork() {
@@ -129,16 +128,8 @@
         this.amount = null;
       },
       show() {
-        $.get('/get_affiliates.json',
-          affiliates => this.affiliates = affiliates );
-        $.get('/get_affiliates.json',
-          affiliates => {
-            this.affiliates = affiliates;
-
-            if(affiliates.length > 0)
-              this.affiliate_id = affiliates[0].id;
-          }
-        );
+        if(vmWorkers.affiliates.length > 0)
+          this.affiliate_id = vmWorkers.affiliates[0].id;
       },
       worker() {
         this.addWork = '';
@@ -161,7 +152,7 @@
         return vmWorkers.worksCompany.filter(function(w) {
           if(w.people_id == vmWorkers.worker.id) {
             var nameAffiliate = '';
-            vmWorkers.affiliatesCompany.filter(function(a) {
+            vmWorkers.affiliates.filter(function(a) {
               if(a.id == w.affiliate_id)
                 nameAffiliate = a.address;
             });

@@ -119,6 +119,22 @@ header {
     transition: .3s;
     padding: 12px 25px;
 }
+.panel-list.active-client .item-list {
+    opacity: 0.3;
+}
+.panel-list.active-client:hover .item-list {
+    opacity: 1;
+}
+.panel-list.active-client .item-list.active {
+    opacity: 1!important;
+}
+.item-list.active {
+    background: #f5f5f5;
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+    cursor: default;
+}
 .avatar-listt {
     width: 40px;
     height: 40px;
@@ -972,13 +988,6 @@ img.loading-panel {
     float: left;
     margin: 5px 10px;
 }
-.item-list.active {
-    background: #f5f5f5;
-    -webkit-transform: translateX(0);
-    -ms-transform: translateX(0);
-    transform: translateX(0);
-    cursor: default;
-}
 .status-complited {
     font-size: 12px;
     cursor: default;
@@ -1591,4 +1600,169 @@ header:hover {
 }
 .log {
     margin: 10px 0;
+}
+
+.add-input {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.item-add-input {
+    display: flex;
+    margin-top: 10px;
+}
+.left-item-add-input {
+    width: 30%;
+    font-size: 14px;
+    color: #8c8b88;
+    padding: 6px 0;
+    user-select: none;
+}
+
+
+.right-item-add-input {
+    width: 70%;    
+    position: relative;
+}
+.input-right-item-add-input {
+    width: calc(100% - 28px)!important;
+    min-height: 30px;
+    margin-left: 12px;
+    padding: 6px 8px;
+    border: 0;
+    outline: none;
+    font-size: 14px;
+    border-radius: 3px;
+    cursor: text;
+}
+.input-right-item-add-input {
+    background-color: #f6f6f6;
+}   
+.input-right-item-add-input:hover {
+    background-color: #e9e9e9;
+}   
+.input-right-item-add-input:focus {    
+    background-color: white!important;
+    box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px;
+}
+.input-right-item-add-input.active {
+    border-radius: 3px 3px 0 0; 
+    background-color: white!important;
+    box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px;
+}
+.select-list {
+    position: absolute;
+    width: 245px;
+    max-height: 160px;
+    min-height: 30px;
+    background-color: white;
+    top: 30px;
+    right: 16px;
+    box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px;
+    border-radius: 0px 0px 3px 3px;
+    z-index: 99;
+    overflow-y: overlay;
+}
+.scroll-select-list {
+    height: 100%;
+    padding: 5px 0 10px 0;
+}
+
+.dop {
+    margin-bottom: 20px;
+}
+
+.item-dop {
+    background-color: #3880ff;
+    font-size: 14px;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.09);
+    transition: .3s;
+    margin-right: 6px;
+}
+.item-dop:hover {
+    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.3);
+}
+.item-tree-category:hover>div {
+    opacity: .7;
+}
+
+
+.item-s {
+    display: flex;
+    padding: 5px 5px;
+    margin: 0 5px;
+    user-select: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.item-s:hover {
+    background-color: #e9e9e9;
+}
+.item-s > img {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    float: left;
+}
+.item-s > div {
+    float: left;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+
+.item-v {
+    display: flex;
+    padding: 2px 17px;
+    margin: 0 5px;
+    user-select: none;
+    cursor: pointer;
+    border-radius: 3px;
+    position: absolute;
+    top: 0;
+}
+.item-v > img {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    float: left;
+}
+.item-v > div {
+    float: left;
+    padding: 4px 10px;
+    font-size: 14px;
+}
+
+.emptily {
+    color: rgb(194, 194, 194);
+    position: absolute;
+    top: 0px;
+    background-color: #f6f6f6;
+    width: calc(100% - 43px)!important;
+    min-height: 18px;
+    margin-left: 12px;
+    padding: 6px 8px;
+    font-size: 14px;
+    border-radius: 3px;
+}
+
+.close-select {
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    top: 6px;
+    right: 20px;
+    z-index: 999;
+    opacity: .3;
+    cursor: pointer;
+}
+.close-select:hover {
+    opacity: .7;
+}
+.right-item-add-input:hover > .emptily {
+    background-color: #e9e9e9;
 }

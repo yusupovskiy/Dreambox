@@ -4,7 +4,6 @@
     <%= render 'transactions/index_list' %>
   </div>
   <div class="panels-content hide-scrollbar">
-    <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
     <%= render 'transactions/home' %>
     <%= render 'transactions/transaction' %>
   </div>
@@ -15,8 +14,6 @@
 <%= render 'transactions/transaction_panel_info' %>
 
 <script type="text/javascript">
-  var authToken = document.getElementById("authenticity_token").value;
-  var valueInput = document.getElementById("search").value
   var lastId = null;
 
   var vmTransaction = new Vue ({
@@ -90,8 +87,6 @@
         filters_params = filters_params.replace(',' + object + '-' + id, '');
         filters_params = filters_params.replace(object + '-' + id + ',', '');
         filters_params = filters_params.replace(object + '-' + id, '');
-
-        console.log(filters_params);
 
         filtrationElements.splice(index, 1);
 
@@ -292,8 +287,10 @@
       var filters = urlHash.searchParams.get("filters");
 
       setTimeout(() => {
-        $.get('/get_transactions.json', transactions => {
-          this.transactions = transactions;
+        $.get('/get_data.json', data => {
+          this.transactions = data.transactions;
+          this.affiliatesCompany = data.affiliates;
+          this.categories = data.categories;
 
           if(transaction_id != null) {
             let indexCurrentTransaction = transactions
@@ -305,31 +302,26 @@
             }
           }
 
+          if(filters != null) {
+            var filtersArray = filters.split(',');
+            var newFiltersArray = ']';
+            for (var i = 0; i < filtersArray.length; i++) {
+              var array = filtersArray[i].split('-');
+
+              if(i != 0) {
+                newFiltersArray = ',' + newFiltersArray;
+              }
+
+              newFiltersArray = '{ "id": ' + array[1] + ', "object": "' + array[0] + '" }' + newFiltersArray;
+            }
+            newFiltersArray = '[' + newFiltersArray;
+            var jsonFiltersArray = JSON.parse(newFiltersArray);
+            this.filtrationElements = jsonFiltersArray;
+          }
+
           this.loadComplete = true;
         });
       }, 600);
-
-      if(filters != null) {
-        var filtersArray = filters.split(',');
-        var newFiltersArray = ']';
-        for (var i = 0; i < filtersArray.length; i++) {
-          var array = filtersArray[i].split('-');
-
-          if(i != 0) {
-            newFiltersArray = ',' + newFiltersArray;
-          }
-
-          newFiltersArray = '{ "id": ' + array[1] + ', "object": "' + array[0] + '" }' + newFiltersArray;
-        }
-        newFiltersArray = '[' + newFiltersArray;
-        var jsonFiltersArray = JSON.parse(newFiltersArray);
-        this.filtrationElements = jsonFiltersArray;
-      }
-
-      $.get('/get_categories.json', 
-        categories => this.categories = categories);
-      $.get('/get_affiliates.json',
-        affiliatesCompany => this.affiliatesCompany = affiliatesCompany);
 
       this.typeDate = 'month';
       var currentDate = new Date();
@@ -403,7 +395,6 @@
           number = number + 2;
 
           if(presenceChildren.length > 0) {
-            console.log(c.amount);
             categoriesEtc.push({id: c.id + 0.1, name: 'Прочие', budget: c.budget, subject: c.subject, level: c.id, amount: c.amount, show_category: [c.id], number: number});
           }
           return Object.assign(c, { show_category: [c.id], number: number - 1 });

@@ -1,24 +1,200 @@
-<div class="panel-header">
-  <div class="title-panel">Транзакции</div>
-  <div class="show-panel">Показать все</div>
-</div>
-<div class="list-panel">
-  <div class="item-panel">
-    <div class="item-panel__basic-info">
-      <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-      <div class="right-item-panel green">6000.0 ₽</div>
-    </div>
-  </div>
-  <div class="item-panel">
-    <div class="item-panel__basic-info">
-      <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-      <div class="right-item-panel green">6000.0 ₽</div>
-    </div>
-  </div>
-  <div class="item-panel">
-    <div class="item-panel__basic-info">
-      <div class="left-item-panel">Оплата за абонемент от 23 октября...</div>
-      <div class="right-item-panel green">6000.0 ₽</div>
-    </div>
-  </div>
-</div>
+<script type="text/javascript">
+  Vue.component('section-client-transactions', {
+    data: function () {
+      return {
+        loading: false,
+        showAll: false,
+
+        transactionCreateLoading: false,
+        note: '',
+
+        showNoteCancel: false,
+      }
+    },
+    props: {
+    },
+    methods: {
+      showPanelAdd(panel) {
+        vmPanelsAdd.panelAddCategory = panel;
+        vmPanelsAdd.people = vmClient.client;        
+      },
+      indentAmount(amount) {
+        return amount.toLocaleString();
+      },
+      date(date) {
+        return totalDate(date, true, true, true);
+      },
+      clickTransactionClientActive(id) {
+        let {client} = vmClient;
+
+        if(!$('.transaction-'+id).hasClass('active')) {
+          $('.transaction-'+id).parents().children().removeClass('active');
+          $('.transaction-'+id).addClass('active');
+        }
+        else {
+          $('.transaction-'+id).parents().children().removeClass('active');
+          this.note = '';
+        }
+      },
+      cancelTransactionClient(transaction) {
+        let {client, transactions, clientSubscriptions} = vmClient;
+        let {note} = this;
+        var complited = false;
+
+        if(!this.transactionCreateLoading) {
+          this.transactionCreateLoading = true;
+
+          setTimeout(() => {
+            $.ajax('/cancel_transaction.json', {
+              method: 'DELETE',
+              data: {
+                authenticity_token: authToken,
+                id: transaction.id,
+                note: note,
+              },
+              success: messege => {
+                complited = messege.complited;
+                vmNotifications.notifications.unshift(messege);
+              },
+              error: e => console.warn('error', e)
+            }).done(e => {
+              if(complited) {
+
+                let indexTransactions = transactions
+                  .findIndex(t => t.id == transaction.id);
+                transactions.splice(indexTransactions, 1);
+                this.note = '';
+
+                this.showNoteCancel = false;
+
+
+                if(transaction.operation_id != client.operation_id) {
+                  client.unpaid_debt_subs = client.unpaid_debt_subs + transaction.amount;
+
+                  let indexSub = clientSubscriptions
+                    .findIndex(s => s.operation_id == transaction.operation_id);
+                  total_amount = clientSubscriptions[indexSub].total_amount;
+                  clientSubscriptions[indexSub].total_amount = total_amount - transaction.amount;
+                }
+                client.total_amount = client.total_amount - transaction.amount;
+
+              }
+              this.transactionCreateLoading = false;
+            });
+          }, 600);
+        }
+      },
+    },
+    watch: {
+      "showNoteCancel" : function() {
+        this.note = '';
+      }
+    },
+    computed: {
+      transactionsClient() {
+        let { operations, client, transactions } = vmClient;
+
+        return transactions.filter(t => {
+          if(t.is_active) {
+            let operations_client = operations.filter( o => o.client_id === client.id );
+            let operations_transactions = operations_client.find( o => o.id == t.operation_id );
+
+            if(operations_transactions != undefined) {
+              return t;
+            }
+          }
+        });
+      },
+      transactionsSort() {
+        const k = 'date';
+        const reverse = true;
+        return this.transactionsClient.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
+      },
+    },
+    template: `
+      <section id="client-transactions" class="panel-content" :class="{ 'show-all': showAll}">
+        <div class="panel-header">
+          <div class="title-panel">Транзакции</div>
+          <div v-if="transactionsClient.length > 3" @click="showAll = !showAll" class="btn show-panel">
+            <div v-if="showAll == false">Еще</div>
+            <div v-else-if="showAll == true">Скрыть</div>
+          </div>
+        </div>
+        <div v-if="transactionsClient.length > 0" class="list-panel">
+
+          <div v-for="transaction in transactionsSort" v-bind:class="'transaction-' + transaction.id" class="item-panel" :title='transaction.note'>
+            
+            <div @click="clickTransactionClientActive(transaction.id)" class="item-panel__basic-info" style="cursor: pointer;">
+              <div class="left-item-panel">
+                {{ transaction.note }}
+                <div style=" font-size: 12px; color: #b3b3b3; margin-top: 3px;">
+                  {{ date(transaction.date) }} / {{ transaction.category_name }}
+                </div>
+              </div>
+              <div class="right-item-panel">
+                <div class="right-item-panel--no-hover" :class="[transaction.budget == 'income' ? 'income' : 'expense']">
+                  {{ transaction.budget == 'income' ? '+ ' : '- ' }}
+                  {{ indentAmount(transaction.amount) }} ₽
+                </div>
+                <div class="btn-hide btn">Скрыть</div>
+              </div>
+            </div>
+
+            <div class="item-panel__total-info">
+              <div v-if="showNoteCancel">
+                <textarea v-model="note" placeholder="Комментарий к отмене" class="textarea"></textarea>
+              </div>
+
+              <div class="btns" style="margin: 0;">
+                <button 
+                  v-if="note != ''"
+                  @click="cancelTransactionClient(transaction)" 
+                  v-bind:class="{ active: transactionCreateLoading }" 
+                  class="btn-subscribe btn">
+
+                  <div class="btn__text">Отменить</div>
+                  <div v-if="transactionCreateLoading" class="container" style="width: 58px;">
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                       viewBox="0 0 240.7 8.9" style="enable-background:new 0 0 240.7 8.9;" xml:space="preserve">
+                    <path d="M232.1,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.8-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                      c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C172,4,168.6,0.2,163.5,0
+                      c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0c-0.1-0.2-3.6-3.9-8.6-4.1
+                      c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C103.4,4,100,0.2,95,0c-3.2-0.1-6.3,1.3-9.3,4.1
+                      C83,6.8,80.1,8,77.2,7.9c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C69.2,4,65.7,0.2,60.7,0c-3.2-0.1-6.3,1.3-9.3,4.1c-2.7,2.6-5.6,3.9-8.5,3.8
+                      c-4.6-0.2-7.8-3.7-7.9-3.8l0,0C34.9,4,31.5,0.2,26.4,0c-3.2-0.1-6.3,1.3-9.3,4.1C14.4,6.8,11.6,8,8.6,7.9C4,7.8,0.8,4.2,0.7,4.1
+                      L0,4.8C0.1,5,3.5,8.8,8.6,8.9c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1C89.1,2.2,92,0.9,94.9,1c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.8,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.7,7.9,3.8l0,0
+                      c0.1,0.2,3.5,3.9,8.6,4.1c0.1,0,0.3,0,0.4,0c3.1,0,6.1-1.4,8.9-4.1c2.7-2.6,5.6-3.9,8.5-3.8c4.6,0.2,7.9,3.8,7.9,3.8l0.7-0.7
+                      C240.5,4,237.1,0.2,232.1,0z"/>
+                    </svg>
+                  </div>
+                </button>
+
+                <button 
+                  @click="showNoteCancel = !showNoteCancel" 
+                  class="btn gray">
+                  
+                  <div v-if="showNoteCancel == false">Отмена</div>
+                  <div v-if="showNoteCancel == true" class='btn-unsubscribe'>Не отменять</div>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div v-else-if="transactionsClient.length <= 0" class="list-panel">
+          <div class="no-record">Список пуст</div>
+        </div>
+        <div v-else-if="loadingPanel" class="list-panel">
+          <img class="loading-panel" src="images/loading.gif" />
+        </div>
+
+        <button @click='showPanelAdd("transaction")' style="margin-top: 0px; padding-bottom: 10px;" class="btn-add btn">+ Добавить</button>
+      </section>
+    `
+  });
+</script>

@@ -15,6 +15,7 @@
     props: {
       records: Array,
       show: String,
+      affiliates: Array,
     },
     methods: {
       createRem() {
@@ -62,14 +63,12 @@
     },
     watch: {
       show() {
-        $.get('/get_affiliates.json',
-          affiliatesCompany => {
-            this.affiliatesCompany = affiliatesCompany;
-            this.affiliateId = affiliatesCompany[0].id;
-          });
+        if(this.show == 'addReminderClient') {
+          this.affiliateId = this.affiliates[0].id;
 
-        let currentDate = new Date();
-        this.date = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());
+          let currentDate = new Date();
+          this.date = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());
+        }
       },
     },
     computed: {

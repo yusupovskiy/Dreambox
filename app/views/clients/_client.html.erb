@@ -1,13 +1,41 @@
-<div v-if="panelShow == 'client'" id="client-card">
+<%= render 'clients/client_panel_info' %>
+<%= render 'clients/client_records' %>
+<%= render 'clients/client_records_vue' %>
+<%= render 'clients/client_transactions' %>
+<%= render 'clients/client_discounts' %>
+<%= render 'clients/client_reminders' %>
 
-  <section-client-panel-info :client="client" :records="recordsCompany">
-  </section-client-panel-info>
+<script type="text/javascript">
+  Vue.component('client', {
+    data: function() {
+      return {}
+    },
+    props: {
+      client: Object,
+      records: Array,
+      categories: Array,
+      affiliates: Array,
+      search_r: String,
+    },
+    template: `
+      <div id="client-card">
+        <section-client-panel-info 
+          :client="client" 
+          :records="records"
+          :categories="categories"
+          :affiliates="affiliates"
+        ></section-client-panel-info>
 
-  <section-client-records :client="client" :search_r='search_r'></section-client-records>
+        <section-client-records :client="client" :search_r='search_r'></section-client-records>
 
-  <section-client-transactions :transactions="clientTransactions"></section-client-transactions>
-  
-  <section-client-reminders></section-client-reminders>
+        <section-client-transactions></section-client-transactions>
+        
+        <section-client-reminders></section-client-reminders>
 
-  <section-client-discounts></section-client-discounts>
-</div>
+        <section-client-discounts
+          :affiliates="affiliates"
+        ></section-client-discounts>
+      </div>
+    `
+  });
+</script>

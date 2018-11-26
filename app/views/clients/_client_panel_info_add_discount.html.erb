@@ -19,7 +19,7 @@
     },
     methods: {
       createDiscount() {
-        let {client, discountCompany} = vmClient;
+        let {client, discounts} = vmClient;
         let {addDiscount, startDate, finishDate, amount, note, newDiscount} = this;
         var complited = false
 
@@ -51,7 +51,7 @@
                 this.startDate = '';
                 this.finishDate = '';
                 this.amount = null;
-                discountCompany.unshift(newDiscount);
+                discounts.unshift(newDiscount);
               }
               this.loading = false;
             });
@@ -75,7 +75,7 @@
           this.amount = Math.round(percent / 100 * amount_record);
       },
       "addDiscount" : function() {
-        let {recordsClients, recordsCompany} = vmClient;
+        let {recordsClients, records} = vmClient;
 
         var date = new Date();
         m = (date.getMonth() + '').length == 1 ? '0' + date.getMonth() : date.getMonth()
@@ -88,21 +88,19 @@
 
         let indexRecordClient = recordsClients.findIndex(rc => rc.record_client_id == this.addDiscount);
 
-        let indexRecord = recordsCompany.findIndex(r => r.id == recordsClients[indexRecordClient].id);
+        let indexRecord = records.findIndex(r => r.id == recordsClients[indexRecordClient].id);
 
-        this.priceRecord = total_price_abon = recordsCompany[indexRecord].total_price_abon;
+        this.priceRecord = total_price_abon = records[indexRecord].total_price_abon;
       }
     },
     computed: {
       recordsClient() {
-        let {recordsClients, client, recordsCompany} = vmClient;
+        let {recordsClients, client, records} = vmClient;
 
         return recordsClients.filter(function (rc) {
-          if(rc.client_id == client.id && rc.is_active == true) {
-            var recordCompany = recordsCompany.filter(r => r == rc.record_id);
-
-            let indexRecord = recordsCompany.findIndex(r => r.id == rc.id);
-            var total_price_abon = recordsCompany[indexRecord].total_price_abon;
+          if(rc.client_id == client.id && rc.is_active === true) {
+            let indexRecord = records.findIndex(r => r.id === rc.id);
+            let total_price_abon = records[indexRecord].total_price_abon;
 
             return Object.assign(rc, {total_price_abon: total_price_abon});
           }
