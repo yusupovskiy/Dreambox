@@ -12,7 +12,7 @@
     },
     methods: {
       clickActive(id) {
-        let {client} = vmClient;
+        let { client } = vmClient;
 
         if(this.activeId != id)
           this.activeId = id;
@@ -25,6 +25,7 @@
       },
 
       completedReminder(reminder, index) {
+        let { reminders, logs } = data;
         let complited = false;
 
         if(!this.loading) {
@@ -45,19 +46,10 @@
               error: e => console.warn('error', e)
             }).done(e => {
               if(complited) {
-                let index = vmClient.reminders.findIndex(r => r.id === reminder.id);
-                vmClient.reminders[index].completed = !reminder.completed;
+                let index = reminders.findIndex(r => r.id === reminder.id);
+                reminders[index].completed = !reminder.completed;
 
-                vmClient.logs.unshift(newLog);
-
-                if(parseInt(reminder.debt) > 0) {
-                  if(!reminder.completed) {
-                    vmClient.client.unpaid_debt_subs = vmClient.client.unpaid_debt_subs + reminder.debt;
-                  }
-                  else if(reminder.completed) {
-                    vmClient.client.unpaid_debt_subs = vmClient.client.unpaid_debt_subs - reminder.debt;
-                  }
-                }
+                logs.unshift(newLog);
               }
               this.loading = false;
             });
@@ -69,15 +61,15 @@
     },
     computed: {
       remindersClient() {
-        let {reminders, client} = vmClient;
+        let { client, remindersWithPayments } = vmClient;
 
-        return reminders.filter(r => {
+        return remindersWithPayments.filter(r => {
           if(r.client_id === client.id)
             return r;
         });
       },
       logs() {
-        return vmClient.logs;
+        return data.logs;
       },
     },
     template: `
@@ -112,7 +104,7 @@
               </div>
               <div class="right-item-panel">
                 <div v-if='reminder.debt !== null' class="right-item-panel--no-hover">
-                  <span class="red-color">- {{ reminder.debt | money }} ₽</span>
+                  <span class="red-color">- {{ reminder.unpaid_debt | money }} ₽</span>
                 </div>
                 <div class="btn-hide btn">Скрыть</div>
               </div>
@@ -167,9 +159,9 @@
                 </div>
                 
                 <div v-if="reminder.debt > 0" class="item-info">
-                  <div class="title-item-info">Задолжность</div>
+                  <div class="title-item-info">Оплачено</div>
                   <div class="content-item-info">
-                    <span v-if="reminder.debt > 0" class="red-color">- {{ reminder.debt }} ₽</span>
+                    <span v-if="reminder.debt > 0" class="red-color">{{ reminder.payment }} из {{ reminder.debt }} ₽</span>
                   </div>
                 </div>
 

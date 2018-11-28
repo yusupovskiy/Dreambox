@@ -6,9 +6,9 @@
     },
     props: {
       filtrationElements: Array,
-      recordsCompany: Array,
+      records: Array,
       servicesCompany: Array,
-      affiliatesCompany: Array,
+      affiliates: Array,
       clientsCurrent: Array,
       clientsDebtors: Array,
       clientsTotal: Array,
@@ -51,20 +51,20 @@
     },
     computed: {
       filtrationElementsName() {
-        let {filtrationElements, recordsCompany, servicesCompany, affiliatesCompany} = this;
+        let {filtrationElements, records, servicesCompany, affiliates} = this;
 
         return filtrationElements.filter(function (element) {
-          let indexRecord = recordsCompany
+          let indexRecord = records
             .findIndex(r => r.id == element.id);
-          record = recordsCompany[indexRecord];
+          record = records[indexRecord];
 
           let indexService = servicesCompany
             .findIndex(s => s.id == element.id);
           service = servicesCompany[indexService];
 
-          let indexAffiliate = affiliatesCompany
+          let indexAffiliate = affiliates
             .findIndex(a => a.id == element.id);
-          affiliate = affiliatesCompany[indexAffiliate];
+          affiliate = affiliates[indexAffiliate];
 
           if (record != null && element.object == 'r') {
             return Object.assign(element, {name: record.name});
@@ -80,7 +80,6 @@
       },
     },
     template: `
-
       <section class="panel-content">
         <div title="Можно отфильтровать списки по записям, услугам и филиалам. Для этого нужно отметить галочками нужные варианты в списках ниже" class="params-filters">
             <div v-if="filtrationElementsName.length > 0" class="list-params">

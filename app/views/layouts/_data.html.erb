@@ -1,0 +1,45 @@
+<script type="text/javascript">
+  var authToken = document.getElementById("authenticity_token").value;
+  Vue.filter('money', function(value) {
+    if (!value) return 0;
+    return value.toLocaleString();
+  });
+
+  var data = new Vue({
+    data: {
+      people: [],
+      affiliates: [],
+      categories: [],
+      subscriptions: [],
+      transactions: [],
+      operations: [],
+      workers: [],
+      reminders: [],
+      logs: [],
+      recordsClients: [],
+    },
+    copmuted: {
+      clients() {
+        const clientRole = 10;
+        return this.people.filter(c => c.role === clientRole);
+      },
+      workers() {
+        const workerRole = 100;
+        return this.people.filter(c => c.role === workerRole);
+      },
+    },
+    created() {
+      $.get('/get_data.json', data => {
+        this.people = data.people;
+        this.affiliates = data.affiliates;
+        this.categories = data.categories;
+        this.subscriptions = data.subscriptions;
+        this.transactions = data.transactions;
+        this.operations = data.operations;
+        this.reminders = data.reminders;
+        this.logs = data.logs;
+        this.recordsClients = data.records_clients;
+      });
+    }
+  });
+</script>

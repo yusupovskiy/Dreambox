@@ -42,12 +42,12 @@
         <%= link_to new_worker_path, class: 'item-panel-add' do %>
           <div class="sdfdsa" style="background-image: url(/images/teacher.png);"></div><div class="dsafdsaf">Сотрудника</div>
         <% end %>
-        <%= link_to new_transaction_path, class: 'item-panel-add' do %>
+        <% link_to new_transaction_path, class: 'item-panel-add' do %>
           <div class="sdfdsa" style="background-image: url(/images/Abacus-WF.png);"></div><div class="dsafdsaf">Транзакцию</div>
         <% end %>
 
         <div @click='showPanelAdd("transaction")' class='item-panel-add'>
-          <div class="sdfdsa" style="background-image: url(/images/list.png);"></div><div class="dsafdsaf">Транзакцию</div>
+          <div class="sdfdsa" style="background-image: url(/images/Abacus-WF.png);"></div><div class="dsafdsaf">Транзакцию</div>
         </div>
 
         <div @click='showPanelAdd("services")' class='item-panel-add'>
@@ -76,6 +76,8 @@
         methods: {
           showPanelAdd(panel) {
             vmPanelsAdd.panelAddCategory = panel;
+            vmPanelsAdd.person = {};
+            vmPanelsAdd.unpaidSubscriptionClient = '';    
           },
         }
       });

@@ -18,7 +18,7 @@
           :filtration-elements='filtrationElements' 
           :records-company='records' 
           :services-company='servicesCompany' 
-          :affiliates-company='affiliates' 
+          :affiliates='affiliates' 
           :clients-current='clientsCurrent' 
           :clients-debtors='clientsDebtors' 
           :clients-total='clientsTotal' 
@@ -73,7 +73,6 @@
       discounts: [],
       titleInput: 'Клиенты',
       loadComplete: false,
-      categories: [],
 
       subscriptions: [],
 
@@ -108,17 +107,11 @@
       filtrationElements: [],
       typeClients: '',
 
-      reminders: [],
-      logs: [],
-
-
       sortKey: 'full_name',
       reverse: false,
       querySearch: {},
 
-      transactions: [],
       operations: [],
-      reminders: [],
     },
     methods: {
       addElementFiltration(id, object) {
@@ -220,16 +213,12 @@
 
       setTimeout(() => {
         $.get('/get_data.json', data => {
-          this.logs = data.logs;
           this.operations = data.operations;
           this.clients = data.clients;
           this.affiliates = data.affiliates;
           this.subscriptions = data.subscriptions;
-          this.reminders = data.reminders;
-          this.categories = data.categories;
           this.records = data.records;
           this.recordsServices = data.records_services;
-          this.transactions = data.transactions;
           this.discounts = data.discounts;
           this.recordsClients = data.records_clients;
 
@@ -274,25 +263,11 @@
       }, 600);
     },
     computed: {
-      subscriptionsAmount() {
-        let { subscriptions, transactions, operations } = this;
-
-        return subscriptions.filter(s => {
-          let payment = transactions.reduce((sum, t) => {
-            return (t.operation_id === s.operation_id && t.is_active) ? sum + t.amount : sum;
-          }, 0);
-          let client_id = operations.find(o => o.id === s.operation_id).client_id;
-
-          return Object.assign(s, { 
-            payment: payment, 
-            debt: s.price - payment, 
-            client_id: client_id 
-          });
-        });
+      categories() {
+        return data.categories;
       },
-
       servicesCompany() {
-        let {categories} = this;
+        let { categories } = data;
         var services = [];
         var find_children = function(level) {
           var services_children = categories.filter(c => c.level == level);
@@ -516,23 +491,76 @@
         });
       },
 
+      subscriptionsAmount() {
+        let { transactions, subscriptions, operations } = data;
+
+        return subscriptions.filter(s => {
+          let payment = transactions.reduce((sum, t) => {
+            return (t.operation_id === s.operation_id && t.is_active && t.budget === 'income') ? sum + t.amount : sum;
+          }, 0);
+          let client_id = operations.find(o => o.id === s.operation_id).client_id;
+
+          return Object.assign(s, { 
+            payment: payment, 
+            debt: s.price - payment, 
+            client_id: client_id 
+          });
+        });
+      },
+      remindersWithPayments() {
+        let { reminders, transactions } = data;
+
+        return reminders.filter(r => {
+          let payment = transactions.reduce((sum, t) => {
+            return (t.operation_id === r.operation_id && t.is_active) ? sum + t.amount : sum;
+          }, 0);
+
+          return Object.assign(r, { 
+            payment: payment, 
+            unpaid_debt: r.debt - payment,
+          });
+        });
+      },
+
       clientDebt() {
-        let { clientsRecords, subscriptionsAmount, reminders } = this;
+        let { clientsRecords, subscriptionsAmount, remindersWithPayments, activeRecords, record } = this;
+        let activeRecordsClients = data.recordsClients;
+
+        if(record.id !== undefined || activeRecords.length > 0) {
+          activeRecordsClients = activeRecordsClients.filter(r => {
+            return r.id === record.id || activeRecords.find(ar => ar.id === r.id) !== undefined
+          });
+        }
 
         return clientsRecords.filter(c => {
           let debt_subscriptions = subscriptionsAmount.reduce((sum, s) => {
-            return (c.id === s.client_id && s.is_active) ? sum + s.debt : sum;
+            const currentDate = new Date();
+            const currentDateLastDay = getLastDayOfMonth(currentDate.getFullYear(), currentDate.getMonth())
+            const startDate = new Date(s.start_at);
+
+            if( c.id === s.client_id 
+                && s.is_active 
+                && currentDateLastDay >= startDate 
+                && activeRecordsClients.find(arc => arc.record_client_id === s.record_client_id) !== undefined) {
+
+              return sum + s.debt
+            }
+            else {
+              return sum;
+            }
           }, 0);
-          let debt_reminders = reminders.reduce((sum, r) => {
-            return (c.id === r.client_id && !r.completed) ? sum + r.debt : sum;
+
+          let debt_reminders = remindersWithPayments.reduce((sum, r) => {
+            return (c.id === r.client_id && !r.completed) ? sum + r.unpaid_debt : sum;
           }, 0);
 
           return Object.assign(c, { 
-            full_name: c.first_name + ' ' + c.last_name + ' ' + c.patronymic,
+            full_name: c.last_name + ' ' + c.first_name + ' ' + c.patronymic,
             debt: debt_subscriptions + debt_reminders 
           });
         });
       },
+
       clientsSorted() {
         const k = this.sortKey;
         return this.clientDebt.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+this.reverse]);

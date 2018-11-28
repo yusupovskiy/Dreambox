@@ -71,8 +71,6 @@
         let {showNoteSubRecalculation, newPriceSub} = this;
         let complited = false;
 
-        console.log(complited);
-
         if(!this.loadingRecalculation) {
           this.loadingRecalculation = true;
 
@@ -140,8 +138,8 @@
       clickRecord(record) {
         vmClient.clickRecord(record);
       },
-      date(date) {
-        return totalDate(date, true, true, true);
+      parseDate(start, finish) {
+        return startAndEndDateInWords('', start, ' / ', finish, true);
       },
       statusSubsctiption(start, finish) {
         var currentDate = new Date();
@@ -318,7 +316,7 @@
 
                     <div @click="clickSubActive(subs.id)">
                       <div>{{ statusSubsctiption(subs.start_at, subs.finish_at) }}</div>
-                      <div>{{ date(subs.start_at) }} / {{ date(subs.finish_at) }}</div>
+                      <div>{{ parseDate(subs.start_at, subs.finish_at) }}</div>
                     </div>
 
                     <div class="sub-desc">

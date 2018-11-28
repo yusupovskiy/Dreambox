@@ -4,7 +4,6 @@
       return {
         loading: false,
         showAll: false,
-
         transactionCreateLoading: false,
         note: '',
 
@@ -16,13 +15,14 @@
     methods: {
       showPanelAdd(panel) {
         vmPanelsAdd.panelAddCategory = panel;
-        vmPanelsAdd.people = vmClient.client;        
+        vmPanelsAdd.person = vmClient.client;
+        vmPanelsAdd.unpaidSubscriptionClient = '';      
       },
       indentAmount(amount) {
         return amount.toLocaleString();
       },
       date(date) {
-        return totalDate(date, true, true, true);
+        return dateInWords(date, false);
       },
       clickTransactionClientActive(id) {
         let {client} = vmClient;
@@ -37,8 +37,9 @@
         }
       },
       cancelTransactionClient(transaction) {
-        let {client, transactions, clientSubscriptions} = vmClient;
-        let {note} = this;
+        let { client } = vmClient;
+        let { transactions } = data;
+        let { note } = this;
         var complited = false;
 
         if(!this.transactionCreateLoading) {
@@ -66,18 +67,6 @@
                 this.note = '';
 
                 this.showNoteCancel = false;
-
-
-                if(transaction.operation_id != client.operation_id) {
-                  client.unpaid_debt_subs = client.unpaid_debt_subs + transaction.amount;
-
-                  let indexSub = clientSubscriptions
-                    .findIndex(s => s.operation_id == transaction.operation_id);
-                  total_amount = clientSubscriptions[indexSub].total_amount;
-                  clientSubscriptions[indexSub].total_amount = total_amount - transaction.amount;
-                }
-                client.total_amount = client.total_amount - transaction.amount;
-
               }
               this.transactionCreateLoading = false;
             });
@@ -92,7 +81,8 @@
     },
     computed: {
       transactionsClient() {
-        let { operations, client, transactions } = vmClient;
+        let { operations, client } = vmClient;
+        let { transactions } = data;
 
         return transactions.filter(t => {
           if(t.is_active) {
@@ -146,7 +136,7 @@
               </div>
 
               <div class="btns" style="margin: 0;">
-                <button 
+                <a 
                   v-if="note != ''"
                   @click="cancelTransactionClient(transaction)" 
                   v-bind:class="{ active: transactionCreateLoading }" 
@@ -172,15 +162,17 @@
                       C240.5,4,237.1,0.2,232.1,0z"/>
                     </svg>
                   </div>
-                </button>
+                </a>
 
-                <button 
+                <a 
                   @click="showNoteCancel = !showNoteCancel" 
                   class="btn gray">
                   
                   <div v-if="showNoteCancel == false">Отмена</div>
                   <div v-if="showNoteCancel == true" class='btn-unsubscribe'>Не отменять</div>
-                </button>
+                </a>
+
+                <a class="btn gray" target="_blank" :href='"/transactions/" + transaction.id + "/doc_pko"'>Документ</a>
               </div>
 
             </div>

@@ -20,7 +20,6 @@
     el: '#transaction',
     data: {
       panelShow: 'home',
-      transactions: [],
       transaction: [],
       startDate: '',
       finishDate: '',
@@ -47,7 +46,7 @@
       categories: [],
       affiliatesCompany: [],
 
-      filtrationElements: []
+      filtrationElements: [],
     },
     methods: {
       sendQuery(query, type, byDefault) {
@@ -195,7 +194,7 @@
 
       },
       date(date) {
-        return totalDate(date, true, true, true);
+        return dateInWords(date, false);
       },
       sortBy(sortKey) {
         this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
@@ -282,13 +281,13 @@
       },
     },
     created() {
+      let { transactions } = data;
       var urlHash = new URL(window.location.href);
       var transaction_id = urlHash.searchParams.get("transaction");
       var filters = urlHash.searchParams.get("filters");
 
       setTimeout(() => {
         $.get('/get_data.json', data => {
-          this.transactions = data.transactions;
           this.affiliatesCompany = data.affiliates;
           this.categories = data.categories;
 
@@ -297,7 +296,7 @@
               .findIndex(transaction => transaction.id == transaction_id);
 
             if(indexCurrentTransaction > -1) {
-              getTransaction = this.transactions[indexCurrentTransaction];
+              getTransaction = transactions[indexCurrentTransaction];
               this.clickTransaction(getTransaction);
             }
           }
@@ -360,8 +359,11 @@
       },
     },
     computed: {
+      transactions() {
+        return data.transactions;
+      },
       transactionsAmount() {
-        return this.transactions.filter(function(transaction) {
+        return data.transactions.filter(function(transaction) {
           if(transaction.budget == 'expense')
             transaction.amount = - transaction.amount;
 
@@ -577,35 +579,8 @@
         }
 
       },
-
-      // красивый вывод указанных дат
       dateDisplay() {
-        var currentDate = new Date();
-
-        var startDate = new Date(this.startDate);
-        var finishDate = new Date(this.finishDate);
-        var lastDayOfMonth = getLastDayOfMonth(finishDate.getFullYear(), finishDate.getMonth()).getDate();
-
-        var startDay = startDate.getDate();
-        var startMonth = startDate.getMonth();
-        var startYear = startDate.getFullYear();
-
-        var finishDay = finishDate.getDate();
-        var finishMonth = finishDate.getMonth();
-        var finishYear = finishDate.getFullYear();
-
-        if(startYear == finishYear) {
-          if(startMonth == finishMonth && (startDay == 1 && finishDay == lastDayOfMonth)) {
-            result = nameMonth(startMonth, 1) + ' ' + startYear;
-          }
-          else {
-            result = startDay + ' ' + nameMonth(startMonth, 2) + ' – ' + finishDay + ' ' + nameMonth(finishMonth, 2) + ' ' + finishYear;
-          }
-        }
-        else {
-          result = startDay + ' ' + nameMonth(startMonth, 2) + ' ' + startYear + ' – ' + finishDay + ' ' + nameMonth(finishMonth, 2) + ' ' + finishYear;
-        }
-        return result;
+        return startAndEndDateInWords('', this.startDate, ' – ', this.finishDate, true);
       },
 
       transactionsSorted() {

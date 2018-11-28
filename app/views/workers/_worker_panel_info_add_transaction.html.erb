@@ -22,8 +22,8 @@
     },
     methods: {
       createTransaction() {
-        let {transactions} = vmWorkers;
-        let {amount, note, addTransaction, category_id, dateTransaction, affiliate_id, newTransaction} = this;
+        let { transactions } = data;
+        let { amount, note, addTransaction, category_id, dateTransaction, affiliate_id, newTransaction} = this;
         var complited = false;
 
         if(!this.transactionCreateLoading) {
@@ -34,7 +34,7 @@
               method: 'POST',
               data: {
                 authenticity_token: authToken,
-                operation_id: this.worker.operation_id,
+                client_operation_id: this.worker.operation_id,
                 amount: amount,
                 note: note,
                 category_id: category_id,

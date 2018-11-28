@@ -62,42 +62,42 @@ function validSpaces(text) {
   return text;
 }
 
-function totalDate(date, d, m, y) {
-  dateArray = date.split('-');
+// function totalDate(date, d, m, y) {
+//   dateArray = date.split('-');
 
-  if(dateArray[1] == 1)
-    dateArray[1] = 'января';
-  else if(dateArray[1] == 2)
-    dateArray[1] = 'февраля';
-  else if(dateArray[1] == 3)
-    dateArray[1] = 'марта';
-  else if(dateArray[1] == 4)
-    dateArray[1] = 'апреля';
-  else if(dateArray[1] == 5)
-    dateArray[1] = 'мая';
-  else if(dateArray[1] == 6)
-    dateArray[1] = 'июня';
-  else if(dateArray[1] == 7)
-    dateArray[1] = 'июля';
-  else if(dateArray[1] == 8)
-    dateArray[1] = 'августа';
-  else if(dateArray[1] == 9)
-    dateArray[1] = 'сентября';
-  else if(dateArray[1] == 10)
-    dateArray[1] = 'октября';
-  else if(dateArray[1] == 11)
-    dateArray[1] = 'ноября';
-  else if(dateArray[1] == 12)
-    dateArray[1] = 'декабря';
+//   if(dateArray[1] == 1)
+//     dateArray[1] = 'января';
+//   else if(dateArray[1] == 2)
+//     dateArray[1] = 'февраля';
+//   else if(dateArray[1] == 3)
+//     dateArray[1] = 'марта';
+//   else if(dateArray[1] == 4)
+//     dateArray[1] = 'апреля';
+//   else if(dateArray[1] == 5)
+//     dateArray[1] = 'мая';
+//   else if(dateArray[1] == 6)
+//     dateArray[1] = 'июня';
+//   else if(dateArray[1] == 7)
+//     dateArray[1] = 'июля';
+//   else if(dateArray[1] == 8)
+//     dateArray[1] = 'августа';
+//   else if(dateArray[1] == 9)
+//     dateArray[1] = 'сентября';
+//   else if(dateArray[1] == 10)
+//     dateArray[1] = 'октября';
+//   else if(dateArray[1] == 11)
+//     dateArray[1] = 'ноября';
+//   else if(dateArray[1] == 12)
+//     dateArray[1] = 'декабря';
   
-  dDate = d ? dateArray[2] + ' ' : ''
-  mDate = m ? dateArray[1] + ' ' : ''
-  yDate = y ? dateArray[0] : ''
+//   dDate = d ? dateArray[2] + ' ' : ''
+//   mDate = m ? dateArray[1] + ' ' : ''
+//   yDate = y ? dateArray[0] : ''
 
-  newDate = dDate + mDate + yDate;
+//   newDate = dDate + mDate + yDate;
 
-  return newDate;
-}
+//   return newDate;
+// }
 
 function setDate(day, month, year) {
   var day = day;
@@ -128,4 +128,62 @@ function nameMonth(month, ending) {
     return arrayNameMonth[month];
   else if(ending == 2)
     return arrayNameMonth2[month];
+}
+
+function dateInWords(getDate, showCurrentDateYear) {
+  const date = new Date(getDate),
+        currentDate = new Date(),
+        dataDay = date.getDate(),
+        dataMonth = date.getMonth(),
+        dataYear = date.getFullYear(),
+        currentDateYear = currentDate.getFullYear();
+        
+  let year = ' ' + dataYear;
+
+  if(dataYear === currentDateYear && !showCurrentDateYear) {
+    year = '';
+  }
+
+  const result = dataDay + ' ' + nameMonth(dataMonth, 2) + ' ' + year;
+
+  return result;  
+}
+
+function startAndEndDateInWords(from, start, to, finish, showCurrentYear) {
+
+  const currentDate = new Date(),
+        currentDateYear = currentDate.getFullYear();
+
+  const startDate = new Date(start);
+  const finishDate = new Date(finish);
+
+  const startDay = startDate.getDate();
+  const startMonth = startDate.getMonth();
+  const startYear = startDate.getFullYear();
+
+  const finishDay = finishDate.getDate();
+  const finishMonth = finishDate.getMonth();
+  const finishYear = finishDate.getFullYear();
+  const lastDayOfMonth = getLastDayOfMonth(finishDate.getFullYear(), finishDate.getMonth()).getDate();
+  let year;
+
+  if(startYear === finishYear) {
+    let year = ' ' + finishYear;
+
+    if(!showCurrentYear && currentDateYear === finishYear) {
+      year = '';
+    }
+
+    if(startMonth === finishMonth && (startDay === 1 && finishDay === lastDayOfMonth)) {
+      result = from + nameMonth(finishMonth, 1) + year;
+    }
+    else {
+      result = from + startDay + ' ' + nameMonth(startMonth, 2) + to + finishDay + ' ' + nameMonth(finishMonth, 2) + year;
+    }
+  }
+  else {
+    result = from + startDay + ' ' + nameMonth(startMonth, 2) + ' ' + startYear + to + finishDay + ' ' + nameMonth(finishMonth, 2) + finishYear;
+  }
+  
+  return result;  
 }

@@ -9,9 +9,11 @@
     v-if='panelAddCategory == "transaction"'
     :arr-tree="[categoriesTreeIncome, categoriesTreeExpense]"
     :affiliates="affiliates"
-    :clients="clients"
+    :person="person"
     :people="people"
     :category-id="categoryId"
+    :panel-add-category="panelAddCategory"
+    :unpaid-subscription-client="unpaidSubscriptionClient"
   ></add-transaction>
 
   <add-category 
@@ -41,10 +43,8 @@
       panelAddCategory: null,
       categoryId: null,
       budget: '',
-      categories: [],
-      affiliates: [],
-      clients: [],
-      people: {},
+      person: {},
+      unpaidSubscriptionClient: '',
     },
     methods: {
       cancelPanels() {
@@ -92,14 +92,10 @@
           value: { name: 'Расход', id: 0, budget: 'expense' },
           children: buildHierarchy(categories)
         }
-      }
-    },
-    created() {
-      $.get('/get_data.json', data => {
-        this.categories = data.categories;
-        this.affiliates = data.affiliates;
-        this.clients = data.clients;
-      });
+      },
+      people() { return data.people },
+      affiliates() { return data.affiliates },
+      categories() { return data.categories },
     },
   });
 </script>

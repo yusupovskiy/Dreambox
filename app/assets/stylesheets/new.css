@@ -1590,16 +1590,18 @@ header:hover {
 }
 .log__user > div {
     font-size: 14px;
-    color: darkgrey;
+    color: #5d5d5d;
     float: left;
     margin: 2px 0;
 }
 .log__note {
-    font-size: 15px;
-    margin-bottom: 3px;
+    font-size: 14px;
+    margin-bottom: 6px;
 }
 .log {
-    margin: 10px 0;
+    margin: 5px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e7e7e7;
 }
 
 .add-input {
@@ -1765,4 +1767,42 @@ header:hover {
 }
 .right-item-add-input:hover > .emptily {
     background-color: #e9e9e9;
+}
+
+.debt-panel {
+    width: calc(100% - 40px);
+    padding: 10px 20px;
+    display: grid;
+}
+.left-item-debt-panel {
+    float: left;
+}
+.right-item-debt-panel {
+    color: #ff7375;
+    float: right;
+    margin: 7px 0;
+}
+.desc-left-item-debt-panel {
+    font-size: 12px;
+    color: #a1a1a1;
+}
+.item-debt-panel {
+    margin: 10px 0;
+    cursor: pointer;
+    transition: .3s;
+    opacity: .9;
+}
+.item-debt-panel:hover {
+    transform: translateX(1px);
+    opacity: 1;
+}
+.title-debt {
+    margin: 20px 20px 0 20px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ababab;
+}
+.title-left-item-debt-panel {
+    color: black;
 }

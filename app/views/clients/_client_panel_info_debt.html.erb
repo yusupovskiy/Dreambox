@@ -1,0 +1,73 @@
+<script type="text/javascript">
+  Vue.component('client-debt', {
+    data: function() {
+      return {
+
+      }
+    },
+    methods: {
+      clickDebt(s) {
+        vmPanelsAdd.panelAddCategory = 'transaction';
+        vmPanelsAdd.unpaidSubscriptionClient = s.operation_id;
+        vmPanelsAdd.person = vmClient.client;
+      },
+      parseDate(start, finish) {
+        return startAndEndDateInWords('за ', start, ' до ', finish, false);
+      },
+      dateInWords(date) {
+        return dateInWords(date, false);
+      },
+    },
+    computed: {
+      unpaidSubscriptionsClient() {
+        let { subscriptionsAmount, client } = vmClient;
+
+        return subscriptionsAmount.filter(function (s) {
+          if (s.is_active && client.id === s.client_id && s.debt > 0) {
+            return s;
+          }
+        });
+      },
+      unpaidRemindersClient() {
+        let { reminders } = data;
+        let { client } = vmClient;
+
+        return reminders.filter(function (r) {
+          if (!r.completed && client.id === r.client_id && r.debt > 0) {
+            return r;
+          }
+        });
+      },
+    },
+    template: `
+      <div v-if="unpaidSubscriptionsClient.length > 0 || unpaidRemindersClient.length > 0">
+        <div class="title-debt">Задолжность</div>
+        <div class="debt-panel">
+
+          <div v-for="s in unpaidSubscriptionsClient" :key="s.id" @click="clickDebt(s)" class="item-debt-panel">
+            <div class="left-item-debt-panel">
+              <div class="title-left-item-debt-panel">Анлийский язык</div>
+              <div class="desc-left-item-debt-panel">
+                {{ parseDate(s.start_at, s.finish_at) }}
+              </div>
+            </div>
+
+            <div class="right-item-debt-panel">{{ s.payment }} из {{ s.price }} ₽</div>
+          </div>
+
+          <div v-for="r in unpaidRemindersClient" :key="r.id" @click="clickDebt(r)" class="item-debt-panel">
+            <div class="left-item-debt-panel">
+              <div class="title-left-item-debt-panel">{{ r.note }}</div>
+              <div class="desc-left-item-debt-panel">
+                {{ dateInWords(r.date) }} 
+              </div>
+            </div>
+
+            <div class="right-item-debt-panel">{{ r.payment }} из {{ r.debt }} ₽</div>
+          </div>
+
+        </div>
+      </div>
+    `
+  });
+</script>

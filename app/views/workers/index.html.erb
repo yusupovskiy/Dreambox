@@ -25,7 +25,6 @@
       loadComplete: false,
       worksCompany: [],
       panelShow: 'home',
-      transactions: [],
       affiliates: [],
       worksAffiliates: [],
 
@@ -81,7 +80,6 @@
         });
 
         $.get('/get_data.json', data => {
-          this.transactions = data.transactions;
           this.affiliates = data.affiliates;
           this.categories = data.categories;
 

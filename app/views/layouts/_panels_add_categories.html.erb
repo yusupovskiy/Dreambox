@@ -19,10 +19,9 @@
     },
     methods: {
       createCategory() {
-        let {nameCategory, color} = this;
-        let {categories} = vmPanelsAdd;
-        
-        let {categoryId, budget} = vmPanelsAdd;
+        let { nameCategory, color } = this;
+        let { categories } = data;
+        let { categoryId, budget } = vmPanelsAdd;
         var complited = false;
 
         if(!this.loadingCategory) {
@@ -57,16 +56,6 @@
                 }
 
                 categories.unshift(newCategory);
-
-                if(typeof vmClient !== 'undefined') {
-                  vmClient.categories.unshift(newCategory);                  
-                }
-                else if(typeof vmTransaction !== 'undefined') {
-                  vmTransaction.categories.unshift(newCategory);                  
-                }
-                else if(typeof vmWorkers !== 'undefined') {
-                  vmWorkers.categories.unshift(newCategory);                  
-                }
               }
               this.loadingCategory = false;
             });
@@ -75,7 +64,7 @@
       },
     },
     created() {
-      this.colors = ['#ad2257', '#f4511f', '#288043', '#f6bf26', '#3f51b5', '#3cb678', '#a79b8e', '#616161', '#e67b72']
+      this.colors = ['#ad2257', '#f4511f', '#288043', '#f6bf26', '#3f51b5', '#3cb678', '#a79b8e', '#616161', '#e67b72'];
     },
     template: `
       <div class="pnl-add1">

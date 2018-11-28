@@ -8,7 +8,10 @@ class ApplicationController < ActionController::Base
   before_action :access_levels
 
   def get_data
+    people = Client.where(company_id: @current_company)
+
     clients = Client.where(company_id: @current_company)
+
     records_clients = RecordClient.where record_id: @current_record
     subscriptions = Subscription.where(record_client_id: records_clients).order('start_at DESC')
     reminders = Reminder.where(affiliate_id: @current_affiliates)
@@ -22,8 +25,6 @@ class ApplicationController < ActionController::Base
           
       ORDER BY l.created_at DESC
     ")
-    categories = Category.where("subject = 'company' AND (company_id IS NULL OR company_id = #{@current_company.id})").order(:id)
-
     operations = Operation.where( id: clients.select(:operation_id) )
                  .or( Operation.where( id: @current_record.select(:operation_id) ) )
                  .or( Operation.where( id: subscriptions.select(:operation_id) ) )
@@ -52,12 +53,13 @@ class ApplicationController < ActionController::Base
     data = { 
       logs: logs,
       operations: operations,
+      people: people,
       clients: clients,
       records: @current_record, 
       subscriptions: subscriptions,
       reminders: reminders,
       affiliates: @current_affiliates,
-      categories: categories,
+      categories: @categories_company,
       records: @current_record,
       records_services: records_services,
       transactions: transactions,
@@ -136,8 +138,8 @@ class ApplicationController < ActionController::Base
           rc = RecordClient.where(record_id: ra, is_active: true)
 
           @total_clients_company = Client.where("company_id = #{} and (role & #{Client::Role::CLIENT}) != 0")
-          
           @current_clients_company = Client.where id: rc.select(:client_id)
+          @categories_company = Category.where("subject = 'company' AND (company_id IS NULL OR company_id = #{@current_company.id})").order(:id)
 
           if @user_director
             unless @expired

@@ -11,9 +11,6 @@
         showNoteCancel: false,
       }
     },
-    props: {
-      transactions: Array,
-    },
     methods: {
       date(date) {
         return totalDate(date, true, true, true);
@@ -29,8 +26,8 @@
         }
       },
       cancelTransactionClient(transaction) {
-        let {transactions} = vmWorkers;
-        let {note} = this;
+        let { transactions } = data;
+        let { note } = this;
         var complited = false;
 
         if(!this.transactionCreateLoading) {
@@ -72,7 +69,7 @@
     },
     computed: {
       transactionsWorker() {
-        return vmWorkers.transactions.filter(t => t.operation_id == vmWorkers.worker.operation_id && t.is_active);
+        return data.transactions.filter(t => t.operation_id == vmWorkers.worker.operation_id && t.is_active);
       },
     },
     template: `

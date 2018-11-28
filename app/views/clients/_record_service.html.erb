@@ -13,7 +13,7 @@
     },
     methods: {
       deleteRecordServise(index) {
-        let {recordsServices, recordsCompany} = vmClient;
+        let {recordsServices, records} = vmClient;
         let rs = recordsServices[index];
         var complited = false
 
@@ -40,8 +40,8 @@
               if(complited) {
                 recordsServices.splice(index, 1);
                 
-                let indexRecord = recordsCompany.findIndex(r => r.id == rs.record_id);
-                vmClient.recordsCompany[indexRecord].total_price_abon = recordsCompany[indexRecord].total_price_abon - rs.money_for_abon;
+                let indexRecord = records.findIndex(r => r.id == rs.record_id);
+                vmClient.records[indexRecord].total_price_abon = records[indexRecord].total_price_abon - rs.money_for_abon;
               }
               this.loadingDelete = false;
             });

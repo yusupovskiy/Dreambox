@@ -33,13 +33,8 @@
 
   <body data-params="<%=params.to_json%>" class="home">
     <input type="hidden" id="authenticity_token" value="<%=form_authenticity_token%>">
-    <script type="text/javascript">
-      var authToken = document.getElementById("authenticity_token").value;
-      Vue.filter('money', function(value) {
-        if (!value) return 0;
-        return value.toLocaleString();
-      });
-    </script>
+
+    <%= render 'layouts/data' %>
 
     <header>
       <div class="panel-logo">
@@ -65,8 +60,6 @@
     <%= render 'layouts/panels_add' %>
     <%= render 'layouts/menu' %>
 
-
-
     <content>
       <%= yield %>
     </content>
@@ -78,7 +71,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
 
     <script type="text/javascript">
-      var vmNotifications = new Vue ({
+      var vmNotifications = new Vue({
         el: '#notifications',
         data: {
           notifications: []

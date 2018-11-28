@@ -13,60 +13,69 @@
         selectSearch: '',
         showSelect: false,
         affiliateId: '',
+        unpaidOperationId: '',
+        maxAmount: null,
+        operation: '',
+        log: {},
       }
     },
     props: {
       panelAddCategory: String,
       arrTree: Array,
       affiliates: Array,
-      clients: Array,
-      people: Object,
+      people: Array,
+      person: Object,
       categoryId: Number,
+      unpaidSubscriptionClient: String,
     },
     methods: {
       currentDate() {
         let currentDate = new Date();
 
         this.date = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());
-
-        console.log(this.date);
       },
-      clickPeople(people) {
+      parseDate(start, finish) {
+        return startAndEndDateInWords('за ', start, ' до ', finish, false);
+      },
+      clickPerson(person) {
         this.selectSearch = '';
         this.showSelect = false;
-        vmPanelsAdd.people = people;
+        vmPanelsAdd.person = person;
+        this.unpaidOperationId = '';
+      },
+      openSelect() {
+        this.showSelect = true;
+        if(vmPanelsAdd.person.id !== undefined) {
+          this.selectSearch = vmPanelsAdd.person.last_name + ' ' + vmPanelsAdd.person.first_name;
+        }
       },
       closeSelect() {
         this.selectSearch = '';
+      },
+      hideSelect() {
         this.showSelect = false;
       },
-      deletePeople() {
-        vmPanelsAdd.people = {};
+      deletePerson() {
+        vmPanelsAdd.person = {};
+        this.unpaidOperationId = '';
       },
-
       createTransaction() {
-        let {people} = vmPanelsAdd;
-        let {amount, note, categoryId, date, affiliateId, newElement} = this;
+        let {person} = vmPanelsAdd;
+        let {amount, note, categoryId, date, affiliateId, newElement, unpaidOperationId, log, operation} = this;
         var complited = false;
+
+        // определять абонемент ли операция или заметка, если заметка просто делать ее выполненной
 
         if(!this.loading) {
           this.loading = true;
-
-          // if(addTransForSubs == 'income') {
-          //   budget = 'income';
-          //   addTransForSubs = client.operation_id;
-          // }
-          // else if(addTransForSubs == 'expense') {
-          //   budget = 'expense';
-          //   addTransForSubs = client.operation_id;
-          // }
 
           setTimeout(() => {
             $.ajax('/create_transaction.json', {
               method: 'POST',
               data: {
                 authenticity_token: authToken,
-                operation_id: people.operation_id,
+                client_operation_id: person.operation_id,
+                unpaid_operation_id: unpaidOperationId,
                 amount: amount,
                 note: note,
                 category_id: categoryId,
@@ -76,6 +85,8 @@
               success: messege => {
                 complited = messege.complited;
                 newElement = messege.result[0];
+                log = messege.log;
+                operation = messege.operation;
                 vmNotifications.notifications.unshift(messege);
               },
               error: e => console.warn('error', e)
@@ -83,18 +94,18 @@
               if(complited) {
                 vmPanelsAdd.categoryId = null;
                 this.affiliateId = '';
-
-                if(typeof vmClient !== 'undefined') {
-                  vmClient.transactions.unshift(newElement);                  
-                }
-                else if(typeof vmTransaction !== 'undefined') {
-                  vmTransaction.transactions.unshift(newElement);                  
-                }
-                else if(typeof vmWorkers !== 'undefined') {
-                  vmWorkers.transactions.unshift(newElement);                  
-                }
-
                 vmPanelsAdd.panelAddCategory = null;
+
+                if(operation === 'reminder' || operation === 'reminder_completed') {
+                  data.logs.unshift(log);
+                }
+                if(operation === 'reminder_completed') {
+                  const indexReminder = data.reminders.findIndex(r => r.operation_id === unpaidOperationId);
+                  data.reminders[indexReminder].completed = true;
+                }
+
+                data.transactions.unshift(newElement);
+                window.open('/transactions/' + newElement.id + '/doc_pko', '_blank');
               }
               this.loading = false;
             });
@@ -102,29 +113,113 @@
         }
       },
     },
+    watch: {
+      unpaidOperationId: function() {
+        const { 
+          unpaidSubscriptionsClient, 
+          remindersWithPaymentsPerson, 
+          unpaidOperationId } = this, 
+          presentOperationId = String(unpaidOperationId).length > 0;
+
+        if(presentOperationId) {
+          const sub = unpaidSubscriptionsClient.find(s => s.operation_id === unpaidOperationId);
+          const rem = remindersWithPaymentsPerson.find(r => r.operation_id === unpaidOperationId);
+
+          if(sub !== undefined) {
+            this.amount = sub.debt;
+            this.maxAmount = sub.debt;
+            this.note = startAndEndDateInWords('За ', sub.start_at, ' до ', sub.finish_at, true) + ', абонемент Ucmas';
+          }
+          else if(rem !== undefined) {
+            this.amount = rem.unpaid_debt;
+            this.maxAmount = rem.unpaid_debt;
+            this.note = rem.note;
+          }
+          else {
+            this.amount = null;
+            this.maxAmount = null;
+            this.note = '';
+          }
+        }
+        else {
+          this.amount = null;
+          this.maxAmount = null;
+          this.note = '';
+        }
+      },
+      amount: function() {
+        if(this.maxAmount !== null && this.maxAmount <= this.amount) {
+          this.amount = this.maxAmount;
+        }
+      },
+    },
+    created() {
+      this.unpaidOperationId = this.unpaidSubscriptionClient;
+    },
     computed: {
+      subscriptionsAmount() {
+        let { subscriptions, transactions, operations } = data;
+
+        return subscriptions.filter(s => {
+          let payment = transactions.reduce((sum, t) => {
+            return (t.operation_id === s.operation_id && t.is_active && t.budget === 'income') ? sum + t.amount : sum;
+          }, 0);
+          let client_id = operations.find(o => o.id === s.operation_id).client_id;
+
+          // console.log(s);
+          return Object.assign(s, { 
+            payment: payment, 
+            debt: s.price - payment, 
+            client_id: client_id 
+          });
+        });
+      },
+      unpaidSubscriptionsClient() {
+        let { subscriptionsAmount } = this;
+        let { person } = vmPanelsAdd;
+
+        return subscriptionsAmount.filter(function (s) {
+          if (s.is_active && person.id === s.client_id && s.debt > 0) {
+            return s;
+          }
+        });
+      },
+      remindersWithPaymentsPerson() {
+        let { reminders, transactions } = data;
+        let { person } = vmPanelsAdd;
+
+        return reminders.filter(r => {
+          if (!r.completed && person.id === r.client_id && r.debt > 0) {
+            let payment = transactions.reduce((sum, t) => {
+              return (t.operation_id === r.operation_id && t.is_active) ? sum + t.amount : sum;
+            }, 0);
+
+            return Object.assign(r, { 
+              payment: payment, 
+              unpaid_debt: r.debt - payment,
+            });
+          }
+        });
+      },
       isCurrentDate() {
         let newCurrentDate = new Date();
         let currentDate = setDate(newCurrentDate.getDate(), newCurrentDate.getMonth(), newCurrentDate.getFullYear());
 
         return this.date === currentDate;
       },
-      clientsSearch() {
+      peopleSearch() {
         const s = validSpaces(this.selectSearch.toLowerCase());
-        return this.clients.filter(n => {
-          let full_name = n.first_name + ' ' + n.last_name + ' ' + n.patronymic;
+        return this.people.filter(n => {
+          let full_name = n.last_name + ' ' + n.first_name + ' ' + n.patronymic;
 
           return Object.values(full_name.split()).some(m => m.toString().toLowerCase().includes(s));
           }
         );
       },
     },
-    created() {
-      this.colors = ['#ad2257', '#f4511f', '#288043', '#f6bf26', '#3f51b5', '#3cb678', '#a79b8e', '#616161', '#e67b72']
-    },
     template: `
       <div class="pnl-add1">
-        <input v-model='amount' type="text" class="whsOnd zHQkBf" autocomplete="off" tabindex="0" placeholder="Сумма" autofocus="" data-initial-value="" badinput="false" />
+        <input v-model='amount' type="number" class="whsOnd zHQkBf" autocomplete="off" tabindex="0" placeholder="Сумма" autofocus="" data-initial-value="" badinput="false" />
 
         <div v-if="!isCurrentDate" class="dop">
           <span @click="currentDate()" class="item-dop">Сегодня</span>
@@ -138,30 +233,49 @@
             <div class="left-item-add-input">Сторона</div>
             <div class="right-item-add-input">
 
-              <input v-model="selectSearch" type="text" class="input-right-item-add-input" style="position: relative; z-index: 99; background-color: transparent;"  @focus="showSelect = true" :class="[{ active: showSelect }]" />
+              <input v-model="selectSearch" type="text" class="input-right-item-add-input" style="position: relative; z-index: 99; background-color: transparent;"  @focus="openSelect" :class="[{ active: showSelect }]" />
 
-              <div v-if="showSelect || selectSearch.length > 0" @click="closeSelect" class="close-select"><ion-icon name="close-circle"></ion-icon></ion-icon></div>
+              <div v-if="selectSearch.length > 0" @click="closeSelect" class="close-select"><ion-icon name="close-circle"></ion-icon></ion-icon></div>
 
-              <div v-else-if="people.id !== undefined" @click="deletePeople" class="close-select"><ion-icon name="close-circle"></ion-icon></ion-icon></div>
+              <div v-else-if="showSelect" @click="hideSelect" class="close-select"><ion-icon name="close-circle"></ion-icon></ion-icon></div>
 
-              <div v-if="people.id !== undefined" class="item-v" :title="people.patronymic">
+              <div v-else-if="person.id !== undefined" @click="deletePerson" class="close-select"><ion-icon name="close-circle"></ion-icon></ion-icon></div>
+
+              <div v-if="!showSelect && person.id !== undefined" class="item-v" :title="person.patronymic">
                 <img src="/resources/no-image-available.png">
-                <div>{{ people.last_name }} {{ people.first_name }}</div>
+                <div>{{ person.last_name }} {{ person.first_name }}</div>
               </div>
-              <div v-else-if="selectSearch.length <= 0 && people.id === undefined" class="emptily">Пусто</div>
+              <div v-else-if="showSelect || (selectSearch.length <= 0 && person.id === undefined)" class="emptily">Пусто</div>
 
               <div v-if="showSelect" class="select-list cool-scrollbar">
                 <div class="scroll-select-list">
-                  <div v-if="clientsSearch.length > 0">
-                    <div @click="clickPeople(client)" v-for="client in clientsSearch" :title="client.patronymic + ' ' + client.phone_number" class="item-s">
+                  <div v-if="peopleSearch.length > 0">
+                    <div @click="clickPerson(client)" v-for="client in peopleSearch" :title="client.patronymic" class="item-s">
                       <img src="/resources/no-image-available.png">
-                      <div>{{ client.first_name }} {{ client.last_name }}</div>
+                      <div>{{ client.last_name }} {{ client.first_name }}</div>
                     </div>
                   </div>
                   <div v-else style="font-size: 14px; padding: 2px 10px; color: #c2c2c2; user-select: none;">Ничего не найдено</div>
                 </div>
               </div>
 
+            </div>
+          </div>
+
+          <div v-if="person.id !== undefined && (unpaidSubscriptionsClient.length > 0 || remindersWithPaymentsPerson.length > 0)" class="item-add-input">
+            <div class="left-item-add-input">Задолжности</div>
+            <div class="right-item-add-input">
+              <select v-model="unpaidOperationId" class="input-right-item-add-input">
+                <option value="">Пусто</option>
+
+                <option v-for="s in unpaidSubscriptionsClient" :value="s.operation_id">
+                  {{ s.payment }} из {{ s.price }} ₽ | Ucmas {{ parseDate(s.start_at, s.finish_at) }}
+                </option>
+
+                <option v-for="r in remindersWithPaymentsPerson" :value="r.operation_id">
+                  {{ r.payment }} из {{ r.debt }} ₽ | {{ r.note }}
+                </option>
+              </select>
             </div>
           </div>
 
@@ -172,17 +286,18 @@
             </div>
           </div>
 
-          <div class="item-add-input">
+          <div v-if="unpaidOperationId === ''" class="item-add-input">
             <div class="left-item-add-input">Филиал</div>
             <div class="right-item-add-input">
               <select v-model="affiliateId" class="input-right-item-add-input">
-                <option disabled value="">Пусто</option>
+                <option value="">Пусто</option>
                 <option v-for="affiliate in affiliates" :value="affiliate.id">
                   {{ affiliate.address }}
                 </option>
               </select>
             </div>
           </div>
+
           <div class="item-add-input">
             <div class="left-item-add-input">Комментарий</div>
             <div class="right-item-add-input">
