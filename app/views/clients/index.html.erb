@@ -554,6 +554,10 @@
             return (c.id === r.client_id && !r.completed) ? sum + r.unpaid_debt : sum;
           }, 0);
 
+          if(record.id !== undefined || activeRecords.length > 0) {
+            debt_reminders = 0;
+          }
+
           return Object.assign(c, { 
             full_name: c.last_name + ' ' + c.first_name + ' ' + c.patronymic,
             debt: debt_subscriptions + debt_reminders 
