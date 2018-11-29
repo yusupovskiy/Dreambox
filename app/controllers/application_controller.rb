@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
         INNER JOIN categories ON company_transactions.category_id = categories.id
         INNER JOIN operations ON company_transactions.operation_id = operations.id
         
-      WHERE ol.operation_id IN (#{operations_id})
+      WHERE company_transactions.operation_id IN (#{operations_id})
       ORDER BY transactions.date DESC
     ")
     discounts = Discount.where(record_client_id: records_clients).order('created_at DESC')
