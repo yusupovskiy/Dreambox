@@ -8,7 +8,8 @@
         debt: null,
         affiliateId: null,
         newElement: null,
-        newLog: [],
+        newOperation: {},
+        newLog: {},
       }
     },
     props: {
@@ -42,6 +43,7 @@
               success: messege => {
                 complited = messege.complited;
                 newElement = messege.result;
+                newOperation = messege.operation;
                 newLog = messege.log;
                 vmNotifications.notifications.unshift(messege);
               },
@@ -50,6 +52,7 @@
               if(complited) {
                 reminders.unshift(newElement);
 
+                data.operations.unshift(newOperation);
                 data.logs.unshift(newLog);
               }
               this.loading = false;

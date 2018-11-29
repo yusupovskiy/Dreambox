@@ -48,15 +48,15 @@
   width: 458px;
   height: 100%;
   float: left;
-  border: 1px dashed black;
+  border: 1px solid black;
   border-width: 0 1px 0 0;
   position: relative;
 }
 .right {
-  width: 297px;
+  width: 296px;
   height: 100%;
   float: right;
-  border: 1px dashed black;
+  border: 1px solid black;
   border-width: 0 0 0 1px;
   position: relative;
 }
@@ -430,8 +430,21 @@ ion-icon.hydrated:hover {
 
         </div>
       </div>
-      <span style="position: absolute; bottom: 0; right: 10px; font-size: 9px; color: #a1a1a1;"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Квитанция подготовлена сервисом для учета Draft</span>
+      <span style="position: absolute;
+    top: 100px;
+    right: -113px;
+    font-size: 9px;
+    color: #a1a1a1;
+    transform: rotate(90deg);"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Квитанция подготовлена сервисом для учета Draft</span>
     </div>
+
+    <hr style="    width: 0;
+    height: 100%;
+    float: left;
+    margin: 0 18px;
+    border: 1px dashed black;
+    border-width: 0 1px 0 0;" />
+
     <div class="right">
       <div class="column">
         <div class="field_1">
@@ -543,36 +556,9 @@ ion-icon.hydrated:hover {
         <td colspan="8" style="padding: 20px 0px 0 20px;">М.П.(штампа)</td>
       </tr>
 
-      <!-- <tr style="font-size: 12px;">
-        <td colspan="3" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
-        <td colspan="4" style="padding: 13px 3px 1px 3px;">
-          <div class="field" style="float: left; margin-right: 20px;">
-            <div style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 84px; height: 15px;"></div>
-            <span style="bottom: -50%;">(подпись)</span>
-          </div>
-          <div class="field" style="float: left;">
-            <input type="text" value="" style="padding: 3px 3px 4px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px;">
-            <span style="bottom: -50%;">(расшифровка подписи)</span>
-          </div>
-        </td>
-      </tr>
-      <tr style="font-size: 12px;">
-        <td colspan="3" style="padding: 21px 3px 1px 3px;">Кассир</td>
-        <td colspan="4" style="padding: 13px 3px 1px 3px;">
-          <div class="field" style="float: left; margin-right: 20px;">
-            <div style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 84px; height: 15px;"></div>
-            <span style="bottom: -50%;">(подпись)</span>
-          </div>
-          <div class="field" style="float: left;">
-            <input type="text" value="<%= format_name(@current_people) %>" style="padding: 3px 3px 4px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px;">
-            <span style="bottom: -50%;">(расшифровка подписи)</span>
-          </div>
-        </td>
-      </tr> -->
-
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
-        <td colspan="6" style="padding: 13px 0 1px 0;">
+        <td colspan="6" style="padding: 13px 0 1px 4px;">
           <div class="field" style="float: left; margin-right: 10px;">
             <div style="padding: 1px 0 1px 0; border: 2px solid black; border-width: 0 0 2px 0; width: 60px; height: 15px;"></div>
             <span style="bottom: -50%;">(подпись)</span>
@@ -585,7 +571,7 @@ ion-icon.hydrated:hover {
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 21px 3px 1px 3px;">Получил кассир</td>
-        <td colspan="6" style="padding: 13px 0 1px 0;">
+        <td colspan="6" style="padding: 13px 0 1px 4px;">
           <div class="field" style="float: left; margin-right: 10px;">
             <div style="padding: 1px 0 1px 0; border: 2px solid black; border-width: 0 0 2px 0; width: 60px; height: 15px;"></div>
             <span style="bottom: -50%;">(подпись)</span>
@@ -600,7 +586,12 @@ ion-icon.hydrated:hover {
     </table>
   </div>
 
-      <span style="position: absolute; bottom: 0; left: 10px; font-size: 9px; color: #a1a1a1;"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Получайте полную информацию в сервисе Draft</span>
+      <span style="    position: absolute;
+    bottom: 100px;
+    left: -110px;
+    font-size: 9px;
+    color: #a1a1a1;
+    transform: rotate(-90deg);"><img src="/images/lflflf.png" style="width: 10px; margin-right: 5px; margin-bottom: -2px;">Получайте полную информацию в сервисе Draft</span>
     </div>
 
   </div>

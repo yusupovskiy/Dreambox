@@ -110,8 +110,6 @@
       sortKey: 'full_name',
       reverse: false,
       querySearch: {},
-
-      operations: [],
     },
     methods: {
       addElementFiltration(id, object) {
@@ -213,7 +211,6 @@
 
       setTimeout(() => {
         $.get('/get_data.json', data => {
-          this.operations = data.operations;
           this.clients = data.clients;
           this.affiliates = data.affiliates;
           this.subscriptions = data.subscriptions;

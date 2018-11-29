@@ -39,11 +39,11 @@ class RemindersController < ApplicationController
           LEFT JOIN users AS s
             ON l.user_id = s.id
         WHERE l.id = #{log.id}
-      ")
+      ").last
     end
 
     messege = { complited: complited, note: note, result: reminder, 
-                log: log[0] }
+                log: log, operation: operation }
 
     respond_to do |format|
       format.json { render json: messege }

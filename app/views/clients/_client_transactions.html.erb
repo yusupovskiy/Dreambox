@@ -81,8 +81,8 @@
     },
     computed: {
       transactionsClient() {
-        let { operations, client } = vmClient;
-        let { transactions } = data;
+        let { client } = vmClient;
+        let { transactions, operations } = data;
 
         return transactions.filter(t => {
           if(t.is_active) {

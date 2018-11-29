@@ -51,7 +51,8 @@
     },
     computed: {
       filtrationElementsName() {
-        let {filtrationElements, records, servicesCompany, affiliates} = this;
+        let { filtrationElements, servicesCompany } = this;
+        let { records, affiliates } = data;
 
         return filtrationElements.filter(function (element) {
           let indexRecord = records
