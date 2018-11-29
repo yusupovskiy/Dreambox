@@ -9,12 +9,19 @@ class ApplicationController < ActionController::Base
 
   def get_data
     people = Client.where(company_id: @current_company)
-
     clients = Client.where(company_id: @current_company)
-
     records_clients = RecordClient.where record_id: @current_record
     subscriptions = Subscription.where(record_client_id: records_clients).order('start_at DESC')
     reminders = Reminder.where(affiliate_id: @current_affiliates)
+
+    operations = Operation.where( id: clients.select(:operation_id) )
+                 .or( Operation.where( id: @current_record.select(:operation_id) ) )
+                 .or( Operation.where( id: subscriptions.select(:operation_id) ) )
+                 .or( Operation.where( id: reminders.select(:operation_id) ) )
+      # OR id IN #{works.select(:operation_id)}
+      # OR id IN #{salaries.select(:operation_id)}
+
+    operations_id = operations.ids.join(", ")
     logs = OperationLog.find_by_sql("
       SELECT l.id, l.note, l.created_at, l.type_log, s.id AS user_id, s.last_name || ' ' || s.first_name AS user_name, s.avatar, ol.operation_id
       FROM operation_logs AS ol
@@ -22,15 +29,11 @@ class ApplicationController < ActionController::Base
           ON ol.log_id = l.id
         LEFT JOIN users AS s
           ON l.user_id = s.id
-          
+
+      WHERE ol.operation_id IN (#{operations_id})
       ORDER BY l.created_at DESC
     ")
-    operations = Operation.where( id: clients.select(:operation_id) )
-                 .or( Operation.where( id: @current_record.select(:operation_id) ) )
-                 .or( Operation.where( id: subscriptions.select(:operation_id) ) )
-                 .or( Operation.where( id: reminders.select(:operation_id) ) )
-      # OR id IN #{works.select(:operation_id)}
-      # OR id IN #{salaries.select(:operation_id)} 
+
     records_services = RecordService.where(record_id: @current_record).order('created_at DESC')
 
     transactions = CompanyTransaction.find_by_sql("
@@ -39,6 +42,8 @@ class ApplicationController < ActionController::Base
         INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
         INNER JOIN categories ON company_transactions.category_id = categories.id
         INNER JOIN operations ON company_transactions.operation_id = operations.id
+        
+      WHERE ol.operation_id IN (#{operations_id})
       ORDER BY transactions.date DESC
     ")
     discounts = Discount.where(record_client_id: records_clients).order('created_at DESC')
