@@ -13,15 +13,15 @@ module TransactionsHelper
     end
   end
   def format_name(people)
-    first_name = people.first_name
     last_name = people.last_name
+    first_name = people.first_name
     patronymic = people.patronymic
 
-    if first_name.present?
-      fio = first_name
-    end
     if last_name.present?
-      fio = fio + ' ' + last_name[0] + '.'
+      fio = last_name
+    end
+    if first_name.present?
+      fio = fio + ' ' + first_name[0] + '.'
     end
     if patronymic.present?
       fio = fio + ' ' + patronymic[0] + '.'

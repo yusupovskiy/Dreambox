@@ -5,7 +5,46 @@ class TransactionsController < ApplicationController
     @transaction = Transaction.find_by id: params[:id], company_transaction_id: company_transactions
 
     if @transaction.present?
+      @debt = 0
       @company_transaction = CompanyTransaction.find_by id: @transaction.company_transaction_id
+      @client = Client.find_by operation_id: @company_transaction.operation_id
+      
+      unless @client
+        @subscription = Subscription.find_by operation_id: @company_transaction.operation_id
+        @reminder = Reminder.find_by operation_id: @company_transaction.operation_id
+      
+        payments = CompanyTransaction.find_by_sql("
+          SELECT operation_id, SUM(amount) as total_payments
+          FROM company_transactions 
+            INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
+            INNER JOIN categories ON company_transactions.category_id = categories.id
+          WHERE is_active = true 
+                AND budget = 'income' 
+                AND operation_id = #{ @company_transaction.operation_id }
+                AND date <= '#{ @transaction.date }'
+          GROUP BY operation_id
+        ")
+
+        if @subscription.present?
+          operation = Operation.find @company_transaction.operation_id
+          @client = Client.find operation.client_id
+
+          if payments.present?
+            @debt = @subscription.price - payments.last.total_payments
+          end
+
+        elsif @reminder.present?
+          @client = Client.find @reminder.client_id
+          if payments.present?
+            @debt = @reminder.debt - payments.last.total_payments
+          end
+
+        end
+
+      end
+
+      # reminder client_id
+
     end
 
     render :template => 'transactions/doc_pko',layout: false    

@@ -13,7 +13,7 @@
     },
     methods: {
       date(date) {
-        return totalDate(date, true, true, true);
+        return dateInWords(date, false);
       },
       clickTransactionClientActive(id) {
         if(!$('.transaction-'+id).hasClass('active')) {

@@ -28,7 +28,8 @@
             <li 
               v-for="clientItem in clientsFilter" 
               @click="clickClient(clientItem)" 
-              class="item-list" :key="clientItem.id" 
+              class="item-list" :key="clientItem.id"
+              :id="[ client.id != clientItem.id ? '' : 'active-item-list' ]" 
               :class="[ 'client-' + clientItem.id, client.id != clientItem.id ? '' : 'active' ]" >
 
               <img class="avatar-listt" src="/resources/no-image-available.png">
