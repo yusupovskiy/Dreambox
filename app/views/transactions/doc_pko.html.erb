@@ -35,7 +35,8 @@
 }
 .doc {
   width: 793.7007874016px;
-  height: 559.3700787402px;
+  /*height: 559.3700787402px;*/
+  height: 550px;
   background: white;
   margin: 0 auto;
 }
@@ -64,14 +65,13 @@
   font-size: 13px;
   margin-top: 20px;
 }
-.field_1>input {
-  width: 100%;
-  text-align: center;
-  background-color: #f1f4ff;
-  border: 1px solid black;
-  border-width: 0 0 2px 0;
-  font-size: 12px;
-  padding: 3px;
+.field_1>div {
+    width: 100%;
+    text-align: center;
+    border: 1px solid black;
+    border-width: 0 0 2px 0;
+    padding: 3px;
+    font-size: 13px;
 }
 .field_1>span {
     font-size: 11px;
@@ -195,7 +195,7 @@ ion-icon.hydrated {
     cursor: pointer;
 }
 
-#rub:first-letter {
+.rub:first-letter {
   text-transform: capitalize;
 }
 
@@ -349,7 +349,7 @@ ion-icon.hydrated:hover {
                 <%= @client.last_name %> <%= @client.first_name %> <%= @client.patronymic %>
               </div>
             <% else %>
-              <div class="field-div" contenteditable="true" style="width: 361px;">-</div>
+              <div style="text-align: center; font-size: 12px!important;" class="field-div" contenteditable="true" style="width: 361px;">-</div>
             <% end %>
         </td>
       </tr>
@@ -366,7 +366,7 @@ ion-icon.hydrated:hover {
         <td colspan="1" style="padding: 10px 3px 1px 3px;">Сумма</td>
         <td colspan="7" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; text-align: center;">
             <div class="field">
-              <div id="rub" style="text-align: center;" class="field">-</div>
+              <div style="text-align: center;" class="rub field">-</div>
               <span>(прописью)</span>
           </div>
         </td>
@@ -377,7 +377,7 @@ ion-icon.hydrated:hover {
         </td>
         <td style="padding: 13px 3px 1px 3px; text-align: center;">руб.</td>
         <td style="padding: 13px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
-          <div id="kop" style="text-align: center;" class="field" style=""></div>
+          <div style="text-align: center;" class="field kop" style=""></div>
         </td>
         <td style="padding: 13px 3px 3px 3px; text-align: center;">коп.</td>
       </tr>
@@ -393,7 +393,7 @@ ion-icon.hydrated:hover {
         <td colspan="2" style="padding: 10px 3px 1px 3px;">Приложение</td>
         <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
           <div class="field" style="">
-            <input style="font-size: 12!important;" type="text" value="">
+            <input style="font-size: 12!important;" type="text" value="-">
           </div>
         </td>
       </tr>
@@ -406,7 +406,7 @@ ion-icon.hydrated:hover {
             <span style="bottom: -50%;">(подпись)</span>
           </div>
           <div class="field" style="float: left;">
-            <input type="text" value="" style="padding: 3px 3px 3px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px; font-size: 12!important;">
+            <input type="text" value="-" style="padding: 3px 3px 3px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 140px; font-size: 12!important;">
             <span style="bottom: -50%;">(расшифровка подписи)</span>
           </div>
         </td>
@@ -435,7 +435,7 @@ ion-icon.hydrated:hover {
     <div class="right">
       <div class="column">
         <div class="field_1">
-          <input type="text" value="<%= @current_company.name %>">
+          <div><%= @current_company.name %></div>
           <span>(организация)</span>
         </div>
         <h2 class="title_1">Квитанция</h2>
@@ -464,56 +464,86 @@ ion-icon.hydrated:hover {
     <table style="width: 100%; font-size: 10px; padding-top: 15px;" cellspacing="0">
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 10px 3px 1px 3px;">Принято от</td>
-        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">@client_subscription.first_name    @client_subscription.last_name    @client_subscription.patronymic</td>
+        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; text-align: center;">
+
+            <% if @client.present? %>
+              <div>
+                <%= @client.last_name %> <%= @client.first_name %> <%= @client.patronymic %>
+              </div>
+            <% else %>
+              <div class="field-div" contenteditable="true" style="text-align: center; font-size: 12px!important;">-</div>
+            <% end %>
+
+        </td>
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="2" style="padding: 10px 3px 1px 3px;">Основание:</td>
-        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;"><%= @transaction.note %></td>
+        <td colspan="6" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; text-align: center;"><%= @transaction.note %></td>
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="8" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; height: 22px;"></td>
       </tr>
       <tr style="font-size: 12px;">
-        <td colspan="1" style="padding: 3px 3px 1px 3px;">Сумма</td>
-        <td colspan="7" style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; text-align: center;">
+        <td colspan="1" style="padding: 10px 3px 1px 3px;">Сумма</td>
+
+
+        <td colspan="1"></td>
+        <td colspan="3" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; width: 190px; font-size: 12px; text-align: center;">
+          <div class="field">
+            <div><%= @transaction.amount.to_i %></div>
+            <span>(цифрами)</span>
+          </div>
+        </td>
+        <td colspan="1" style="padding: 10px 3px 1px 3px; text-align: center;">руб.</td>
+        <td colspan="1" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
+          <div class="field" style="">
+            <div class="kop" style="text-align: center; width: 30px;"></div>
+          </div>
+        </td>
+        <td colspan="1" style="padding: 13px 3px 3px 3px; text-align: center;">коп.</td>
+               
+<!--         <td colspan="7" style="padding: 10px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; text-align: center;">
             <div class="field">
-              <div>Четыре тысячи</div>
+              <div id="rub2">-</div>
               <span>(структурное подразделение)</span>
+          </div>
+        </td> -->
+      </tr>
+      <tr style="font-size: 12px;">
+        <td colspan="8" style="padding: 13px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0; text-align: center;">
+            <div class="field">
+              <div class="rub">-</div>
+              <span>(прописью)</span>
           </div>
         </td>
       </tr>
       <tr style="font-size: 12px;">
         <td colspan="5" style="padding: 13px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
           <div class="field" style="">
-            <input type="text" value="-">
+            <div style="text-align: center;">-</div>
           </div>
         </td>
         <td style="padding: 13px 3px 1px 3px; text-align: center;">руб.</td>
         <td style="padding: 13px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
           <div class="field" style="">
-            <input type="text" value="00">
+            <div  class="kop" style="text-align: center; width: 30px;"></div>
           </div>
         </td>
         <td style="padding: 13px 3px 3px 3px; text-align: center;">коп.</td>
       </tr>
       <tr style="font-size: 12px;">
-        <td colspan="2" style="padding: 3px 3px 1px 3px;">В том числе</td>
+        <td colspan="2" style="padding: 3px 3px 1px 3px; width: 150px;">В том числе</td>
         <td colspan="6" style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
           <div class="field" style="">
-            <input type="text" value="">
+            <input style="font-size: 12!important;" type="text" value="Без НДC">
           </div>
         </td>
       </tr>
       <tr style="font-size: 12px;">
-        <td colspan="2" style="padding: 3px 3px 1px 3px;">Приложение</td>
-        <td colspan="6" style="padding: 3px 3px 1px 3px; border: 2px solid black; border-width: 0 0 2px 0;">
-          <div class="field" style="">
-            <input type="text" value="">
-          </div>
-        </td>
+        <td colspan="8" style="padding: 20px 0px 0 20px;">М.П.(штампа)</td>
       </tr>
 
-      <tr style="font-size: 12px;">
+      <!-- <tr style="font-size: 12px;">
         <td colspan="3" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
         <td colspan="4" style="padding: 13px 3px 1px 3px;">
           <div class="field" style="float: left; margin-right: 20px;">
@@ -538,6 +568,33 @@ ion-icon.hydrated:hover {
             <span style="bottom: -50%;">(расшифровка подписи)</span>
           </div>
         </td>
+      </tr> -->
+
+      <tr style="font-size: 12px;">
+        <td colspan="2" style="padding: 21px 3px 1px 3px;">Главный бухгалтер</td>
+        <td colspan="6" style="padding: 13px 0 1px 0;">
+          <div class="field" style="float: left; margin-right: 10px;">
+            <div style="padding: 1px 0 1px 0; border: 2px solid black; border-width: 0 0 2px 0; width: 60px; height: 15px;"></div>
+            <span style="bottom: -50%;">(подпись)</span>
+          </div>
+          <div class="field" style="float: left;">
+            <input type="text" value="-" style="padding: 3px 0 1px 0; border: 2px solid black; border-width: 0 0 2px 0; width: 110px; font-size: 12!important;">
+            <span style="bottom: -50%;">(расшифровка подписи)</span>
+          </div>
+        </td>
+      </tr>
+      <tr style="font-size: 12px;">
+        <td colspan="2" style="padding: 21px 3px 1px 3px;">Получил кассир</td>
+        <td colspan="6" style="padding: 13px 0 1px 0;">
+          <div class="field" style="float: left; margin-right: 10px;">
+            <div style="padding: 1px 0 1px 0; border: 2px solid black; border-width: 0 0 2px 0; width: 60px; height: 15px;"></div>
+            <span style="bottom: -50%;">(подпись)</span>
+          </div>
+          <div class="field" style="float: left;">
+            <input type="text" value="<%= format_name(@current_people) %>" style="padding: 3px 0 1px 0; border: 2px solid black; border-width: 0 0 2px 0; width: 110px; font-size: 12!important;">
+            <span style="bottom: -50%;">(расшифровка подписи)</span>
+          </div>
+        </td>
       </tr>
 
     </table>
@@ -559,6 +616,7 @@ ion-icon.hydrated:hover {
 <script>
   let amount = document.getElementById('amount');
   start(amount.innerText, 'rub', 'kop');
+  start(amount.innerText, 'rub2', 'kop');
 
   function start(value, rub, kop){
     // document.getElementsByTagName('p')[1].innerHTML = getSumInWords(value);
@@ -582,8 +640,18 @@ ion-icon.hydrated:hover {
     // копейки
     var kopeikiStr = sumSymbols.slice(-2);
 
-    document.getElementById(rub).innerHTML = res;
-    document.getElementById(kop).innerHTML = kopeikiStr;
+    let elementRub = document.getElementsByClassName(rub);
+    let elementKop = document.getElementsByClassName(kop);
+
+    for(let i = 0; i < elementRub.length; i++) {
+      elementRub[i].innerHTML = res;
+    }
+    for(let i = 0; i < elementKop.length; i++) {
+      elementKop[i].innerHTML = kopeikiStr;
+    }
+
+    // document.getElementById(rub).innerHTML = res;
+    // document.getElementById(kop).innerHTML = kopeikiStr;
     // res = res + kopeikiStr
     // res += getGroupNameToNumber(kopeikiStr, 3);
     // return res;
@@ -609,9 +677,9 @@ ion-icon.hydrated:hover {
     var numberName = 
     [ ['', 'сто ', 'двести ',   'триста ', 'четыреста ',  'пятьсот ', 'шестьсот ', 'семьсот ',  'восемьсот ', 'девятьсот '],
       ['',   '',   'двадцать ', 'тридцать ', 'сорок ',  'пятьдесят ', 'шестьдесят ', 'семьдесят ',  'восемьдесят ', 'девяносто '],
-      ['', 'одна ', 'две ', 'три ', 'четыре ',  'пять ', 'шесть ', 'семь ',  'восемь ', 'девять '], 
+      ['', 'один ', 'два ', 'три ', 'четыре ',  'пять ', 'шесть ', 'семь ',  'восемь ', 'девять '], 
       ['десять ', 'одинадцать ',  'двенадцать ', 'тринадцать ', 'четырнадцать ',  'пятнадцать ', 'шестнадцать ', 'семнадцать ',  'восемнадцать ', 'девятнадцать '],
-      ['', 'один ', 'два ', 'три ', 'четыре ',  'пять ', 'шесть ', 'семь ',  'восемь ', 'девять '] ]; 
+      ['', 'одна ', 'две ', 'три ', 'четыре ',  'пять ', 'шесть ', 'семь ',  'восемь ', 'девять '] ]; 
     
     // если на входе 000
     if (+x==0) return '';
