@@ -1,0 +1,129 @@
+<script type="text/javascript">
+  Vue.component('add-reminder', {
+    data: function () {
+      return {
+        loading: false,
+        note: '',
+        date: '',
+        debt: null,
+        affiliateId: '',
+        newElement: null,
+        newOperation: {},
+        newLog: {},
+      }
+    },
+    props: {
+      person: Object,
+      affiliates: Array,
+    },
+    methods: {
+      currentDate() {
+        let currentDate = new Date();
+
+        this.date = setDate(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());
+      },
+      createElement() {
+        let { reminders } = data;
+        let { person, note, date, debt, affiliateId } = this;
+        let complited = false
+
+        if(!this.loading) {
+          this.loading = true;
+
+          setTimeout(() => {
+            $.ajax('/reminders.json', {
+              method: 'POST',
+              data: {
+                authenticity_token: authToken,
+                reminder: {
+                  note: note,
+                  date: date,
+                  debt: debt,
+                  client_id: person.id,
+                  affiliate_id: affiliateId,
+                }
+              },
+              success: messege => {
+                complited = messege.complited;
+                newElement = messege.result;
+                newOperation = messege.operation;
+                newLog = messege.log;
+                vmNotifications.notifications.unshift(messege);
+              },
+              error: e => console.warn('error', e)
+            }).done(e => {
+              if(complited) {
+                reminders.unshift(newElement);
+
+                data.operations.unshift(newOperation);
+                data.logs.unshift(newLog);
+                vmPanelsAdd.panelAddCategory = null;
+              }
+              this.loading = false;
+            });
+          }, 600);
+        }
+      },
+    },
+    watch: {
+    },
+    computed: {
+      isCurrentDate() {
+        let newCurrentDate = new Date();
+        let currentDate = setDate(newCurrentDate.getDate(), newCurrentDate.getMonth(), newCurrentDate.getFullYear());
+
+        return this.date === currentDate;
+      },
+    },
+    created() {
+      let { affiliates } = this;
+
+      if(affiliates.length == 1) {
+        this.affiliateId = affiliates[0].id;
+      }
+    },
+    template: `
+      <div class="pnl-add1">
+        <input v-model='note' type="text" autocomplete="off" tabindex="0" placeholder="Заметка" autofocus="" data-initial-value="" badinput="false" />
+
+        <div v-if="!isCurrentDate" class="dop">
+          <span @click="currentDate()" class="item-dop">Сегодня</span>
+        </div>
+
+        <div class="add-input">
+          <div class="item-add-input">
+            <div class="left-item-add-input">Задолжность</div>
+            <div class="right-item-add-input">
+              <input v-model='debt' placeholder="Отсутсвует" type="number" class="input-right-item-add-input" />
+            </div>
+          </div>
+
+          <div class="item-add-input">
+            <div class="left-item-add-input">Дата транзакции</div>
+            <div class="right-item-add-input">
+              <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='date' />
+            </div>
+          </div>
+
+          <div v-if="affiliates.length > 1" class="item-add-input">
+            <div class="left-item-add-input">Филиал</div>
+            <div class="right-item-add-input">
+              <select v-model="affiliateId" class="input-right-item-add-input">
+                <option value="">Пусто</option>
+                <option v-for="affiliate in affiliates" :value="affiliate.id">
+                  {{ affiliate.address }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class='btns-pnls-add'>
+          <button @click='createElement()' class='btn-pnls-add'>Добавить</button>
+          <button @click="$emit('cancel-panel')" class='btn-pnls-cancel'>Отмена</button>
+        </div>
+      </div>
+    `
+  });
+</script>

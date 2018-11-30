@@ -157,7 +157,12 @@
       },
     },
     created() {
+      let { affiliates } = this;
       this.unpaidOperationId = this.unpaidSubscriptionClient;
+
+      if(affiliates.length == 1) {
+        this.affiliateId = affiliates[0].id;
+      }
     },
     computed: {
       subscriptionsAmount() {
@@ -233,7 +238,6 @@
         <tree :arr-tree="arrTree"></tree>
 
         <div class="add-input">
-
           <div class="item-add-input">
             <div class="left-item-add-input">Сторона</div>
             <div class="right-item-add-input">
@@ -291,7 +295,7 @@
             </div>
           </div>
 
-          <div v-if="unpaidOperationId === ''" class="item-add-input">
+          <div v-if="affiliates.length > 1 && unpaidOperationId === ''" class="item-add-input">
             <div class="left-item-add-input">Филиал</div>
             <div class="right-item-add-input">
               <select v-model="affiliateId" class="input-right-item-add-input">

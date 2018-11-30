@@ -4,7 +4,11 @@ class RemindersController < ApplicationController
     reminder = Reminder.new prms
     result = []
 
-    if !Client.exists? id: reminder.client_id, company_id: @current_company
+    if reminder.note == ''
+      complited = false
+      note = 'Не указан комментарий заметки'
+
+    elsif !Client.exists? id: reminder.client_id, company_id: @current_company
       complited = false
       note = 'Нет такого клиента'
 

@@ -5,8 +5,8 @@
   class='pnls-add'>
 
   <add-transaction
+    v-if='panelAddCategory === "transaction"'
     v-on:cancel-panel="panelAddCategory = null"
-    v-if='panelAddCategory == "transaction"'
     :arr-tree="[categoriesTreeIncome, categoriesTreeExpense]"
     :affiliates="affiliates"
     :person="person"
@@ -17,24 +17,32 @@
   ></add-transaction>
 
   <add-category 
-    v-if='panelAddCategory == "services"' 
+    v-else-if='panelAddCategory === "services"' 
+    v-on:cancel-panel="panelAddCategory = null"
     :placeholder='"Название услуги"' 
     :panel-add-category='panelAddCategory' 
-    v-on:cancel-panel="panelAddCategory = null"
     :arr-tree="[services]"
   ></add-category>
 
   <add-category 
-    v-else-if='panelAddCategory == "categories"' 
+    v-else-if='panelAddCategory === "categories"' 
+    v-on:cancel-panel="panelAddCategory = null"
     :placeholder='"Название категории"' 
     :panel-add-category='panelAddCategory' 
-    v-on:cancel-panel="panelAddCategory = null"
     :arr-tree="[categoriesTreeIncome, categoriesTreeExpense]"
   ></add-category>
+
+  <add-reminder
+    v-else-if='panelAddCategory === "reminders"' 
+    v-on:cancel-panel="panelAddCategory = null"
+    :person="person"
+    :affiliates="affiliates"
+  ></add-reminder>
 </div>
 
-<%= render 'layouts/panels_add_categories' %>
 <%= render 'layouts/panels_add_transaction' %>
+<%= render 'layouts/panels_add_categories' %>
+<%= render 'layouts/panels_add_reminders' %>
 
 <script type="text/javascript">
   var vmPanelsAdd = new Vue({

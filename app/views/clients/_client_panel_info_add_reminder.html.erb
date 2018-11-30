@@ -92,13 +92,13 @@
               <input v-model="debt" type="number" placeholder="Задолжность" />
 
               <select v-model="affiliateId">
-                <option disabled value="">Выберите однин из филиалов</option>
+                <option value="">Выберите однин из филиалов</option>
                 <option v-for="affiliate in affiliates" :value="affiliate.id">
                   {{ affiliate.address }}
                 </option>
               </select>
 
-              <div v-if="note !== '' && date !== ''" class="btns" style="margin: 0;">
+              <div class="btns" style="margin: 0;">
                 <button 
                   @click="createRem()" 
                   v-bind:class="{ active: loading }" 

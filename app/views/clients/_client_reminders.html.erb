@@ -11,6 +11,11 @@
     props: {
     },
     methods: {
+      showPanelAdd() {
+        vmPanelsAdd.panelAddCategory = 'reminders';
+        vmPanelsAdd.person = vmClient.client;
+        vmPanelsAdd.unpaidSubscriptionClient = '';      
+      },
       clickActive(id) {
         let { client } = vmClient;
 
@@ -23,7 +28,6 @@
         else 
           this.activeId = id;
       },
-
       completedReminder(reminder, index) {
         let { reminders, logs } = data;
         let complited = false;
@@ -190,7 +194,7 @@
           <img class="loading-panel" src="images/loading.gif" />
         </div>
 
-        <button style="margin-top: 0px; padding-bottom: 10px;" class="btn-add btn">+ Добавить</button>
+        <button @click='showPanelAdd()' style="margin-top: 0px; padding-bottom: 10px;" class="btn-add btn">+ Добавить</button>
       </section>
     `
   });
