@@ -20,11 +20,13 @@
     },
     computed: {
       unpaidSubscriptionsClient() {
-        let { subscriptionsAmount, client } = vmClient;
+        let { subscriptionsAmount, client, recordsClientsServices } = vmClient;
 
         return subscriptionsAmount.filter(function (s) {
           if (s.is_active && client.id === s.client_id && s.debt > 0) {
-            return s;
+            const record = recordsClientsServices.find(rcs => rcs.records_clients_ids.find(rci => rci === s.record_client_id) !== undefined);
+
+            return Object.assign(s, { services_name: String(record.services_name), record_name: record.name });
           }
         });
       },
@@ -46,7 +48,7 @@
 
           <div v-for="s in unpaidSubscriptionsClient" :key="s.id" @click="clickDebt(s)" class="item-debt-panel">
             <div class="left-item-debt-panel">
-              <div class="title-left-item-debt-panel">Анлийский язык</div>
+              <div class="title-left-item-debt-panel">{{ s.services_name !== '' ? s.services_name : s.record_name }}</div>
               <div class="desc-left-item-debt-panel">
                 {{ parseDate(s.start_at, s.finish_at) }}
               </div>

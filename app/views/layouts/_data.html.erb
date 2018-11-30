@@ -9,6 +9,7 @@
     data: {
       people: [],
       records: [],
+      recordsClients: [],
       affiliates: [],
       categories: [],
       subscriptions: [],
@@ -17,7 +18,6 @@
       workers: [],
       reminders: [],
       logs: [],
-      recordsClients: [],
     },
     copmuted: {
       clients() {
@@ -39,8 +39,9 @@
         this.operations = data.operations;
         this.reminders = data.reminders;
         this.logs = data.logs;
-        this.recordsClients = data.records_clients;
         this.records = data.records;
+        this.recordsClients = data.records_clients;
+        this.recordsServices = data.records_services;
       });
     }
   });

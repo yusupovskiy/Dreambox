@@ -77,6 +77,55 @@
           children: buildHierarchy(categories)
         }.children[0]
       },
+      servicesCompany() {
+        let { categories } = data;
+        var services = [];
+        var find_children = function(level) {
+          var services_children = categories.filter(c => c.level == level);
+          var id_categories_array = []
+
+          if(!services_children.length > 0) {
+            return false
+          }
+
+          services_children.filter(function(i) {
+            id_categories_array.push(i.id)
+          });
+
+          services = $.merge(services, services_children)
+          find_children(id_categories_array)
+        }
+        
+        find_children([1]);
+
+        return services;
+      },
+      recordsClientsServices() {
+        const { records, recordsClients, recordsServices } = data;
+        const {  servicesCompany } = this;
+
+        return records.filter(r => {
+          const recordClients = recordsClients.filter(rc => rc.id === r.id),
+                recordServices = recordsServices.filter(rs => rs.record_id === r.id);
+
+          let recordClientsIds = [],
+              clientsIds = [],
+              servicesIds = [],
+              nameServices = [];
+
+          recordClients.filter(rc => {
+            recordClientsIds.push(rc.record_client_id);
+            clientsIds.push(rc.client_id);
+          });
+          recordServices.filter(rs => {
+            const serviceName = servicesCompany.find(sc => sc.id === rs.category_id);
+            servicesIds.push(rs.category_id);
+            nameServices.push(serviceName.name);
+          });
+
+          return Object.assign(r, { records_clients_ids: recordClientsIds, clients_ids: clientsIds, services_ids: servicesIds, services_name: nameServices });
+        });
+      },
       categoriesTreeIncome() {
         var categories = vmPanelsAdd.categories.filter(c => c.budget == 'income');
 

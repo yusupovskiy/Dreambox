@@ -66,7 +66,6 @@
   var vmClient = new Vue ({
     el: '#clients',
     data: {
-      clients: [],
       affiliates: [],
       records: [],
       recordsClients: [],
@@ -211,7 +210,7 @@
 
       setTimeout(() => {
         $.get('/get_data.json', data => {
-          this.clients = data.clients;
+          // this.clients = data.clients;
           this.affiliates = data.affiliates;
           this.subscriptions = data.subscriptions;
           this.records = data.records;
@@ -260,6 +259,10 @@
       }, 600);
     },
     computed: {
+      clients() {
+        const clientRole = 10;
+        return data.people.filter(c => c.role === clientRole);
+      },
       categories() {
         return data.categories;
       },
@@ -286,6 +289,34 @@
 
         return services;
       },
+
+      recordsClientsServices() {
+        const { records, recordsClients, recordsServices } = data;
+        const { servicesCompany } = this;
+
+        return records.filter(r => {
+          const recordClients = recordsClients.filter(rc => rc.id === r.id),
+                recordServices = recordsServices.filter(rs => rs.record_id === r.id);
+
+          let recordClientsIds = [],
+              clientsIds = [],
+              servicesIds = [],
+              nameServices = [];
+
+          recordClients.filter(rc => {
+            recordClientsIds.push(rc.record_client_id);
+            clientsIds.push(rc.client_id);
+          });
+          recordServices.filter(rs => {
+            const serviceName = servicesCompany.find(sc => sc.id === rs.category_id);
+            servicesIds.push(rs.category_id);
+            nameServices.push(serviceName.name);
+          });
+
+          return Object.assign(r, { records_clients_ids: recordClientsIds, clients_ids: clientsIds, services_ids: servicesIds, services_name: nameServices });
+        });
+      },
+
       // получение всех выделенных записей
       activeRecords() {
         let {filtrationElements} = this;
@@ -447,17 +478,8 @@
         }
       },
 
-      // clientSubscriptions() {
-      //   let {subscriptions, client} = this;
-      //   return subscriptions.filter(function (subs) {
-      //     if (subs.client_id == client.id && subs.is_active == true) {
-      //       return subs;
-      //     }
-      //   });
-      // },
-
       clientsRecords() {
-        let {clients, recordsClients} = this;
+        let { clients, recordsClients } = this;
 
         return clients.filter(function (client) {
           var arraySubscribedRecordsId = [];

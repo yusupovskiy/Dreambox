@@ -62,9 +62,7 @@
       createTransaction() {
         let {person} = vmPanelsAdd;
         let {amount, note, categoryId, date, affiliateId, newElement, unpaidOperationId, log, operation} = this;
-        var complited = false;
-
-        // определять абонемент ли операция или заметка, если заметка просто делать ее выполненной
+        let complited = false;
 
         if(!this.loading) {
           this.loading = true;
@@ -115,6 +113,7 @@
     },
     watch: {
       unpaidOperationId: function() {
+        const { recordsClientsServices } = vmPanelsAdd;
         const { 
           unpaidSubscriptionsClient, 
           remindersWithPaymentsPerson, 
@@ -126,9 +125,13 @@
           const rem = remindersWithPaymentsPerson.find(r => r.operation_id === unpaidOperationId);
 
           if(sub !== undefined) {
+            const record = recordsClientsServices.find(rcs => rcs.records_clients_ids.find(rci => rci === sub.record_client_id) !== undefined);
+            const servicesName = String(record.services_name);
+            const nameForNote = servicesName !== '' ? servicesName : record.name;
+
             this.amount = sub.debt;
             this.maxAmount = sub.debt;
-            this.note = startAndEndDateInWords('За ', sub.start_at, ' до ', sub.finish_at, true) + ', абонемент Ucmas';
+            this.note = startAndEndDateInWords('За ', sub.start_at, ' до ', sub.finish_at, true) + ', абонемент ' + nameForNote;
           }
           else if(rem !== undefined) {
             this.amount = rem.unpaid_debt;
@@ -176,11 +179,13 @@
       },
       unpaidSubscriptionsClient() {
         let { subscriptionsAmount } = this;
-        let { person } = vmPanelsAdd;
+        let { person, recordsClientsServices } = vmPanelsAdd;
 
         return subscriptionsAmount.filter(function (s) {
           if (s.is_active && person.id === s.client_id && s.debt > 0) {
-            return s;
+            const record = recordsClientsServices.find(rcs => rcs.records_clients_ids.find(rci => rci === s.record_client_id) !== undefined);
+
+            return Object.assign(s, { services_name: String(record.services_name), record_name: record.name });
           }
         });
       },
@@ -269,7 +274,7 @@
                 <option value="">Пусто</option>
 
                 <option v-for="s in unpaidSubscriptionsClient" :value="s.operation_id">
-                  {{ s.payment }} из {{ s.price }} ₽ | Ucmas {{ parseDate(s.start_at, s.finish_at) }}
+                  {{ s.payment }} из {{ s.price }} ₽ | {{ s.services_name !== '' ? s.services_name : s.record_name }} {{ parseDate(s.start_at, s.finish_at) }}
                 </option>
 
                 <option v-for="r in remindersWithPaymentsPerson" :value="r.operation_id">

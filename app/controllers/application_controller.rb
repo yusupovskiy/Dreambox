@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
         INNER JOIN transactions ON company_transactions.id = transactions.company_transaction_id
         INNER JOIN categories ON company_transactions.category_id = categories.id
         INNER JOIN operations ON company_transactions.operation_id = operations.id
-        
+
       WHERE company_transactions.operation_id IN (#{operations_id})
       ORDER BY transactions.date DESC
     ")
@@ -61,15 +61,14 @@ class ApplicationController < ActionController::Base
       people: people,
       clients: clients,
       records: @current_record, 
+      records_clients: records_clients,
+      records_services: records_services,
       subscriptions: subscriptions,
       reminders: reminders,
       affiliates: @current_affiliates,
       categories: @categories_company,
-      records: @current_record,
-      records_services: records_services,
       transactions: transactions,
       discounts: discounts,
-      records_clients: records_clients,
     }
 
     respond_to do |format|
