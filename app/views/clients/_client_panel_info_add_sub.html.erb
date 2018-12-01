@@ -158,7 +158,12 @@
                 <input v-if="showRecalculationAmount && recalculationNote != ''" v-model="recalculationAmount" type="number" placeholder="Сумма прерасчета" style="width: 100%;" />
 
                 <div class="btns" style="margin: 14px 0 0;">
-                  <button v-if="startSubs != '' && finishSubs != ''" @click="createSubClient()" v-bind:class="{ active: subsCreateLoading }" class="btn-subscribe btn" style="position: absolute; right: 10px; top: 0; padding: 15px; margin: 0;">
+                  <button 
+                    v-if="startSubs != '' && finishSubs != ''" @click="createSubClient()" 
+                    :class="{ active: subsCreateLoading }" 
+                    class="btn-subscribe btn" 
+                    style="position: absolute; right: 10px; top: 0; padding: 15px; margin: 0;">
+                    
                     <div class="btn__text">Продать</div>
                     <div v-if="subsCreateLoading" class="container" style="width: 58px;">
                       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

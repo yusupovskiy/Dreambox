@@ -136,15 +136,15 @@
         var start_date = new Date(start);
         var finish_date = new Date(finish);
 
-        if(start_date <= currentDate && currentDate <= finish_date) {
+        // if(start_date <= currentDate && currentDate <= finish_date) {
           return 'Текущий абонемент';
-        }
-        else if(start_date > currentDate && currentDate < finish_date) {
-          return 'Предстоящий абонемент';
-        }
-        else if(start_date > currentDate && currentDate < finish_date) {
-          return 'Завершенный абонемент';
-        }
+        // }
+        // else if(start_date > currentDate && currentDate < finish_date) {
+        //   return 'Предстоящий абонемент';
+        // }
+        // else if(start_date > currentDate && currentDate < finish_date) {
+        //   return 'Завершенный абонемент';
+        // }
       },
       currentSubsctiption(start, finish) {
         var currentDate = new Date();

@@ -45,7 +45,7 @@ SQL
         price_service = price_correction.value
       end
 
-      operation = Operation.create
+      operation = Operation.create client_id: rc['client_id']
 
       subs = Subscription.new({
         start_at: start_at,
@@ -56,13 +56,13 @@ SQL
         operation_id: operation.id,
       })
       subs.save
-      History.create({
-        object_log: 'subscription', 
-        object_id: subs.id, 
-        type_history: 'auto_create', 
-        note: 'Автоматическое создание абонемента по календарю', 
-        user_id: current_user.id
-      })
+      # History.create({
+      #   object_log: 'subscription', 
+      #   object_id: subs.id, 
+      #   type_history: 'auto_create', 
+      #   note: 'Автоматическое создание абонемента по календарю', 
+      #   user_id: current_user.id
+      # })
     end
     render plain: "#{rows.size} subscriptions were created"
   end
@@ -100,7 +100,7 @@ SQL
 
       abon_period = Record.find(rc['record_id']).abon_period
 
-      operation = Operation.create
+      operation = Operation.create client_id: rc['client_id']
 
       subs = Subscription.new({
         start_at: today,
@@ -111,13 +111,13 @@ SQL
         operation_id: operation.id,
       })
       subs.save
-      History.create({
-        object_log: 'subscription', 
-        object_id: subs.id, 
-        type_history: 'auto_create', 
-        note: 'Автоматическое создание абонемента по завершения предыдущего', 
-        user_id: current_user.id
-      })
+      # History.create({
+      #   object_log: 'subscription', 
+      #   object_id: subs.id, 
+      #   type_history: 'auto_create', 
+      #   note: 'Автоматическое создание абонемента по завершения предыдущего', 
+      #   user_id: current_user.id
+      # })
     end
     render plain: "#{rows.size} subscriptions were created"
   end

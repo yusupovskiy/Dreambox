@@ -316,7 +316,10 @@
         </div>
 
         <div class='btns-pnls-add'>
-          <button @click='createTransaction()' class='btn-pnls-add'>Добавить</button>
+          <button @click='createTransaction()' class='btn-pnls-add'>
+            <div v-if="!loading">Добавить</div>
+            <div v-else-if="loading">Загрузка..</div>
+          </button>
           <button @click="$emit('cancel-panel')" class='btn-pnls-cancel'>Отмена</button>
         </div>
       </div>
