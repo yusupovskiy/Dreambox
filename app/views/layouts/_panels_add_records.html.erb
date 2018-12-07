@@ -3,11 +3,13 @@
     data: function () {
       return {
         selectSearch: '',
+        recordId: '',
       }
     },
     props: {
       person: Object,
       clients: Array,
+      records: Array,
     },
     methods: {
       createCategory() {
@@ -64,7 +66,12 @@
           <div class="item-add-input">
             <div class="left-item-add-input">Запись</div>
             <div class="right-item-add-input">
-              <select-search :person="person" :people="clients"></select-search>
+              <select v-model="recordId" class="input-right-item-add-input">
+                <option value="">Пусто</option>
+                <option v-for="r in records" :value="r.id">
+                  {{ r.name }}
+                </option>
+              </select>
             </div>
           </div>
 
