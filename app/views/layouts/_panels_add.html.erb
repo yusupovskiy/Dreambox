@@ -38,11 +38,24 @@
     :person="person"
     :affiliates="affiliates"
   ></add-reminder>
+
+  <add-record
+    v-else-if='panelAddCategory === "records"' 
+    v-on:cancel-panel="panelAddCategory = null"
+    :person="person"
+    :clients="people"
+    :affiliates="affiliates"
+    :records="records"
+  ></add-record>
 </div>
+
 
 <%= render 'layouts/panels_add_transaction' %>
 <%= render 'layouts/panels_add_categories' %>
 <%= render 'layouts/panels_add_reminders' %>
+<%= render 'layouts/panels_add_records' %>
+<%= render 'layouts/panels_add_select_search' %>
+<%= render 'layouts/panels_add_select_records' %>
 
 <script type="text/javascript">
   var vmPanelsAdd = new Vue({
@@ -153,6 +166,7 @@
       people() { return data.people },
       affiliates() { return data.affiliates },
       categories() { return data.categories },
+      records() { return data.records },
     },
   });
 </script>
