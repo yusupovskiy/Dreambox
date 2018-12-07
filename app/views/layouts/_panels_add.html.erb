@@ -45,7 +45,6 @@
     :person="person"
     :clients="people"
     :affiliates="affiliates"
-    :records="records"
   ></add-record>
 </div>
 
@@ -56,6 +55,7 @@
 <%= render 'layouts/panels_add_records' %>
 <%= render 'layouts/panels_add_select_search' %>
 <%= render 'layouts/panels_add_select_records' %>
+<%= render 'layouts/panels_add_multi_select' %>
 
 <script type="text/javascript">
   var vmPanelsAdd = new Vue({
@@ -166,7 +166,6 @@
       people() { return data.people },
       affiliates() { return data.affiliates },
       categories() { return data.categories },
-      records() { return data.records },
     },
   });
 </script>

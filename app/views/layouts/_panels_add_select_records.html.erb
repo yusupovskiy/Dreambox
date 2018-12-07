@@ -1,0 +1,83 @@
+<script type="text/javascript">
+  Vue.component('select-records', {
+    data: function() {
+      return {
+        selectSearch: '',
+        showSelect: false,
+      }
+    },
+    props: {
+      record: Object,
+      records: Array,
+    },
+    methods: {
+      clickPerson(record) {
+        this.selectSearch = '';
+        this.showSelect = false;
+        this.record = record;
+        this.unpaidOperationId = '';
+      },
+      openSelect() {
+        this.showSelect = true;
+        if(this.record.id !== undefined) {
+          this.selectSearch = this.record.last_name + ' ' + this.record.first_name;
+        }
+      },
+      closeSelect() {
+        this.selectSearch = '';
+      },
+      hideSelect() {
+        this.showSelect = false;
+      },
+      deletePerson() {
+        this.record = {};
+        this.unpaidOperationId = '';
+      },
+    },
+    computed: {
+      listSelect() {
+        const s = validSpaces(this.selectSearch.toLowerCase());
+        return this.records.filter(n => {
+          let name = n.first_name;
+
+          return Object.values(name.split()).some(m => m.toString().toLowerCase().includes(s));
+          }
+        );
+      },
+    },
+    template: `
+      <div>
+
+        <input v-model="selectSearch" type="text" class="input-right-item-add-input" style="position: relative; z-index: 99; background-color: transparent;" @focus="openSelect" :class="[{ active: showSelect }]" />
+
+        <div v-if="selectSearch.length > 0" @click="closeSelect" class="close-select"><ion-icon name="close-circle"></ion-icon></ion-icon></div>
+
+        <div v-else-if="showSelect" @click="hideSelect" class="close-select"><ion-icon name="close-circle"></ion-icon></ion-icon></div>
+
+        <div v-else-if="record.id !== undefined" @click="deletePerson" class="close-select"><ion-icon name="close-circle"></ion-icon></ion-icon></div>
+
+        <div v-if="!showSelect && record.id !== undefined" class="item-v">
+          <img src="/resources/no-image-available.png">
+          <div>{{ record.name }}</div>
+        </div>
+        <div v-else-if="showSelect || (selectSearch.length <= 0 && record.id === undefined)" class="emptily">Пусто</div>
+
+        <div v-if="showSelect" class="select-list cool-scrollbar">
+          <div class="scroll-select-list">
+
+            <div v-if="listSelect.length > 0">
+
+              <div @click="clickPerson(item)" v-for="item in listSelect" :title="item.patronymic" class="item-s">
+                <img src="/resources/no-image-available.png">
+                <div>{{ item.last_name }} {{ item.first_name }}</div>
+              </div>
+
+            </div>
+
+            <div v-else style="font-size: 14px; padding: 2px 10px; color: #c2c2c2; user-select: none;">Ничего не найдено</div>
+          </div>
+        </div>
+      </div>
+    `
+  });
+</script>

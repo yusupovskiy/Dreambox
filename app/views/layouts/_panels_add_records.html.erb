@@ -1,0 +1,80 @@
+<script type="text/javascript">
+  Vue.component('add-record', {
+    data: function () {
+      return {
+        selectSearch: '',
+      }
+    },
+    props: {
+      person: Object,
+      clients: Array,
+    },
+    methods: {
+      createCategory() {
+        // let { nameCategory, color } = this;
+        // let { categories } = data;
+        // let { categoryId, budget } = vmPanelsAdd;
+        // var complited = false;
+
+        // if(!this.loadingCategory) {
+        //   this.loadingCategory = true;
+
+        //   setTimeout(() => {
+        //     $.ajax('/categories.json', {
+        //       method: 'POST',
+        //       data: {
+        //         authenticity_token: authToken,
+        //         category: {
+        //           name: nameCategory,
+        //           budget: budget,
+        //           level: categoryId,
+        //           color: color,
+        //         }
+        //       },
+        //       success: messege => {
+        //         complited = messege.complited;
+        //         newCategory = messege.result;
+        //         vmNotifications.notifications.unshift(messege);
+        //       },
+        //       error: e => console.warn('error', e)
+        //     }).done(e => {
+        //       if(complited) {
+        //         this.nameCategory = '';
+        //         this.color = null;
+
+        //         if(vmPanelsAdd.panelAddCategory == "categories") {
+        //           vmPanelsAdd.budget = '';
+        //           vmPanelsAdd.categoryId = null;                  
+        //         }
+
+        //         categories.unshift(newCategory);
+        //       }
+        //       this.loadingCategory = false;
+        //     });
+        //   }, 600);
+        // }
+      },
+    },
+    template: `
+      <div class="pnl-add1">
+
+        <div class="add-input">
+
+
+          <div class="item-add-input">
+            <div class="left-item-add-input">Запись</div>
+            <div class="right-item-add-input">
+              <select-search :person="person" :people="clients"></select-search>
+            </div>
+          </div>
+
+        </div>
+
+        <div class='btns-pnls-add'>
+          <button @click='createCategory()' class='btn-pnls-add'>Добавить</button>
+          <button @click="$emit('cancel-panel')" class='btn-pnls-cancel'>Отмена</button>
+        </div>
+      </div>
+    `
+  });
+</script>
