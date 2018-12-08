@@ -2,83 +2,280 @@
   Vue.component('add-record', {
     data: function () {
       return {
+        loading: false,
+
         selectSearch: '',
         recordId: '',
+        amount: null,
+        note: null,
+
+        addDiscountPanel: false,
+
+        sellSubscription: false,
+        startSubs: '',
+        finishSubs: '',
+
+        showPanelRecalculate: false,
+        showPanelAmount: false,
       }
     },
     props: {
       person: Object,
       clients: Array,
       records: Array,
+      recordsClients: Array,
     },
     methods: {
-      createCategory() {
-        // let { nameCategory, color } = this;
-        // let { categories } = data;
-        // let { categoryId, budget } = vmPanelsAdd;
-        // var complited = false;
+      createElement() {
+        const { person, recordId, sellSubscription } = this,
+              { recordsClients } = data,
+              recordClient = recordsClients.find(rc => rc.id === recordId && rc.client_id === person.id),
+              presentRecordClient = recordClient !== undefined && recordClient.is_active;
 
-        // if(!this.loadingCategory) {
-        //   this.loadingCategory = true;
+        // if(!this.loading) {
+        //   this.loading = true;
 
-        //   setTimeout(() => {
-        //     $.ajax('/categories.json', {
-        //       method: 'POST',
-        //       data: {
-        //         authenticity_token: authToken,
-        //         category: {
-        //           name: nameCategory,
-        //           budget: budget,
-        //           level: categoryId,
-        //           color: color,
-        //         }
-        //       },
-        //       success: messege => {
-        //         complited = messege.complited;
-        //         newCategory = messege.result;
-        //         vmNotifications.notifications.unshift(messege);
-        //       },
-        //       error: e => console.warn('error', e)
-        //     }).done(e => {
-        //       if(complited) {
-        //         this.nameCategory = '';
-        //         this.color = null;
+          setTimeout(() => {
 
-        //         if(vmPanelsAdd.panelAddCategory == "categories") {
-        //           vmPanelsAdd.budget = '';
-        //           vmPanelsAdd.categoryId = null;                  
-        //         }
+            if(!presentRecordClient) {
+              $.ajax('/records_clients.json', {
+                method: 'POST',
+                data: {
+                  authenticity_token: authToken,
+                  record_client: {
+                    record_id: recordId,
+                    client_id: person.id,
+                  }
+                },
+                success: messege => {
+                  const complited = messege.complited
+                  vmNotifications.notifications.unshift(messege);
 
-        //         categories.unshift(newCategory);
-        //       }
-        //       this.loadingCategory = false;
-        //     });
-        //   }, 600);
+                  if(complited) {
+                    const newRecordClient = messege.result, 
+                          indexCurrentRecord = recordsClients.findIndex(rs => rs.id == recordId && rs.client_id == person.id);
+
+                    indexCurrentRecord < 0 ? recordsClients.unshift(newRecordClient) : recordsClients.splice(indexCurrentRecord, 1, newRecordClient);
+
+                    this.createSubClient();
+                    vmPanelsAdd.panelAddCategory = null;
+                  }
+                  // this.loading = false;
+                },
+                error: e => console.warn('error', e)
+              });  
+            } 
+
+            else {
+              this.createSubClient();
+            }
+          }, 600);
         // }
+      },
+
+      createSubClient() {
+        if(this.sellSubscription) {
+          const { subscriptions, operations } = data,
+                { person, startSubs, finishSubs, recordsClient, recordId } = this;
+
+          $.ajax('/subscriptions.json', {
+            method: 'POST',
+            data: {
+              authenticity_token: authToken,
+              record_id: recordId,
+              client_id: person.id,
+              subscription: {
+                start_at: startSubs,
+                finish_at: finishSubs,
+              }
+            },
+            success: messege => {
+              const complited = messege.complited;
+              vmNotifications.notifications.unshift(messege);
+
+              if(complited) {
+                let newSubscription = messege.result;
+                const newOperation = messege.operation,
+                      recordClient = recordsClient.find(rc => rc.record_client_id == newSubscription.record_client_id);
+
+                newSubscription = Object.assign(newSubscription, {
+                  total_amount: 0, 
+                  name: recordClient.name,
+                  record_id: recordClient.id,
+                  client_id: person.id
+                });
+
+                subscriptions.unshift(newSubscription);
+                operations.unshift(newOperation);
+                // this.getDateSub();
+              }
+
+            },
+            error: e => console.warn('error', e),
+          });
+        }
+      },
+
+
+      closePanelAddDiscount() {
+        this.addDiscountPanel = false;
+
+      },
+      closePanelSellSubscription() {
+        this.sellSubscription = false;
+
+      },
+    },
+    computed: {
+      recordsFilter: function() {
+        const { recordsClientsServices } = vmPanelsAdd,
+              { person, records, recordsClients } = this,
+              recordsClient = recordsClients.filter(r => r.client_id === person.id);
+
+        const recordsStatus = records.filter(r => {
+          const recordClient = recordsClient.find(rc => rc.id === r.id),
+                record = recordsClientsServices.find(rcs => rcs.id === r.id),
+                amount_subscription = record.amount_subscription;
+
+          // получать скидку и указывать цену
+
+          return Object.assign(r, {
+            status: (recordClient !== undefined && recordClient.is_active) ? 'Записан' : 'Не записан',
+            amount_subscription: amount_subscription,
+          });
+        });
+
+        const k = 'status';
+        return recordsStatus.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+false]);
+      },
+      recordsClient() {
+        let {recordsClients, person, records} = this;
+
+        return recordsClients.filter(function (rc) {
+          if(rc.client_id == person.id && rc.is_active == true) {
+            var discounts = vmClient.discounts.filter(function(d) {
+              var currentDate = new Date();
+              var start_date = new Date(d.start_at);
+              var finish_date = new Date(d.finish_at);
+
+              if(d.record_client_id == rc.record_client_id && d.is_active == true && start_date <= currentDate && currentDate <= finish_date) {
+                return d;
+              }
+            });
+
+            if(discounts.length > 0) {
+              var total_price_abon = discounts[0].value;
+            }
+            else {
+              let indexRecord = records.findIndex(r => r.id == rc.id);
+              var total_price_abon = records[indexRecord].total_price_abon;
+            }
+
+            return Object.assign(rc, {total_price_abon: total_price_abon});
+          }
+        });
       },
     },
     template: `
       <div class="pnl-add1">
 
         <div class="add-input">
-
-
           <div class="item-add-input">
             <div class="left-item-add-input">Запись</div>
             <div class="right-item-add-input">
               <select v-model="recordId" class="input-right-item-add-input">
                 <option value="">Пусто</option>
-                <option v-for="r in records" :value="r.id">
-                  {{ r.name }}
+                <option v-for="r in recordsFilter" :value="r.id">
+                  {{ r.name }} | {{ r.amount_subscription }} ₽ — [{{ r.status }}]
                 </option>
               </select>
             </div>
           </div>
 
+          <div v-if="!(sellSubscription && addDiscountPanel)" class="dop">
+            <span v-if="!sellSubscription" @click="sellSubscription = true" class="item-dop">Продать абонемент</span>
+            <span v-if="!addDiscountPanel" @click="addDiscountPanel = true" class="item-dop">Добавить скидку</span>
+          </div>
+
+          <div v-if="sellSubscription">
+            <div @click="closePanelSellSubscription()" class="head-input">Продажа абонемента</div>
+
+            <div class="item-add-input">
+              <div class="left-item-add-input">Дата начала</div>
+              <div class="right-item-add-input">
+                <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='startSubs' />
+              </div>
+            </div>
+            <div class="item-add-input">
+              <div class="left-item-add-input">Дата завершения</div>
+              <div class="right-item-add-input">
+                <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='finishSubs' />
+              </div>
+            </div>
+
+            <div v-if="showPanelRecalculate">
+              <div class="item-add-input">
+                <div class="left-item-add-input">Сумма перерасчета</div>
+                <div class="right-item-add-input">
+                  <input placeholder="Пусто" type="number" class="input-right-item-add-input" v-model='amount' />
+                </div>
+              </div>
+              <div class="item-add-input">
+                <div class="left-item-add-input">Комментарий</div>
+                <div class="right-item-add-input">
+                  <input placeholder="Пусто" type="text" class="input-right-item-add-input" v-model='note' />
+                </div>
+              </div>
+            </div>
+
+            <div v-if="showPanelAmount">
+              <div class="item-add-input">
+                <div class="left-item-add-input">Сумма оплаты</div>
+                <div class="right-item-add-input">
+                  <input placeholder="Пусто" type="number" class="input-right-item-add-input" v-model='amount' />
+                </div>
+              </div>
+            </div>
+
+
+            <div class="dop">
+              <span :class="[{ active: showPanelRecalculate }]" @click="showPanelRecalculate = !showPanelRecalculate" class="item-dop">Пересчитать</span>
+              <span :class="[{ active: showPanelAmount }]" @click="showPanelAmount = !showPanelAmount"  class="item-dop">Оплатить</span>
+            </div>
+          </div>
+
+          <div v-if="addDiscountPanel">
+            <div @click="closePanelAddDiscount()" class="head-input">Добавление скидки</div>
+
+            <div class="item-add-input">
+              <div class="left-item-add-input">Дата начала</div>
+              <div class="right-item-add-input">
+                <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='date' />
+              </div>
+            </div>
+            <div class="item-add-input">
+              <div class="left-item-add-input">Дата завершения</div>
+              <div class="right-item-add-input">
+                <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='date' />
+              </div>
+            </div>
+            <div class="item-add-input">
+              <div class="left-item-add-input">Сумма</div>
+              <div class="right-item-add-input">
+                <input placeholder="Пусто" type="number" class="input-right-item-add-input" v-model='amount' />
+              </div>
+            </div>
+            <div class="item-add-input">
+              <div class="left-item-add-input">Комментарий</div>
+              <div class="right-item-add-input">
+                <input placeholder="Пусто" type="text" class="input-right-item-add-input" v-model='note' />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class='btns-pnls-add'>
-          <button @click='createCategory()' class='btn-pnls-add'>Добавить</button>
+          <button @click='createElement()' class='btn-pnls-add'>Добавить</button>
           <button @click="$emit('cancel-panel')" class='btn-pnls-cancel'>Отмена</button>
         </div>
       </div>

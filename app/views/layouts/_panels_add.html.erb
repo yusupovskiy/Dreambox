@@ -46,6 +46,7 @@
     :clients="people"
     :affiliates="affiliates"
     :records="records"
+    :records-clients="recordsClients"
   ></add-record>
 </div>
 
@@ -137,13 +138,21 @@
             recordClientsIds.push(rc.record_client_id);
             clientsIds.push(rc.client_id);
           });
-          recordServices.filter(rs => {
+          const amount_subscription = recordServices.reduce((sum, rs) => {
             const serviceName = servicesCompany.find(sc => sc.id === rs.category_id);
             servicesIds.push(rs.category_id);
             nameServices.push(serviceName.name);
-          });
 
-          return Object.assign(r, { records_clients_ids: recordClientsIds, clients_ids: clientsIds, services_ids: servicesIds, services_name: nameServices });
+            return sum + rs.money_for_abon;
+          }, 0);
+
+          return Object.assign(r, { 
+            records_clients_ids: recordClientsIds, 
+            clients_ids: clientsIds, 
+            services_ids: servicesIds, 
+            services_name: nameServices,
+            amount_subscription: amount_subscription,
+          });
         });
       },
       categoriesTreeIncome() {
@@ -166,6 +175,7 @@
       affiliates() { return data.affiliates },
       categories() { return data.categories },
       records() { return data.records },
+      recordsClients() { return data.recordsClients },
     },
   });
 </script>

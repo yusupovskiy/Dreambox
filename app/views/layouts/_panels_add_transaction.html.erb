@@ -150,7 +150,6 @@
           }, 0);
           let client_id = operations.find(o => o.id === s.operation_id).client_id;
 
-          // console.log(s);
           return Object.assign(s, { 
             payment: payment, 
             debt: s.price - payment, 
@@ -166,7 +165,10 @@
           if (s.is_active && person.id === s.client_id && s.debt > 0) {
             const record = recordsClientsServices.find(rcs => rcs.records_clients_ids.find(rci => rci === s.record_client_id) !== undefined);
 
-            return Object.assign(s, { services_name: String(record.services_name), record_name: record.name });
+            return Object.assign(s, { 
+              services_name: String(record.services_name), 
+              record_name: record.name 
+            });
           }
         });
       },

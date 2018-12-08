@@ -219,8 +219,8 @@
         return subscriptions.sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * [1, -1][+reverse]);
       },
       recordsClient() {
-        let {recordsClients} = vmClient;
-        let {client} = this;
+        let { recordsClients } = data;
+        let { client } = this;
 
         return recordsClients.filter(function (rc) {
           if(rc.client_id == client.id) {

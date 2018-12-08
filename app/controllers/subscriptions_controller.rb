@@ -99,12 +99,10 @@ class SubscriptionsController < ApplicationController
 
   def create
     @subscription = Subscription.new(subscription_params)
-    result = []
-
     rc = RecordClient.eager_load(:record).find_by record_id: params[:record_id], client_id: params[:client_id]
     r = @current_record.find rc.record_id
     
-    amount = params[:amount].to_f
+    # amount = params[:amount].to_f
 
     @subscription.record_client_id = rc.id
 
@@ -220,7 +218,12 @@ class SubscriptionsController < ApplicationController
       note = "Абонемент не продан"
     end
 
-    messege = {complited: complited, note: note, result: result}
+    messege = {
+      complited: complited, 
+      note: note, 
+      result: result,
+      operation: operation,
+    }
 
     respond_to do |format|
       format.json { render json: messege }

@@ -1668,25 +1668,30 @@ header:hover {
     height: 100%;
     padding: 5px 0 10px 0;
 }
-
 .dop {
-    margin-bottom: 20px;
+    display: table;
+    margin: 20px 0;
 }
-
+.item-dop.active {
+    color: #d4d4d4!important;
+    border-color: #d4d4d4!important;
+    background-color: white!important;
+}
 .item-dop {
-    background-color: #3880ff;
     font-size: 14px;
-    color: white;
+    color: #3880ff;
+    border: 1px solid #3880ff;
     padding: 4px 12px;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
     user-select: none;
-    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.09);
     transition: .3s;
-    margin-right: 6px;
+    margin: 3px 6px 3px 0;
+    float: left;
 }
 .item-dop:hover {
-    box-shadow: 0px 0px 11px 2px rgba(0, 0, 0, 0.3);
+    background-color: #3880ff;
+    color: white;
 }
 .item-tree-category:hover>div {
     opacity: .7;
@@ -1805,4 +1810,16 @@ header:hover {
 }
 .title-left-item-debt-panel {
     color: black;
+}
+
+.head-input {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #d6d6d6;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-right: 17px;
+    border-bottom: 1px solid #f1f1f1;
+    padding: 10px 0;
+    user-select: none;
 }
