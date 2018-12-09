@@ -6,7 +6,6 @@
 
         selectSearch: '',
         recordId: '',
-        amount: null,
         note: null,
 
         addDiscountPanel: false,
@@ -14,9 +13,12 @@
         sellSubscription: false,
         startSubs: '',
         finishSubs: '',
+        bookingDate: '',
 
         showPanelRecalculate: false,
-        showPanelAmount: false,
+
+        priceRecalculate: null,
+        noteRecalculate: '',
       }
     },
     props: {
@@ -76,7 +78,7 @@
       createSubClient() {
         if(this.sellSubscription) {
           const { subscriptions, operations } = data,
-                { person, startSubs, finishSubs, recordsClient, recordId } = this;
+                { person, startSubs, finishSubs, recordsClient, recordId, priceRecalculate, noteRecalculate } = this;
 
           $.ajax('/subscriptions.json', {
             method: 'POST',
@@ -84,6 +86,8 @@
               authenticity_token: authToken,
               record_id: recordId,
               client_id: person.id,
+              price: priceRecalculate,
+              note_recalculate: noteRecalculate,
               subscription: {
                 start_at: startSubs,
                 finish_at: finishSubs,
@@ -107,23 +111,54 @@
 
                 subscriptions.unshift(newSubscription);
                 operations.unshift(newOperation);
-                // this.getDateSub();
+                this.getDateSub();
               }
-
             },
             error: e => console.warn('error', e),
           });
         }
       },
 
+      getDateSub() {
+        if(this.sellSubscription) {
+          const { recordId, person } = this;
+
+          if(recordId != '' && recordId != 0) {
+            $.get('/get_autodata_subscription.json', { client_id: person.id, record_id: recordId },
+              dateSub => {
+                this.startSubs = dateSub.start_date;
+                this.finishSubs = dateSub.finish_date;
+                this.bookingDate = dateSub.booking_date;
+              }
+            );
+          }
+        }
+      },
 
       closePanelAddDiscount() {
-        this.addDiscountPanel = false;
+        this.addDiscountPanel = !this.addDiscountPanel;
 
       },
       closePanelSellSubscription() {
-        this.sellSubscription = false;
+        this.sellSubscription = !this.sellSubscription;
 
+      },
+    },
+    watch: {
+      recordId: function() {
+        if(this.recordId === '') {
+          this.startSubs = '';
+          this.finishSubs = '';
+          this.bookingDate = '';
+        }
+        else {
+          this.getDateSub();
+        }
+      },
+      sellSubscription: function() {
+        if(this.recordId !== '') {
+          this.getDateSub();
+        }
       },
     },
     computed: {
@@ -192,13 +227,13 @@
             </div>
           </div>
 
-          <div v-if="!(sellSubscription && addDiscountPanel)" class="dop">
-            <span v-if="!sellSubscription" @click="sellSubscription = true" class="item-dop">Продать абонемент</span>
-            <span v-if="!addDiscountPanel" @click="addDiscountPanel = true" class="item-dop">Добавить скидку</span>
+          <div class="dop">
+            <span :class="[{ active: sellSubscription }]" @click="closePanelSellSubscription()" class="item-dop">Продать абонемент</span>
+            <span :class="[{ active: addDiscountPanel }]" @click="closePanelAddDiscount()" class="item-dop">Добавить скидку</span>
           </div>
 
           <div v-if="sellSubscription">
-            <div @click="closePanelSellSubscription()" class="head-input">Продажа абонемента</div>
+            <div class="head-input">Продажа абонемента</div>
 
             <div class="item-add-input">
               <div class="left-item-add-input">Дата начала</div>
@@ -212,40 +247,30 @@
                 <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='finishSubs' />
               </div>
             </div>
+            <div v-if="bookingDate !== ''" style="margin-top: 10px; font-size: 14px;">{{ bookingDate }}</div>
 
             <div v-if="showPanelRecalculate">
               <div class="item-add-input">
-                <div class="left-item-add-input">Сумма перерасчета</div>
+                <div class="left-item-add-input">Цена</div>
                 <div class="right-item-add-input">
-                  <input placeholder="Пусто" type="number" class="input-right-item-add-input" v-model='amount' />
+                  <input placeholder="Пусто" type="number" class="input-right-item-add-input" v-model='priceRecalculate' />
                 </div>
               </div>
               <div class="item-add-input">
                 <div class="left-item-add-input">Комментарий</div>
                 <div class="right-item-add-input">
-                  <input placeholder="Пусто" type="text" class="input-right-item-add-input" v-model='note' />
+                  <input placeholder="Пусто" type="text" class="input-right-item-add-input" v-model='noteRecalculate' />
                 </div>
               </div>
             </div>
-
-            <div v-if="showPanelAmount">
-              <div class="item-add-input">
-                <div class="left-item-add-input">Сумма оплаты</div>
-                <div class="right-item-add-input">
-                  <input placeholder="Пусто" type="number" class="input-right-item-add-input" v-model='amount' />
-                </div>
-              </div>
-            </div>
-
 
             <div class="dop">
               <span :class="[{ active: showPanelRecalculate }]" @click="showPanelRecalculate = !showPanelRecalculate" class="item-dop">Пересчитать</span>
-              <span :class="[{ active: showPanelAmount }]" @click="showPanelAmount = !showPanelAmount"  class="item-dop">Оплатить</span>
             </div>
           </div>
 
           <div v-if="addDiscountPanel">
-            <div @click="closePanelAddDiscount()" class="head-input">Добавление скидки</div>
+            <div class="head-input">Добавление скидки</div>
 
             <div class="item-add-input">
               <div class="left-item-add-input">Дата начала</div>
@@ -276,7 +301,7 @@
 
         <div class='btns-pnls-add'>
           <button @click='createElement()' class='btn-pnls-add'>Добавить</button>
-          <button @click="$emit('cancel-panel')" class='btn-pnls-cancel'>Отмена</button>
+          <button @click="$emit('cancel-panel')" class='btn-pnls-cancel'>Назад</button>
         </div>
       </div>
     `

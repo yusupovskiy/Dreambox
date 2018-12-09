@@ -37,7 +37,7 @@ class SubscriptionsController < ApplicationController
     if s.present?
       booking_date = "Бронь до #{s.finish_at.strftime("%d %B %Y")}"
     else 
-      booking_date = "Сейчас свободное время"
+      booking_date = "Сейчас время свободное"
     end
 
     date = {
@@ -53,54 +53,12 @@ class SubscriptionsController < ApplicationController
     end
   end
 
-  # def index
-  #   affiliates_id = @current_affiliates.ids.join(", ")
-  #   records_client = RecordClient.where(record_id: @current_record).ids.join(", ")
-
-  #   if records_client.empty?
-  #     subscriptions = []
-  #   else
-  #     subscriptions = Subscription.find_by_sql("
-  #       SELECT s.*, coalesce(SUM(t.amount), 0) AS total_amount, r.name, rc.record_id, rc.client_id
-  #       FROM subscriptions AS s
-  #         LEFT JOIN ( SELECT records_clients.*
-  #                     FROM records_clients
-  #           ) AS rc
-  #           ON s.record_client_id = rc.id
-  #         LEFT JOIN records AS r
-  #           ON rc.record_id = r.id
-  #         LEFT JOIN ( SELECT company_transactions.*
-  #                     FROM company_transactions
-  #                     WHERE company_transactions.affiliate_id IN (#{affiliates_id})
-  #           ) AS ct
-  #           ON s.operation_id = ct.operation_id
-  #         LEFT JOIN ( SELECT SUM(t1.amount) AS amount, t1.company_transaction_id
-  #                     FROM transactions AS t1
-  #                     WHERE (t1.is_active IS NULL or t1.is_active = true)
-  #                     GROUP BY t1.company_transaction_id
-  #           ) AS t 
-  #           ON ct.id = t.company_transaction_id
-                    
-  #       WHERE (s.is_active IS NULL OR s.is_active = true)
-  #         AND r.affiliate_id IN (#{affiliates_id})
-  #         AND record_client_id IN (#{records_client})
-  #       GROUP BY s.id, r.name, rc.record_id, rc.client_id
-  #       ORDER BY s.start_at DESC
-  #     ")
-  #   end
-
-  #   respond_to do |format|
-  #     format.json { render json: subscriptions, status: :ok }
-  #   end
-  # end
-
-  # def show
-  # end
-
   def create
     @subscription = Subscription.new(subscription_params)
     rc = RecordClient.eager_load(:record).find_by record_id: params[:record_id], client_id: params[:client_id]
     r = @current_record.find rc.record_id
+    price = params[:price]
+    note_recalculate = params[:note_recalculate]
     
     # amount = params[:amount].to_f
 
@@ -135,6 +93,11 @@ class SubscriptionsController < ApplicationController
       @subscription.price = discounts_record_client.value
     end
     
+    if price.present? and note_recalculate.present?
+      @subscription.price = price
+      @subscription.note = note_recalculate
+    end
+
     no_subscriptions_in_that_range = rc.subscriptions
       .where('(? between start_at and finish_at or ? between start_at and finish_at) and is_active = true',
              @subscription.start_at, @subscription.finish_at)
@@ -168,7 +131,11 @@ class SubscriptionsController < ApplicationController
     #       amount_notice = "<br /><br />Финансовая операция <a href=\"#{company_fin_operation_path(@current_company.id, payment.id)}\" class=\"link-style\" style=\"text-transform: lowercase;\">#{t('operation_type.payment_subscription')}</a> на сумму <span class=\"amount\">#{amount} ₽</span> произведена"
     #     end
 
-    if !Client.exists? company_id: @current_company, id: params[:client_id]
+    if (price.present? and !note_recalculate.present?) or (note_recalculate.present? and !price.present?)
+      complited = false
+      note = 'Чтобы указать свою цену, нужно заполнить поле Цены и Комментария'
+
+    elsif !Client.exists? company_id: @current_company, id: params[:client_id]
       complited = false
       note = 'Нет такого клиента'
 
