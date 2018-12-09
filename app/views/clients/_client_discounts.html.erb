@@ -42,7 +42,8 @@
     },
     computed: {
       discountsClient() {
-        let {recordsClients, client, discounts, records} = vmClient;
+        let { discounts } = data;
+        let { recordsClients, client, records } = vmClient;
 
         var recordsClient = recordsClients.filter(rc => rc.client_id == client.id);
         return discounts.filter(function (d) {

@@ -1,8 +1,4 @@
-<%= render 'clients/client_panel_info_add_record' %>
-<%= render 'clients/client_panel_info_add_sub' %>
-<%= render 'clients/client_panel_info_add_transaction' %>
 <%= render 'clients/client_panel_info_add_discount' %>
-<%= render 'clients/client_panel_info_add_reminder' %>
 <%= render 'clients/client_panel_info_debt' %>
 
 <script type="text/javascript">
@@ -13,7 +9,6 @@
         showAll: false,
         subsClient: [],
         showTotalInfo: false,
-        openPanelAdd: null,
         fieldsClient: [],
       }
     },
@@ -153,7 +148,13 @@
               </div>
             </div>
 
-            <div v-on:click="showTotalInfo = !showTotalInfo" class="click-compact" v-bind:class="{ active: showTotalInfo }"><img src="images/_ionicons_svg_ios-arrow-down.svg"></div>
+            <div class="btn-show-panel btn-show-list new-btn-show-panel">
+              <div class="panel-show" style="left: auto; right: 10px;">
+                <a @click="showTotalInfo = !showTotalInfo">Доп. информация</a>
+                <a :href="urlEditClient">Редактировать</a>
+              </div>
+              <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
+            </div>
           </div>
 
           <div v-if="showTotalInfo" class="total-info">
@@ -186,62 +187,15 @@
                 <img src="images/loading.gif" style="width: 60px; height: 60px; margin: auto; display: table; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" />
               </div>
             </div>
+
+            <div @click="showTotalInfo = !showTotalInfo" class="click-compact new-click-compact" :class="{ active: showTotalInfo }">
+              <img src="images/_ionicons_svg_ios-arrow-down.svg">
+            </div>
           </div>
 
         </div>
         <div class="panel-footer">
-          <div v-if="openPanelAdd == null" class="indecators">
-
-            <div class="btn-show-panel btn-show-list">
-              <div class="panel-show" style="left: auto; right: 10px;">
-                <a>Доп. информация</a>
-                <a :href="urlEditClient">Редактировать</a>
-              </div>
-              <ion-icon style="width: 100%; height: 100%;" name="more"></ion-icon>
-            </div>
-            <div @click="openPanelAdd = 'addListForClient'" class="btn-add-panel">
-                <ion-icon style="width: 100%; height: 100%;" name="add" role="img" class="hydrated" aria-label="add"></ion-icon>
-            </div>
-          </div>
-
-          <section v-if="openPanelAdd == 'addListForClient'" class="panel-add show-all">
-            <h2 class="panel-form__title">
-              <div @click="openPanelAdd = null" class="btn-back new-btn">
-                <ion-icon name="arrow-back"></ion-icon>
-              </div>
-              <span>Добавление</span>
-            </h2>
-
-            <div>
-              <div @click="openPanelAdd = 'addRecordClient'" class="item-panel" style="cursor: pointer;">
-                <div class="item-panel__basic-info">
-                  <div class="left-item-panel" style="width: 100%;">Записать в группу</div>
-                  <div class="right-item-panel"></div>
-                </div>
-              </div>
-              <div @click="openPanelAdd = 'addSubscriptionClient'" class="item-panel" style="cursor: pointer;">
-                <div class="item-panel__basic-info">
-                  <div class="left-item-panel" style="width: 100%;">Продать абонемент</div>
-                  <div class="right-item-panel"></div>
-                </div>
-              </div>
-              <div @click="openPanelAdd = 'addDiscountClient'" class="item-panel" style="cursor: pointer;">
-                <div class="item-panel__basic-info">
-                  <div class="left-item-panel" style="width: 100%;">Добавить скидку или скорректировать цену</div>
-                  <div class="right-item-panel"></div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section-add-record v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :client='client' :show="openPanelAdd"></section-add-record>
-
-          <section-subs-add v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd"></section-subs-add>
-
-          <section-add-discount v-on:open-pnl-add="openPanelAdd = 'addListForClient'" :records="records" :show="openPanelAdd"></section-add-discount>
-
           <client-debt></client-debt>
-
         </div>
       </section>
     `

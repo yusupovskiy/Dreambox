@@ -8,17 +8,20 @@
         recordId: '',
         note: null,
 
-        addDiscountPanel: false,
-
         sellSubscription: false,
         startSubs: '',
         finishSubs: '',
         bookingDate: '',
 
         showPanelRecalculate: false,
-
         priceRecalculate: null,
         noteRecalculate: '',
+
+        addDiscountPanel: false,
+        startDiscount: '',
+        finishDiscount: '',
+        amountDiscount: null,
+        noteDiscount: '',
       }
     },
     props: {
@@ -60,6 +63,7 @@
                     indexCurrentRecord < 0 ? recordsClients.unshift(newRecordClient) : recordsClients.splice(indexCurrentRecord, 1, newRecordClient);
 
                     this.createSubClient();
+                    this.createDiscount(newRecordClient.record_client_id);
                     vmPanelsAdd.panelAddCategory = null;
                   }
                   // this.loading = false;
@@ -70,11 +74,11 @@
 
             else {
               this.createSubClient();
+              this.createDiscount(recordClient.record_client_id);
             }
           }, 600);
         // }
       },
-
       createSubClient() {
         if(this.sellSubscription) {
           const { subscriptions, operations } = data,
@@ -112,6 +116,41 @@
                 subscriptions.unshift(newSubscription);
                 operations.unshift(newOperation);
                 this.getDateSub();
+              }
+            },
+            error: e => console.warn('error', e),
+          });
+        }
+      },
+      createDiscount(recordClientId) {
+        if(this.addDiscountPanel) {
+          let   { discounts } = data;
+          const { startDiscount, finishDiscount, amountDiscount, noteDiscount } = this;
+
+          $.ajax('/discounts.json', {
+            method: 'POST',
+            data: {
+              authenticity_token: authToken,
+              discount: {
+                record_client_id: recordClientId,
+                value: amountDiscount,
+                start_at: startDiscount,
+                finish_at: finishDiscount,
+                note: noteDiscount,
+              }
+            },
+            success: messege => {
+              const complited = messege.complited;
+              vmNotifications.notifications.unshift(messege);
+
+              if(complited) {
+                const newDiscount = messege.result;
+
+                this.startDiscount = '';
+                this.finishDiscount = '';
+                this.amountDiscount = null;
+                this.noteDiscount = '';
+                discounts.unshift(newDiscount);
               }
             },
             error: e => console.warn('error', e),
@@ -163,20 +202,20 @@
     },
     computed: {
       recordsFilter: function() {
-        const { recordsClientsServices } = vmPanelsAdd,
+        const { discounts } = data,
+              { recordsClientsServices } = vmPanelsAdd,
               { person, records, recordsClients } = this,
               recordsClient = recordsClients.filter(r => r.client_id === person.id);
 
         const recordsStatus = records.filter(r => {
           const recordClient = recordsClient.find(rc => rc.id === r.id),
                 record = recordsClientsServices.find(rcs => rcs.id === r.id),
-                amount_subscription = record.amount_subscription;
-
-          // получать скидку и указывать цену
+                amount_subscription = record.amount_subscription,
+                discount = discounts.find(d => recordClient !== undefined && d.record_client_id === recordClient.record_client_id);
 
           return Object.assign(r, {
             status: (recordClient !== undefined && recordClient.is_active) ? 'Записан' : 'Не записан',
-            amount_subscription: amount_subscription,
+            amount_subscription: discount !== undefined ? discount.value : amount_subscription,
           });
         });
 
@@ -275,25 +314,25 @@
             <div class="item-add-input">
               <div class="left-item-add-input">Дата начала</div>
               <div class="right-item-add-input">
-                <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='date' />
+                <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='startDiscount' />
               </div>
             </div>
             <div class="item-add-input">
               <div class="left-item-add-input">Дата завершения</div>
               <div class="right-item-add-input">
-                <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='date' />
+                <input placeholder="Пусто" type="date" class="input-right-item-add-input" v-model='finishDiscount' />
               </div>
             </div>
             <div class="item-add-input">
               <div class="left-item-add-input">Сумма</div>
               <div class="right-item-add-input">
-                <input placeholder="Пусто" type="number" class="input-right-item-add-input" v-model='amount' />
+                <input placeholder="Пусто" type="number" class="input-right-item-add-input" v-model='amountDiscount' />
               </div>
             </div>
             <div class="item-add-input">
               <div class="left-item-add-input">Комментарий</div>
               <div class="right-item-add-input">
-                <input placeholder="Пусто" type="text" class="input-right-item-add-input" v-model='note' />
+                <input placeholder="Пусто" type="text" class="input-right-item-add-input" v-model='noteDiscount' />
               </div>
             </div>
           </div>

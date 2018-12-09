@@ -352,7 +352,7 @@ a.logo:hover {
     user-select: none;
     cursor: default;
     display: grid;
-    min-height: 73px;
+    /*min-height: 73px;*/
 }
 .loading>div {
     position: absolute;
@@ -1822,4 +1822,19 @@ header:hover {
     border-bottom: 1px solid #f1f1f1;
     padding: 10px 0;
     user-select: none;
+}
+.new-btn-show-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 29px 5px;
+    border-radius: 50%;
+    transition: .3s;
+    user-select: none;
+}
+.new-click-compact {
+    top: auto;
+    bottom: -13px;
+    right: -30px;
+    margin: 0;
 }
