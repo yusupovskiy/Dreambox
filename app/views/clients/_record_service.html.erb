@@ -12,10 +12,9 @@
       records: Array,
     },
     methods: {
-      deleteRecordServise(index) {
+      deleteRecordServise(categoryId, recordId) {
         const { recordsServices } = data,
-              { records } = vmClient,
-              rs = recordsServices[index];
+              { records } = vmClient;
 
         if(!this.loadingDelete) {
           this.loadingDelete = true;
@@ -26,14 +25,15 @@
               data: {
                 authenticity_token: authToken,
                 record_service: {
-                  record_id: rs.record_id,
-                  category_id: rs.category_id
+                  record_id: recordId,
+                  category_id: categoryId,
                 }
               },
               success: messege => {
                 const complited = messege.complited;
 
                 if(complited) {
+                  const index = recordsServices.findIndex(rs => rs.record_id === recordId && rs.category_id === categoryId);
                   recordsServices.splice(index, 1);
                 }
 
@@ -78,17 +78,15 @@
         <div v-if="services.length > 0" class="list-panel">
 
           <div 
-            v-for="(service, index) in services" 
+            v-for="service in services" 
             :class="[ 'service-' + service.id ]" 
-            class="item-panel">
+            class="item-panel"
+            :key="service.id">
             
             <div class="item-panel__basic-info">
               <div class="left-item-panel">
                 <div class='item__btns'>
-                  <div class='btn-delete'>
-                    <ion-icon name="options"></ion-icon>
-                  </div>
-                  <div @click="deleteRecordServise(index)" class='btn-delete'>
+                  <div @click="deleteRecordServise(service.category_id, service.record_id)" class='btn-delete'>
                     <ion-icon name="trash"></ion-icon>
                   </div>
                 </div>
