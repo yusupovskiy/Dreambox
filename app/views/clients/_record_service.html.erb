@@ -13,9 +13,9 @@
     },
     methods: {
       deleteRecordServise(index) {
-        let {recordsServices, records} = vmClient;
-        let rs = recordsServices[index];
-        var complited = false
+        const { recordsServices } = data,
+              { records } = vmClient,
+              rs = recordsServices[index];
 
         if(!this.loadingDelete) {
           this.loadingDelete = true;
@@ -31,30 +31,25 @@
                 }
               },
               success: messege => {
-                complited = messege.complited;
+                const complited = messege.complited;
+
+                if(complited) {
+                  recordsServices.splice(index, 1);
+                }
+
                 vmNotifications.notifications.unshift(messege);
-                // recordsServices.splice(index, 1);
+                this.loadingDelete = false;
               },
               error: e => console.warn('error', e)
-            }).done(e => {
-              if(complited) {
-                recordsServices.splice(index, 1);
-                
-                let indexRecord = records.findIndex(r => r.id == rs.record_id);
-                vmClient.records[indexRecord].total_price_abon = records[indexRecord].total_price_abon - rs.money_for_abon;
-              }
-              this.loadingDelete = false;
             });
           }, 600);
         }
-
-
-
       },
     },
     computed: {
       services() {
-        let {servicesCompany, recordsServices, record} = vmClient;
+        const { recordsServices } = data,
+              { servicesCompany, record } = vmClient;
 
         return recordsServices.filter(function (record_service) {
           if(record_service.record_id == record.id) {

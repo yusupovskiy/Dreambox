@@ -1,5 +1,4 @@
 <script type="text/javascript">
-
   Vue.component('section-add-service', {
     data: function () {
       return {
@@ -7,7 +6,6 @@
         amountServiceSub: '',
         amountServiceVisit: '',
         loadingServiceRecordCreate: false,
-        newServicesRecord: [],
       }
     },
     props: {
@@ -15,9 +13,10 @@
     },
     methods: {
       createServiceRecord() {
-        let {record, recordsServices, recordsCompany} = vmClient;
-        let {addServicesRecord, amountServiceSub, amountServiceVisit, newServicesRecord} = this;
-        var complited = false;
+        let { recordsServices } = data;
+        const { record } = vmClient;
+        const { records } = data;
+        let { addServicesRecord, amountServiceSub, amountServiceVisit } = this;
 
         if(!this.loadingServiceRecordCreate) {
           this.loadingServiceRecordCreate = true;
@@ -35,28 +34,22 @@
                 }
               },
               success: messege => {
-                complited = messege.complited;
-                newServicesRecord = messege.result;
+                const complited = messege.complited;
+
+                if(complited) {
+                  const newServicesRecord = messege.result;
+                  recordsServices.unshift(newServicesRecord);
+
+                  this.addServicesRecord = '';
+                  this.amountServiceSub = '';
+                  this.amountServiceVisit = '';
+                }
+
                 vmNotifications.notifications.unshift(messege);
+                this.loadingServiceRecordCreate = false;
               },
               error: e => console.warn('error', e)
             }).done(e => {
-              if(complited) {
-                recordsServices.unshift(newServicesRecord);
-
-                let indexRecord = recordsCompany.findIndex(r => r.id == newServicesRecord.record_id);
-
-                console.log(vmClient.recordsCompany[indexRecord].total_price_abon);
-                
-                vmClient.recordsCompany[indexRecord].total_price_abon = recordsCompany[indexRecord].total_price_abon + newServicesRecord.money_for_abon;
-
-                console.log(vmClient.recordsCompany[indexRecord].total_price_abon);
-
-                this.addServicesRecord = '';
-                this.amountServiceSub = '';
-                this.amountServiceVisit = '';
-              }
-              this.loadingServiceRecordCreate = false;
             });
           }, 600);
         }

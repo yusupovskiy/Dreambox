@@ -291,8 +291,8 @@
       },
 
       recordsClientsServices() {
-        const { records, recordsClients, recordsServices } = data;
-        const { servicesCompany } = this;
+        const { records, recordsClients, recordsServices } = data,
+              { servicesCompany } = this;
 
         return records.filter(r => {
           const recordClients = recordsClients.filter(rc => rc.id === r.id),
@@ -347,7 +347,7 @@
       },
       // получение записей активных услуг и филиалов
       currentRecords() {
-        let {activeRecords, activeServices, servicesCompany, records, activeAffiliates, recordsServices} = this;
+        let { activeRecords, activeServices, servicesCompany, records, activeAffiliates, recordsServices} = this;
         var arrayIdActiveRecord = [];
 
         recordsServices.filter(function (service_record) {

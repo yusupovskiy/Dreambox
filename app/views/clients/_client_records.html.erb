@@ -233,7 +233,8 @@
         return this.recordsClient.filter(n => Object.values(n.name.split()).some(m => m.toString().toLowerCase().includes(s)));
       },
       services() {
-        let {servicesCompany, recordsServices, client} = vmClient;
+        const { recordsServices } = data,
+              { servicesCompany, client } = vmClient;
 
         return recordsServices.filter(function (record_service) {
           var service = servicesCompany.filter(function (service) {
@@ -298,7 +299,7 @@
             <div class="item-panel__total-info">
 
               <div class="btns">
-                <button-subscribe v-bind:record="record" :client="client"></button-subscribe>
+                <button-subscribe :record="record" :client="client"></button-subscribe>
               </div>
 
               <div class="total-info__service">
