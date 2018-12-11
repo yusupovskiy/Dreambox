@@ -79,7 +79,6 @@
 
       client: {},
       record: {},
-      recordsServices: [],
 
       search: '',
       search_r: '',
@@ -214,7 +213,6 @@
           this.affiliates = data.affiliates;
           this.subscriptions = data.subscriptions;
           this.records = data.records;
-          this.recordsServices = data.records_services;
           this.discounts = data.discounts;
           this.recordsClients = data.records_clients;
 
@@ -347,8 +345,9 @@
       },
       // получение записей активных услуг и филиалов
       currentRecords() {
-        let { activeRecords, activeServices, servicesCompany, records, activeAffiliates, recordsServices} = this;
-        var arrayIdActiveRecord = [];
+        const { recordsServices} = data,
+              { activeRecords, activeServices, servicesCompany, records, activeAffiliates } = this;
+        let   arrayIdActiveRecord = [];
 
         recordsServices.filter(function (service_record) {
           if(activeServices.find( value => value.id == service_record.category_id) != undefined) {
@@ -394,10 +393,11 @@
 
       // содержаться все услуги, записи которых являются активными
       currentServices() {
-        let {recordsServices, activeRecords} = this;
+        const { recordsServices } = data,
+              { activeRecords } = this;
 
-        var arrayIdRecord = [];
-        var have = Object.keys(activeRecords).length > 0;
+        let arrayIdRecord = [];
+        const have = Object.keys(activeRecords).length > 0;
 
         if(have) {
           recordsServices.filter(function (service_record) {

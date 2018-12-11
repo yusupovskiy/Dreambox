@@ -62,7 +62,8 @@
     },
     computed: {
       no_services() {
-        let {servicesCompany, recordsServices, record} = vmClient;
+        const { recordsServices } = data,
+              { servicesCompany, record } = vmClient;
 
         return servicesCompany.filter(function (service) {
           var record_service = recordsServices.filter(function (record_service) {
