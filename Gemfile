@@ -61,3 +61,5 @@ gem 'therubyracer', :platforms => :ruby
 gem 'aws-sdk', '~> 3'
 gem 'aws-sdk-s3', '~> 1'
 gem 'slim-rails'
+
+gem 'spree_mail_settings', github: 'spree-contrib/spree_mail_settings'
