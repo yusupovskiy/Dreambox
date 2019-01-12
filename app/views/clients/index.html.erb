@@ -160,12 +160,16 @@
         history.replaceState(record.name, record.name, newUrl);
       },
       clickClient(client) {
+        console.log(1);
         this.client = client;
+        console.log(2);
         this.panelShow = 'client';
+        console.log(3);
 
         url = window.location.href;
         newUrl = updateURLParameter(url, 'client', client.id);
         history.replaceState('Клиент', 'Клиент', newUrl);
+        console.log(4);
       },
       clientActive() {
         return Object.keys(this.client).length == 0;
@@ -368,25 +372,30 @@
       },
       // добавления статуса для каждого элемента для списка записей по данным, полученым  выше
       recordsFilter() {
-        let {records, activeRecords, currentRecords, activeServices, activeAffiliates} = this;
-        var have = Object.keys(activeRecords).length > 0 || Object.keys(activeServices).length > 0 || Object.keys(activeAffiliates).length > 0;
+        const { records, activeRecords, currentRecords, activeServices, activeAffiliates } = this,
+              have = Object.keys(activeRecords).length > 0 || Object.keys(activeServices).length > 0 || Object.keys(activeAffiliates).length > 0;
 
         if(have) {
-          return records.filter(function (record) {
-            if(activeRecords.find( currentValue => currentValue.id == record.id ) != undefined) {
-              return Object.assign(record, {status: 'active'});
+          return records.filter(r => {
+            let status = 'default';
+
+            if(activeRecords.find( currentValue => currentValue.id == r.id ) != undefined) {
+              status = 'active';
             }
-            else if(currentRecords.find( currentValue => currentValue == record.id ) != undefined) {
-              return Object.assign(record, {status: 'current'});
+            else if(currentRecords.find( currentValue => currentValue == r.id ) != undefined) {
+              status = 'current';
             }
-            else {
-              return Object.assign(record, {status: 'default'});
-            }
+
+            r.status = status;
+
+            return r;
           });
         }
         else {
-          return records.filter(function (record) {
-            return Object.assign(record, {status: 'current'});
+          return records.filter(r => {
+            r.status = 'current';
+
+            return r;
           });
         }
       },
